@@ -190,6 +190,12 @@
   var storedLang = localStorage.getItem(LANG_KEY);
   applyLanguage(LANGS.indexOf(storedLang) !== -1 ? storedLang : 'en');
 
+  /* ---------- Deep-link to a section via #hash (menu is built after page load) ---------- */
+  if (window.location.hash){
+    var target = qs(window.location.hash);
+    if (target) target.scrollIntoView({ block: 'start' });
+  }
+
   /* ---------- Logo lightbox ---------- */
   var heroLogo = qs('#heroLogo');
   var logoLightbox = qs('#logoLightbox');

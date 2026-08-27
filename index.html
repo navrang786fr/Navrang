@@ -18,46 +18,6 @@
     --leaf:#4C7A1E;
     --rule:rgba(22,35,26,.18);
   }
-  html[data-theme="classic"]{
-    --paper:#F9EFD8;
-    --ink:#2A2016;
-    --maroon:#7A1220;
-    --maroon-deep:#5A0D18;
-    --turmeric:#D89A1B;
-    --turmeric-light:#F3D98A;
-    --leaf:#3F5D3A;
-    --rule:rgba(42,32,22,.18);
-  }
-  html[data-theme="emerald"]{
-    --paper:#F7F1DE;
-    --ink:#16231A;
-    --maroon:#12401C;
-    --maroon-deep:#0A2A12;
-    --turmeric:#B3821E;
-    --turmeric-light:#E7CB86;
-    --leaf:#4C7A1E;
-    --rule:rgba(22,35,26,.18);
-  }
-  html[data-theme="royal"]{
-    --paper:#F3EFE3;
-    --ink:#1B1A2E;
-    --maroon:#2A2470;
-    --maroon-deep:#191552;
-    --turmeric:#D4AF37;
-    --turmeric-light:#EAD98A;
-    --leaf:#3A6B5C;
-    --rule:rgba(27,26,46,.18);
-  }
-  html[data-theme="charcoal"]{
-    --paper:#EDE7DA;
-    --ink:#211C18;
-    --maroon:#3A2E28;
-    --maroon-deep:#1E1714;
-    --turmeric:#B5651D;
-    --turmeric-light:#E3A868;
-    --leaf:#4B5D3A;
-    --rule:rgba(33,28,24,.18);
-  }
 
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -99,18 +59,6 @@
     padding:8px 16px;font-weight:700;letter-spacing:.5px;
     text-decoration:none;font-size:13px;
   }
-
-  /* ---------- Theme picker ---------- */
-  .theme-picker{display:flex;gap:7px;align-items:center;}
-  .theme-swatch{
-    width:18px;height:18px;border-radius:50%;padding:0;cursor:pointer;
-    border:2px solid rgba(255,255,255,.25);
-    background:linear-gradient(135deg,var(--sw1) 50%,var(--sw2) 50%);
-    transition:transform .12s,border-color .12s;
-  }
-  .theme-swatch:hover{transform:scale(1.14);}
-  .theme-swatch.active{border-color:var(--turmeric-light);box-shadow:0 0 0 2px var(--maroon-deep),0 0 0 3px var(--turmeric-light);}
-  @media (max-width:640px){.theme-picker{display:none;}}
 
   /* ---------- Hero ---------- */
   .hero{
@@ -246,13 +194,7 @@
       <li><a href="navarang-menu.html">Full Menu</a></li>
     </ul>
     <div class="topbar-right">
-      <div class="theme-picker" role="group" aria-label="Choose site color theme">
-        <button class="theme-swatch" data-theme="classic" style="--sw1:#7A1220;--sw2:#D89A1B" title="Classic — Maroon &amp; Turmeric" aria-label="Classic theme"></button>
-        <button class="theme-swatch active" data-theme="emerald" style="--sw1:#12401C;--sw2:#B3821E" title="Logo — Green &amp; Gold" aria-label="Logo theme"></button>
-        <button class="theme-swatch" data-theme="royal" style="--sw1:#2A2470;--sw2:#D4AF37" title="Royal Indigo &amp; Gold" aria-label="Royal theme"></button>
-        <button class="theme-swatch" data-theme="charcoal" style="--sw1:#3A2E28;--sw2:#B5651D" title="Charcoal &amp; Copper" aria-label="Charcoal theme"></button>
-      </div>
-      <a class="nav-cta" href="navarang-menu.html">View Menu</a>
+      <a class="nav-cta" href="order.html">View Menu</a>
     </div>
   </div>
 </div>
@@ -265,7 +207,7 @@
     <h1>Navarang</h1>
     <p class="sub">Home-style curries, live-fire starters, and slow dum biryani — the flavors of Andhra, cooked the way they're meant to be.</p>
     <div class="hero-ctas">
-      <a class="btn btn-primary" href="navarang-menu.html">View Full Menu</a>
+      <a class="btn btn-primary" href="order.html">View Full Menu</a>
       <a class="btn btn-ghost" href="#dishes">See Signature Dishes</a>
     </div>
   </div>
@@ -365,7 +307,7 @@
     </div>
     <h2>Save Room for Dessert</h2>
     <p class="lead">Kheer and Badam Milk round out the meal, alongside ice cream and cool drinks.</p>
-    <a class="btn btn-primary" href="navarang-menu.html#specials">Open the Full Menu</a>
+    <a class="btn btn-primary" href="order.html#sec-specials">Open the Full Menu</a>
   </div>
 </section>
 
