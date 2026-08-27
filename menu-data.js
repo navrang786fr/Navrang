@@ -58,7 +58,7 @@ var MENU_DATA = {
     { id: 49, name: "Onion Pakodi", nameTe: "ఉల్లి పకోడి", price: 130, veg: true, status: "Active", weeklyDishInd: false },
     { id: 50, name: "Paneer 65", nameTe: "పనీర్ 65", price: 200, veg: true, thumb: "images/menu/paneer-65-100.jpg", photo: "images/menu/paneer-65-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 51, name: "Paneer Chilli", nameTe: "పనీర్ చిల్లీ", price: 210, veg: true, thumb: "images/menu/paneer-chilli-100.jpg", photo: "images/menu/paneer-chilli-500.jpg", top: false, status: "Active", weeklyDishInd: false },
-    { id: 52, name: "Paneer Fry", nameTe: "పనీర్ ఫ్రై", price: 190, veg: true, status: "Active", weeklyDishInd: false },
+    { id: 52, name: "Paneer Fry", nameTe: "పనీర్ ఫ్రై", price: 190, veg: true, thumb: "images/menu/paneer-fry-100.jpg", photo: "images/menu/paneer-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 53, name: "Paneer Manchuria", nameTe: "పనీర్ మంచూరియా", price: 210, veg: true, thumb: "images/menu/paneer-manchuria-100.jpg", photo: "images/menu/paneer-manchuria-500.jpg", top: false, status: "Active", weeklyDishInd: false }
   ],
   "biryani": [
