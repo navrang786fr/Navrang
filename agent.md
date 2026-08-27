@@ -4,6 +4,14 @@ Running log of changes made by the coding agent in this repo. Newest entries at 
 
 ## 2026-08-27
 
+- **Done:** Root-caused and fixed the "Rate Your Food" dialog bug the user kept reporting (commits `db109dd`, `6a29f22`, `f83968e`).
+  - Root cause: `.rate-card{overflow-y:auto}` had no matching `overflow-x`, and per the CSS Overflow spec, browsers force the unset axis to `auto` too when the other isn't `visible`. That silently clipped the close button (`.lightbox-close`, styled with `top:-14px;right:-14px` to overhang the card — fine for `.lightbox-card`, which has no overflow set) and created a 14px internal horizontal scrollbar, which is what showed up in the user's screenshots as both a "clipped/overlapping" close button and a phantom scrollbar. Confirmed via Playwright (`cardOverflowX` was computing to `"auto"`, `scrollWidth` 454 vs `clientWidth` 440) before touching any code — first two rounds of headless testing at various viewport widths had failed to reproduce it because headless Chromium doesn't render the internal scrollbar the same way a real browser with classic scrollbars does.
+  - Fix: wrapped the dialog's scrollable content in a new `.rate-card-body` div; `.rate-card` itself no longer sets `overflow`, so the close button renders as a full circle again.
+  - Also: dish picker now auto-adds on `<select>` change (removed the separate "+" button per user request); added a star-icon shortcut button in the topbar that opens the same dialog as the footer CTA.
+  - Sorted every `MENU_DATA` category alphabetically by dish name (verified identical 102-name set via script, just reordered).
+  - Added an `ingredients`/`ingredientsTe` field to Egg Burji only (pilot), rendered as an "Ingredients: ..." line in the image lightbox — hidden for dishes without the field.
+  - Along the way, fixed two more photo-pipeline mismatches from the concurrent process: Mushroom Chili's `menu-data.js` reference said `-chilli-` but the actual resized files are `-chili-`; also picked up a manual Omlete price correction (₹70→₹60) the user made directly.
+
 - **Done:** Added Gobi Manchuria and Mushroom Fry dish photos (commit `7ba40a7`). Verified files existed with real content and correct `.jpg` extensions before committing; no stray originals this time. Pushed to `navrang786fr/main`.
 
 - **Investigated:** "Rate Your Food" dialog reported as visually broken (screenshot showed what looked like a horizontal scrollbar). Tested headlessly via Playwright at 390/414/595/1024px widths with the dialog open — `document.documentElement.scrollWidth` matched `window.innerWidth` exactly every time, no overflow reproduced, and the dish-picker/star-rating/submit JS logic in `order-app.js` checked out. Likely an artifact of the screenshot/preview tool, not a page bug — flagged to the user rather than guessing at a fix.
