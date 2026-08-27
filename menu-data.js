@@ -13,7 +13,7 @@ var MENU_DATA = {
     { id: 10, name: "Omlete", nameTe: "ఆమ్లెట్", price: 60, veg: false, thumb: "images/menu/omlete-100.jpg", photo: "images/menu/omlete-500.jpg", top: false, status: "Active", weeklyDishInd: false }
   ],
   "non-veg-starter": [
-    { id: 11, name: "Chicken 65", nameTe: "చికెన్ 65", price: 260, veg: false, top: true, status: "Active", weeklyDishInd: false },
+    { id: 11, name: "Chicken 65", nameTe: "చికెన్ 65", price: 260, veg: false, thumb: "images/menu/chicken-65-100.jpg", photo: "images/menu/chicken-65-500.jpg", top: true, status: "Active", weeklyDishInd: false },
     { id: 12, name: "Chicken Bone Fry", nameTe: "చికెన్ బోన్ ఫ్రై", price: 180, veg: false, thumb: "images/menu/chicken-bone-fry-100.jpg", photo: "images/menu/chicken-bone-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 13, name: "Chicken Bone Roast", nameTe: "చికెన్ బోన్ రోస్ట్", price: 200, veg: false, thumb: "images/menu/chicken-bone-roast-100.jpg", photo: "images/menu/chicken-bone-roast-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 14, name: "Chicken Boneless Fry", nameTe: "చికెన్ బోన్‌లెస్ ఫ్రై", price: 230, veg: false, thumb: "images/menu/chicken-boneless-fry-100.jpg", photo: "images/menu/chicken-boneless-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
