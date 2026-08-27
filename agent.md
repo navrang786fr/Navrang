@@ -4,6 +4,10 @@ Running log of changes made by the coding agent in this repo. Newest entries at 
 
 ## 2026-08-27
 
+- **Done:** Added `status: "Active"` and `weeklyDishInd: false` to every dish in `MENU_DATA` (commit `01ccea2`), plus a manual price revision + 4 item removals (Crab Curry, Crab Roast, Kamju Curry/Roast) the user made directly (commit `e5e57ec`).
+  - Wrote a one-off script to programmatically add the two new fields to all 98 dishes with a consistent key order, rather than hand-editing each line; verified the dish name set was unchanged before/after and that the live page still renders all 98 rows with no console errors. `CATEGORY_META` was left untouched.
+  - No UI wired up to these fields yet (no availability filtering, no "weekly dish" badge) — just data, since that wasn't asked for. `[[menu-data-schema-fields]]`
+
 - **Done:** Root-caused and fixed the "Rate Your Food" dialog bug the user kept reporting (commits `db109dd`, `6a29f22`, `f83968e`).
   - Root cause: `.rate-card{overflow-y:auto}` had no matching `overflow-x`, and per the CSS Overflow spec, browsers force the unset axis to `auto` too when the other isn't `visible`. That silently clipped the close button (`.lightbox-close`, styled with `top:-14px;right:-14px` to overhang the card — fine for `.lightbox-card`, which has no overflow set) and created a 14px internal horizontal scrollbar, which is what showed up in the user's screenshots as both a "clipped/overlapping" close button and a phantom scrollbar. Confirmed via Playwright (`cardOverflowX` was computing to `"auto"`, `scrollWidth` 454 vs `clientWidth` 440) before touching any code — first two rounds of headless testing at various viewport widths had failed to reproduce it because headless Chromium doesn't render the internal scrollbar the same way a real browser with classic scrollbars does.
   - Fix: wrapped the dialog's scrollable content in a new `.rate-card-body` div; `.rate-card` itself no longer sets `overflow`, so the close button renders as a full circle again.
