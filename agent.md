@@ -4,6 +4,8 @@ Running log of changes made by the coding agent in this repo. Newest entries at 
 
 ## 2026-08-27
 
+- **Done:** Wired up `status` filtering on the order page (commit `7de8c5b`) — `MENU_DATA[cat.id]` is now filtered to `status === 'Active'` both in the main menu render and the rate-dialog dish picker, so flipping a dish to any other status hides it without deleting it. Verified end-to-end by temporarily marking a dish Inactive (Playwright: confirmed it disappeared from the rendered list, the section's item count, and the rating dropdown) then restoring it before committing.
+
 - **Done:** Added `status: "Active"` and `weeklyDishInd: false` to every dish in `MENU_DATA` (commit `01ccea2`), plus a manual price revision + 4 item removals (Crab Curry, Crab Roast, Kamju Curry/Roast) the user made directly (commit `e5e57ec`).
   - Wrote a one-off script to programmatically add the two new fields to all 98 dishes with a consistent key order, rather than hand-editing each line; verified the dish name set was unchanged before/after and that the live page still renders all 98 rows with no console errors. `CATEGORY_META` was left untouched.
   - No UI wired up to these fields yet (no availability filtering, no "weekly dish" badge) — just data, since that wasn't asked for. `[[menu-data-schema-fields]]`
