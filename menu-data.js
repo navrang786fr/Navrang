@@ -91,7 +91,7 @@ var MENU_DATA = {
     { id: 74, name: "Bonda Chicken", nameTe: "బొండా చికెన్", price: 410, veg: false, thumb: "images/menu/bonda-chicken-100.jpg", photo: "images/menu/bonda-chicken-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 75, name: "Butter Chicken", nameTe: "బటర్ చికెన్", price: 260, veg: false, thumb: "images/menu/butter-chicken-100.jpg", photo: "images/menu/butter-chicken-500.jpg", top: true, status: "Active", weeklyDishInd: false },
     { id: 76, name: "Chicken Bone Curry", nameTe: "చికెన్ బోన్ కర్రీ", price: 180, veg: false, status: "Active", weeklyDishInd: false },
-    { id: 77, name: "Chicken Boneless Curry", nameTe: "చికెన్ బోన్‌లెస్ కర్రీ", price: 240, veg: false, status: "Active", weeklyDishInd: false },
+    { id: 77, name: "Chicken Boneless Curry", nameTe: "చికెన్ బోన్‌లెస్ కర్రీ", price: 240, veg: false, thumb: "images/menu/chicken-boneless-curry-100.jpg", photo: "images/menu/chicken-boneless-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 78, name: "Fish Curry (2 pc)", nameTe: "చేప కర్రీ (2 ముక్కలు)", price: 140, veg: false, thumb: "images/menu/fish-curry-2-pc-100.jpg", photo: "images/menu/fish-curry-2-pc-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 79, name: "Fish Fry (2 pc)", nameTe: "చేప ఫ్రై (2 ముక్కలు)", price: 140, veg: false, thumb: "images/menu/fish-fry-2-pc-100.jpg", photo: "images/menu/fish-fry-2-pc-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 80, name: "Kadai Chicken", nameTe: "కడాయి చికెన్", price: 270, veg: false, thumb: "images/menu/kadai-chicken-100.jpg", photo: "images/menu/kadai-chicken-500.jpg", top: false, status: "Active", weeklyDishInd: false },
