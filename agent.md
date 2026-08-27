@@ -4,6 +4,9 @@ Running log of changes made by the coding agent in this repo. Newest entries at 
 
 ## 2026-08-27
 
+- **Done:** Added customer activity tracking (commit `edfa84f`) — `order-app.js` now tracks search queries (debounced, 2+ chars) and dish-photo views via `navigator.sendBeacon` to a new public `POST /api/track` endpoint, tagged with an anonymous per-tab session id (no PII). Data lands in `activity-log.json` in the private admin-db repo (never the public site). New `admin/activity.html`: summary stats, top-searches/most-viewed-items bar charts, date filter, recent-activity table. Verified the debounce/threshold logic on the real order page via Playwright, then a live POST+GET round-trip against the deployed endpoint.
+
+- **Done:** Fixed `navrang-menu.html` (the printable A4 menu) and added the logo (commit `00d2647`). The item-population script only queried `.category`, but the "Chicken/Mutton/Seafood Curries" and "Navrang Specials" sections used different class names (`.curries`, `.specials`) — so those two sections, 26 of 98 dishes, silently never rendered. Added `.category` alongside their existing classes. Also added the `navrang_logo.png` image to the page-1 hero and page-2 running header (previously text-only). Confirmed via Playwright: 98/98 items now render across all 9 categories.
 - **Done:** Three quick order-page requests, each verified with Playwright before committing (commits `03be4a5`, `3e134c2`, `20facf1`):
   - Stacked the Arabic brand text below "Navrang" in the topbar (was inline beside it).
   - Added a sequential integer `id` (primary key) to all 98 dishes in `MENU_DATA` — sets up the admin dish-editing API (in progress, see below) to match dishes by a stable id instead of by name.
