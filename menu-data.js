@@ -42,7 +42,7 @@ var MENU_DATA = {
     { name: "Kaju Paneer", nameTe: "కాజు పనీర్", price: 210, veg: true }
   ],
   "veg-starters": [
-    { name: "Batani Fry", nameTe: "బటానీ ఫ్రై", price: 130, veg: true },
+    { name: "Batani Fry", nameTe: "బటానీ ఫ్రై", price: 130, veg: true,thumb: "images/menu/batani-fry-100.jpg", photo: "images/menu/batani-fry-500.jpg" },
     { name: "Batani Roast", nameTe: "బటానీ రోస్ట్", price: 130, veg: true },
     { name: "Groundnut Masala", nameTe: "వేరుశనగ మసాలా", price: 130, veg: true },
     { name: "Chena Fry", nameTe: "చేన ఫ్రై", price: 130, veg: true },
