@@ -344,6 +344,7 @@
     uploadEmpty.style.display = '';
     uploadFilled.style.display = 'none';
     imageHint.textContent = '';
+    uploadZone.classList.remove('processing');
   }
   function showFilledUpload(previewSrc, fileName, hintText){
     imagePreview.src = previewSrc;
