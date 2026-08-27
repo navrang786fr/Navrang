@@ -44,8 +44,8 @@ var MENU_DATA = {
   "veg-starters": [
     { name: "Batani Fry", nameTe: "బటానీ ఫ్రై", price: 130, veg: true, thumb: "images/menu/batani-fry-100.jpg", photo: "images/menu/batani-fry-500.jpg" },
     { name: "Batani Roast", nameTe: "బటానీ రోస్ట్", price: 130, veg: true, thumb: "images/menu/batani-roast-100.jpg", photo: "images/menu/batani-roast-500.jpg" },
-    { name: "Groundnut Masala", nameTe: "వేరుశనగ మసాలా", price: 130, veg: true },
-    { name: "Chena Fry", nameTe: "చేన ఫ్రై", price: 130, veg: true },
+    { name: "Groundnut Masala", nameTe: "వేరుశనగ మసాలా", price: 130, veg: true, thumb: "images/menu/groundnut-masala-100.jpg", photo: "images/menu/groundnut-masala-500.jpg" },
+    { name: "Chena Fry", nameTe: "చేన ఫ్రై", price: 130, veg: true, thumb: "images/menu/chena-fry-100.jpg", photo: "images/menu/chena-fry-500.jpg" },
     { name: "Gobi Fry", nameTe: "గోబీ ఫ్రై", price: 130, veg: true },
     { name: "Gobi Manchuria", nameTe: "గోబీ మంచూరియా", price: 150, veg: true },
     { name: "Onion Pakodi", nameTe: "ఉల్లి పకోడి", price: 130, veg: true },
