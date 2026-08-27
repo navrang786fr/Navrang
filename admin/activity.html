@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Customer Activity</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .summary-card{background:var(--paper-soft);border:1px solid var(--rule);border-radius:13px;padding:12px 10px;text-align:center;}
+  .summary-card .val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:var(--maroon-deep);}
+  .summary-card .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--maroon);font-weight:700;margin-top:3px;opacity:.85;}
+  .filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:16px;}
+  .preset-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .preset-btn{border:1.3px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:20px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;}
+  .preset-btn.active{background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));border-color:var(--maroon-deep);color:var(--turmeric-light);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:640px){ .two-col{grid-template-columns:1fr;} }
+  .bar-row{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:6px;}
+  .bar-row .term{flex:0 0 auto;min-width:110px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .bar-row .bar-wrap{flex:1;background:var(--paper);border-radius:6px;height:14px;overflow:hidden;}
+  .bar-row .bar{height:100%;background:linear-gradient(90deg,var(--turmeric),var(--maroon));}
+  .bar-row .count{flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--maroon);width:26px;text-align:right;}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <div class="admin-topbar-row">
+      <img src="../navrang_logo.png" alt="Navrang">
+      <h1>Customer Activity</h1>
+    </div>
+    <nav class="admin-nav" id="adminNav"></nav>
+  </div>
+
+  <div class="admin-panel">
+    <div class="summary-grid">
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statSearches">–</div><div class="lbl">Searches</div></div>
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statViews">–</div><div class="lbl">Item Views</div></div>
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statSessions">–</div><div class="lbl">Unique Sessions</div></div>
+    </div>
+
+    <div class="admin-card filter-bar">
+      <div class="admin-field" style="margin-bottom:0;">
+        <label for="fromDate">From</label>
+        <input type="date" id="fromDate">
+      </div>
+      <div class="admin-field" style="margin-bottom:0;">
+        <label for="toDate">To</label>
+        <input type="date" id="toDate">
+      </div>
+      <div class="preset-row" id="presetRow">
+        <button type="button" class="preset-btn" data-range="today">Today</button>
+        <button type="button" class="preset-btn" data-range="7">7 Days</button>
+        <button type="button" class="preset-btn" data-range="30">30 Days</button>
+        <button type="button" class="preset-btn active" data-range="all">All Time</button>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2 style="font-size:16px;">Top Searches</h2>
+        <div class="admin-card" id="topSearches"></div>
+      </div>
+      <div>
+        <h2 style="font-size:16px;">Most Viewed Items</h2>
+        <div class="admin-card" id="topItems"></div>
+      </div>
+    </div>
+
+    <h2>Recent Activity</h2>
+    <div class="admin-table-wrap" id="listWrap">
+      <div class="admin-loading">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function(){
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('activity');
+  var esc = AdminShared.esc;
+
+  var all = [];
+  var fromDate = document.getElementById('fromDate');
+  var toDate = document.getElementById('toDate');
+  var presetRow = document.getElementById('presetRow');
+
+  function fmtDate(iso){
+    var d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
+  }
+  function dayStart(s){ return new Date(s + 'T00:00:00'); }
+  function dayEnd(s){ return new Date(s + 'T23:59:59.999'); }
+  function toISODate(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+
+  function setActivePreset(range){
+    Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){ b.classList.toggle('active', b.dataset.range === range); });
+  }
+  function applyPreset(range){
+    var now = new Date(), to = new Date(now), from;
+    if (range === 'today') from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    else if (range === '7') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+    else if (range === '30') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+    else { fromDate.value = ''; toDate.value = ''; setActivePreset('all'); render(); return; }
+    fromDate.value = toISODate(from);
+    toDate.value = toISODate(to);
+    setActivePreset(range);
+    render();
+  }
+  function getFiltered(){
+    var from = fromDate.value ? dayStart(fromDate.value) : null;
+    var to = toDate.value ? dayEnd(toDate.value) : null;
+    return all.filter(function(r){
+      var t = new Date(r.timestamp);
+      if (isNaN(t)) return false;
+      if (from && t < from) return false;
+      if (to && t > to) return false;
+      return true;
+    });
+  }
+  function topList(rows, type, limit){
+    var counts = {};
+    rows.filter(function(r){ return r.type === type; }).forEach(function(r){
+      counts[r.value] = (counts[r.value] || 0) + 1;
+    });
+    return Object.keys(counts).map(function(k){ return { value: k, count: counts[k] }; })
+      .sort(function(a,b){ return b.count - a.count; }).slice(0, limit || 10);
+  }
+  function renderBars(el, list){
+    if (!list.length){ el.innerHTML = '<div class="admin-empty" style="padding:16px;">No data in this range.</div>'; return; }
+    var max = list[0].count;
+    el.innerHTML = list.map(function(item){
+      var pct = Math.max(6, Math.round((item.count / max) * 100));
+      return '<div class="bar-row"><span class="term" title="' + esc(item.value) + '">' + esc(item.value) + '</span>' +
+        '<span class="bar-wrap"><span class="bar" style="width:' + pct + '%;"></span></span>' +
+        '<span class="count">' + item.count + '</span></div>';
+    }).join('');
+  }
+
+  function render(){
+    var rows = getFiltered();
+    var searches = rows.filter(function(r){ return r.type === 'search'; });
+    var views = rows.filter(function(r){ return r.type === 'item_view'; });
+    var sessions = {};
+    rows.forEach(function(r){ if (r.sessionId) sessions[r.sessionId] = true; });
+
+    document.getElementById('statSearches').textContent = searches.length;
+    document.getElementById('statViews').textContent = views.length;
+    document.getElementById('statSessions').textContent = Object.keys(sessions).length;
+
+    renderBars(document.getElementById('topSearches'), topList(rows, 'search'));
+    renderBars(document.getElementById('topItems'), topList(rows, 'item_view'));
+
+    var listWrap = document.getElementById('listWrap');
+    var recent = rows.slice().sort(function(a,b){ return new Date(b.timestamp) - new Date(a.timestamp); }).slice(0, 200);
+    if (!recent.length){ listWrap.innerHTML = '<div class="admin-empty">No activity in this range.</div>'; return; }
+    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>When</th><th>Type</th><th>Value</th><th>Session</th></tr></thead><tbody>' +
+      recent.map(function(r){
+        return '<tr><td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td>' +
+          '<td>' + (r.type === 'search' ? 'Search' : 'Item View') + '</td>' +
+          '<td>' + esc(r.value) + '</td>' +
+          '<td style="opacity:.6;font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;">' + esc((r.sessionId || '').slice(0, 8)) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){ b.addEventListener('click', function(){ applyPreset(b.dataset.range); }); });
+  fromDate.addEventListener('change', function(){ setActivePreset(''); render(); });
+  toDate.addEventListener('change', function(){ setActivePreset(''); render(); });
+
+  AdminShared.apiFetch('/api/track').then(function(resp){
+    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok) throw new Error(result.data.error || 'Failed to load');
+    all = result.data;
+    render();
+  }).catch(function(err){
+    document.getElementById('listWrap').innerHTML = '<div class="admin-empty">' + esc(err.message || 'Could not load activity.') + '</div>';
+  });
+})();
+</script>
+
+</body>
+</html>

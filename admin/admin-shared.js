@@ -50,6 +50,7 @@
       { key: 'home', label: 'Home', href: 'index.html' },
       { key: 'ratings', label: 'Ratings', href: 'ratings.html' },
       { key: 'dishes', label: 'Dish Rates', href: 'dishes.html' },
+      { key: 'activity', label: 'Customer Activity', href: 'activity.html' },
       { key: 'audit', label: 'Audit Log', href: 'audit-log.html' },
       { key: 'access', label: 'Access Log', href: 'access-log.html' }
     ];

@@ -10,6 +10,29 @@
   var qs = function(sel, ctx){ return (ctx||document).querySelector(sel); };
   var qsa = function(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); };
 
+  /* ---------- Anonymous activity tracking (search terms + item views) ---------- */
+  var TRACK_ENDPOINT = 'https://ratings-api-pink.vercel.app/api/track';
+  var TRACK_SESSION_KEY = 'navrang-session-id';
+  function getSessionId(){
+    var id = sessionStorage.getItem(TRACK_SESSION_KEY);
+    if (!id){
+      id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+      sessionStorage.setItem(TRACK_SESSION_KEY, id);
+    }
+    return id;
+  }
+  function trackEvent(type, value){
+    if (!value) return;
+    var payload = JSON.stringify({ type: type, value: value, sessionId: getSessionId() });
+    try {
+      if (navigator.sendBeacon){
+        navigator.sendBeacon(TRACK_ENDPOINT, new Blob([payload], { type: 'application/json' }));
+        return;
+      }
+    } catch (e) {}
+    fetch(TRACK_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function(){});
+  }
+
   /* ---------- Language from QR code (?lang=en or ?lang=te) ---------- */
   function getUrlLang(){
     var m = /[?&]lang=([^&]+)/.exec(window.location.search);
@@ -211,6 +234,7 @@
       row.querySelector('.dish-thumb-wrap').addEventListener('click', function(){
         var ingredients = currentLang === 'te' ? item.ingredientsTe : item.ingredients;
         openLightbox(item.photo || item.thumb || NO_IMAGE_FULL, currentLang === 'te' ? item.nameTe : item.name, ingredients);
+        trackEvent('item_view', item.name);
       });
 
       section.appendChild(row);
@@ -260,7 +284,19 @@
       existingEmpty.remove();
     }
   }
-  searchInput.addEventListener('input', applyFilters);
+  var searchTrackTimer = null;
+  var lastTrackedQuery = '';
+  searchInput.addEventListener('input', function(){
+    applyFilters();
+    clearTimeout(searchTrackTimer);
+    searchTrackTimer = setTimeout(function(){
+      var q = searchInput.value.trim();
+      if (q.length >= 2 && q.toLowerCase() !== lastTrackedQuery){
+        lastTrackedQuery = q.toLowerCase();
+        trackEvent('search', q);
+      }
+    }, 800);
+  });
   vegToggle.addEventListener('click', function(){
     vegOnly = !vegOnly;
     vegToggle.classList.toggle('active', vegOnly);
