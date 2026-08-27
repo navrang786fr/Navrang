@@ -11,6 +11,7 @@
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   @media (max-width:560px){ .form-grid{grid-template-columns:1fr;} }
   .admin-field-wide{grid-column:1 / -1;}
+  .checkbox-row{display:flex;flex-wrap:wrap;gap:14px 22px;padding:4px 0;}
   .form-actions{display:flex;gap:10px;align-items:center;}
 
   .upload-zone{
@@ -48,7 +49,23 @@
   .search-row input{flex:1;border:1.3px solid var(--rule);border-radius:9px;padding:9px 11px;font-size:13.5px;background:var(--paper);outline:none;}
   .search-row input:focus{border-color:var(--maroon);}
   .edit-link{color:var(--maroon);font-weight:700;text-decoration:underline;cursor:pointer;font-size:12.5px;background:none;border:none;padding:0;}
-  .row-thumb{width:40px;height:40px;object-fit:cover;border-radius:8px;border:1px solid var(--rule);background:var(--paper-soft);display:block;}
+  .row-thumb{width:40px;height:40px;object-fit:cover;border-radius:8px;border:1px solid var(--rule);background:var(--paper-soft);display:block;cursor:pointer;transition:transform .12s ease;}
+  .row-thumb:hover{transform:scale(1.08);}
+  .img-lightbox{
+    position:fixed;inset:0;z-index:90;background:rgba(10,15,10,.82);
+    display:flex;align-items:center;justify-content:center;padding:24px;
+    opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .img-lightbox.show{opacity:1;pointer-events:auto;}
+  .img-lightbox-card{position:relative;max-width:min(90vw,420px);width:100%;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);padding:14px 14px 16px;}
+  .img-lightbox-card img{display:block;width:100%;max-height:68vh;object-fit:contain;border-radius:10px;}
+  .img-lightbox-caption{margin:10px 0 0;text-align:center;font-weight:700;color:var(--ink);}
+  .img-lightbox-close{
+    position:absolute;top:-14px;right:-14px;width:32px;height:32px;border-radius:50%;
+    background:var(--maroon-deep);color:#fff;border:2px solid #fff;
+    display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.3);
+  }
 </style>
 </head>
 <body>
@@ -91,11 +108,13 @@
               <option value="Inactive">Inactive</option>
             </select>
           </div>
-          <div class="admin-field" style="display:flex;flex-direction:column;justify-content:flex-end;gap:8px;">
-            <label class="admin-checkbox"><input type="checkbox" id="fVeg"> Vegetarian</label>
-            <label class="admin-checkbox"><input type="checkbox" id="fNonVeg"> Non-Veg</label>
-            <label class="admin-checkbox"><input type="checkbox" id="fTop"> Top Pick</label>
-            <label class="admin-checkbox"><input type="checkbox" id="fWeekly"> Weekly Dish</label>
+          <div class="admin-field admin-field-wide">
+            <div class="checkbox-row">
+              <label class="admin-checkbox"><input type="checkbox" id="fVeg"> Vegetarian</label>
+              <label class="admin-checkbox"><input type="checkbox" id="fNonVeg"> Non-Veg</label>
+              <label class="admin-checkbox"><input type="checkbox" id="fTop"> Top Pick</label>
+              <label class="admin-checkbox"><input type="checkbox" id="fWeekly"> Weekly Dish</label>
+            </div>
           </div>
           <div class="admin-field admin-field-wide">
             <label for="fImage">Dish Photo (optional)</label>
@@ -137,6 +156,14 @@
   </div>
 </div>
 
+<div class="img-lightbox" id="imgLightbox">
+  <div class="img-lightbox-card">
+    <button type="button" class="img-lightbox-close" id="imgLightboxClose" aria-label="Close">✕</button>
+    <img id="imgLightboxImg" src="" alt="">
+    <p class="img-lightbox-caption" id="imgLightboxCaption"></p>
+  </div>
+</div>
+
 <script src="admin-shared.js"></script>
 <script>
 (function(){
@@ -172,6 +199,19 @@
   var listWrap = document.getElementById('listWrap');
   var searchBox = document.getElementById('searchBox');
   var teHint = document.getElementById('teHint');
+
+  var imgLightbox = document.getElementById('imgLightbox');
+  var imgLightboxImg = document.getElementById('imgLightboxImg');
+  var imgLightboxCaption = document.getElementById('imgLightboxCaption');
+  function openImageLightbox(src, caption){
+    imgLightboxImg.src = src;
+    imgLightboxCaption.textContent = caption || '';
+    imgLightbox.classList.add('show');
+  }
+  function closeImageLightbox(){ imgLightbox.classList.remove('show'); }
+  imgLightbox.addEventListener('click', closeImageLightbox);
+  document.getElementById('imgLightboxClose').addEventListener('click', closeImageLightbox);
+  document.querySelector('.img-lightbox-card').addEventListener('click', function(e){ e.stopPropagation(); });
 
   function allDishesFlat(){
     var out = [];
@@ -413,8 +453,9 @@
         var cat = categories.find(function(c){ return c.id === d.categoryId; });
         var badge = d.status === 'Active' ? 'active' : 'inactive';
         var thumbSrc = '../' + (d.thumb || 'images/menu/no-dish-image-100.jpg');
+        var photoSrc = '../' + (d.photo || d.thumb || 'images/menu/no-dish-image-500.jpg');
         return '<tr>' +
-          '<td><img class="row-thumb" src="' + esc(thumbSrc) + '" alt="" loading="lazy"></td>' +
+          '<td><img class="row-thumb" src="' + esc(thumbSrc) + '" data-photo="' + esc(photoSrc) + '" data-name="' + esc(d.name) + '" alt="" loading="lazy"></td>' +
           '<td>' + d.id + '</td>' +
           '<td>' + esc(d.name) + '<br><span style="opacity:.6;">' + esc(d.nameTe) + '</span></td>' +
           '<td>' + esc(cat ? cat.title : d.categoryId) + '</td>' +
@@ -424,6 +465,12 @@
           '<td><button type="button" class="edit-link" data-id="' + d.id + '">Edit</button></td>' +
           '</tr>';
       }).join('') + '</tbody></table>';
+
+    Array.prototype.forEach.call(listWrap.querySelectorAll('.row-thumb'), function(img){
+      img.addEventListener('click', function(){
+        openImageLightbox(img.dataset.photo, img.dataset.name);
+      });
+    });
 
     Array.prototype.forEach.call(listWrap.querySelectorAll('.edit-link'), function(btn){
       btn.addEventListener('click', function(){
