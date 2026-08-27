@@ -83,7 +83,7 @@ var MENU_DATA = {
     { id: 68, name: "Kaju Rice", nameTe: "కాజు రైస్", price: 180, veg: true, status: "Active", weeklyDishInd: false },
     { id: 69, name: "Mushroom Rice", nameTe: "మష్రూమ్ రైస్", price: 150, veg: true, status: "Active", weeklyDishInd: false },
     { id: 70, name: "Paneer Rice", nameTe: "పనీర్ రైస్", price: 170, veg: true, status: "Active", weeklyDishInd: false },
-    { id: 71, name: "Plain White Rice", nameTe: "ప్లెయిన్ వైట్ రైస్", price: 60, veg: true, status: "Active", weeklyDishInd: false },
+    { id: 71, name: "Plain White Rice", nameTe: "ప్లెయిన్ వైట్ రైస్", price: 60, veg: true, thumb: "images/menu/plain-white-rice-100.jpg", photo: "images/menu/plain-white-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 72, name: "Veg Rice", nameTe: "వెజ్ రైస్", price: 120, veg: true, status: "Active", weeklyDishInd: false }
   ],
   "chicken-curries": [
