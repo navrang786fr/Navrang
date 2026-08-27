@@ -71,6 +71,17 @@
   .topbar .brand{font-family:'Yatra One',cursive;font-size:22px;color:#F7E7B4;letter-spacing:.5px;}
   .topbar .brand-ar{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:14px;direction:rtl;color:var(--turmeric);margin-left:8px;}
   .topbar-actions{display:flex;align-items:center;gap:8px;}
+  .lang-toggle{
+    display:flex;align-items:center;background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.25);border-radius:17px;padding:2px;gap:2px;
+  }
+  .lang-toggle button{
+    border:none;background:transparent;color:var(--paper);opacity:.75;
+    font-size:11.5px;font-weight:700;padding:6px 10px;border-radius:14px;cursor:pointer;
+    font-family:'Karla','Noto Sans Telugu',sans-serif;white-space:nowrap;
+    transition:background .15s ease,color .15s ease,opacity .15s ease;
+  }
+  .lang-toggle button.active{background:var(--turmeric);color:var(--maroon-deep);opacity:1;}
   .icon-btn{
     width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.25);
     background:rgba(255,255,255,.08);color:var(--paper);
@@ -94,6 +105,20 @@
     width:76px;height:76px;border-radius:50%;background:#fff;
     border:2px solid var(--turmeric);object-fit:cover;display:block;margin:0 auto 10px;
     box-shadow:var(--shadow-md),0 0 0 4px rgba(243,217,138,.14);
+    cursor:pointer;transition:transform .15s ease;
+  }
+  .hero-logo:active{transform:scale(.96);}
+
+  .logo-lightbox{
+    position:fixed;inset:0;z-index:90;background:rgba(10,15,10,.82);
+    display:flex;align-items:center;justify-content:center;padding:32px;
+    opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .logo-lightbox.show{opacity:1;pointer-events:auto;}
+  .logo-lightbox img{
+    max-width:min(88vw,420px);max-height:80vh;width:100%;
+    border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);
+    background:#fff;
   }
   .hero-strip .ar{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:21px;direction:rtl;color:var(--maroon-deep);margin-bottom:1px;}
   .hero-divider{display:flex;align-items:center;justify-content:center;gap:7px;margin:8px 0 9px;}
@@ -122,15 +147,6 @@
     font-size:14.5px;color:var(--ink);width:100%;
   }
   .search-field input::placeholder{color:rgba(42,32,22,.45);}
-  .lang-toggle{
-    flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-width:38px;
-    border:1.4px solid var(--maroon);color:var(--maroon);
-    border-radius:11px;padding:8px 10px;font-size:12.5px;font-weight:700;
-    background:var(--paper);cursor:pointer;white-space:nowrap;
-    font-family:'Karla','Noto Sans Telugu',sans-serif;
-    transition:background .15s ease,color .15s ease,transform .15s ease;
-  }
-  .lang-toggle:active{transform:scale(.95);background:var(--maroon);color:var(--turmeric-light);}
   .veg-toggle{
     flex:0 0 auto;display:flex;align-items:center;gap:6px;
     border:1.4px solid var(--leaf);color:var(--leaf);
@@ -240,6 +256,10 @@
       <span class="brand-ar">نڤارنگ</span>
     </div>
     <div class="topbar-actions">
+      <div class="lang-toggle" id="langToggle" role="group" aria-label="Switch language">
+        <button type="button" class="lang-opt" data-lang="en" title="View in English" aria-label="View in English">EN</button>
+        <button type="button" class="lang-opt" data-lang="te" title="తెలుగులో చూడండి" aria-label="తెలుగులో చూడండి">తె</button>
+      </div>
       <a class="icon-btn" id="instaLink" href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" title="Follow us on Instagram" aria-label="Follow us on Instagram">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
       </a>
@@ -247,7 +267,7 @@
   </div>
 
   <div class="hero-strip">
-    <img class="hero-logo" src="navrang_logo.png" alt="Navarang Family Restaurant">
+    <img class="hero-logo" id="heroLogo" src="navrang_logo.png" alt="Navarang Family Restaurant" tabindex="0" role="button" aria-label="View full logo">
     <div class="ar">نڤارنگ</div>
     <div class="hero-divider" aria-hidden="true"><span></span><i></i><span></span></div>
     <div class="tag" id="heroTag">Scan · Browse · Order With Your Waiter</div>
@@ -258,7 +278,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       <input type="text" id="searchInput" placeholder="Search dishes…" autocomplete="off">
     </div>
-    <button class="lang-toggle" id="langToggle" type="button" title="Switch language" aria-label="Switch language">తె</button>
     <button class="veg-toggle" id="vegToggle" type="button"><span class="sq"></span><span id="vegLabel">Veg</span></button>
   </div>
 
@@ -271,6 +290,10 @@
     <p id="footerNote">Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.</p>
   </div>
 
+</div>
+
+<div class="logo-lightbox" id="logoLightbox" role="dialog" aria-label="Navarang logo" aria-hidden="true">
+  <img src="navrang_logo.png" alt="Navarang Family Restaurant">
 </div>
 
 <script src="config.js"></script>

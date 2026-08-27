@@ -18,9 +18,7 @@
       itemsSuffix: function(n){ return n === 1 ? ' item' : ' items'; },
       emptyState: 'No dishes match your search.',
       footerNote: 'Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.',
-      instaTitle: 'Follow us on Instagram',
-      langToggleLabel: 'తె',
-      langToggleTitle: 'తెలుగులో చూడండి'
+      instaTitle: 'Follow us on Instagram'
     },
     te: {
       tag: 'స్కాన్ చేయండి · చూడండి · మీ వెయిటర్‌తో ఆర్డర్ చేయండి',
@@ -30,13 +28,11 @@
       itemsSuffix: function(){ return ' వస్తువులు'; },
       emptyState: 'మీ శోధనకు సరిపోలే వంటకాలు లేవు.',
       footerNote: 'ఆర్డర్ చేయడానికి సిద్ధంగా ఉన్నారా? మీ వెయిటర్‌కు తెలియజేయండి. అన్ని ధరలలో వర్తించే పన్నులు కలిపి ఉన్నాయి — ఏవైనా ఆహార అలర్జీల గురించి మీ సర్వర్‌కు తెలియజేయండి.',
-      instaTitle: 'ఇన్‌స్టాగ్రామ్‌లో మమ్మల్ని ఫాలో అవ్వండి',
-      langToggleLabel: 'EN',
-      langToggleTitle: 'View in English'
+      instaTitle: 'ఇన్‌స్టాగ్రామ్‌లో మమ్మల్ని ఫాలో అవ్వండి'
     }
   };
 
-  var langToggle = qs('#langToggle');
+  var langOpts = qsa('.lang-opt');
   var currentLang = 'en';
 
   function applyLanguage(lang){
@@ -51,9 +47,9 @@
     qs('#footerNote').textContent = S.footerNote;
     var instaLink = qs('#instaLink');
     if (instaLink){ instaLink.title = S.instaTitle; instaLink.setAttribute('aria-label', S.instaTitle); }
-    langToggle.textContent = S.langToggleLabel;
-    langToggle.title = S.langToggleTitle;
-    langToggle.setAttribute('aria-label', S.langToggleTitle);
+    langOpts.forEach(function(btn){
+      btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
 
     qsa('.chip .chip-label').forEach(function(el){
       el.textContent = currentLang === 'te' ? el.dataset.te : el.dataset.en;
@@ -76,8 +72,8 @@
     if (emptyP) emptyP.textContent = S.emptyState;
   }
 
-  langToggle.addEventListener('click', function(){
-    applyLanguage(currentLang === 'en' ? 'te' : 'en');
+  langOpts.forEach(function(btn){
+    btn.addEventListener('click', function(){ applyLanguage(btn.dataset.lang); });
   });
 
   /* ---------- Config ---------- */
@@ -193,4 +189,21 @@
   /* ---------- Init language (after DOM built so all nodes exist) ---------- */
   var storedLang = localStorage.getItem(LANG_KEY);
   applyLanguage(LANGS.indexOf(storedLang) !== -1 ? storedLang : 'en');
+
+  /* ---------- Logo lightbox ---------- */
+  var heroLogo = qs('#heroLogo');
+  var logoLightbox = qs('#logoLightbox');
+  function openLogoLightbox(){
+    logoLightbox.classList.add('show');
+    logoLightbox.setAttribute('aria-hidden', 'false');
+  }
+  function closeLogoLightbox(){
+    logoLightbox.classList.remove('show');
+    logoLightbox.setAttribute('aria-hidden', 'true');
+  }
+  heroLogo.addEventListener('click', openLogoLightbox);
+  heroLogo.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLogoLightbox(); }
+  });
+  logoLightbox.addEventListener('click', closeLogoLightbox);
 })();
