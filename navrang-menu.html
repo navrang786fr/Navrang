@@ -5,7 +5,7 @@
 <title>Navrang — Menu</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Yatra+One&family=Aref+Ruqaa:wght@400;700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Yatra+One&family=Aref+Ruqaa:wght@400;700&family=Amiri:wght@400;700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
   /* Default palette — sampled directly from navrang_logo.png (deep emblem green + halal gold) */
   :root{
@@ -98,30 +98,30 @@
     margin-bottom:16px;
   }
   .hero-logo-img{
-    position:absolute;top:0;left:50%;
-    width:112px;height:112px;border-radius:50%;object-fit:cover;
+    position:absolute;top:14px;left:50%;
+    width:156px;height:156px;border-radius:50%;object-fit:cover;
     background:#fff;border:3px solid var(--turmeric);
     box-shadow:0 0 0 4px rgba(243,217,138,.25),0 8px 20px rgba(0,0,0,.3);
-    display:block;transform:translate(-50%,-50%);z-index:2;
+    display:block;transform:translateX(-50%);z-index:2;
   }
   .hero .ar-name{
     font-family:'Aref Ruqaa',serif;
-    font-size:30px;font-weight:700;
+    font-size:30px;font-weight:700;line-height:1;
     direction:rtl;
     color:var(--turmeric);
-    margin:38px 0 2px;
+    margin:-6px 0 4px;
     letter-spacing:0;
   }
   .hero-mashallah{
     position:absolute;top:8px;right:12px;
-    font-family:'Aref Ruqaa',serif;font-weight:700;font-size:15px;
-    direction:rtl;color:var(--turmeric);opacity:.9;z-index:2;
+    font-family:'Amiri',serif;font-weight:700;font-size:22px;
+    direction:rtl;color:var(--turmeric);opacity:.95;z-index:2;
   }
   .hero h1{
     font-family:'Yatra One',cursive;
-    font-size:62px;
+    font-size:62px;line-height:1;
     letter-spacing:3px;
-    margin:2px 0 4px;
+    margin:188px 0 0;
     color:#F7E7B4;
   }
   .hero .sub{
@@ -193,11 +193,11 @@
     padding:2.3px 1px;font-size:15.5px;
   }
   .dot{
-    width:9px;height:9px;border:1.3px solid currentColor;
+    width:13px;height:13px;border:1.6px solid currentColor;
     display:inline-flex;align-items:center;justify-content:center;
     margin-right:7px;flex:0 0 auto;
   }
-  .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;}
+  .dot::after{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;}
   .dot.veg{color:var(--leaf);}
   .dot.nonveg{color:var(--nonveg);}
 
@@ -265,8 +265,8 @@
   <div class="hero">
     <span class="hero-mashallah">ماشاءالله</span>
     <img class="hero-logo-img" src="navrang_logo.png" alt="Navrang">
-    <div class="ar-name">نڤارنگ</div>
     <h1>Navrang</h1>
+    <div class="ar-name">نڤارنگ</div>
     <div class="sub">Andhra Kitchen · Curry &amp; Charcoal</div>
     <div class="rule"></div>
   </div>
