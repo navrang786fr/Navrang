@@ -23,7 +23,7 @@ var MENU_DATA = {
     { id: 18, name: "Lemon Chicken", nameTe: "లెమన్ చికెన్", price: 260, veg: false, thumb: "images/menu/lemon-chicken-100.jpg", photo: "images/menu/lemon-chicken-500.jpg", status: "Active", weeklyDishInd: false },
     { id: 19, name: "Lollipop Fry", nameTe: "లాలీపాప్ ఫ్రై", price: 260, veg: false, thumb: "images/menu/lollipop-fry-100.jpg", photo: "images/menu/lollipop-fry-500.jpg", status: "Active", weeklyDishInd: false },
     { id: 20, name: "Lollipop Roast", nameTe: "లాలీపాప్ రోస్ట్", price: 280, veg: false, thumb: "images/menu/lollipop-roast-100.jpg", photo: "images/menu/lollipop-roast-500.jpg", status: "Active", weeklyDishInd: false },
-    { id: 21, name: "Pepper Chicken", nameTe: "పెప్పర్ చికెన్", price: 240, veg: false, status: "Active", weeklyDishInd: false },
+    { id: 21, name: "Pepper Chicken", nameTe: "పెప్పర్ చికెన్", price: 240, veg: false, thumb: "images/menu/pepper-chicken-100.jpg", photo: "images/menu/pepper-chicken-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 22, name: "Tiger Chicken", nameTe: "టైగర్ చికెన్", price: 280, veg: false, thumb: "images/menu/tiger-chicken-100.jpg", photo: "images/menu/tiger-chicken-500.jpg", status: "Active", weeklyDishInd: false }
   ],
   "veg-curries": [
