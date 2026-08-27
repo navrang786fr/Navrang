@@ -11,7 +11,7 @@
 <link rel="icon" href="navrang_logo.png">
 <link rel="apple-touch-icon" href="navrang_logo.png">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Yatra+One&family=Aref+Ruqaa:wght@400;700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Yatra+One&family=Aref+Ruqaa:wght@400;700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap');
 
   /* Default palette — sampled directly from navrang_logo.png (deep emblem green + halal gold) */
   :root{
@@ -20,31 +20,6 @@
     --turmeric:#B3821E; --turmeric-light:#E7CB86;
     --leaf:#4C7A1E; --nonveg:#A83A28; --rule:rgba(22,35,26,.16);
   }
-  html[data-theme="classic"]{
-    --paper:#F9EFD8; --paper-soft:#F2E6C6; --ink:#2A2016;
-    --maroon:#7A1220; --maroon-deep:#5A0D18;
-    --turmeric:#D89A1B; --turmeric-light:#F3D98A;
-    --leaf:#3F5D3A; --nonveg:#7A1220; --rule:rgba(42,32,22,.16);
-  }
-  html[data-theme="emerald"]{
-    --paper:#F7F1DE; --paper-soft:#EDE3C2; --ink:#16231A;
-    --maroon:#12401C; --maroon-deep:#0A2A12;
-    --turmeric:#B3821E; --turmeric-light:#E7CB86;
-    --leaf:#4C7A1E; --nonveg:#A83A28; --rule:rgba(22,35,26,.16);
-  }
-  html[data-theme="royal"]{
-    --paper:#F3EFE3; --paper-soft:#E7E1CE; --ink:#1B1A2E;
-    --maroon:#2A2470; --maroon-deep:#191552;
-    --turmeric:#D4AF37; --turmeric-light:#EAD98A;
-    --leaf:#3A6B5C; --nonveg:#8B2635; --rule:rgba(27,26,46,.16);
-  }
-  html[data-theme="charcoal"]{
-    --paper:#EDE7DA; --paper-soft:#E1D9C8; --ink:#211C18;
-    --maroon:#3A2E28; --maroon-deep:#1E1714;
-    --turmeric:#B5651D; --turmeric-light:#E3A868;
-    --leaf:#4B5D3A; --nonveg:#8B3A2E; --rule:rgba(33,28,24,.16);
-  }
-
   :root{
     --shadow-xs:0 1px 2px rgba(30,18,10,.06);
     --shadow-sm:0 2px 8px rgba(30,18,10,.10);
@@ -57,7 +32,7 @@
   html,body{margin:0;padding:0;height:100%;}
   body{
     background:var(--paper-soft);
-    font-family:'Karla',sans-serif;
+    font-family:'Karla','Noto Sans Telugu',sans-serif;
     color:var(--ink);
     -webkit-font-smoothing:antialiased;
   }
@@ -106,16 +81,6 @@
   .icon-btn svg{width:17px;height:17px;}
   .icon-btn:active{transform:scale(.92);background:rgba(255,255,255,.16);}
 
-  .theme-picker{display:flex;gap:7px;align-items:center;}
-  .theme-swatch{
-    width:17px;height:17px;border-radius:50%;padding:0;cursor:pointer;
-    border:2px solid rgba(255,255,255,.3);
-    background:linear-gradient(135deg,var(--sw1) 50%,var(--sw2) 50%);
-    transition:transform .15s ease;
-  }
-  .theme-swatch:active{transform:scale(.88);}
-  .theme-swatch.active{border-color:var(--turmeric-light);box-shadow:0 0 0 2px var(--maroon-deep),0 0 0 3px var(--turmeric-light);}
-
   /* ---------- Hero strip ---------- */
   .hero-strip{
     background:
@@ -157,6 +122,15 @@
     font-size:14.5px;color:var(--ink);width:100%;
   }
   .search-field input::placeholder{color:rgba(42,32,22,.45);}
+  .lang-toggle{
+    flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-width:38px;
+    border:1.4px solid var(--maroon);color:var(--maroon);
+    border-radius:11px;padding:8px 10px;font-size:12.5px;font-weight:700;
+    background:var(--paper);cursor:pointer;white-space:nowrap;
+    font-family:'Karla','Noto Sans Telugu',sans-serif;
+    transition:background .15s ease,color .15s ease,transform .15s ease;
+  }
+  .lang-toggle:active{transform:scale(.95);background:var(--maroon);color:var(--turmeric-light);}
   .veg-toggle{
     flex:0 0 auto;display:flex;align-items:center;gap:6px;
     border:1.4px solid var(--leaf);color:var(--leaf);
@@ -266,18 +240,9 @@
       <span class="brand-ar">نڤارنگ</span>
     </div>
     <div class="topbar-actions">
-      <a class="icon-btn" href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" title="Follow us on Instagram" aria-label="Follow us on Instagram">
+      <a class="icon-btn" id="instaLink" href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" title="Follow us on Instagram" aria-label="Follow us on Instagram">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
       </a>
-      <button class="icon-btn" id="waiterBtn" title="Call waiter" aria-label="Call waiter">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-      </button>
-      <div class="theme-picker" role="group" aria-label="Choose color theme">
-        <button class="theme-swatch" data-theme="classic" style="--sw1:#7A1220;--sw2:#D89A1B" title="Classic" aria-label="Classic theme"></button>
-        <button class="theme-swatch active" data-theme="emerald" style="--sw1:#1F5C3A;--sw2:#C9A227" title="Emerald" aria-label="Emerald theme"></button>
-        <button class="theme-swatch" data-theme="royal" style="--sw1:#2A2470;--sw2:#D4AF37" title="Royal" aria-label="Royal theme"></button>
-        <button class="theme-swatch" data-theme="charcoal" style="--sw1:#3A2E28;--sw2:#B5651D" title="Charcoal" aria-label="Charcoal theme"></button>
-      </div>
     </div>
   </div>
 
@@ -285,7 +250,7 @@
     <img class="hero-logo" src="navrang_logo.png" alt="Navarang Family Restaurant">
     <div class="ar">نڤارنگ</div>
     <div class="hero-divider" aria-hidden="true"><span></span><i></i><span></span></div>
-    <div class="tag">Scan · Browse · Call Waiter to Place Order</div>
+    <div class="tag" id="heroTag">Scan · Browse · Order With Your Waiter</div>
   </div>
 
   <div class="search-bar">
@@ -293,7 +258,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       <input type="text" id="searchInput" placeholder="Search dishes…" autocomplete="off">
     </div>
-    <button class="veg-toggle" id="vegToggle" type="button"><span class="sq"></span>Veg</button>
+    <button class="lang-toggle" id="langToggle" type="button" title="Switch language" aria-label="Switch language">తె</button>
+    <button class="veg-toggle" id="vegToggle" type="button"><span class="sq"></span><span id="vegLabel">Veg</span></button>
   </div>
 
   <div class="chip-row" id="chipRow"></div>
@@ -302,7 +268,7 @@
 
   <div class="menu-footer">
     <div class="hero-divider" aria-hidden="true"><span></span><i></i><span></span></div>
-    <p>Ready to order? Tap the bell icon at the top to call your waiter. All prices are inclusive of applicable taxes — please inform your server of any food allergies.</p>
+    <p id="footerNote">Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.</p>
   </div>
 
 </div>

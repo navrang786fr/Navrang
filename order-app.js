@@ -1,41 +1,88 @@
 (function(){
   "use strict";
 
-  var THEMES = ['classic','emerald','royal','charcoal'];
-  var TABLE_KEY = 'navarang-table';
-  var THEME_KEY = 'navarang-theme';
+  var LANGS = ['en','te'];
+  var LANG_KEY = 'navarang-lang';
 
   var root = document.documentElement;
   var qs = function(sel, ctx){ return (ctx||document).querySelector(sel); };
   var qsa = function(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); };
 
-  /* ---------- Theme ---------- */
-  function applyTheme(theme){
-    root.setAttribute('data-theme', theme);
-    localStorage.setItem(THEME_KEY, theme);
-    qsa('.theme-swatch').forEach(function(btn){
-      btn.classList.toggle('active', btn.dataset.theme === theme);
+  /* ---------- Language ---------- */
+  var STRINGS = {
+    en: {
+      tag: 'Scan · Browse · Order With Your Waiter',
+      searchPlaceholder: 'Search dishes…',
+      veg: 'Veg',
+      askStaff: 'Ask staff',
+      itemsSuffix: function(n){ return n === 1 ? ' item' : ' items'; },
+      emptyState: 'No dishes match your search.',
+      footerNote: 'Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.',
+      instaTitle: 'Follow us on Instagram',
+      langToggleLabel: 'తె',
+      langToggleTitle: 'తెలుగులో చూడండి'
+    },
+    te: {
+      tag: 'స్కాన్ చేయండి · చూడండి · మీ వెయిటర్‌తో ఆర్డర్ చేయండి',
+      searchPlaceholder: 'వంటకాలు వెతకండి…',
+      veg: 'వెజ్',
+      askStaff: 'సిబ్బందిని అడగండి',
+      itemsSuffix: function(){ return ' వస్తువులు'; },
+      emptyState: 'మీ శోధనకు సరిపోలే వంటకాలు లేవు.',
+      footerNote: 'ఆర్డర్ చేయడానికి సిద్ధంగా ఉన్నారా? మీ వెయిటర్‌కు తెలియజేయండి. అన్ని ధరలలో వర్తించే పన్నులు కలిపి ఉన్నాయి — ఏవైనా ఆహార అలర్జీల గురించి మీ సర్వర్‌కు తెలియజేయండి.',
+      instaTitle: 'ఇన్‌స్టాగ్రామ్‌లో మమ్మల్ని ఫాలో అవ్వండి',
+      langToggleLabel: 'EN',
+      langToggleTitle: 'View in English'
+    }
+  };
+
+  var langToggle = qs('#langToggle');
+  var currentLang = 'en';
+
+  function applyLanguage(lang){
+    currentLang = LANGS.indexOf(lang) !== -1 ? lang : 'en';
+    localStorage.setItem(LANG_KEY, currentLang);
+    root.setAttribute('lang', currentLang === 'te' ? 'te' : 'en');
+    var S = STRINGS[currentLang];
+
+    qs('#heroTag').textContent = S.tag;
+    searchInput.placeholder = S.searchPlaceholder;
+    qs('#vegLabel').textContent = S.veg;
+    qs('#footerNote').textContent = S.footerNote;
+    var instaLink = qs('#instaLink');
+    if (instaLink){ instaLink.title = S.instaTitle; instaLink.setAttribute('aria-label', S.instaTitle); }
+    langToggle.textContent = S.langToggleLabel;
+    langToggle.title = S.langToggleTitle;
+    langToggle.setAttribute('aria-label', S.langToggleTitle);
+
+    qsa('.chip .chip-label').forEach(function(el){
+      el.textContent = currentLang === 'te' ? el.dataset.te : el.dataset.en;
     });
+    qsa('.section-title').forEach(function(el){
+      el.textContent = currentLang === 'te' ? el.dataset.te : el.dataset.en;
+    });
+    qsa('.section-count').forEach(function(el){
+      var n = parseInt(el.dataset.count, 10);
+      el.textContent = n + S.itemsSuffix(n);
+    });
+    qsa('.dish-name').forEach(function(el){
+      el.textContent = currentLang === 'te' ? el.dataset.te : el.dataset.en;
+    });
+    qsa('.no-price').forEach(function(el){
+      el.textContent = S.askStaff;
+    });
+
+    var emptyP = qs('#emptyState p');
+    if (emptyP) emptyP.textContent = S.emptyState;
   }
-  qsa('.theme-swatch').forEach(function(btn){
-    btn.addEventListener('click', function(){ applyTheme(btn.dataset.theme); });
+
+  langToggle.addEventListener('click', function(){
+    applyLanguage(currentLang === 'en' ? 'te' : 'en');
   });
-  (function initTheme(){
-    var stored = localStorage.getItem(THEME_KEY);
-    applyTheme(THEMES.indexOf(stored) !== -1 ? stored : 'emerald');
-  })();
 
   /* ---------- Config ---------- */
-  var CFG = window.RESTAURANT_CONFIG || { name:'Restaurant', whatsappNumber:'', currency:'₹' };
+  var CFG = window.RESTAURANT_CONFIG || { name:'Restaurant', currency:'₹' };
   var CUR = CFG.currency || '₹';
-
-  /* ---------- Table number ---------- */
-  function getUrlTable(){
-    var m = /[?&]table=([^&]+)/.exec(window.location.search);
-    return m ? decodeURIComponent(m[1]) : '';
-  }
-  var currentTable = getUrlTable() || localStorage.getItem(TABLE_KEY) || '';
-  if (getUrlTable()) localStorage.setItem(TABLE_KEY, getUrlTable());
 
   /* ---------- Build menu DOM ---------- */
   var chipRow = qs('#chipRow');
@@ -43,6 +90,9 @@
 
   function iconSvg(paths, extraAttrs){
     return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"' + (extraAttrs||'') + '>' + paths + '</svg>';
+  }
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   CATEGORY_META.forEach(function(cat){
@@ -52,7 +102,7 @@
     chip.type = 'button';
     chip.className = 'chip';
     chip.dataset.target = cat.id;
-    chip.innerHTML = iconSvg(cat.icon) + '<span>' + cat.short + '</span>';
+    chip.innerHTML = iconSvg(cat.icon) + '<span class="chip-label" data-en="' + esc(cat.short) + '" data-te="' + esc(cat.shortTe) + '">' + esc(cat.short) + '</span>';
     chip.addEventListener('click', function(){
       var section = document.getElementById('sec-' + cat.id);
       if (section) section.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -65,8 +115,9 @@
 
     var head = document.createElement('div');
     head.className = 'section-head';
-    head.innerHTML = '<span class="cat-icon">' + iconSvg(cat.icon) + '</span>' + cat.title +
-      '<span class="n">' + items.length + ' items</span>';
+    head.innerHTML = '<span class="cat-icon">' + iconSvg(cat.icon) + '</span>' +
+      '<span class="section-title" data-en="' + esc(cat.title) + '" data-te="' + esc(cat.titleTe) + '">' + esc(cat.title) + '</span>' +
+      '<span class="n section-count" data-count="' + items.length + '">' + items.length + ' items</span>';
     section.appendChild(head);
 
     items.forEach(function(item){
@@ -79,7 +130,7 @@
 
       row.innerHTML =
         '<span class="dot ' + (item.veg ? 'veg' : 'nonveg') + '"></span>' +
-        '<span class="dish-info"><span class="dish-name">' + item.name + '</span></span>' +
+        '<span class="dish-info"><span class="dish-name" data-en="' + esc(item.name) + '" data-te="' + esc(item.nameTe) + '">' + esc(item.name) + '</span></span>' +
         priceLabel;
 
       section.appendChild(row);
@@ -114,7 +165,7 @@
         el.id = 'emptyState';
         el.className = 'empty-state';
         el.innerHTML = iconSvg('<circle cx="32" cy="32" r="22"/><path d="M22 40s4 6 10 6 10-6 10-6M24 26h.01M40 26h.01"/>') +
-          '<p>No dishes match your search.</p>';
+          '<p>' + esc(STRINGS[currentLang].emptyState) + '</p>';
         menuContent.appendChild(el);
       }
     } else if (existingEmpty){
@@ -139,12 +190,7 @@
   }, { rootMargin: '-180px 0px -70% 0px', threshold: 0 });
   qsa('.menu-section').forEach(function(s){ observer.observe(s); });
 
-  /* ---------- Call waiter ---------- */
-  qs('#waiterBtn').addEventListener('click', function(){
-    var number = (CFG.whatsappNumber || '').replace(/[^0-9]/g,'');
-    var msg = '🔔 Assistance needed at Table ' + (currentTable || '(not set)') + ' — ' + CFG.name;
-    var url = 'https://wa.me/' + number + '?text=' + encodeURIComponent(msg);
-    var win = window.open(url, '_blank');
-    if (!win) window.location.href = url;
-  });
+  /* ---------- Init language (after DOM built so all nodes exist) ---------- */
+  var storedLang = localStorage.getItem(LANG_KEY);
+  applyLanguage(LANGS.indexOf(storedLang) !== -1 ? storedLang : 'en');
 })();
