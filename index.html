@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navarang — Andhra Kitchen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Yatra+One&family=Aref+Ruqaa:wght@400;700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root,
+  html[data-theme="classic"]{
+    --paper:#F9EFD8;
+    --ink:#2A2016;
+    --maroon:#7A1220;
+    --maroon-deep:#5A0D18;
+    --turmeric:#D89A1B;
+    --turmeric-light:#F3D98A;
+    --leaf:#3F5D3A;
+    --rule:rgba(42,32,22,.18);
+  }
+  html[data-theme="emerald"]{
+    --paper:#F5F2E2;
+    --ink:#1C2A1B;
+    --maroon:#1F5C3A;
+    --maroon-deep:#123C26;
+    --turmeric:#C9A227;
+    --turmeric-light:#E9D98D;
+    --leaf:#2E7D4F;
+    --rule:rgba(28,42,27,.18);
+  }
+  html[data-theme="royal"]{
+    --paper:#F3EFE3;
+    --ink:#1B1A2E;
+    --maroon:#2A2470;
+    --maroon-deep:#191552;
+    --turmeric:#D4AF37;
+    --turmeric-light:#EAD98A;
+    --leaf:#3A6B5C;
+    --rule:rgba(27,26,46,.18);
+  }
+  html[data-theme="charcoal"]{
+    --paper:#EDE7DA;
+    --ink:#211C18;
+    --maroon:#3A2E28;
+    --maroon-deep:#1E1714;
+    --turmeric:#B5651D;
+    --turmeric-light:#E3A868;
+    --leaf:#4B5D3A;
+    --rule:rgba(33,28,24,.18);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Karla',sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+  }
+  img{display:block;max-width:100%;}
+  a{color:inherit;}
+
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px;}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    background:var(--maroon-deep);
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .topbar .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:62px;
+  }
+  .brand{
+    font-family:'Yatra One',cursive;font-size:24px;
+    color:var(--turmeric-light);letter-spacing:.5px;text-decoration:none;
+  }
+  .nav-links{display:flex;gap:26px;list-style:none;margin:0;padding:0;}
+  .nav-links a{
+    color:var(--paper);text-decoration:none;font-size:13px;
+    letter-spacing:1.2px;text-transform:uppercase;font-weight:600;
+    opacity:.85;transition:opacity .15s;
+  }
+  .nav-links a:hover{opacity:1;}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .nav-cta{
+    background:var(--turmeric);color:var(--maroon-deep);
+    padding:8px 16px;font-weight:700;letter-spacing:.5px;
+    text-decoration:none;font-size:13px;
+  }
+
+  /* ---------- Theme picker ---------- */
+  .theme-picker{display:flex;gap:7px;align-items:center;}
+  .theme-swatch{
+    width:18px;height:18px;border-radius:50%;padding:0;cursor:pointer;
+    border:2px solid rgba(255,255,255,.25);
+    background:linear-gradient(135deg,var(--sw1) 50%,var(--sw2) 50%);
+    transition:transform .12s,border-color .12s;
+  }
+  .theme-swatch:hover{transform:scale(1.14);}
+  .theme-swatch.active{border-color:var(--turmeric-light);box-shadow:0 0 0 2px var(--maroon-deep),0 0 0 3px var(--turmeric-light);}
+  @media (max-width:640px){.theme-picker{display:none;}}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;min-height:92vh;
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;overflow:hidden;
+  }
+  .hero img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:saturate(1.05);
+  }
+  .hero::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(20,10,8,.35) 0%, rgba(20,8,6,.55) 55%, rgba(16,6,5,.88) 100%);
+  }
+  .hero-content{position:relative;z-index:2;color:var(--paper);padding:0 20px;}
+  .hero .eyebrow{
+    letter-spacing:4px;text-transform:uppercase;font-size:12px;
+    font-weight:600;color:var(--turmeric-light);opacity:.9;
+  }
+  .hero .ar-name{
+    font-family:'Aref Ruqaa',serif;font-weight:700;
+    font-size:clamp(28px,4.5vw,48px);
+    direction:rtl;color:var(--turmeric);margin:0 0 6px;
+  }
+  .hero h1{
+    font-family:'Yatra One',cursive;font-size:clamp(56px,9vw,104px);
+    margin:8px 0 6px;color:#FBEFC8;line-height:1;letter-spacing:2px;
+  }
+  .hero .sub{
+    font-size:16px;font-weight:500;color:var(--paper);opacity:.92;
+    max-width:520px;margin:0 auto 26px;line-height:1.5;
+  }
+  .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    display:inline-block;padding:13px 26px;text-decoration:none;
+    font-weight:700;letter-spacing:.6px;font-size:13.5px;
+    text-transform:uppercase;
+  }
+  .btn-primary{background:var(--turmeric);color:var(--maroon-deep);}
+  .btn-ghost{background:transparent;color:var(--paper);border:1.5px solid rgba(249,239,216,.6);}
+
+  /* ---------- Section shells ---------- */
+  section{padding:84px 0;}
+  .eyebrow-label{
+    display:inline-flex;align-items:center;gap:8px;
+    color:var(--maroon);font-weight:700;letter-spacing:2px;
+    text-transform:uppercase;font-size:12.5px;margin-bottom:12px;
+  }
+  .eyebrow-label svg{width:16px;height:16px;}
+  h2{
+    font-family:'Yatra One',cursive;font-size:40px;color:var(--maroon-deep);
+    margin:0 0 14px;letter-spacing:1px;
+  }
+  .lead{font-size:16px;line-height:1.7;color:rgba(42,32,22,.85);max-width:560px;}
+
+  /* ---------- About / intro ---------- */
+  .intro .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+  .intro figure{margin:0;position:relative;}
+  .intro img{width:100%;height:420px;object-fit:cover;}
+  .intro figure::before{
+    content:'';position:absolute;top:-14px;left:-14px;right:14px;bottom:14px;
+    border:2px solid var(--turmeric);z-index:-1;
+  }
+  .intro figure{margin:14px 0 0 14px;}
+
+  /* ---------- Signature dishes ---------- */
+  .dishes{background:#F2E6C6;}
+  .dishes-head{text-align:center;max-width:600px;margin:0 auto 48px;}
+  .dishes-head .lead{margin:0 auto;}
+  .dish-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:22px;
+  }
+  .dish-card{
+    background:var(--paper);
+    box-shadow:0 6px 20px rgba(42,20,15,.12);
+    display:flex;flex-direction:column;
+  }
+  .dish-card figure{margin:0;height:170px;overflow:hidden;position:relative;}
+  .dish-card img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+  .dish-card:hover img{transform:scale(1.06);}
+  .dish-card .dc-body{padding:16px 16px 18px;flex:1;display:flex;flex-direction:column;}
+  .dc-cat{
+    display:flex;align-items:center;gap:7px;color:var(--maroon);
+    font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:1px;
+    margin-bottom:6px;
+  }
+  .dc-cat svg{width:15px;height:15px;flex:0 0 auto;}
+  .dish-card p{font-size:13.3px;line-height:1.55;color:rgba(42,32,22,.8);margin:0 0 14px;flex:1;}
+  .dish-card a{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;
+    color:var(--maroon-deep);text-decoration:none;letter-spacing:.3px;
+  }
+  .dish-card a:hover{text-decoration:underline;}
+
+  /* ---------- CTA band ---------- */
+  .cta-band{
+    background:linear-gradient(135deg,var(--maroon) 0%, var(--maroon-deep) 100%);
+    color:var(--paper);text-align:center;
+  }
+  .cta-band h2{color:#FBEFC8;}
+  .cta-band .lead{color:rgba(249,239,216,.85);margin:0 auto 28px;}
+  .cta-band .wrap{display:flex;flex-direction:column;align-items:center;}
+
+  /* ---------- Footer ---------- */
+  footer{background:var(--maroon-deep);color:rgba(249,239,216,.75);padding:28px 0;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .legend{display:flex;gap:16px;align-items:center;font-size:11.5px;}
+  .dot{width:9px;height:9px;border:1.3px solid currentColor;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;}
+  .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;}
+  .dot.veg{color:var(--leaf);}
+  .dot.nonveg{color:#E7A9A9;}
+  footer .fine{font-size:11px;opacity:.7;}
+
+  @media (max-width:900px){
+    .intro .wrap{grid-template-columns:1fr;}
+    .dish-grid{grid-template-columns:1fr 1fr;}
+    .nav-links{display:none;}
+  }
+  @media (max-width:520px){
+    .dish-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">Navarang</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#dishes">Dishes</a></li>
+      <li><a href="navarang-menu.html">Full Menu</a></li>
+    </ul>
+    <div class="topbar-right">
+      <div class="theme-picker" role="group" aria-label="Choose site color theme">
+        <button class="theme-swatch active" data-theme="classic" style="--sw1:#7A1220;--sw2:#D89A1B" title="Classic — Maroon &amp; Turmeric" aria-label="Classic theme"></button>
+        <button class="theme-swatch" data-theme="emerald" style="--sw1:#1F5C3A;--sw2:#C9A227" title="Emerald &amp; Gold" aria-label="Emerald theme"></button>
+        <button class="theme-swatch" data-theme="royal" style="--sw1:#2A2470;--sw2:#D4AF37" title="Royal Indigo &amp; Gold" aria-label="Royal theme"></button>
+        <button class="theme-swatch" data-theme="charcoal" style="--sw1:#3A2E28;--sw2:#B5651D" title="Charcoal &amp; Copper" aria-label="Charcoal theme"></button>
+      </div>
+      <a class="nav-cta" href="navarang-menu.html">View Menu</a>
+    </div>
+  </div>
+</div>
+
+<section class="hero" id="top">
+  <img src="https://images.unsplash.com/photo-1782541370275-6761522e39d1?fm=jpg&q=80&w=2000&auto=format&fit=crop" alt="Hyderabadi-style chicken biryani served with lemon and raita">
+  <div class="hero-content">
+    <div class="ar-name">نڤارنگ</div>
+    <div class="eyebrow">Andhra Kitchen · Curry &amp; Charcoal</div>
+    <h1>Navarang</h1>
+    <p class="sub">Home-style curries, live-fire starters, and slow dum biryani — the flavors of Andhra, cooked the way they're meant to be.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="navarang-menu.html">View Full Menu</a>
+      <a class="btn btn-ghost" href="#dishes">See Signature Dishes</a>
+    </div>
+  </div>
+</section>
+
+<section class="intro" id="about">
+  <div class="wrap">
+    <figure>
+      <img src="https://images.unsplash.com/photo-1551881192-002e02ad3d87?fm=jpg&q=80&w=1200&auto=format&fit=crop" alt="Assortment of Indian curries served in bowls">
+    </figure>
+    <div>
+      <div class="eyebrow-label">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 32h44a22 22 0 01-44 0z"/><path d="M24 30c0-6 2-9 2-9M32 30c0-8 3-11 3-11M40 30c0-6 2-9 2-9"/></svg>
+        Our Kitchen
+      </div>
+      <h2>Cooked slow, served hot</h2>
+      <p class="lead">
+        Every curry starts with hand-ground masala, every biryani is sealed and cooked on dum, and every starter comes off the fire to order.
+        From egg curries and creamy paneer to Andhra-style chicken and fresh seafood, the menu spans the full range of a home-style Andhra kitchen —
+        mild to fiery, vegetarian to non-veg, all made fresh.
+      </p>
+      <p class="lead">
+        Whether it's a quick fried-rice lunch or a full biryani spread for the table, Navarang keeps the recipes true to where they come from.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="dishes" id="dishes">
+  <div class="wrap">
+    <div class="dishes-head">
+      <div class="eyebrow-label" style="justify-content:center;">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M32 6c6 10-4 12-4 20 0 4 3 7 7 7s8-4 8-9c6 4 9 11 9 17 0 13-11 23-24 23S8 54 8 41c0-9 5-16 9-21 2 8 7 10 7 10-2-9 2-16 8-24z"/></svg>
+        What We're Known For
+      </div>
+      <h2>Signature Flavors</h2>
+      <p class="lead">A taste of what's on the menu — the full list of curries, starters, biryani, and rice runs much longer.</p>
+    </div>
+
+    <div class="dish-grid">
+      <div class="dish-card">
+        <figure><img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?fm=jpg&q=80&w=800&auto=format&fit=crop" alt="Curry served with steamed rice"></figure>
+        <div class="dc-body">
+          <div class="dc-cat">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 32h44a22 22 0 01-44 0z"/><path d="M24 30c0-6 2-9 2-9M32 30c0-8 3-11 3-11M40 30c0-6 2-9 2-9"/></svg>
+            Chicken &amp; Mutton Curries
+          </div>
+          <p>Andhra Chicken, Kadai Chicken, Mutton Curry, and 20+ more slow-cooked gravies.</p>
+          <a href="navarang-menu.html#chicken-curries">See prices →</a>
+        </div>
+      </div>
+
+      <div class="dish-card">
+        <figure><img src="https://images.unsplash.com/photo-1767114915936-745dd372f1d8?fm=jpg&q=80&w=800&auto=format&fit=crop" alt="Indian vegetarian curry with spinach and flatbread"></figure>
+        <div class="dc-body">
+          <div class="dc-cat">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 32h44a22 22 0 01-44 0z"/><path d="M24 30c0-6 2-9 2-9M32 30c0-8 3-11 3-11M40 30c0-6 2-9 2-9"/></svg>
+            Veg Curries
+          </div>
+          <p>Paneer Butter Masala, Palak Paneer, Kaju Curry, Methi Chaman, and more.</p>
+          <a href="navarang-menu.html#veg-curries">See prices →</a>
+        </div>
+      </div>
+
+      <div class="dish-card">
+        <figure><img src="https://images.unsplash.com/photo-1751618646882-4221d5e3b1c2?fm=jpg&q=80&w=800&auto=format&fit=crop" alt="Fried rice with vegetables in a bowl"></figure>
+        <div class="dc-body">
+          <div class="dc-cat">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 32h44a22 22 0 01-44 0z"/><circle cx="24" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="32" cy="21" r="1.6" fill="currentColor" stroke="none"/><circle cx="40" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="28" cy="29" r="1.6" fill="currentColor" stroke="none"/><circle cx="36" cy="29" r="1.6" fill="currentColor" stroke="none"/></svg>
+            Fried Rice
+          </div>
+          <p>Jeera, Gobi, Kaju, Paneer, and Chicken Fried Rice — wok-tossed to order.</p>
+          <a href="navarang-menu.html#fried-rice">See prices →</a>
+        </div>
+      </div>
+
+      <div class="dish-card">
+        <figure><img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?fm=jpg&q=80&w=800&auto=format&fit=crop" alt="Roti served with a meat curry"></figure>
+        <div class="dc-body">
+          <div class="dc-cat">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="21"/><path d="M32 15v10M32 39v10M15 32h10M39 32h10M21 21l7 7M36 36l7 7M43 21l-7 7M28 36l-7 7"/></svg>
+            Roti &amp; Starters
+          </div>
+          <p>Fresh Ponga and Patala Roti alongside Chicken 65, Lollipop, and Gobi Manchuria.</p>
+          <a href="navarang-menu.html#non-veg-starter">See prices →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <div class="eyebrow-label" style="color:var(--turmeric-light);justify-content:center;">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l7 16 17 2-13 12 4 18-15-9-15 9 4-18-13-12 17-2z"/></svg>
+      Navarang Specials
+    </div>
+    <h2>Save Room for Dessert</h2>
+    <p class="lead">Kheer and Badam Milk round out the meal, alongside ice cream and cool drinks.</p>
+    <a class="btn btn-primary" href="navarang-menu.html#specials">Open the Full Menu</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="legend">
+      <span><span class="dot veg"></span>Veg</span>
+      <span><span class="dot nonveg"></span>Non-Veg / Egg</span>
+    </div>
+    <span class="fine">Navarang · Andhra Kitchen</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var THEMES=['classic','emerald','royal','charcoal'];
+  var root=document.documentElement;
+  var stored=localStorage.getItem('navarang-theme');
+  if(stored && THEMES.indexOf(stored)!==-1){root.setAttribute('data-theme',stored);}
+  function apply(theme){
+    root.setAttribute('data-theme',theme);
+    localStorage.setItem('navarang-theme',theme);
+    document.querySelectorAll('.theme-swatch').forEach(function(btn){
+      btn.classList.toggle('active',btn.dataset.theme===theme);
+    });
+  }
+  document.querySelectorAll('.theme-swatch').forEach(function(btn){
+    btn.addEventListener('click',function(){apply(btn.dataset.theme);});
+  });
+  apply(root.getAttribute('data-theme')||'classic');
+})();
+</script>
+
+</body>
+</html>
