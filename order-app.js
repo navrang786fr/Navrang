@@ -125,11 +125,19 @@
       row.dataset.veg = item.veg ? '1' : '0';
 
       var priceLabel = item.price === null ? '<span class="no-price">Ask staff</span>' : ('<span class="dish-price">' + CUR + item.price + '</span>');
+      var thumb = item.thumb ? '<img class="dish-thumb" src="' + esc(item.thumb) + '" data-full="' + esc(item.photo || item.thumb) + '" alt="">' : '';
 
       row.innerHTML =
         '<span class="dot ' + (item.veg ? 'veg' : 'nonveg') + '"></span>' +
+        thumb +
         '<span class="dish-info"><span class="dish-name" data-en="' + esc(item.name) + '" data-te="' + esc(item.nameTe) + '">' + esc(item.name) + '</span></span>' +
         priceLabel;
+
+      if (item.thumb){
+        row.querySelector('.dish-thumb').addEventListener('click', function(){
+          openLightbox(item.photo || item.thumb, item.name);
+        });
+      }
 
       section.appendChild(row);
     });
@@ -198,20 +206,23 @@
     if (target) target.scrollIntoView({ block: 'start' });
   }
 
-  /* ---------- Logo lightbox ---------- */
+  /* ---------- Image lightbox (logo + dish photos) ---------- */
   var heroLogo = qs('#heroLogo');
-  var logoLightbox = qs('#logoLightbox');
-  function openLogoLightbox(){
-    logoLightbox.classList.add('show');
-    logoLightbox.setAttribute('aria-hidden', 'false');
+  var imageLightbox = qs('#imageLightbox');
+  var lightboxImg = qs('#lightboxImg');
+  function openLightbox(src, alt){
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || '';
+    imageLightbox.classList.add('show');
+    imageLightbox.setAttribute('aria-hidden', 'false');
   }
-  function closeLogoLightbox(){
-    logoLightbox.classList.remove('show');
-    logoLightbox.setAttribute('aria-hidden', 'true');
+  function closeLightbox(){
+    imageLightbox.classList.remove('show');
+    imageLightbox.setAttribute('aria-hidden', 'true');
   }
-  heroLogo.addEventListener('click', openLogoLightbox);
+  heroLogo.addEventListener('click', function(){ openLightbox('navrang_logo.png', 'Navarang Family Restaurant'); });
   heroLogo.addEventListener('keydown', function(e){
-    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLogoLightbox(); }
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLightbox('navrang_logo.png', 'Navarang Family Restaurant'); }
   });
-  logoLightbox.addEventListener('click', closeLogoLightbox);
+  imageLightbox.addEventListener('click', closeLightbox);
 })();

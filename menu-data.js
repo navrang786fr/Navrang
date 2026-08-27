@@ -1,7 +1,7 @@
 /* Navarang menu data — edit prices/items here; the page renders from this object. */
 var MENU_DATA = {
   "egg-curries": [
-    { name: "Egg Burji", nameTe: "గుడ్డు బుర్జీ", price: 110, veg: false },
+    { name: "Egg Burji", nameTe: "గుడ్డు బుర్జీ", price: 110, veg: false, thumb: "images/menu/egg-burji-100.jpg", photo: "images/menu/egg-burji-500.jpg" },
     { name: "Egg Keema", nameTe: "గుడ్డు కీమా", price: 110, veg: false },
     { name: "Egg Curry", nameTe: "గుడ్డు కర్రీ", price: 110, veg: false },
     { name: "Egg Fry", nameTe: "గుడ్డు ఫ్రై", price: 130, veg: false },
@@ -124,7 +124,7 @@ var MENU_DATA = {
 /* Category display order, titles and icons — shared by the printed menu and the order app. */
 var CATEGORY_META = [
   { id: "egg-curries", title: "Egg Curries", titleTe: "గుడ్డు కూరలు", short: "Egg Curries", shortTe: "గుడ్డు కూరలు",
-    image: "images/menu/egg-curries.png",
+    image: "images/menu/categories/egg-curries.jpg",
     icon: '<path d="M32 8C20 8 12 26 12 38a20 20 0 0040 0C52 26 44 8 32 8z"/>' },
   { id: "non-veg-starter", title: "Non-Veg Starter", titleTe: "నాన్-వెజ్ స్టార్టర్", short: "Starters", shortTe: "స్టార్టర్స్",
     icon: '<path d="M12 52L52 12"/><circle cx="24" cy="40" r="7"/><circle cx="34" cy="30" r="7"/><circle cx="44" cy="20" r="7"/>' },

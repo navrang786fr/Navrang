@@ -112,13 +112,13 @@
   }
   .hero-logo:active{transform:scale(.96);}
 
-  .logo-lightbox{
+  .image-lightbox{
     position:fixed;inset:0;z-index:90;background:rgba(10,15,10,.82);
     display:flex;align-items:center;justify-content:center;padding:32px;
     opacity:0;pointer-events:none;transition:opacity .2s ease;
   }
-  .logo-lightbox.show{opacity:1;pointer-events:auto;}
-  .logo-lightbox img{
+  .image-lightbox.show{opacity:1;pointer-events:auto;}
+  .image-lightbox img{
     max-width:min(88vw,420px);max-height:80vh;width:100%;
     border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);
     background:#fff;
@@ -220,6 +220,12 @@
   .dish .dot::after{content:'';width:4.5px;height:4.5px;border-radius:50%;background:currentColor;}
   .dish .dot.veg{color:var(--leaf);}
   .dish .dot.nonveg{color:var(--nonveg);}
+  .dish-thumb{
+    width:44px;height:44px;border-radius:10px;object-fit:cover;flex:0 0 auto;
+    border:1px solid var(--rule);cursor:pointer;box-shadow:var(--shadow-xs);
+    transition:transform .12s ease;
+  }
+  .dish-thumb:active{transform:scale(.94);}
   .dish-info{flex:1;min-width:0;}
   .dish-name{font-size:14.5px;font-weight:700;line-height:1.3;color:var(--ink);}
   .dish-price{
@@ -298,8 +304,8 @@
 
 </div>
 
-<div class="logo-lightbox" id="logoLightbox" role="dialog" aria-label="Navarang logo" aria-hidden="true">
-  <img src="navrang_logo.png" alt="Navarang Family Restaurant">
+<div class="image-lightbox" id="imageLightbox" role="dialog" aria-label="Image preview" aria-hidden="true">
+  <img id="lightboxImg" src="" alt="">
 </div>
 
 <script src="config.js"></script>
