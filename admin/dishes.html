@@ -41,6 +41,7 @@
   .search-row input{flex:1;border:1.3px solid var(--rule);border-radius:9px;padding:9px 11px;font-size:13.5px;background:var(--paper);outline:none;}
   .search-row input:focus{border-color:var(--maroon);}
   .edit-link{color:var(--maroon);font-weight:700;text-decoration:underline;cursor:pointer;font-size:12.5px;background:none;border:none;padding:0;}
+  .row-thumb{width:40px;height:40px;object-fit:cover;border-radius:8px;border:1px solid var(--rule);background:var(--paper-soft);display:block;}
 </style>
 </head>
 <body>
@@ -70,6 +71,7 @@
           <div class="admin-field">
             <label for="fNameTe">Name (Telugu)</label>
             <input type="text" id="fNameTe" required maxlength="80">
+            <p id="teHint" style="font-size:11px;color:var(--maroon);opacity:.7;margin:5px 0 0;"></p>
           </div>
           <div class="admin-field">
             <label for="fPrice">Price (₹, blank = "Ask staff")</label>
@@ -84,6 +86,7 @@
           </div>
           <div class="admin-field" style="display:flex;flex-direction:column;justify-content:flex-end;gap:8px;">
             <label class="admin-checkbox"><input type="checkbox" id="fVeg"> Vegetarian</label>
+            <label class="admin-checkbox"><input type="checkbox" id="fNonVeg"> Non-Veg</label>
             <label class="admin-checkbox"><input type="checkbox" id="fTop"> Top Pick</label>
             <label class="admin-checkbox"><input type="checkbox" id="fWeekly"> Weekly Dish</label>
           </div>
@@ -144,6 +147,7 @@
   var fPrice = document.getElementById('fPrice');
   var fStatus = document.getElementById('fStatus');
   var fVeg = document.getElementById('fVeg');
+  var fNonVeg = document.getElementById('fNonVeg');
   var fTop = document.getElementById('fTop');
   var fWeekly = document.getElementById('fWeekly');
   var fImage = document.getElementById('fImage');
@@ -160,6 +164,7 @@
   var formHeading = document.getElementById('formHeading');
   var listWrap = document.getElementById('listWrap');
   var searchBox = document.getElementById('searchBox');
+  var teHint = document.getElementById('teHint');
 
   function allDishesFlat(){
     var out = [];
@@ -168,6 +173,54 @@
     });
     return out;
   }
+
+  /* ---------- Auto-populate Telugu name from existing dish vocabulary ---------- */
+  var teDict = {};
+  var lastAutoTe = '';
+  function buildTeDictionary(){
+    var counts = {};
+    allDishesFlat().forEach(function(d){
+      var en = (d.name || '').replace(/\(.*?\)/g, '').trim().split(/\s+/);
+      var te = (d.nameTe || '').replace(/\(.*?\)/g, '').trim().split(/\s+/);
+      if (!en[0] || en.length !== te.length) return;
+      en.forEach(function(w, i){
+        var key = w.toLowerCase();
+        counts[key] = counts[key] || {};
+        counts[key][te[i]] = (counts[key][te[i]] || 0) + 1;
+      });
+    });
+    teDict = {};
+    Object.keys(counts).forEach(function(key){
+      teDict[key] = Object.keys(counts[key]).sort(function(a, b){ return counts[key][b] - counts[key][a]; })[0];
+    });
+  }
+  function translateName(nameEn){
+    var words = nameEn.trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return null;
+    var out = words.map(function(w){ return teDict[w.toLowerCase()]; });
+    if (out.some(function(w){ return !w; })) return null;
+    return out.join(' ');
+  }
+  fName.addEventListener('input', function(){
+    var suggestion = translateName(fName.value);
+    if (suggestion){
+      if (!fNameTe.value.trim() || fNameTe.value === lastAutoTe){
+        fNameTe.value = suggestion;
+        lastAutoTe = suggestion;
+        teHint.textContent = 'Auto-filled from existing dish names — check before saving.';
+      }
+    } else if (fNameTe.value === lastAutoTe){
+      fNameTe.value = '';
+      lastAutoTe = '';
+      teHint.textContent = fName.value.trim() ? 'No match in existing dish names — please enter Telugu manually.' : '';
+    }
+  });
+  fNameTe.addEventListener('input', function(){
+    if (fNameTe.value !== lastAutoTe) teHint.textContent = '';
+  });
+
+  fVeg.addEventListener('change', function(){ if (fVeg.checked) fNonVeg.checked = false; });
+  fNonVeg.addEventListener('change', function(){ if (fNonVeg.checked) fVeg.checked = false; });
 
   function slugify(name){
     return String(name).toLowerCase().trim()
@@ -291,6 +344,8 @@
     editingId = null;
     form.reset();
     fImage.value = '';
+    lastAutoTe = '';
+    teHint.textContent = '';
     showEmptyUpload();
     fCategory.disabled = false;
     formHeading.textContent = 'Create New Dish';
@@ -309,8 +364,11 @@
     fPrice.value = dish.price === null || dish.price === undefined ? '' : dish.price;
     fStatus.value = dish.status || 'Active';
     fVeg.checked = !!dish.veg;
+    fNonVeg.checked = !dish.veg;
     fTop.checked = !!dish.top;
     fWeekly.checked = !!dish.weeklyDishInd;
+    lastAutoTe = '';
+    teHint.textContent = '';
     fImage.value = '';
     if (dish.thumb) {
       showFilledUpload('../' + dish.thumb, dish.name, 'Current photo — choose a new file to replace it');
@@ -335,11 +393,13 @@
 
     if (!rows.length){ listWrap.innerHTML = '<div class="admin-empty">No dishes match.</div>'; return; }
 
-    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Veg</th><th>Status</th><th></th></tr></thead><tbody>' +
+    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th></th><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Veg</th><th>Status</th><th></th></tr></thead><tbody>' +
       rows.map(function(d){
         var cat = categories.find(function(c){ return c.id === d.categoryId; });
         var badge = d.status === 'Active' ? 'active' : 'inactive';
+        var thumbSrc = '../' + (d.thumb || 'images/menu/no-dish-image-100.jpg');
         return '<tr>' +
+          '<td><img class="row-thumb" src="' + esc(thumbSrc) + '" alt="" loading="lazy"></td>' +
           '<td>' + d.id + '</td>' +
           '<td>' + esc(d.name) + '<br><span style="opacity:.6;">' + esc(d.nameTe) + '</span></td>' +
           '<td>' + esc(cat ? cat.title : d.categoryId) + '</td>' +
@@ -414,6 +474,7 @@
       menu = result.data.menu;
       categories = result.data.categories;
       fCategory.innerHTML = categories.map(function(c){ return '<option value="' + esc(c.id) + '">' + esc(c.title) + '</option>'; }).join('');
+      buildTeDictionary();
       renderList();
     }).catch(function(err){
       listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Could not load dishes.') + '</div>';
