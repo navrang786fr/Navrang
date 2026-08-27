@@ -1,0 +1,12 @@
+[
+  {
+    "id": "mtbracz2ka0ftl",
+    "name": "Test User",
+    "dishes": [
+      "Egg Burji"
+    ],
+    "rating": 5,
+    "comments": "Deployment verification test",
+    "submittedAt": "2026-08-27T16:47:38.798Z"
+  }
+]
