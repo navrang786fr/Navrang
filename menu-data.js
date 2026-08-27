@@ -72,7 +72,7 @@ var MENU_DATA = {
   "roti": [
     { id: 60, name: "Katak Roti", nameTe: "కటక్ రొట్టె", price: 10, veg: true, status: "Active", weeklyDishInd: false },
     { id: 61, name: "Patala Roti", nameTe: "పాతల రొట్టె", price: 10, veg: true, status: "Active", weeklyDishInd: false },
-    { id: 62, name: "Ponga Roti", nameTe: "పొంగా రొట్టె", price: 12, veg: true, status: "Active", weeklyDishInd: false }
+    { id: 62, name: "Ponga Roti", nameTe: "పొంగా రొట్టె", price: 12, veg: true, thumb: "images/menu/ponga-roti-100.jpg", photo: "images/menu/ponga-roti-500.jpg", top: false, status: "Active", weeklyDishInd: false }
   ],
   "fried-rice": [
     { id: 63, name: "Chicken Rice", nameTe: "చికెన్ రైస్", price: 130, veg: false, thumb: "images/menu/chicken-rice-100.jpg", photo: "images/menu/chicken-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
