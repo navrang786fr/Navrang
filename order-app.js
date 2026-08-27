@@ -134,7 +134,7 @@
 
       if (item.thumb){
         row.querySelector('.dish-thumb').addEventListener('click', function(){
-          openLightbox(item.photo || item.thumb, item.name);
+          openLightbox(item.photo || item.thumb, currentLang === 'te' ? item.nameTe : item.name);
         });
       }
 
@@ -208,10 +208,14 @@
   /* ---------- Image lightbox (logo + dish photos) ---------- */
   var heroLogo = qs('#heroLogo');
   var imageLightbox = qs('#imageLightbox');
+  var lightboxCard = qs('#lightboxCard');
   var lightboxImg = qs('#lightboxImg');
-  function openLightbox(src, alt){
+  var lightboxCaption = qs('#lightboxCaption');
+  var lightboxClose = qs('#lightboxClose');
+  function openLightbox(src, caption){
     lightboxImg.src = src;
-    lightboxImg.alt = alt || '';
+    lightboxImg.alt = caption || '';
+    lightboxCaption.textContent = caption || '';
     imageLightbox.classList.add('show');
     imageLightbox.setAttribute('aria-hidden', 'false');
   }
@@ -224,4 +228,6 @@
     if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLightbox('navrang_logo.png', 'Navarang Family Restaurant'); }
   });
   imageLightbox.addEventListener('click', closeLightbox);
+  lightboxCard.addEventListener('click', function(e){ e.stopPropagation(); });
+  lightboxClose.addEventListener('click', closeLightbox);
 })();

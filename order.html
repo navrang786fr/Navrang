@@ -118,11 +118,26 @@
     opacity:0;pointer-events:none;transition:opacity .2s ease;
   }
   .image-lightbox.show{opacity:1;pointer-events:auto;}
-  .image-lightbox img{
-    max-width:min(88vw,420px);max-height:80vh;width:100%;
-    border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);
-    background:#fff;
+  .lightbox-card{
+    position:relative;max-width:min(88vw,420px);width:100%;
+    background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);
+    padding:14px 14px 16px;
   }
+  .lightbox-card img{
+    display:block;width:100%;max-height:68vh;object-fit:contain;
+    border-radius:10px;background:#fff;
+  }
+  .lightbox-caption{
+    margin:12px 0 0;text-align:center;font-family:'Karla','Noto Sans Telugu',sans-serif;
+    font-weight:700;font-size:15px;color:var(--ink);
+  }
+  .lightbox-close{
+    position:absolute;top:-14px;right:-14px;width:32px;height:32px;border-radius:50%;
+    background:var(--maroon-deep);color:#fff;border:2px solid #fff;
+    display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.3);
+  }
+  .lightbox-close:active{transform:scale(.9);}
   .hero-strip .ar{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:21px;direction:rtl;color:var(--maroon-deep);margin-bottom:1px;}
   .hero-divider{display:flex;align-items:center;justify-content:center;gap:7px;margin:8px 0 9px;}
   .hero-divider span{width:38px;height:1px;background:linear-gradient(90deg,transparent,var(--turmeric));}
@@ -306,7 +321,11 @@
 </div>
 
 <div class="image-lightbox" id="imageLightbox" role="dialog" aria-label="Image preview" aria-hidden="true">
-  <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-card" id="lightboxCard">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close">✕</button>
+    <img id="lightboxImg" src="" alt="">
+    <p class="lightbox-caption" id="lightboxCaption"></p>
+  </div>
 </div>
 
 <script src="config.js"></script>
