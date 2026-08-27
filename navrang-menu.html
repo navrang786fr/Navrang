@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Navarang — Menu</title>
+<title>Navrang — Menu</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Yatra+One&family=Aref+Ruqaa:wght@400;700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
@@ -250,7 +250,7 @@
 <section class="sheet">
   <div class="hero">
     <div class="ar-name">نڤارنگ</div>
-    <h1>Navarang</h1>
+    <h1>Navrang</h1>
     <div class="sub">Andhra Kitchen · Curry &amp; Charcoal</div>
     <div class="rule"></div>
   </div>
@@ -294,7 +294,7 @@
 <section class="sheet">
   <div class="runhead">
     <span class="rname-group">
-      <span class="rname">Navarang</span>
+      <span class="rname">Navrang</span>
       <span class="rname-ar">نڤارنگ</span>
     </span>
     <span class="rtag">Rice · Biryani · Curries · Specials</span>
@@ -323,7 +323,7 @@
   </div>
 
   <div class="specials" id="specials">
-    <div class="cat-head"><span class="cat-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l7 16 17 2-13 12 4 18-15-9-15 9 4-18-13-12 17-2z"/></svg></span>Navarang Specials</div>
+    <div class="cat-head"><span class="cat-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l7 16 17 2-13 12 4 18-15-9-15 9 4-18-13-12 17-2z"/></svg></span>Navrang Specials</div>
     <div class="specials-grid"></div>
   </div>
 
@@ -356,11 +356,11 @@
 (function(){
   var THEMES=['classic','emerald','royal','charcoal'];
   var root=document.documentElement;
-  var stored=localStorage.getItem('navarang-theme');
+  var stored=localStorage.getItem('navrang-theme');
   if(stored && THEMES.indexOf(stored)!==-1){root.setAttribute('data-theme',stored);}
   function apply(theme){
     root.setAttribute('data-theme',theme);
-    localStorage.setItem('navarang-theme',theme);
+    localStorage.setItem('navrang-theme',theme);
     document.querySelectorAll('.theme-swatch').forEach(function(btn){
       btn.classList.toggle('active',btn.dataset.theme===theme);
     });

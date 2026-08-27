@@ -2,7 +2,9 @@
   "use strict";
 
   var LANGS = ['en','te'];
-  var LANG_KEY = 'navarang-lang';
+  var LANG_KEY = 'navrang-lang';
+  var NO_IMAGE_THUMB = 'images/menu/no-dish-image-100.jpg';
+  var NO_IMAGE_FULL = 'images/menu/no-dish-image-500.jpg';
 
   var root = document.documentElement;
   var qs = function(sel, ctx){ return (ctx||document).querySelector(sel); };
@@ -11,9 +13,11 @@
   /* ---------- Language ---------- */
   var STRINGS = {
     en: {
-      tag: 'Scan · Browse · Order With Your Waiter',
+      tag: 'Scan · Browse · Order',
       searchPlaceholder: 'Search dishes…',
       veg: 'Veg',
+      topPicks: 'Top Picks',
+      topBadge: 'Top',
       askStaff: 'Ask staff',
       itemsSuffix: function(n){ return n === 1 ? ' item' : ' items'; },
       emptyState: 'No dishes match your search.',
@@ -21,9 +25,11 @@
       instaTitle: 'Follow us on Instagram'
     },
     te: {
-      tag: 'స్కాన్ చేయండి · చూడండి · మీ వెయిటర్‌తో ఆర్డర్ చేయండి',
+      tag: 'స్కాన్ చేయండి · చూడండి · ఆర్డర్ చేయండి',
       searchPlaceholder: 'వంటకాలు వెతకండి…',
       veg: 'వెజ్',
+      topPicks: 'టాప్ పిక్స్',
+      topBadge: 'టాప్',
       askStaff: 'సిబ్బందిని అడగండి',
       itemsSuffix: function(){ return ' వస్తువులు'; },
       emptyState: 'మీ శోధనకు సరిపోలే వంటకాలు లేవు.',
@@ -44,6 +50,7 @@
     qs('#heroTag').textContent = S.tag;
     searchInput.placeholder = S.searchPlaceholder;
     qs('#vegLabel').textContent = S.veg;
+    qs('#topToggleLabel').textContent = S.topPicks;
     qs('#footerNote').textContent = S.footerNote;
     var instaLink = qs('#instaLink');
     if (instaLink){ instaLink.title = S.instaTitle; instaLink.setAttribute('aria-label', S.instaTitle); }
@@ -66,6 +73,9 @@
     });
     qsa('.no-price').forEach(function(el){
       el.textContent = S.askStaff;
+    });
+    qsa('.top-badge').forEach(function(el){
+      el.textContent = S.topBadge;
     });
 
     var emptyP = qs('#emptyState p');
@@ -123,20 +133,21 @@
       row.className = 'dish';
       row.dataset.name = item.name.toLowerCase();
       row.dataset.veg = item.veg ? '1' : '0';
+      row.dataset.top = item.top ? '1' : '0';
 
       var priceLabel = item.price === null ? '<span class="no-price">Ask staff</span>' : ('<span class="dish-price">' + CUR + item.price + '</span>');
-      var thumb = item.thumb ? '<img class="dish-thumb" src="' + esc(item.thumb) + '" data-full="' + esc(item.photo || item.thumb) + '" alt="">' : '';
+      var thumbSrc = item.thumb || NO_IMAGE_THUMB;
+      var topBadge = item.top ? '<span class="top-badge">' + esc(STRINGS[currentLang].topBadge) + '</span>' : '';
+      var thumb = '<span class="dish-thumb-wrap"><span class="dish-thumb-clip"><img class="dish-thumb" src="' + esc(thumbSrc) + '" alt=""></span>' + topBadge + '</span>';
 
       row.innerHTML =
         thumb +
         '<span class="dish-info"><span class="dish-name" data-en="' + esc(item.name) + '" data-te="' + esc(item.nameTe) + '">' + esc(item.name) + '</span></span>' +
         '<span class="dish-side">' + priceLabel + '<span class="dot ' + (item.veg ? 'veg' : 'nonveg') + '"></span></span>';
 
-      if (item.thumb){
-        row.querySelector('.dish-thumb').addEventListener('click', function(){
-          openLightbox(item.photo || item.thumb, currentLang === 'te' ? item.nameTe : item.name);
-        });
-      }
+      row.querySelector('.dish-thumb-wrap').addEventListener('click', function(){
+        openLightbox(item.photo || item.thumb || NO_IMAGE_FULL, currentLang === 'te' ? item.nameTe : item.name);
+      });
 
       section.appendChild(row);
     });
@@ -147,7 +158,9 @@
   /* ---------- Search + veg filter ---------- */
   var searchInput = qs('#searchInput');
   var vegToggle = qs('#vegToggle');
+  var topToggle = qs('#topToggle');
   var vegOnly = false;
+  var topOnly = false;
 
   function applyFilters(){
     var q = searchInput.value.trim().toLowerCase();
@@ -156,7 +169,8 @@
       qsa('.dish', section).forEach(function(row){
         var matchesQ = !q || row.dataset.name.indexOf(q) !== -1;
         var matchesVeg = !vegOnly || row.dataset.veg === '1';
-        var show = matchesQ && matchesVeg;
+        var matchesTop = !topOnly || row.dataset.top === '1';
+        var show = matchesQ && matchesVeg && matchesTop;
         row.style.display = show ? '' : 'none';
         if (show) visibleCount++;
       });
@@ -183,17 +197,43 @@
     vegToggle.classList.toggle('active', vegOnly);
     applyFilters();
   });
+  topToggle.addEventListener('click', function(){
+    topOnly = !topOnly;
+    topToggle.classList.toggle('active', topOnly);
+    applyFilters();
+  });
 
   /* ---------- Active chip highlight ---------- */
   var chips = qsa('.chip');
-  var observer = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if (!entry.isIntersecting) return;
-      var id = entry.target.id.replace('sec-', '');
-      chips.forEach(function(c){ c.classList.toggle('active', c.dataset.target === id); });
-    });
-  }, { rootMargin: '-180px 0px -70% 0px', threshold: 0 });
-  qsa('.menu-section').forEach(function(s){ observer.observe(s); });
+  var observer = null;
+  function setupObserver(headerHeight){
+    if (observer) observer.disconnect();
+    observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (!entry.isIntersecting) return;
+        var id = entry.target.id.replace('sec-', '');
+        chips.forEach(function(c){ c.classList.toggle('active', c.dataset.target === id); });
+      });
+    }, { rootMargin: '-' + (headerHeight + 8) + 'px 0px -70% 0px', threshold: 0 });
+    qsa('.menu-section').forEach(function(s){ observer.observe(s); });
+  }
+
+  /* ---------- Keep the sticky header stack (topbar + search/chips) from overlapping,
+     regardless of font size, wrapping, or device width ---------- */
+  var topbarEl = qs('.topbar');
+  var stickySubheader = qs('#stickySubheader');
+  function updateStickyLayout(){
+    var topbarH = topbarEl.getBoundingClientRect().height;
+    stickySubheader.style.top = topbarH + 'px';
+    var totalH = topbarH + stickySubheader.getBoundingClientRect().height;
+    qsa('.menu-section').forEach(function(s){ s.style.scrollMarginTop = (totalH + 10) + 'px'; });
+    setupObserver(totalH);
+  }
+  updateStickyLayout();
+  window.addEventListener('resize', updateStickyLayout);
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(updateStickyLayout);
+  }
 
   /* ---------- Init language (after DOM built so all nodes exist) ---------- */
   var storedLang = localStorage.getItem(LANG_KEY);
@@ -223,9 +263,9 @@
     imageLightbox.classList.remove('show');
     imageLightbox.setAttribute('aria-hidden', 'true');
   }
-  heroLogo.addEventListener('click', function(){ openLightbox('navrang_logo.png', 'Navarang Family Restaurant'); });
+  heroLogo.addEventListener('click', function(){ openLightbox('navrang_logo.png', 'Navrang Family Restaurant'); });
   heroLogo.addEventListener('keydown', function(e){
-    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLightbox('navrang_logo.png', 'Navarang Family Restaurant'); }
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLightbox('navrang_logo.png', 'Navrang Family Restaurant'); }
   });
   imageLightbox.addEventListener('click', closeLightbox);
   lightboxCard.addEventListener('click', function(e){ e.stopPropagation(); });

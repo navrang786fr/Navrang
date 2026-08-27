@@ -1,5 +1,5 @@
-/* Navarang order-app configuration — edit these before launch. */
+/* Navrang order-app configuration — edit these before launch. */
 var RESTAURANT_CONFIG = {
-  name: "Navarang",
+  name: "Navrang",
   currency: "₹"
 };

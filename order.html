@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Navarang — Order</title>
+<title>Navrang — Order</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="theme-color" content="#0A2A12">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -77,7 +77,7 @@
   }
   .lang-toggle button{
     border:none;background:transparent;color:var(--paper);opacity:.75;
-    font-size:11.5px;font-weight:700;padding:6px 10px;border-radius:14px;cursor:pointer;
+    font-size:11px;font-weight:700;padding:6px 8px;border-radius:14px;cursor:pointer;
     font-family:'Karla','Noto Sans Telugu',sans-serif;white-space:nowrap;
     transition:background .15s ease,color .15s ease,opacity .15s ease;
   }
@@ -145,9 +145,11 @@
   .hero-divider i{width:5px;height:5px;background:var(--turmeric);transform:rotate(45deg);display:inline-block;flex:0 0 auto;}
   .hero-strip .tag{font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--maroon);font-weight:700;opacity:.85;}
 
+  /* ---------- Sticky sub-header (search + chips, stacks below topbar) ---------- */
+  .sticky-subheader{position:sticky;top:0;z-index:35;background:var(--paper);}
+
   /* ---------- Search + filter bar ---------- */
   .search-bar{
-    position:sticky;top:58px;z-index:35;
     background:var(--paper);padding:10px 14px;
     border-bottom:1px solid var(--rule);
     display:flex;gap:8px;align-items:center;
@@ -176,10 +178,19 @@
   .veg-toggle .sq{width:11px;height:11px;border:1.4px solid currentColor;display:inline-flex;align-items:center;justify-content:center;}
   .veg-toggle .sq::after{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
   .veg-toggle.active{background:var(--leaf);color:#fff;box-shadow:var(--shadow-xs);}
+  .top-toggle{
+    flex:0 0 auto;display:flex;align-items:center;gap:5px;
+    border:1.4px solid var(--turmeric);color:var(--turmeric);
+    border-radius:11px;padding:8px 10px;font-size:12px;font-weight:700;
+    background:var(--paper);cursor:pointer;white-space:nowrap;
+    transition:background .15s ease,color .15s ease,transform .15s ease;
+  }
+  .top-toggle:active{transform:scale(.95);}
+  .top-toggle svg{width:13px;height:13px;flex:0 0 auto;}
+  .top-toggle.active{background:var(--turmeric);color:var(--maroon-deep);box-shadow:var(--shadow-xs);}
 
   /* ---------- Category chips ---------- */
   .chip-row{
-    position:sticky;top:112px;z-index:30;
     background:var(--paper);border-bottom:1px solid var(--rule);
     display:flex;gap:8px;overflow-x:auto;padding:9px 14px;
     scrollbar-width:none;
@@ -235,12 +246,23 @@
   .dish .dot::after{content:'';width:4.5px;height:4.5px;border-radius:50%;background:currentColor;}
   .dish .dot.veg{color:var(--leaf);}
   .dish .dot.nonveg{color:var(--nonveg);}
-  .dish-thumb{
-    width:84px;height:84px;border-radius:14px;object-fit:cover;flex:0 0 auto;
-    border:1px solid var(--rule);cursor:pointer;box-shadow:var(--shadow-xs);
+  .dish-thumb-wrap{
+    width:84px;height:84px;flex:0 0 auto;position:relative;cursor:pointer;
     transition:transform .12s ease;
   }
-  .dish-thumb:active{transform:scale(.94);}
+  .dish-thumb-wrap:active{transform:scale(.94);}
+  .dish-thumb-clip{
+    width:100%;height:100%;border-radius:14px;overflow:hidden;display:block;
+    border:1px solid var(--rule);box-shadow:var(--shadow-xs);
+  }
+  .dish-thumb{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.35);}
+  .top-badge{
+    position:absolute;top:-6px;left:-6px;z-index:2;
+    background:linear-gradient(135deg,var(--turmeric),var(--maroon-deep));color:#fff;
+    font-size:8.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+    padding:3px 6px;border-radius:7px;border:1.5px solid var(--paper);
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
   .dish-info{flex:1;min-width:0;}
   .dish-name{font-size:14.5px;font-weight:700;line-height:1.3;color:var(--ink);}
   .dish-side{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
@@ -280,13 +302,13 @@
   <div class="topbar">
     <div class="brand-wrap">
       <span class="brand-mark" aria-hidden="true"><img src="navrang_logo.png" alt=""></span>
-      <span class="brand">Navarang</span>
+      <span class="brand">Navrang</span>
       <span class="brand-ar">نڤارنگ</span>
     </div>
     <div class="topbar-actions">
       <div class="lang-toggle" id="langToggle" role="group" aria-label="Switch language">
-        <button type="button" class="lang-opt" data-lang="en" title="View in English" aria-label="View in English">EN</button>
-        <button type="button" class="lang-opt" data-lang="te" title="తెలుగులో చూడండి" aria-label="తెలుగులో చూడండి">తె</button>
+        <button type="button" class="lang-opt" data-lang="en" title="View in English" aria-label="View in English">English</button>
+        <button type="button" class="lang-opt" data-lang="te" title="తెలుగులో చూడండి" aria-label="తెలుగులో చూడండి">తెలుగు</button>
       </div>
       <a class="icon-btn icon-btn-img" id="instaLink" href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" title="Follow us on Instagram" aria-label="Follow us on Instagram">
         <img src="images/app/instagram.png" alt="">
@@ -295,21 +317,27 @@
   </div>
 
   <div class="hero-strip">
-    <img class="hero-logo" id="heroLogo" src="navrang_logo.png" alt="Navarang Family Restaurant" tabindex="0" role="button" aria-label="View full logo">
+    <img class="hero-logo" id="heroLogo" src="navrang_logo.png" alt="Navrang Family Restaurant" tabindex="0" role="button" aria-label="View full logo">
     <div class="ar">نڤارنگ</div>
     <div class="hero-divider" aria-hidden="true"><span></span><i></i><span></span></div>
-    <div class="tag" id="heroTag">Scan · Browse · Order With Your Waiter</div>
+    <div class="tag" id="heroTag">Scan · Browse · Order</div>
   </div>
 
-  <div class="search-bar">
-    <div class="search-field">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="text" id="searchInput" placeholder="Search dishes…" autocomplete="off">
+  <div class="sticky-subheader" id="stickySubheader">
+    <div class="search-bar">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" placeholder="Search dishes…" autocomplete="off">
+      </div>
+      <button class="top-toggle" id="topToggle" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.6l-6.3 4.4L8 13.8 2 9.4h7.6z"/></svg>
+        <span id="topToggleLabel">Top Picks</span>
+      </button>
+      <button class="veg-toggle" id="vegToggle" type="button"><span class="sq"></span><span id="vegLabel">Veg</span></button>
     </div>
-    <button class="veg-toggle" id="vegToggle" type="button"><span class="sq"></span><span id="vegLabel">Veg</span></button>
-  </div>
 
-  <div class="chip-row" id="chipRow"></div>
+    <div class="chip-row" id="chipRow"></div>
+  </div>
 
   <div class="menu-content" id="menuContent"></div>
 

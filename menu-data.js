@@ -1,7 +1,7 @@
-/* Navarang menu data — edit prices/items here; the page renders from this object. */
+/* Navrang menu data — edit prices/items here; the page renders from this object. */
 var MENU_DATA = {
   "egg-curries": [
-    { name: "Egg Burji", nameTe: "గుడ్డు బుర్జీ", price: 110, veg: false, thumb: "images/menu/egg-burji-100.jpg", photo: "images/menu/egg-burji-500.jpg" },
+    { name: "Egg Burji", nameTe: "గుడ్డు బుర్జీ", price: 110, veg: false, thumb: "images/menu/egg-burji-100.jpg", photo: "images/menu/egg-burji-500.jpg", top: true },
     { name: "Egg Keema", nameTe: "గుడ్డు కీమా", price: 110, veg: false },
     { name: "Egg Curry", nameTe: "గుడ్డు కర్రీ", price: 110, veg: false },
     { name: "Egg Fry", nameTe: "గుడ్డు ఫ్రై", price: 130, veg: false },
@@ -19,7 +19,7 @@ var MENU_DATA = {
     { name: "Chicken Boneless Roast", nameTe: "చికెన్ బోన్‌లెస్ రోస్ట్", price: 240, veg: false },
     { name: "Chili Chicken", nameTe: "చిల్లీ చికెన్", price: 210, veg: false },
     { name: "Pepper Chicken", nameTe: "పెప్పర్ చికెన్", price: 240, veg: false },
-    { name: "Chicken 65", nameTe: "చికెన్ 65", price: 260, veg: false },
+    { name: "Chicken 65", nameTe: "చికెన్ 65", price: 260, veg: false, top: true },
     { name: "Chicken Manchuria", nameTe: "చికెన్ మంచూరియా", price: 260, veg: false },
     { name: "Lollipop Roast", nameTe: "లాలీపాప్ రోస్ట్", price: 260, veg: false },
     { name: "Lollipop Fry", nameTe: "లాలీపాప్ ఫ్రై", price: 260, veg: false },
@@ -34,7 +34,7 @@ var MENU_DATA = {
     { name: "Dal Tadka", nameTe: "దాల్ తడ్కా", price: 130, veg: true },
     { name: "Veg Mix Curry", nameTe: "వెజ్ మిక్స్ కర్రీ", price: 130, veg: true },
     { name: "Mushroom Curry", nameTe: "మష్రూమ్ కర్రీ", price: 160, veg: true },
-    { name: "Paneer Butter Masala", nameTe: "పనీర్ బటర్ మసాలా", price: 190, veg: true },
+    { name: "Paneer Butter Masala", nameTe: "పనీర్ బటర్ మసాలా", price: 190, veg: true, top: true },
     { name: "Palak Paneer", nameTe: "పాలక్ పనీర్", price: 170, veg: true },
     { name: "Kaju Tamata", nameTe: "కాజు టమాట", price: 170, veg: true },
     { name: "Kaju Curry", nameTe: "కాజు కర్రీ", price: 190, veg: true },
@@ -62,7 +62,7 @@ var MENU_DATA = {
     { name: "Mushroom Pepper", nameTe: "మష్రూమ్ పెప్పర్", price: 170, veg: true }
   ],
   "biryani": [
-    { name: "Dum Biryani", nameTe: "దమ్ బిర్యానీ", price: 160, veg: false },
+    { name: "Dum Biryani", nameTe: "దమ్ బిర్యానీ", price: 160, veg: false, top: true },
     { name: "Fry Biryani", nameTe: "ఫ్రై బిర్యానీ", price: 180, veg: false },
     { name: "SP Biryani", nameTe: "SP బిర్యానీ", price: 210, veg: false },
     { name: "Mutton Fry Biryani", nameTe: "మటన్ ఫ్రై బిర్యానీ", price: 360, veg: false },
@@ -89,7 +89,7 @@ var MENU_DATA = {
   "chicken-curries": [
     { name: "Chicken Bone Curry", nameTe: "చికెన్ బోన్ కర్రీ", price: 180, veg: false },
     { name: "Chicken Boneless Curry", nameTe: "చికెన్ బోన్‌లెస్ కర్రీ", price: 240, veg: false },
-    { name: "Butter Chicken", nameTe: "బటర్ చికెన్", price: 260, veg: false },
+    { name: "Butter Chicken", nameTe: "బటర్ చికెన్", price: 260, veg: false, top: true },
     { name: "Kadai Chicken", nameTe: "కడాయి చికెన్", price: 270, veg: false },
     { name: "Kaju Chicken", nameTe: "కాజు చికెన్", price: 280, veg: false },
     { name: "Mughlai Chicken", nameTe: "మొఘలై చికెన్", price: 280, veg: false },
@@ -114,6 +114,7 @@ var MENU_DATA = {
     { name: "Kamju Roast (2 pc)", nameTe: "కంజు రోస్ట్ (2 ముక్కలు)", price: 260, veg: false }
   ],
   "specials": [
+    { name: "Tea/Coffee", nameTe: "టీ/కాఫీ", price: 20, veg: true },
     { name: "Kheer", nameTe: "ఖీర్", price: 60, veg: true },
     { name: "Badam Milk", nameTe: "బాదం మిల్క్", price: 60, veg: true },
     { name: "Ice Cream", nameTe: "ఐస్ క్రీం", price: null, veg: true },
@@ -140,6 +141,6 @@ var CATEGORY_META = [
     icon: '<path d="M10 32h44a22 22 0 01-44 0z"/><circle cx="24" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="32" cy="21" r="1.6" fill="currentColor" stroke="none"/><circle cx="40" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="28" cy="29" r="1.6" fill="currentColor" stroke="none"/><circle cx="36" cy="29" r="1.6" fill="currentColor" stroke="none"/>' },
   { id: "chicken-curries", title: "Chicken, Mutton & Seafood Curries", titleTe: "చికెన్, మటన్ & సీఫుడ్ కూరలు", short: "Chicken & Mutton", shortTe: "చికెన్ & మటన్",
     icon: '<path d="M8 32c10-11 25-15 36-8 4 2.5 7 5.5 9 8-2 2.5-5 5.5-9 8-11 7-26 3-36-8z"/><path d="M44 32l12-9v18z"/><circle cx="18" cy="29" r="1.8" fill="currentColor" stroke="none"/>' },
-  { id: "specials", title: "Navarang Specials", titleTe: "నవరంగ్ స్పెషల్స్", short: "Specials", shortTe: "స్పెషల్స్",
+  { id: "specials", title: "Navrang Specials", titleTe: "నవ్రంగ్ స్పెషల్స్", short: "Specials", shortTe: "స్పెషల్స్",
     icon: '<path d="M32 6l7 16 17 2-13 12 4 18-15-9-15 9 4-18-13-12 17-2z"/>' }
 ];
