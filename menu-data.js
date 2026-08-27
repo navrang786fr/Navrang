@@ -67,7 +67,7 @@ var MENU_DATA = {
     { id: 56, name: "Mutton Fry Biryani", nameTe: "మటన్ ఫ్రై బిర్యానీ", price: 360, veg: false, thumb: "images/menu/mutton-fry-biryani-100.jpg", photo: "images/menu/mutton-fry-biryani-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 57, name: "Natukodi Fry Biryani", nameTe: "నాటుకోడి ఫ్రై బిర్యానీ", price: 310, veg: false, thumb: "images/menu/natukodi-fry-biryani-100.jpg", photo: "images/menu/natukodi-fry-biryani-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 58, name: "Prawns Fry Biryani", nameTe: "రొయ్యల ఫ్రై బిర్యానీ", price: 320, veg: false, thumb: "images/menu/prawns-fry-biryani-100.jpg", photo: "images/menu/prawns-fry-biryani-500.jpg", top: false, status: "Active", weeklyDishInd: false },
-    { id: 59, name: "SP Biryani", nameTe: "SP బిర్యానీ", price: 220, veg: false, status: "Active", weeklyDishInd: false }
+    { id: 59, name: "SP Biryani", nameTe: "SP బిర్యానీ", price: 220, veg: false, thumb: "images/menu/sp-biryani-100.jpg", photo: "images/menu/sp-biryani-500.jpg", top: false, status: "Active", weeklyDishInd: false }
   ],
   "roti": [
     { id: 60, name: "Katak Roti", nameTe: "కటక్ రొట్టె", price: 10, veg: true, status: "Active", weeklyDishInd: false },
