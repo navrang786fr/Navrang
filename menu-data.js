@@ -107,7 +107,7 @@ var MENU_DATA = {
     { id: 90, name: "Prawns Curry", nameTe: "రొయ్యల కర్రీ", price: 280, veg: false, thumb: "images/menu/prawns-curry-100.jpg", photo: "images/menu/prawns-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 91, name: "Prawns Fry", nameTe: "రొయ్యల ఫ్రై", price: 290, veg: false, thumb: "images/menu/prawns-fry-100.jpg", photo: "images/menu/prawns-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 92, name: "Rambha Chicken", nameTe: "రంభా చికెన్", price: 280, veg: false, thumb: "images/menu/rambha-chicken-100.jpg", photo: "images/menu/rambha-chicken-500.jpg", top: false, status: "Active", weeklyDishInd: false },
-    { id: 93, name: "Star Chicken", nameTe: "స్టార్ చికెన్", price: 260, veg: false, status: "Active", weeklyDishInd: false }
+    { id: 93, name: "Star Chicken", nameTe: "స్టార్ చికెన్", price: 260, veg: false, thumb: "images/menu/star-chicken-100.jpg", photo: "images/menu/star-chicken-500.jpg", top: false, status: "Active", weeklyDishInd: false }
   ],
   "specials": [
     { id: 94, name: "Badam Milk", nameTe: "బాదం మిల్క్", price: 60, veg: true, thumb: "images/menu/badam-milk-100.jpg", photo: "images/menu/badam-milk-500.jpg", top: false, status: "Active", weeklyDishInd: false },
