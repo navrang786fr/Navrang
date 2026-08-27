@@ -21,10 +21,10 @@ var MENU_DATA = {
     { name: "Pepper Chicken", nameTe: "పెప్పర్ చికెన్", price: 240, veg: false },
     { name: "Chicken 65", nameTe: "చికెన్ 65", price: 260, veg: false, top: true },
     { name: "Chicken Manchuria", nameTe: "చికెన్ మంచూరియా", price: 260, veg: false },
-    { name: "Lollipop Roast", nameTe: "లాలీపాప్ రోస్ట్", price: 260, veg: false },
-    { name: "Lollipop Fry", nameTe: "లాలీపాప్ ఫ్రై", price: 260, veg: false },
-    { name: "Tiger Chicken", nameTe: "టైగర్ చికెన్", price: 280, veg: false },
-    { name: "Lemon Chicken", nameTe: "లెమన్ చికెన్", price: 260, veg: false }
+    { name: "Lollipop Roast", nameTe: "లాలీపాప్ రోస్ట్", price: 260, veg: false, thumb: "images/menu/lollipop-roast-100.jpg", photo: "images/menu/lollipop-roast-500.jpg" },
+    { name: "Lollipop Fry", nameTe: "లాలీపాప్ ఫ్రై", price: 260, veg: false,thumb: "images/menu/lollipop-fry-100.jpg", photo: "images/menu/lollipop-fry-500.jpg" },
+    { name: "Tiger Chicken", nameTe: "టైగర్ చికెన్", price: 280, veg: false, thumb: "images/menu/tiger-chicken-100.jpg", photo: "images/menu/tiger-chicken-500.jpg"},
+    { name: "Lemon Chicken", nameTe: "లెమన్ చికెన్", price: 260, veg: false,  thumb: "images/menu/lemon-chicken-100.jpg", photo: "images/menu/lemon-chicken-500.jpg" }
   ],
   "veg-curries": [
     { name: "Tamata Curry", nameTe: "టమాట కర్రీ", price: 110, veg: true },
