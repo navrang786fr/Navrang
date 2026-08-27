@@ -29,6 +29,7 @@
       emptyState: 'No dishes match your search.',
       footerNote: 'Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.',
       instaTitle: 'Follow us on Instagram',
+      ingredientsLabel: 'Ingredients',
       rateCta: 'Rate Your Food',
       rateTitle: 'Rate Your Food',
       rateName: 'Your Name',
@@ -55,6 +56,7 @@
       emptyState: 'మీ శోధనకు సరిపోలే వంటకాలు లేవు.',
       footerNote: 'ఆర్డర్ చేయడానికి సిద్ధంగా ఉన్నారా? మీ వెయిటర్‌కు తెలియజేయండి. అన్ని ధరలలో వర్తించే పన్నులు కలిపి ఉన్నాయి — ఏవైనా ఆహార అలర్జీల గురించి మీ సర్వర్‌కు తెలియజేయండి.',
       instaTitle: 'ఇన్‌స్టాగ్రామ్‌లో మమ్మల్ని ఫాలో అవ్వండి',
+      ingredientsLabel: 'పదార్థాలు',
       rateCta: 'మీ ఆహారాన్ని రేట్ చేయండి',
       rateTitle: 'మీ ఆహారాన్ని రేట్ చేయండి',
       rateName: 'మీ పేరు',
@@ -190,7 +192,8 @@
         '<span class="dish-side">' + priceLabel + '<span class="dot ' + (item.veg ? 'veg' : 'nonveg') + '"></span></span>';
 
       row.querySelector('.dish-thumb-wrap').addEventListener('click', function(){
-        openLightbox(item.photo || item.thumb || NO_IMAGE_FULL, currentLang === 'te' ? item.nameTe : item.name);
+        var ingredients = currentLang === 'te' ? item.ingredientsTe : item.ingredients;
+        openLightbox(item.photo || item.thumb || NO_IMAGE_FULL, currentLang === 'te' ? item.nameTe : item.name, ingredients);
       });
 
       section.appendChild(row);
@@ -297,11 +300,15 @@
   var lightboxCard = qs('#lightboxCard');
   var lightboxImg = qs('#lightboxImg');
   var lightboxCaption = qs('#lightboxCaption');
+  var lightboxIngredients = qs('#lightboxIngredients');
   var lightboxClose = qs('#lightboxClose');
-  function openLightbox(src, caption){
+  function openLightbox(src, caption, ingredients){
     lightboxImg.src = src;
     lightboxImg.alt = caption || '';
     lightboxCaption.textContent = caption || '';
+    lightboxIngredients.textContent = (ingredients && ingredients.length)
+      ? STRINGS[currentLang].ingredientsLabel + ': ' + ingredients.join(', ')
+      : '';
     imageLightbox.classList.add('show');
     imageLightbox.setAttribute('aria-hidden', 'false');
   }
@@ -326,7 +333,6 @@
   var rateClose = qs('#rateClose');
   var rateName = qs('#rateName');
   var rateDishSelect = qs('#rateDishSelect');
-  var rateDishAdd = qs('#rateDishAdd');
   var rateDishChips = qs('#rateDishChips');
   var starPicker = qs('#starPicker');
   var rateComments = qs('#rateComments');
@@ -375,8 +381,8 @@
     return null;
   }
 
-  if (rateDishAdd){
-    rateDishAdd.addEventListener('click', function(){
+  if (rateDishSelect){
+    rateDishSelect.addEventListener('change', function(){
       var val = rateDishSelect.value;
       if (!val) return;
       if (selectedDishes.some(function(d){ return d.en === val; })){ rateDishSelect.value = ''; return; }
@@ -421,7 +427,9 @@
     rateDialog.setAttribute('aria-hidden', 'true');
   }
 
+  var rateTopBtn = qs('#rateTopBtn');
   if (rateCta) rateCta.addEventListener('click', openRateDialog);
+  if (rateTopBtn) rateTopBtn.addEventListener('click', openRateDialog);
   if (rateClose) rateClose.addEventListener('click', closeRateDialog);
   if (rateDialog) rateDialog.addEventListener('click', closeRateDialog);
   if (rateCard) rateCard.addEventListener('click', function(e){ e.stopPropagation(); });

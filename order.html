@@ -131,6 +131,11 @@
     margin:12px 0 0;text-align:center;font-family:'Karla','Noto Sans Telugu',sans-serif;
     font-weight:700;font-size:15px;color:var(--ink);
   }
+  .lightbox-ingredients{
+    margin:6px 0 0;text-align:center;font-family:'Karla','Noto Sans Telugu',sans-serif;
+    font-size:12.5px;color:var(--maroon);opacity:.85;line-height:1.4;
+  }
+  .lightbox-ingredients:empty{display:none;}
   .lightbox-close{
     position:absolute;top:-14px;right:-14px;width:32px;height:32px;border-radius:50%;
     background:var(--maroon-deep);color:#fff;border:2px solid #fff;
@@ -157,9 +162,13 @@
   }
   .rate-dialog.show{opacity:1;pointer-events:auto;}
   .rate-card{
-    position:relative;max-width:min(92vw,440px);width:100%;max-height:88vh;overflow-y:auto;
+    position:relative;max-width:min(92vw,440px);width:100%;max-height:88vh;
     background:var(--paper);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);
-    padding:20px 18px 18px;-webkit-overflow-scrolling:touch;
+    display:flex;flex-direction:column;
+  }
+  .rate-card-body{
+    min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:20px 18px 18px;
   }
   .rate-card h3{margin:2px 0 16px;font-family:'Yatra One',cursive;font-size:21px;color:var(--maroon-deep);text-align:center;}
   .rate-field{margin-bottom:14px;}
@@ -170,13 +179,6 @@
     outline:none;resize:none;font-family:'Karla','Noto Sans Telugu',sans-serif;
   }
   .rate-card input:focus,.rate-card select:focus,.rate-card textarea:focus{border-color:var(--maroon);}
-  .dish-picker-row{display:flex;gap:8px;}
-  .dish-picker-row select{flex:1;min-width:0;}
-  .dish-add-btn{
-    flex:0 0 auto;background:var(--maroon);color:#fff;border:none;border-radius:9px;
-    padding:0 16px;font-weight:700;font-size:13px;cursor:pointer;
-  }
-  .dish-add-btn:active{transform:scale(.95);}
   .dish-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
   .dish-chip{
     display:inline-flex;align-items:center;gap:5px;background:var(--turmeric-light);
@@ -370,6 +372,9 @@
         <button type="button" class="lang-opt" data-lang="en" title="View in English" aria-label="View in English">English</button>
         <button type="button" class="lang-opt" data-lang="te" title="తెలుగులో చూడండి" aria-label="తెలుగులో చూడండి">తెలుగు</button>
       </div>
+      <button class="icon-btn" id="rateTopBtn" type="button" title="Rate Your Food" aria-label="Rate Your Food">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18.2 22 12 18.1 5.8 22l1.7-7.6L2 9.6l7.1-.7z"/></svg>
+      </button>
       <a class="icon-btn icon-btn-img" id="instaLink" href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" title="Follow us on Instagram" aria-label="Follow us on Instagram">
         <img src="images/app/instagram.png" alt="">
       </a>
@@ -417,46 +422,46 @@
     <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close">✕</button>
     <img id="lightboxImg" src="" alt="">
     <p class="lightbox-caption" id="lightboxCaption"></p>
+    <p class="lightbox-ingredients" id="lightboxIngredients"></p>
   </div>
 </div>
 
 <div class="rate-dialog" id="rateDialog" role="dialog" aria-label="Rate your food" aria-hidden="true">
   <div class="rate-card" id="rateCard">
     <button class="lightbox-close" id="rateClose" type="button" aria-label="Close">✕</button>
-    <h3 id="rateTitle">Rate Your Food</h3>
+    <div class="rate-card-body">
+      <h3 id="rateTitle">Rate Your Food</h3>
 
-    <div class="rate-field">
-      <label id="rateNameLabel" for="rateName">Your Name</label>
-      <input type="text" id="rateName" maxlength="60" autocomplete="off">
-    </div>
+      <div class="rate-field">
+        <label id="rateNameLabel" for="rateName">Your Name</label>
+        <input type="text" id="rateName" maxlength="60" autocomplete="off">
+      </div>
 
-    <div class="rate-field">
-      <label id="rateDishLabel" for="rateDishSelect">Dishes You Had</label>
-      <div class="dish-picker-row">
+      <div class="rate-field">
+        <label id="rateDishLabel" for="rateDishSelect">Dishes You Had</label>
         <select id="rateDishSelect"></select>
-        <button type="button" class="dish-add-btn" id="rateDishAdd">+</button>
+        <div class="dish-chip-row" id="rateDishChips"></div>
       </div>
-      <div class="dish-chip-row" id="rateDishChips"></div>
-    </div>
 
-    <div class="rate-field">
-      <label id="rateStarsLabel">Your Rating</label>
-      <div class="star-picker" id="starPicker">
-        <button type="button" class="star-btn" data-star="1">★</button>
-        <button type="button" class="star-btn" data-star="2">★</button>
-        <button type="button" class="star-btn" data-star="3">★</button>
-        <button type="button" class="star-btn" data-star="4">★</button>
-        <button type="button" class="star-btn" data-star="5">★</button>
+      <div class="rate-field">
+        <label id="rateStarsLabel">Your Rating</label>
+        <div class="star-picker" id="starPicker">
+          <button type="button" class="star-btn" data-star="1">★</button>
+          <button type="button" class="star-btn" data-star="2">★</button>
+          <button type="button" class="star-btn" data-star="3">★</button>
+          <button type="button" class="star-btn" data-star="4">★</button>
+          <button type="button" class="star-btn" data-star="5">★</button>
+        </div>
       </div>
-    </div>
 
-    <div class="rate-field">
-      <label id="rateCommentsLabel" for="rateComments">Comments (optional)</label>
-      <textarea id="rateComments" maxlength="500" rows="3"></textarea>
-    </div>
+      <div class="rate-field">
+        <label id="rateCommentsLabel" for="rateComments">Comments (optional)</label>
+        <textarea id="rateComments" maxlength="500" rows="3"></textarea>
+      </div>
 
-    <button class="rate-submit" id="rateSubmit" type="button">Submit Rating</button>
-    <p class="rate-status" id="rateStatus"></p>
+      <button class="rate-submit" id="rateSubmit" type="button">Submit Rating</button>
+      <p class="rate-status" id="rateStatus"></p>
+    </div>
   </div>
 </div>
 
