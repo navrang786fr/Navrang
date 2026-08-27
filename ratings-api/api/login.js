@@ -65,6 +65,18 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  let blockedIps;
+  try {
+    blockedIps = await readJsonArray(adminRepo, 'blocked-ips.json', adminToken);
+  } catch (e) {
+    blockedIps = [];
+  }
+  if (blockedIps.some(function (b) { return b.ip === info.ip; })) {
+    await logAccess('blocked-ip');
+    res.status(403).json({ error: 'Access from this IP has been blocked by an administrator.' });
+    return;
+  }
+
   let recentLog;
   try {
     recentLog = await readJsonArray(adminRepo, 'access-log.json', adminToken);

@@ -7,6 +7,23 @@
 <meta name="theme-color" content="#0A2A12">
 <link rel="icon" href="../navrang_logo.png">
 <link rel="stylesheet" href="admin-style.css">
+<style>
+  .filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:16px;}
+  .preset-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .preset-btn,.outcome-btn{border:1.3px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:20px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;}
+  .preset-btn.active,.outcome-btn.active{background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));border-color:var(--maroon-deep);color:var(--turmeric-light);}
+  .search-input{border:1.3px solid var(--rule);border-radius:9px;padding:9px 11px;font-size:13.5px;background:var(--paper);outline:none;min-width:160px;}
+  .search-input:focus{border-color:var(--maroon);}
+  .block-btn{
+    font-size:11.5px;font-weight:700;color:#fff;background:var(--nonveg);
+    border:none;border-radius:14px;padding:5px 11px;cursor:pointer;
+  }
+  .unblock-btn{
+    font-size:11.5px;font-weight:700;color:var(--maroon);background:var(--paper);
+    border:1.3px solid var(--maroon);border-radius:14px;padding:5px 11px;cursor:pointer;
+  }
+  .blocked-tag{font-size:11px;font-weight:700;color:var(--nonveg);}
+</style>
 </head>
 <body>
 
@@ -20,7 +37,37 @@
   </div>
 
   <div class="admin-panel">
+    <h2>Blocked IPs</h2>
+    <div class="admin-card" id="blockedWrap">
+      <div class="admin-loading">Loading…</div>
+    </div>
+
     <h2>Who's accessed the admin panel</h2>
+    <div class="admin-card filter-bar">
+      <div class="admin-field" style="margin-bottom:0;">
+        <label for="fromDate">From</label>
+        <input type="date" id="fromDate">
+      </div>
+      <div class="admin-field" style="margin-bottom:0;">
+        <label for="toDate">To</label>
+        <input type="date" id="toDate">
+      </div>
+      <div class="preset-row" id="presetRow">
+        <button type="button" class="preset-btn" data-range="today">Today</button>
+        <button type="button" class="preset-btn" data-range="7">7 Days</button>
+        <button type="button" class="preset-btn" data-range="30">30 Days</button>
+        <button type="button" class="preset-btn active" data-range="all">All Time</button>
+      </div>
+      <div class="preset-row" id="outcomeRow">
+        <button type="button" class="outcome-btn active" data-outcome="">All</button>
+        <button type="button" class="outcome-btn" data-outcome="success">Success</button>
+        <button type="button" class="outcome-btn" data-outcome="failed">Failed</button>
+        <button type="button" class="outcome-btn" data-outcome="blocked">Locked out</button>
+        <button type="button" class="outcome-btn" data-outcome="blocked-ip">Blocked IP</button>
+      </div>
+      <input type="text" class="search-input" id="searchBox" placeholder="Search username or IP…">
+    </div>
+
     <div class="admin-table-wrap" id="listWrap">
       <div class="admin-loading">Loading…</div>
     </div>
@@ -34,6 +81,16 @@
   AdminShared.renderNav('access');
   var esc = AdminShared.esc;
   var listWrap = document.getElementById('listWrap');
+  var blockedWrap = document.getElementById('blockedWrap');
+  var fromDate = document.getElementById('fromDate');
+  var toDate = document.getElementById('toDate');
+  var presetRow = document.getElementById('presetRow');
+  var outcomeRow = document.getElementById('outcomeRow');
+  var searchBox = document.getElementById('searchBox');
+
+  var allRows = [];
+  var blockedIps = [];
+  var currentOutcome = '';
 
   function fmtDate(iso){
     var d = new Date(iso);
@@ -48,25 +105,127 @@
     if (!r.device) return '<span style="opacity:.5;">—</span>';
     return esc(r.device.browser) + ' · ' + esc(r.device.os) + ' <span style="opacity:.6;">(' + esc(r.device.type) + ')</span>';
   }
+  function dayStart(s){ return new Date(s + 'T00:00:00'); }
+  function dayEnd(s){ return new Date(s + 'T23:59:59.999'); }
+  function toISODate(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 
-  AdminShared.apiFetch('/api/access-log').then(function(resp){
-    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
-  }).then(function(result){
-    if (!result.ok) throw new Error(result.data.error || 'Failed to load');
-    var rows = result.data;
-    if (!rows.length){ listWrap.innerHTML = '<div class="admin-empty">No access log entries yet.</div>'; return; }
-    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>Username</th><th>Outcome</th><th>IP</th><th>Location</th><th>Device</th><th>When</th></tr></thead><tbody>' +
+  function setActivePreset(range){
+    Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){ b.classList.toggle('active', b.dataset.range === range); });
+  }
+  function applyPreset(range){
+    var now = new Date(), to = new Date(now), from;
+    if (range === 'today') from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    else if (range === '7') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+    else if (range === '30') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+    else { fromDate.value = ''; toDate.value = ''; setActivePreset('all'); render(); return; }
+    fromDate.value = toISODate(from);
+    toDate.value = toISODate(to);
+    setActivePreset(range);
+    render();
+  }
+
+  function isBlocked(ip){ return blockedIps.some(function(b){ return b.ip === ip; }); }
+
+  function blockIp(ip, btn){
+    var reason = window.prompt('Block IP ' + ip + '. Optional reason:', '');
+    if (reason === null) return;
+    btn.disabled = true;
+    AdminShared.apiFetch('/api/blocked-ips', { method: 'POST', body: JSON.stringify({ action: 'block', ip: ip, reason: reason }) })
+      .then(function(resp){ return resp.json(); })
+      .then(function(){ return loadBlocked(); })
+      .then(render)
+      .catch(function(){ btn.disabled = false; });
+  }
+  function unblockIp(ip){
+    return AdminShared.apiFetch('/api/blocked-ips', { method: 'POST', body: JSON.stringify({ action: 'unblock', ip: ip }) })
+      .then(function(resp){ return resp.json(); })
+      .then(function(){ return loadBlocked(); })
+      .then(render);
+  }
+
+  function renderBlocked(){
+    if (!blockedIps.length){ blockedWrap.innerHTML = '<div class="admin-empty" style="padding:10px;">No IPs currently blocked.</div>'; return; }
+    blockedWrap.innerHTML = blockedIps.map(function(b){
+      return '<div class="feed-item" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--rule);">' +
+        '<div><strong>' + esc(b.ip) + '</strong>' + (b.reason ? ' <span style="opacity:.7;font-size:12px;">— ' + esc(b.reason) + '</span>' : '') +
+        '<div style="font-size:11px;opacity:.6;">blocked by ' + esc(b.blockedBy) + ' · ' + esc(fmtDate(b.blockedAt)) + '</div></div>' +
+        '<button type="button" class="unblock-btn" data-ip="' + esc(b.ip) + '">Unblock</button></div>';
+    }).join('');
+    Array.prototype.forEach.call(blockedWrap.querySelectorAll('.unblock-btn'), function(btn){
+      btn.addEventListener('click', function(){ btn.disabled = true; unblockIp(btn.dataset.ip); });
+    });
+  }
+
+  function getFiltered(){
+    var from = fromDate.value ? dayStart(fromDate.value) : null;
+    var to = toDate.value ? dayEnd(toDate.value) : null;
+    var q = searchBox.value.trim().toLowerCase();
+    return allRows.filter(function(r){
+      var t = new Date(r.timestamp);
+      if (isNaN(t)) return false;
+      if (from && t < from) return false;
+      if (to && t > to) return false;
+      if (currentOutcome && r.outcome !== currentOutcome) return false;
+      if (q && r.username.toLowerCase().indexOf(q) === -1 && String(r.ip).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+  }
+
+  function render(){
+    renderBlocked();
+    var rows = getFiltered().slice().sort(function(a,b){ return new Date(b.timestamp) - new Date(a.timestamp); });
+    if (!rows.length){ listWrap.innerHTML = '<div class="admin-empty">No access log entries match.</div>'; return; }
+    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>Username</th><th>Outcome</th><th>IP</th><th>Location</th><th>Device</th><th>When</th><th>Action</th></tr></thead><tbody>' +
       rows.map(function(r){
         var badge = r.outcome === 'success' ? 'active' : 'inactive';
+        var action = isBlocked(r.ip)
+          ? '<span class="blocked-tag">Blocked</span>'
+          : '<button type="button" class="block-btn" data-ip="' + esc(r.ip) + '">Block IP</button>';
         return '<tr><td>' + esc(r.username) + '</td>' +
           '<td><span class="admin-badge ' + badge + '">' + esc(r.outcome) + '</span></td>' +
           '<td>' + esc(r.ip) + '</td>' +
           '<td>' + fmtLocation(r) + '</td>' +
           '<td>' + fmtDevice(r) + '</td>' +
-          '<td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td></tr>';
+          '<td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td>' +
+          '<td>' + action + '</td></tr>';
       }).join('') + '</tbody></table>';
+
+    Array.prototype.forEach.call(listWrap.querySelectorAll('.block-btn'), function(btn){
+      btn.addEventListener('click', function(){ blockIp(btn.dataset.ip, btn); });
+    });
+  }
+
+  Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){ b.addEventListener('click', function(){ applyPreset(b.dataset.range); }); });
+  Array.prototype.forEach.call(outcomeRow.querySelectorAll('.outcome-btn'), function(b){
+    b.addEventListener('click', function(){
+      currentOutcome = b.dataset.outcome;
+      Array.prototype.forEach.call(outcomeRow.querySelectorAll('.outcome-btn'), function(x){ x.classList.toggle('active', x === b); });
+      render();
+    });
+  });
+  fromDate.addEventListener('change', function(){ setActivePreset(''); render(); });
+  toDate.addEventListener('change', function(){ setActivePreset(''); render(); });
+  searchBox.addEventListener('input', render);
+
+  function loadBlocked(){
+    return AdminShared.apiFetch('/api/blocked-ips').then(function(resp){ return resp.json(); }).then(function(data){
+      blockedIps = Array.isArray(data) ? data : [];
+    }).catch(function(){ blockedIps = []; });
+  }
+
+  Promise.all([
+    AdminShared.apiFetch('/api/access-log').then(function(resp){
+      return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+    }),
+    loadBlocked()
+  ]).then(function(results){
+    var result = results[0];
+    if (!result.ok) throw new Error(result.data.error || 'Failed to load');
+    allRows = result.data;
+    render();
   }).catch(function(err){
     listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Could not load access log.') + '</div>';
+    renderBlocked();
   });
 })();
 </script>
