@@ -87,7 +87,7 @@ var MENU_DATA = {
     { id: 72, name: "Veg Rice", nameTe: "వెజ్ రైస్", price: 120, veg: true, status: "Active", weeklyDishInd: false }
   ],
   "chicken-curries": [
-    { id: 73, name: "Andhra Chicken", nameTe: "ఆంధ్రా చికెన్", price: 360, veg: false, status: "Active", weeklyDishInd: false },
+    { id: 73, name: "Andhra Chicken", nameTe: "ఆంధ్రా చికెన్", price: 360, veg: false, thumb: "images/menu/andhra-chicken-100.jpg", photo: "images/menu/andhra-chicken-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 74, name: "Bonda Chicken", nameTe: "బొండా చికెన్", price: 410, veg: false, thumb: "images/menu/bonda-chicken-100.jpg", photo: "images/menu/bonda-chicken-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 75, name: "Butter Chicken", nameTe: "బటర్ చికెన్", price: 260, veg: false, top: true, status: "Active", weeklyDishInd: false },
     { id: 76, name: "Chicken Bone Curry", nameTe: "చికెన్ బోన్ కర్రీ", price: 180, veg: false, status: "Active", weeklyDishInd: false },
