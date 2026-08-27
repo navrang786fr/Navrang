@@ -42,7 +42,7 @@ var MENU_DATA = {
     { id: 35, name: "Veg Mix Curry", nameTe: "వెజ్ మిక్స్ కర్రీ", price: 130, veg: true, status: "Active", weeklyDishInd: false }
   ],
   "veg-starters": [
-    { id: 36, name: "Alasandha Fry", nameTe: "అలసంద ఫ్రై", price: 130, veg: true, status: "Active", weeklyDishInd: false },
+    { id: 36, name: "Alasandha Fry", nameTe: "అలసంద ఫ్రై", price: 130, veg: true, thumb: "images/menu/alasandha-fry-100.jpg", photo: "images/menu/alasandha-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 37, name: "Batani Fry", nameTe: "బటానీ ఫ్రై", price: 130, veg: true, thumb: "images/menu/batani-fry-100.jpg", photo: "images/menu/batani-fry-500.jpg", status: "Active", weeklyDishInd: false },
     { id: 38, name: "Batani Roast", nameTe: "బటానీ రోస్ట్", price: 130, veg: true, thumb: "images/menu/batani-roast-100.jpg", photo: "images/menu/batani-roast-500.jpg", status: "Active", weeklyDishInd: false },
     { id: 39, name: "Chena Fry", nameTe: "చేన ఫ్రై", price: 130, veg: true, thumb: "images/menu/chena-fry-100.jpg", photo: "images/menu/chena-fry-500.jpg", status: "Active", weeklyDishInd: false },
