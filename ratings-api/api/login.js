@@ -3,12 +3,7 @@
 
 const { readJsonArray, writeJsonArrayWithRetry } = require('./_lib/github.js');
 const { verifyPassword, signToken } = require('./_lib/auth.js');
-
-function clientIp(req) {
-  const fwd = req.headers['x-forwarded-for'];
-  if (fwd) return String(fwd).split(',')[0].trim();
-  return req.socket && req.socket.remoteAddress || 'unknown';
-}
+const { getRequestInfo } = require('./_lib/requestInfo.js');
 
 module.exports = async function handler(req, res) {
   const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://navrang786fr.github.io';
@@ -35,7 +30,7 @@ module.exports = async function handler(req, res) {
 
   const username = String(body.username || '').trim().slice(0, 60);
   const password = String(body.password || '').slice(0, 200);
-  const ip = clientIp(req);
+  const info = getRequestInfo(req);
 
   async function logAccess(outcome) {
     try {
@@ -43,7 +38,12 @@ module.exports = async function handler(req, res) {
         arr.push({
           username: username || '(empty)',
           outcome: outcome,
-          ip: ip,
+          ip: info.ip,
+          country: info.country,
+          region: info.region,
+          city: info.city,
+          device: info.device,
+          userAgent: info.userAgent,
           timestamp: new Date().toISOString()
         });
       }, `Access log: ${outcome} login for ${username || '(empty)'}`);

@@ -6,6 +6,7 @@
 const { readRawFile, putFile, getFileSha, putFileBase64, writeJsonArrayWithRetry } = require('./_lib/github.js');
 const { requireAuth } = require('./_lib/auth.js');
 const { parseMenuData, parseCategoryMeta, serializeMenuDataFile, findDishById, nextId } = require('./_lib/menuData.js');
+const { getRequestInfo } = require('./_lib/requestInfo.js');
 
 const EDITABLE_FIELDS = ['name', 'nameTe', 'price', 'veg', 'thumb', 'photo', 'top', 'status', 'weeklyDishInd'];
 
@@ -161,8 +162,18 @@ module.exports = async function handler(req, res) {
     }
 
     try {
+      const info = getRequestInfo(req);
       await writeJsonArrayWithRetry(adminRepo, 'audit-log.json', adminToken, function (arr) {
-        arr.push(Object.assign({ username: auth.sub, timestamp: new Date().toISOString() }, auditPayload));
+        arr.push(Object.assign({
+          username: auth.sub,
+          timestamp: new Date().toISOString(),
+          ip: info.ip,
+          country: info.country,
+          region: info.region,
+          city: info.city,
+          device: info.device,
+          userAgent: info.userAgent
+        }, auditPayload));
       }, `Audit: ${auditPayload.action} dish "${auditPayload.dishName}" by ${auth.sub}`);
     } catch (e) {
       // audit log failure shouldn't undo the already-successful menu write

@@ -40,6 +40,14 @@
     if (isNaN(d)) return iso;
     return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit', second:'2-digit' });
   }
+  function fmtLocation(r){
+    var parts = [r.city, r.region, r.country].filter(Boolean);
+    return parts.length ? parts.join(', ') : '<span style="opacity:.5;">Unknown</span>';
+  }
+  function fmtDevice(r){
+    if (!r.device) return '<span style="opacity:.5;">—</span>';
+    return esc(r.device.browser) + ' · ' + esc(r.device.os) + ' <span style="opacity:.6;">(' + esc(r.device.type) + ')</span>';
+  }
 
   AdminShared.apiFetch('/api/access-log').then(function(resp){
     return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
@@ -47,12 +55,14 @@
     if (!result.ok) throw new Error(result.data.error || 'Failed to load');
     var rows = result.data;
     if (!rows.length){ listWrap.innerHTML = '<div class="admin-empty">No access log entries yet.</div>'; return; }
-    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>Username</th><th>Outcome</th><th>IP</th><th>When</th></tr></thead><tbody>' +
+    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>Username</th><th>Outcome</th><th>IP</th><th>Location</th><th>Device</th><th>When</th></tr></thead><tbody>' +
       rows.map(function(r){
         var badge = r.outcome === 'success' ? 'active' : 'inactive';
         return '<tr><td>' + esc(r.username) + '</td>' +
           '<td><span class="admin-badge ' + badge + '">' + esc(r.outcome) + '</span></td>' +
           '<td>' + esc(r.ip) + '</td>' +
+          '<td>' + fmtLocation(r) + '</td>' +
+          '<td>' + fmtDevice(r) + '</td>' +
           '<td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td></tr>';
       }).join('') + '</tbody></table>';
   }).catch(function(err){
