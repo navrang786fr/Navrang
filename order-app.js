@@ -148,7 +148,7 @@
   }
 
   CATEGORY_META.forEach(function(cat){
-    var items = MENU_DATA[cat.id] || [];
+    var items = (MENU_DATA[cat.id] || []).filter(function(it){ return it.status === 'Active'; });
 
     var chip = document.createElement('button');
     chip.type = 'button';
@@ -347,7 +347,7 @@
     var S = STRINGS[currentLang];
     var html = '<option value="">' + esc(S.rateDishPlaceholder) + '</option>';
     CATEGORY_META.forEach(function(cat){
-      var items = MENU_DATA[cat.id] || [];
+      var items = (MENU_DATA[cat.id] || []).filter(function(it){ return it.status === 'Active'; });
       if (!items.length) return;
       html += '<optgroup label="' + esc(currentLang === 'te' ? cat.titleTe : cat.title) + '">';
       items.forEach(function(item){
