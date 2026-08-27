@@ -75,7 +75,7 @@ var MENU_DATA = {
     { id: 62, name: "Ponga Roti", nameTe: "పొంగా రొట్టె", price: 12, veg: true, status: "Active", weeklyDishInd: false }
   ],
   "fried-rice": [
-    { id: 63, name: "Chicken Rice", nameTe: "చికెన్ రైస్", price: 130, veg: false, status: "Active", weeklyDishInd: false },
+    { id: 63, name: "Chicken Rice", nameTe: "చికెన్ రైస్", price: 130, veg: false, thumb: "images/menu/chicken-rice-100.jpg", photo: "images/menu/chicken-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 64, name: "Curd Rice", nameTe: "పెరుగు అన్నం", price: 80, veg: true, thumb: "images/menu/curd-rice-100.jpg", photo: "images/menu/curd-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 65, name: "Egg Rice", nameTe: "గుడ్డు రైస్", price: 110, veg: false, status: "Active", weeklyDishInd: false },
     { id: 66, name: "Gobi Rice", nameTe: "గోబీ రైస్", price: 130, veg: true, thumb: "images/menu/gobi-rice-100.jpg", photo: "images/menu/gobi-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
