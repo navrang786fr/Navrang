@@ -98,7 +98,8 @@
     chip.type = 'button';
     chip.className = 'chip';
     chip.dataset.target = cat.id;
-    chip.innerHTML = iconSvg(cat.icon) + '<span class="chip-label" data-en="' + esc(cat.short) + '" data-te="' + esc(cat.shortTe) + '">' + esc(cat.short) + '</span>';
+    var chipIcon = cat.image ? '<img class="chip-icon" src="' + esc(cat.image) + '" alt="">' : iconSvg(cat.icon);
+    chip.innerHTML = chipIcon + '<span class="chip-label" data-en="' + esc(cat.short) + '" data-te="' + esc(cat.shortTe) + '">' + esc(cat.short) + '</span>';
     chip.addEventListener('click', function(){
       var section = document.getElementById('sec-' + cat.id);
       if (section) section.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -111,7 +112,8 @@
 
     var head = document.createElement('div');
     head.className = 'section-head';
-    head.innerHTML = '<span class="cat-icon">' + iconSvg(cat.icon) + '</span>' +
+    var headIcon = cat.image ? '<img src="' + esc(cat.image) + '" alt="">' : iconSvg(cat.icon);
+    head.innerHTML = '<span class="cat-icon' + (cat.image ? ' cat-icon-img' : '') + '">' + headIcon + '</span>' +
       '<span class="section-title" data-en="' + esc(cat.title) + '" data-te="' + esc(cat.titleTe) + '">' + esc(cat.title) + '</span>' +
       '<span class="n section-count" data-count="' + items.length + '">' + items.length + ' items</span>';
     section.appendChild(head);
