@@ -53,7 +53,7 @@ var MENU_DATA = {
     { id: 44, name: "Kaju Roast", nameTe: "కాజు రోస్ట్", price: 250, veg: true, thumb: "images/menu/kaju-roast-100.jpg", photo: "images/menu/kaju-roast-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 45, name: "Mushroom Chili", nameTe: "మష్రూమ్ చిల్లీ", price: 190, veg: true, thumb: "images/menu/mushroom-chili-100.jpg", photo: "images/menu/mushroom-chili-500.jpg", status: "Active", weeklyDishInd: false },
     { id: 46, name: "Mushroom Fry", nameTe: "మష్రూమ్ ఫ్రై", price: 170, veg: true, thumb: "images/menu/mushroom-fry-100.jpg", photo: "images/menu/mushroom-fry-500.jpg", status: "Active", weeklyDishInd: false },
-    { id: 47, name: "Mushroom Manchuria", nameTe: "మష్రూమ్ మంచూరియా", price: 190, veg: true, status: "Active", weeklyDishInd: false },
+    { id: 47, name: "Mushroom Manchuria", nameTe: "మష్రూమ్ మంచూరియా", price: 190, veg: true, thumb: "images/menu/mushroom-manchuria-100.jpg", photo: "images/menu/mushroom-manchuria-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 48, name: "Mushroom Pepper", nameTe: "మష్రూమ్ పెప్పర్", price: 190, veg: true, status: "Active", weeklyDishInd: false },
     { id: 49, name: "Onion Pakodi", nameTe: "ఉల్లి పకోడి", price: 130, veg: true, thumb: "images/menu/onion-pakodi-100.jpg", photo: "images/menu/onion-pakodi-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 50, name: "Paneer 65", nameTe: "పనీర్ 65", price: 200, veg: true, thumb: "images/menu/paneer-65-100.jpg", photo: "images/menu/paneer-65-500.jpg", top: false, status: "Active", weeklyDishInd: false },
