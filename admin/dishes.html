@@ -37,6 +37,13 @@
     display:flex;align-items:center;justify-content:center;transition:background .15s ease,color .15s ease;
   }
   .upload-remove-btn:hover{background:var(--nonveg);color:#fff;}
+  .upload-zone.processing{pointer-events:none;opacity:.75;}
+  .upload-spinner{
+    width:16px;height:16px;border-radius:50%;flex:0 0 auto;
+    border:2px solid var(--rule);border-top-color:var(--maroon);
+    animation:upload-spin .7s linear infinite;
+  }
+  @keyframes upload-spin{to{transform:rotate(360deg);}}
   .search-row{display:flex;gap:8px;margin-bottom:12px;}
   .search-row input{flex:1;border:1.3px solid var(--rule);border-radius:9px;padding:9px 11px;font-size:13.5px;background:var(--paper);outline:none;}
   .search-row input:focus{border-color:var(--maroon);}
@@ -304,6 +311,14 @@
     imageHint.textContent = hintText;
     uploadEmpty.style.display = 'none';
     uploadFilled.style.display = '';
+    uploadZone.classList.remove('processing');
+  }
+  function setUploadProcessing(isProcessing, label){
+    uploadZone.classList.toggle('processing', isProcessing);
+    if (isProcessing){
+      uploadFileName.innerHTML = '<span class="upload-spinner"></span> ' + esc(label || 'Processing…');
+      imageHint.textContent = '';
+    }
   }
   function handleSelectedFile(file){
     if (!file) return;
@@ -435,14 +450,22 @@
     };
 
     submitBtn.disabled = true;
+    var originalBtnText = submitBtn.textContent;
     formStatus.textContent = '';
     formStatus.className = 'admin-status';
 
     var wasEdit = !!editingId;
     var file = fImage.files[0];
+    if (file){
+      setUploadProcessing(true, 'Resizing image…');
+    } else {
+      submitBtn.textContent = 'Saving…';
+    }
     var imagesPromise = file ? buildImagesPayload(file) : Promise.resolve(null);
 
     imagesPromise.then(function(images){
+      if (file) setUploadProcessing(true, 'Uploading photo…');
+      submitBtn.textContent = 'Saving…';
       var payload = editingId
         ? { action: 'update', id: editingId, dish: dish }
         : { action: 'create', categoryId: fCategory.value, dish: dish };
@@ -460,10 +483,11 @@
         formStatus.className = 'admin-status success';
       })
       .catch(function(err){
+        if (file) setUploadProcessing(false);
         formStatus.textContent = err.message || 'Something went wrong.';
         formStatus.className = 'admin-status error';
       })
-      .finally(function(){ submitBtn.disabled = false; });
+      .finally(function(){ submitBtn.disabled = false; submitBtn.textContent = originalBtnText; });
   });
 
   function loadMenu(){
