@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Navarang — Order</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<meta name="theme-color" content="#123C26">
+<meta name="theme-color" content="#0A2A12">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
@@ -13,7 +13,13 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Yatra+One&family=Aref+Ruqaa:wght@400;700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
-  :root,
+  /* Default palette — sampled directly from navrang_logo.png (deep emblem green + halal gold) */
+  :root{
+    --paper:#F7F1DE; --paper-soft:#EDE3C2; --ink:#16231A;
+    --maroon:#12401C; --maroon-deep:#0A2A12;
+    --turmeric:#B3821E; --turmeric-light:#E7CB86;
+    --leaf:#4C7A1E; --nonveg:#A83A28; --rule:rgba(22,35,26,.16);
+  }
   html[data-theme="classic"]{
     --paper:#F9EFD8; --paper-soft:#F2E6C6; --ink:#2A2016;
     --maroon:#7A1220; --maroon-deep:#5A0D18;
@@ -21,10 +27,10 @@
     --leaf:#3F5D3A; --nonveg:#7A1220; --rule:rgba(42,32,22,.16);
   }
   html[data-theme="emerald"]{
-    --paper:#F5F2E2; --paper-soft:#EAE4CB; --ink:#1C2A1B;
-    --maroon:#1F5C3A; --maroon-deep:#123C26;
-    --turmeric:#C9A227; --turmeric-light:#E9D98D;
-    --leaf:#2E7D4F; --nonveg:#A6342E; --rule:rgba(28,42,27,.16);
+    --paper:#F7F1DE; --paper-soft:#EDE3C2; --ink:#16231A;
+    --maroon:#12401C; --maroon-deep:#0A2A12;
+    --turmeric:#B3821E; --turmeric-light:#E7CB86;
+    --leaf:#4C7A1E; --nonveg:#A83A28; --rule:rgba(22,35,26,.16);
   }
   html[data-theme="royal"]{
     --paper:#F3EFE3; --paper-soft:#E7E1CE; --ink:#1B1A2E;
@@ -94,6 +100,7 @@
     width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.25);
     background:rgba(255,255,255,.08);color:var(--paper);
     display:flex;align-items:center;justify-content:center;cursor:pointer;
+    text-decoration:none;
     transition:transform .15s ease,background .15s ease;
   }
   .icon-btn svg{width:17px;height:17px;}
@@ -259,6 +266,9 @@
       <span class="brand-ar">نڤارنگ</span>
     </div>
     <div class="topbar-actions">
+      <a class="icon-btn" href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" title="Follow us on Instagram" aria-label="Follow us on Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
       <button class="icon-btn" id="waiterBtn" title="Call waiter" aria-label="Call waiter">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
       </button>
