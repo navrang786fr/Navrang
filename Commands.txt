@@ -18,3 +18,17 @@ Generate QR Code menu card
 2. QR LInk : https://navrang786fr.github.io/Navrang/order.html
 3. purpose : customers can scan the QR code to open menu from there mobile to order food items   
 4. Size of the card : as you recommend
+
+https://navrang786fr.github.io/Navrang/order.html?lang=te
+
+https://navrang786fr.github.io/Navrang/order.html?lang=en
+
+
+
+
+https://navrang786fr.github.io/Navrang/admin/login.html
+admin login:
+------------------------
+
+admin	
+3BzfmisHACLW	
