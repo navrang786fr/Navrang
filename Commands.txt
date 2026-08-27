@@ -1,0 +1,20 @@
+Commands:
+
+Category:
+generate an indian dish style image for "egg-curries" and jpg image format with 50px X 50px size
+
+
+Main Dish
+generate an indian dish style image for "Egg Keema" and jpg image format with 500px X 500px size keep 10px padding for dish
+generate an indian dish style image for "Egg Keema" and jpg image format with 100px X 100px size
+
+
+
+
+
+
+Generate QR Code menu card
+1. display logo
+2. QR LInk : https://navrang786fr.github.io/Navrang/order.html
+3. purpose : customers can scan the QR code to open menu from there mobile to order food items   
+4. Size of the card : as you recommend
