@@ -28,7 +28,7 @@ var MENU_DATA = {
   ],
   "veg-curries": [
     { id: 23, name: "Batani Curry", nameTe: "బటానీ కర్రీ", price: 110, veg: true, thumb: "images/menu/batani-curry-100.jpg", photo: "images/menu/batani-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
-    { id: 24, name: "Dal Curry", nameTe: "దాల్ కర్రీ", price: 110, veg: true, status: "Active", weeklyDishInd: false },
+    { id: 24, name: "Dal Curry", nameTe: "దాల్ కర్రీ", price: 110, veg: true, thumb: "images/menu/dal-curry-100.jpg", photo: "images/menu/dal-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 25, name: "Dal Tadka", nameTe: "దాల్ తడ్కా", price: 130, veg: true, thumb: "images/menu/dal-tadka-100.jpg", photo: "images/menu/dal-tadka-500.jpg", status: "Active", weeklyDishInd: false },
     { id: 26, name: "Kaju Curry", nameTe: "కాజు కర్రీ", price: 200, veg: true, thumb: "images/menu/kaju-curry-100.jpg", photo: "images/menu/kaju-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 27, name: "Kaju Paneer", nameTe: "కాజు పనీర్", price: 220, veg: true, thumb: "images/menu/kaju-paneer-100.jpg", photo: "images/menu/kaju-paneer-500.jpg", top: false, status: "Active", weeklyDishInd: false },
