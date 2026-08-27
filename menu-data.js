@@ -15,7 +15,7 @@ var MENU_DATA = {
   "non-veg-starter": [
     { id: 11, name: "Chicken 65", nameTe: "చికెన్ 65", price: 260, veg: false, top: true, status: "Active", weeklyDishInd: false },
     { id: 12, name: "Chicken Bone Fry", nameTe: "చికెన్ బోన్ ఫ్రై", price: 180, veg: false, status: "Active", weeklyDishInd: false },
-    { id: 13, name: "Chicken Bone Roast", nameTe: "చికెన్ బోన్ రోస్ట్", price: 200, veg: false, status: "Active", weeklyDishInd: false },
+    { id: 13, name: "Chicken Bone Roast", nameTe: "చికెన్ బోన్ రోస్ట్", price: 200, veg: false, thumb: "images/menu/chicken-bone-roast-100.jpg", photo: "images/menu/chicken-bone-roast-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 14, name: "Chicken Boneless Fry", nameTe: "చికెన్ బోన్‌లెస్ ఫ్రై", price: 230, veg: false, thumb: "images/menu/chicken-boneless-fry-100.jpg", photo: "images/menu/chicken-boneless-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 15, name: "Chicken Boneless Roast", nameTe: "చికెన్ బోన్‌లెస్ రోస్ట్", price: 240, veg: false, thumb: "images/menu/chicken-boneless-roast-100.jpg", photo: "images/menu/chicken-boneless-roast-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 16, name: "Chicken Manchuria", nameTe: "చికెన్ మంచూరియా", price: 260, veg: false, status: "Active", weeklyDishInd: false },
