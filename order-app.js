@@ -26,7 +26,10 @@
     var payload = JSON.stringify({ type: type, value: value, sessionId: getSessionId() });
     try {
       if (navigator.sendBeacon){
-        navigator.sendBeacon(TRACK_ENDPOINT, new Blob([payload], { type: 'application/json' }));
+        // text/plain is CORS-safelisted, so the beacon never needs a preflight
+        // (which navigator.sendBeacon can't reliably perform) - the server
+        // JSON.parses the body regardless of Content-Type.
+        navigator.sendBeacon(TRACK_ENDPOINT, new Blob([payload], { type: 'text/plain' }));
         return;
       }
     } catch (e) {}
@@ -198,6 +201,7 @@
     chip.addEventListener('click', function(){
       var section = document.getElementById('sec-' + cat.id);
       if (section) section.scrollIntoView({ behavior:'smooth', block:'start' });
+      trackEvent('category_click', cat.short);
     });
     chipRow.appendChild(chip);
 
@@ -301,11 +305,13 @@
     vegOnly = !vegOnly;
     vegToggle.classList.toggle('active', vegOnly);
     applyFilters();
+    trackEvent('veg_filter', vegOnly ? 'on' : 'off');
   });
   topToggle.addEventListener('click', function(){
     topOnly = !topOnly;
     topToggle.classList.toggle('active', topOnly);
     applyFilters();
+    trackEvent('top_filter', topOnly ? 'on' : 'off');
   });
   priceFilter.addEventListener('change', function(){
     var v = priceFilter.value;
@@ -316,6 +322,7 @@
       priceMax = parseInt(parts[1], 10);
     }
     applyFilters();
+    trackEvent('price_filter', v || 'any');
   });
 
   /* ---------- Active chip highlight ---------- */

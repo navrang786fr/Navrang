@@ -143,6 +143,20 @@
     }).join('');
   }
 
+  var TYPE_LABELS = {
+    search: 'Search', item_view: 'Item View', category_click: 'Category Click',
+    veg_filter: 'Veg Filter', top_filter: 'Top Picks Filter', price_filter: 'Price Filter'
+  };
+  function fmtType(t){ return TYPE_LABELS[t] || t; }
+  function fmtLocation(r){
+    var parts = [r.city, r.region, r.country].filter(Boolean);
+    return parts.length ? parts.join(', ') : '<span style="opacity:.5;">—</span>';
+  }
+  function fmtDevice(r){
+    if (!r.device) return '<span style="opacity:.5;">—</span>';
+    return esc(r.device.browser) + ' · ' + esc(r.device.os);
+  }
+
   function render(){
     var rows = getFiltered();
     var searches = rows.filter(function(r){ return r.type === 'search'; });
@@ -160,11 +174,13 @@
     var listWrap = document.getElementById('listWrap');
     var recent = rows.slice().sort(function(a,b){ return new Date(b.timestamp) - new Date(a.timestamp); }).slice(0, 200);
     if (!recent.length){ listWrap.innerHTML = '<div class="admin-empty">No activity in this range.</div>'; return; }
-    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>When</th><th>Type</th><th>Value</th><th>Session</th></tr></thead><tbody>' +
+    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>When</th><th>Type</th><th>Value</th><th>Location</th><th>Device</th><th>Session</th></tr></thead><tbody>' +
       recent.map(function(r){
         return '<tr><td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td>' +
-          '<td>' + (r.type === 'search' ? 'Search' : 'Item View') + '</td>' +
+          '<td>' + esc(fmtType(r.type)) + '</td>' +
           '<td>' + esc(r.value) + '</td>' +
+          '<td>' + fmtLocation(r) + '</td>' +
+          '<td>' + fmtDevice(r) + '</td>' +
           '<td style="opacity:.6;font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;">' + esc((r.sessionId || '').slice(0, 8)) + '</td></tr>';
       }).join('') + '</tbody></table>';
   }

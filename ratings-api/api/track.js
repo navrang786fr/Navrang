@@ -8,7 +8,7 @@ const { requireAuth } = require('./_lib/auth.js');
 const { getRequestInfo } = require('./_lib/requestInfo.js');
 const { isRateLimited } = require('./_lib/rateLimit.js');
 
-const ALLOWED_TYPES = ['search', 'item_view'];
+const ALLOWED_TYPES = ['search', 'item_view', 'category_click', 'veg_filter', 'top_filter', 'price_filter'];
 const THROTTLE_WINDOW_MS = 5 * 60 * 1000;
 const MAX_EVENTS_PER_IP = 60;
 
@@ -53,16 +53,21 @@ module.exports = async function handler(req, res) {
   if (ALLOWED_TYPES.indexOf(type) === -1) { res.status(400).json({ error: 'Invalid type' }); return; }
   if (!value) { res.status(400).json({ error: 'value is required' }); return; }
 
-  const ip = getRequestInfo(req).ip;
+  const info = getRequestInfo(req);
 
   try {
     const existing = await readJsonArray(adminRepo, 'activity-log.json', adminToken);
-    if (isRateLimited(existing, THROTTLE_WINDOW_MS, MAX_EVENTS_PER_IP, function (e) { return e.ip === ip; })) {
+    if (isRateLimited(existing, THROTTLE_WINDOW_MS, MAX_EVENTS_PER_IP, function (e) { return e.ip === info.ip; })) {
       res.status(429).json({ error: 'Too many events, slow down' });
       return;
     }
     await writeJsonArrayWithRetry(adminRepo, 'activity-log.json', adminToken, function (arr) {
-      arr.push({ type, value, sessionId: sessionId || null, ip: ip, timestamp: new Date().toISOString() });
+      arr.push({
+        type, value, sessionId: sessionId || null,
+        ip: info.ip, country: info.country, region: info.region, city: info.city,
+        device: info.device, userAgent: info.userAgent,
+        timestamp: new Date().toISOString()
+      });
       if (arr.length > 5000) arr.splice(0, arr.length - 5000);
     }, `Track: ${type} "${value}"`);
     res.status(200).json({ ok: true });
