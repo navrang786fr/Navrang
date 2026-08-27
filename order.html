@@ -138,6 +138,66 @@
     box-shadow:0 4px 12px rgba(0,0,0,.3);
   }
   .lightbox-close:active{transform:scale(.9);}
+
+  /* ---------- Rate your food ---------- */
+  .rate-cta{
+    display:inline-flex;align-items:center;gap:7px;margin:2px auto 12px;
+    background:linear-gradient(135deg,var(--turmeric),var(--maroon-deep));color:#fff;border:none;
+    padding:10px 18px;border-radius:22px;font-size:13px;font-weight:700;cursor:pointer;
+    box-shadow:var(--shadow-sm);transition:transform .12s ease;
+    font-family:'Karla','Noto Sans Telugu',sans-serif;
+  }
+  .rate-cta:active{transform:scale(.96);}
+  .rate-cta svg{width:15px;height:15px;flex:0 0 auto;}
+
+  .rate-dialog{
+    position:fixed;inset:0;z-index:95;background:rgba(10,15,10,.82);
+    display:flex;align-items:center;justify-content:center;padding:18px;
+    opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .rate-dialog.show{opacity:1;pointer-events:auto;}
+  .rate-card{
+    position:relative;max-width:min(92vw,440px);width:100%;max-height:88vh;overflow-y:auto;
+    background:var(--paper);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);
+    padding:20px 18px 18px;-webkit-overflow-scrolling:touch;
+  }
+  .rate-card h3{margin:2px 0 16px;font-family:'Yatra One',cursive;font-size:21px;color:var(--maroon-deep);text-align:center;}
+  .rate-field{margin-bottom:14px;}
+  .rate-field label{display:block;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--maroon);margin-bottom:6px;}
+  .rate-card input[type="text"],.rate-card select,.rate-card textarea{
+    width:100%;border:1.3px solid var(--rule);border-radius:9px;
+    padding:10px 12px;font-size:14px;color:var(--ink);background:var(--paper-soft);
+    outline:none;resize:none;font-family:'Karla','Noto Sans Telugu',sans-serif;
+  }
+  .rate-card input:focus,.rate-card select:focus,.rate-card textarea:focus{border-color:var(--maroon);}
+  .dish-picker-row{display:flex;gap:8px;}
+  .dish-picker-row select{flex:1;min-width:0;}
+  .dish-add-btn{
+    flex:0 0 auto;background:var(--maroon);color:#fff;border:none;border-radius:9px;
+    padding:0 16px;font-weight:700;font-size:13px;cursor:pointer;
+  }
+  .dish-add-btn:active{transform:scale(.95);}
+  .dish-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+  .dish-chip{
+    display:inline-flex;align-items:center;gap:5px;background:var(--turmeric-light);
+    color:var(--maroon-deep);border-radius:14px;padding:5px 6px 5px 11px;font-size:12.5px;font-weight:700;
+    border:1px solid rgba(216,154,27,.4);
+  }
+  .dish-chip button{background:none;border:none;color:var(--maroon-deep);font-weight:800;cursor:pointer;padding:0 4px;font-size:14px;line-height:1;}
+  .star-picker{display:flex;gap:4px;justify-content:center;padding:2px 0 4px;}
+  .star-btn{background:none;border:none;font-size:32px;line-height:1;color:var(--rule);cursor:pointer;transition:color .1s ease,transform .1s ease;padding:2px;}
+  .star-btn.filled{color:var(--turmeric);}
+  .star-btn:active{transform:scale(.88);}
+  .rate-submit{
+    width:100%;background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));color:#fff;border:none;
+    padding:13px;border-radius:11px;font-size:14.5px;font-weight:700;cursor:pointer;
+    box-shadow:var(--shadow-sm);transition:transform .12s ease;font-family:inherit;
+  }
+  .rate-submit:active:not(:disabled){transform:scale(.98);}
+  .rate-submit:disabled{opacity:.5;cursor:not-allowed;}
+  .rate-status{text-align:center;font-size:12.5px;margin:10px 0 0;min-height:16px;font-weight:600;}
+  .rate-status.error{color:var(--nonveg);}
+  .rate-status.success{color:var(--leaf);}
   .hero-strip .ar{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:21px;direction:rtl;color:var(--maroon-deep);margin-bottom:1px;}
   .hero-divider{display:flex;align-items:center;justify-content:center;gap:7px;margin:8px 0 9px;}
   .hero-divider span{width:38px;height:1px;background:linear-gradient(90deg,transparent,var(--turmeric));}
@@ -343,6 +403,10 @@
 
   <div class="menu-footer">
     <div class="hero-divider" aria-hidden="true"><span></span><i></i><span></span></div>
+    <button class="rate-cta" id="rateCta" type="button">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18.2 22 12 18.1 5.8 22l1.7-7.6L2 9.6l7.1-.7z"/></svg>
+      <span id="rateCtaLabel">Rate Your Food</span>
+    </button>
     <p id="footerNote">Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.</p>
   </div>
 
@@ -353,6 +417,46 @@
     <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close">✕</button>
     <img id="lightboxImg" src="" alt="">
     <p class="lightbox-caption" id="lightboxCaption"></p>
+  </div>
+</div>
+
+<div class="rate-dialog" id="rateDialog" role="dialog" aria-label="Rate your food" aria-hidden="true">
+  <div class="rate-card" id="rateCard">
+    <button class="lightbox-close" id="rateClose" type="button" aria-label="Close">✕</button>
+    <h3 id="rateTitle">Rate Your Food</h3>
+
+    <div class="rate-field">
+      <label id="rateNameLabel" for="rateName">Your Name</label>
+      <input type="text" id="rateName" maxlength="60" autocomplete="off">
+    </div>
+
+    <div class="rate-field">
+      <label id="rateDishLabel" for="rateDishSelect">Dishes You Had</label>
+      <div class="dish-picker-row">
+        <select id="rateDishSelect"></select>
+        <button type="button" class="dish-add-btn" id="rateDishAdd">+</button>
+      </div>
+      <div class="dish-chip-row" id="rateDishChips"></div>
+    </div>
+
+    <div class="rate-field">
+      <label id="rateStarsLabel">Your Rating</label>
+      <div class="star-picker" id="starPicker">
+        <button type="button" class="star-btn" data-star="1">★</button>
+        <button type="button" class="star-btn" data-star="2">★</button>
+        <button type="button" class="star-btn" data-star="3">★</button>
+        <button type="button" class="star-btn" data-star="4">★</button>
+        <button type="button" class="star-btn" data-star="5">★</button>
+      </div>
+    </div>
+
+    <div class="rate-field">
+      <label id="rateCommentsLabel" for="rateComments">Comments (optional)</label>
+      <textarea id="rateComments" maxlength="500" rows="3"></textarea>
+    </div>
+
+    <button class="rate-submit" id="rateSubmit" type="button">Submit Rating</button>
+    <p class="rate-status" id="rateStatus"></p>
   </div>
 </div>
 
