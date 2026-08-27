@@ -10,7 +10,33 @@
 <style>
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   @media (max-width:560px){ .form-grid{grid-template-columns:1fr;} }
+  .admin-field-wide{grid-column:1 / -1;}
   .form-actions{display:flex;gap:10px;align-items:center;}
+
+  .upload-zone{
+    display:flex;align-items:center;justify-content:center;
+    border:1.6px dashed var(--rule);border-radius:12px;
+    background:var(--paper);cursor:pointer;position:relative;
+    padding:20px 16px;transition:border-color .15s ease,background .15s ease;
+  }
+  .upload-zone:hover,.upload-zone.dragover{border-color:var(--maroon);background:rgba(122,18,32,.03);}
+  .upload-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
+  .upload-zone-empty{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;color:var(--maroon);}
+  .upload-zone-empty svg{width:26px;height:26px;color:var(--turmeric);}
+  .upload-zone-text{font-size:13px;font-weight:600;color:var(--ink);}
+  .upload-zone-text strong{color:var(--maroon);}
+  .upload-zone-sub{font-size:11px;color:var(--maroon);opacity:.65;}
+  .upload-zone-filled{display:flex;align-items:center;gap:12px;width:100%;text-align:left;}
+  .upload-preview-img{width:60px;height:60px;object-fit:cover;border-radius:10px;border:1px solid var(--rule);flex:0 0 auto;background:var(--paper-soft);}
+  .upload-filled-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .upload-filename{font-size:13px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .upload-hint{font-size:11px;color:var(--maroon);opacity:.75;line-height:1.4;}
+  .upload-remove-btn{
+    flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:none;
+    background:var(--paper-soft);color:var(--nonveg);font-size:13px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:background .15s ease,color .15s ease;
+  }
+  .upload-remove-btn:hover{background:var(--nonveg);color:#fff;}
   .search-row{display:flex;gap:8px;margin-bottom:12px;}
   .search-row input{flex:1;border:1.3px solid var(--rule);border-radius:9px;padding:9px 11px;font-size:13.5px;background:var(--paper);outline:none;}
   .search-row input:focus{border-color:var(--maroon);}
@@ -61,14 +87,26 @@
             <label class="admin-checkbox"><input type="checkbox" id="fTop"> Top Pick</label>
             <label class="admin-checkbox"><input type="checkbox" id="fWeekly"> Weekly Dish</label>
           </div>
-          <div class="admin-field">
+          <div class="admin-field admin-field-wide">
             <label for="fImage">Dish Photo (optional)</label>
-            <input type="file" id="fImage" accept="image/*">
-            <p id="imageHint" style="font-size:11px;color:var(--maroon);opacity:.75;margin:5px 0 0;"></p>
-          </div>
-          <div class="admin-field" id="imagePreviewWrap" style="display:none;">
-            <label>Preview (100×100 thumb)</label>
-            <img id="imagePreview" style="width:70px;height:70px;object-fit:cover;border-radius:8px;border:1px solid var(--rule);">
+            <label class="upload-zone" id="uploadZone" for="fImage">
+              <input type="file" id="fImage" accept="image/*" class="upload-input">
+
+              <div class="upload-zone-empty" id="uploadEmpty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+                <span class="upload-zone-text"><strong>Click to upload</strong> or drag and drop</span>
+                <span class="upload-zone-sub">JPG or PNG, up to 8MB</span>
+              </div>
+
+              <div class="upload-zone-filled" id="uploadFilled" style="display:none;">
+                <img id="imagePreview" class="upload-preview-img" alt="">
+                <div class="upload-filled-info">
+                  <span class="upload-filename" id="uploadFileName"></span>
+                  <span class="upload-hint" id="imageHint"></span>
+                </div>
+                <button type="button" class="upload-remove-btn" id="removeImageBtn" aria-label="Remove photo" title="Remove photo">✕</button>
+              </div>
+            </label>
           </div>
         </div>
         <div class="form-actions">
@@ -110,8 +148,12 @@
   var fWeekly = document.getElementById('fWeekly');
   var fImage = document.getElementById('fImage');
   var imageHint = document.getElementById('imageHint');
-  var imagePreviewWrap = document.getElementById('imagePreviewWrap');
   var imagePreview = document.getElementById('imagePreview');
+  var uploadZone = document.getElementById('uploadZone');
+  var uploadEmpty = document.getElementById('uploadEmpty');
+  var uploadFilled = document.getElementById('uploadFilled');
+  var uploadFileName = document.getElementById('uploadFileName');
+  var removeImageBtn = document.getElementById('removeImageBtn');
   var submitBtn = document.getElementById('submitBtn');
   var cancelBtn = document.getElementById('cancelBtn');
   var formStatus = document.getElementById('formStatus');
@@ -198,23 +240,58 @@
     });
   }
 
-  fImage.addEventListener('change', function(){
-    var file = fImage.files[0];
-    if (!file){ imageHint.textContent = ''; imagePreviewWrap.style.display = 'none'; return; }
+  function showEmptyUpload(){
+    uploadEmpty.style.display = '';
+    uploadFilled.style.display = 'none';
+    imageHint.textContent = '';
+  }
+  function showFilledUpload(previewSrc, fileName, hintText){
+    imagePreview.src = previewSrc;
+    uploadFileName.textContent = fileName;
+    imageHint.textContent = hintText;
+    uploadEmpty.style.display = 'none';
+    uploadFilled.style.display = '';
+  }
+  function handleSelectedFile(file){
+    if (!file) return;
     var slug = slugify(fName.value) || 'dish';
-    imageHint.textContent = 'Will store as images/menu/' + slug + '-100.jpg / -500.jpg (and the original under images/menu/original/)';
     resizeImageToDataUrl(file, 100, 0.85).then(function(dataUrl){
-      imagePreview.src = dataUrl;
-      imagePreviewWrap.style.display = '';
+      showFilledUpload(dataUrl, file.name, 'Will store as images/menu/' + slug + '-100.jpg / -500.jpg (+ original)');
     }).catch(function(){});
+  }
+
+  fImage.addEventListener('change', function(){
+    handleSelectedFile(fImage.files[0]);
+  });
+
+  uploadZone.addEventListener('dragover', function(e){
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+  });
+  uploadZone.addEventListener('dragleave', function(){
+    uploadZone.classList.remove('dragover');
+  });
+  uploadZone.addEventListener('drop', function(e){
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    var file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!file) return;
+    fImage.files = e.dataTransfer.files;
+    handleSelectedFile(file);
+  });
+
+  removeImageBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    fImage.value = '';
+    showEmptyUpload();
   });
 
   function resetForm(){
     editingId = null;
     form.reset();
     fImage.value = '';
-    imageHint.textContent = '';
-    imagePreviewWrap.style.display = 'none';
+    showEmptyUpload();
     fCategory.disabled = false;
     formHeading.textContent = 'Create New Dish';
     submitBtn.textContent = 'Create Dish';
@@ -234,6 +311,12 @@
     fVeg.checked = !!dish.veg;
     fTop.checked = !!dish.top;
     fWeekly.checked = !!dish.weeklyDishInd;
+    fImage.value = '';
+    if (dish.thumb) {
+      showFilledUpload('../' + dish.thumb, dish.name, 'Current photo — choose a new file to replace it');
+    } else {
+      showEmptyUpload();
+    }
     formHeading.textContent = 'Edit Dish #' + dish.id;
     submitBtn.textContent = 'Save Changes';
     cancelBtn.style.display = '';
