@@ -114,7 +114,7 @@ var MENU_DATA = {
     { id: 95, name: "Cool Drinks", nameTe: "కూల్ డ్రింక్స్", price: null, veg: true, thumb: "images/menu/cool-drinks-100.jpg", photo: "images/menu/cool-drinks-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 96, name: "Ice Cream", nameTe: "ఐస్ క్రీం", price: null, veg: true, thumb: "images/menu/ice-cream-100.jpg", photo: "images/menu/ice-cream-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 97, name: "Kheer", nameTe: "ఖీర్", price: 50, veg: true, status: "Active", weeklyDishInd: false },
-    { id: 98, name: "Tea", nameTe: "టీ", price: 20, veg: true, status: "Active", weeklyDishInd: false },
+    { id: 98, name: "Tea", nameTe: "టీ", price: 20, veg: true, thumb: "images/menu/tea-100.jpg", photo: "images/menu/tea-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 99, name: "Coffee", nameTe: "కాఫీ", price: 20, veg: true, thumb: "images/menu/coffee-100.jpg", photo: "images/menu/coffee-500.jpg", top: false, status: "Active", weeklyDishInd: false }
   ]
 };
