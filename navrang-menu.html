@@ -96,6 +96,12 @@
     padding:22px 10px 22px;
     margin-bottom:16px;
   }
+  .hero-logo-img{
+    width:64px;height:64px;border-radius:50%;object-fit:cover;
+    background:#fff;border:2px solid var(--turmeric);
+    box-shadow:0 0 0 3px rgba(243,217,138,.25);
+    display:block;margin:0 auto 8px;
+  }
   .hero .ar-name{
     font-family:'Aref Ruqaa',serif;
     font-size:30px;font-weight:700;
@@ -130,7 +136,8 @@
     background:var(--maroon);color:var(--turmeric-light);
     padding:8px 14px;margin-bottom:16px;
   }
-  .runhead .rname-group{display:flex;align-items:baseline;gap:10px;}
+  .runhead .rname-group{display:flex;align-items:center;gap:10px;}
+  .runhead-logo{width:26px;height:26px;border-radius:50%;object-fit:cover;background:#fff;border:1.5px solid var(--turmeric);flex:0 0 auto;}
   .runhead .rname{font-family:'Yatra One',cursive;font-size:24px;color:#F7E7B4;letter-spacing:1px;}
   .runhead .rname-ar{font-family:'Aref Ruqaa',serif;font-size:18px;font-weight:700;direction:rtl;color:var(--turmeric);}
   .runhead .rtag{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.85;}
@@ -249,6 +256,7 @@
 <!-- ===================== PAGE 1 ===================== -->
 <section class="sheet">
   <div class="hero">
+    <img class="hero-logo-img" src="navrang_logo.png" alt="Navrang">
     <div class="ar-name">نڤارنگ</div>
     <h1>Navrang</h1>
     <div class="sub">Andhra Kitchen · Curry &amp; Charcoal</div>
@@ -294,6 +302,7 @@
 <section class="sheet">
   <div class="runhead">
     <span class="rname-group">
+      <img class="runhead-logo" src="navrang_logo.png" alt="">
       <span class="rname">Navrang</span>
       <span class="rname-ar">نڤارنگ</span>
     </span>
@@ -317,12 +326,12 @@
     </div>
   </div>
 
-  <div class="curries" id="chicken-curries">
+  <div class="curries category" id="chicken-curries">
     <div class="cat-head"><span class="cat-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 32h44a22 22 0 01-44 0z"/><path d="M24 30c0-6 2-9 2-9M32 30c0-8 3-11 3-11M40 30c0-6 2-9 2-9"/></svg></span>Chicken, Mutton &amp; Seafood Curries<span class="count"></span></div>
     <div class="items-2col"></div>
   </div>
 
-  <div class="specials" id="specials">
+  <div class="specials category" id="specials">
     <div class="cat-head"><span class="cat-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l7 16 17 2-13 12 4 18-15-9-15 9 4-18-13-12 17-2z"/></svg></span>Navrang Specials</div>
     <div class="specials-grid"></div>
   </div>
