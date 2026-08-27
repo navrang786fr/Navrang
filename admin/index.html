@@ -2,21 +2,45 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Navrang Admin</title>
+<title>Navrang Admin — Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A2A12">
 <link rel="icon" href="../navrang_logo.png">
 <link rel="stylesheet" href="admin-style.css">
 <style>
-  .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  @media (max-width:480px){ .home-grid{grid-template-columns:1fr;} }
-  .home-tile{
-    display:block;text-decoration:none;background:var(--paper-soft);border:1px solid var(--rule);
-    border-radius:13px;padding:16px;transition:transform .12s ease,box-shadow .12s ease;
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+  @media (max-width:640px){ .stat-grid{grid-template-columns:repeat(2,1fr);} }
+  .stat-card{
+    background:var(--paper-soft);border:1px solid var(--rule);border-radius:13px;
+    padding:14px 12px;text-align:center;
   }
-  .home-tile:active{transform:scale(.98);}
-  .home-tile h3{margin:0 0 4px;color:var(--maroon-deep);font-size:15px;}
-  .home-tile p{margin:0;font-size:12.5px;color:var(--ink);opacity:.75;}
+  .stat-card svg{color:var(--turmeric);margin-bottom:4px;}
+  .stat-card .val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--maroon-deep);}
+  .stat-card .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--maroon);font-weight:700;margin-top:4px;opacity:.85;}
+
+  .panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:720px){ .panel-grid{grid-template-columns:1fr;} }
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .panel-head h3{margin:0;font-size:14.5px;color:var(--maroon-deep);display:flex;align-items:center;gap:6px;}
+  .panel-icon{color:var(--turmeric);display:inline-flex;}
+  .panel-head a{font-size:11.5px;font-weight:700;color:var(--maroon);text-decoration:underline;}
+  .feed-item{
+    display:flex;justify-content:space-between;gap:8px;
+    padding:8px 0;border-bottom:1px solid var(--rule);font-size:12.5px;
+  }
+  .feed-item:last-child{border-bottom:none;}
+  .feed-item .main{min-width:0;}
+  .feed-item .main strong{color:var(--ink);}
+  .feed-item .sub{font-size:11px;color:var(--maroon);opacity:.7;margin-top:2px;}
+  .feed-item .when{flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--maroon);opacity:.75;white-space:nowrap;}
+
+  .quick-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+  .quick-link{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:700;color:var(--maroon);text-decoration:none;
+    border:1.3px solid var(--rule);border-radius:20px;padding:7px 14px;background:var(--paper-soft);
+  }
+  .quick-link svg{flex:0 0 auto;}
 </style>
 </head>
 <body>
@@ -31,37 +55,132 @@
   </div>
 
   <div class="admin-panel">
-    <h2>Welcome</h2>
-    <div class="home-grid">
-      <a class="home-tile" href="ratings.html">
-        <h3>Customer Ratings</h3>
-        <p>Browse and filter ratings submitted from the order page.</p>
-      </a>
-      <a class="home-tile" href="dishes.html">
-        <h3>Dish Rates</h3>
-        <p>Update prices/status or add new dishes to the live menu.</p>
-      </a>
-      <a class="home-tile" href="activity.html">
-        <h3>Customer Activity</h3>
-        <p>See what customers search for and which dishes they view.</p>
-      </a>
-      <a class="home-tile" href="audit-log.html">
-        <h3>Audit Log</h3>
-        <p>See every field change made to a dish, by whom and when.</p>
-      </a>
-      <a class="home-tile" href="access-log.html">
-        <h3>Access Log</h3>
-        <p>See who has signed in to this admin panel and when.</p>
-      </a>
+    <h2>Dashboard</h2>
+
+    <div class="stat-grid">
+      <div class="stat-card"><span class="stat-icon" data-icon="dishes"></span><div class="val" id="statDishes">–</div><div class="lbl">Dishes</div></div>
+      <div class="stat-card"><span class="stat-icon" data-icon="dishes"></span><div class="val" id="statActive">–</div><div class="lbl">Active Dishes</div></div>
+      <div class="stat-card"><span class="stat-icon" data-icon="ratings"></span><div class="val" id="statRatings">–</div><div class="lbl">Total Ratings</div></div>
+      <div class="stat-card"><span class="stat-icon" data-icon="ratings"></span><div class="val" id="statAvgRating">–</div><div class="lbl">Avg Rating</div></div>
+      <div class="stat-card"><span class="stat-icon" data-icon="activity"></span><div class="val" id="statSearchesToday">–</div><div class="lbl">Searches Today</div></div>
+      <div class="stat-card"><span class="stat-icon" data-icon="activity"></span><div class="val" id="statViewsToday">–</div><div class="lbl">Item Views Today</div></div>
+    </div>
+
+    <div class="panel-grid">
+      <div class="admin-card">
+        <div class="panel-head"><h3><span class="panel-icon" data-icon="audit"></span>Recent Dish Changes</h3><a href="audit-log.html">View all →</a></div>
+        <div id="auditFeed"><div class="admin-loading">Loading…</div></div>
+      </div>
+      <div class="admin-card">
+        <div class="panel-head"><h3><span class="panel-icon" data-icon="access"></span>Recent Sign-ins</h3><a href="access-log.html">View all →</a></div>
+        <div id="accessFeed"><div class="admin-loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <div class="quick-links">
+      <a class="quick-link" href="ratings.html"><span data-icon="ratings"></span>Customer Ratings</a>
+      <a class="quick-link" href="dishes.html"><span data-icon="dishes"></span>Dish Rates</a>
+      <a class="quick-link" href="activity.html"><span data-icon="activity"></span>Customer Activity</a>
+      <a class="quick-link" href="audit-log.html"><span data-icon="audit"></span>Audit Log</a>
+      <a class="quick-link" href="access-log.html"><span data-icon="access"></span>Access Log</a>
     </div>
   </div>
 </div>
 
 <script src="admin-shared.js"></script>
 <script>
-  if (AdminShared.requireAuthOrRedirect()) {
-    AdminShared.renderNav('home');
+(function(){
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('home');
+  var esc = AdminShared.esc;
+
+  document.querySelectorAll('[data-icon]').forEach(function(el){
+    el.innerHTML = AdminShared.icon(el.dataset.icon, el.classList.contains('stat-icon') ? 20 : 15);
+  });
+
+  function fmtDate(iso){
+    var d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString(undefined, { month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
   }
+  function isToday(iso){
+    var d = new Date(iso), now = new Date();
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+  }
+
+  // Dishes
+  AdminShared.apiFetch('/api/dishes').then(function(resp){
+    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok) throw new Error();
+    var all = Object.values(result.data.menu).reduce(function(a, c){ return a.concat(c); }, []);
+    document.getElementById('statDishes').textContent = all.length;
+    document.getElementById('statActive').textContent = all.filter(function(d){ return d.status === 'Active'; }).length;
+  }).catch(function(){
+    document.getElementById('statDishes').textContent = '—';
+    document.getElementById('statActive').textContent = '—';
+  });
+
+  // Ratings (public file)
+  fetch('../ratings.json', { cache: 'no-store' }).then(function(resp){ return resp.ok ? resp.json() : []; }).then(function(ratings){
+    ratings = Array.isArray(ratings) ? ratings : [];
+    document.getElementById('statRatings').textContent = ratings.length;
+    if (ratings.length){
+      var avg = ratings.reduce(function(a, r){ return a + (r.rating || 0); }, 0) / ratings.length;
+      document.getElementById('statAvgRating').textContent = avg.toFixed(1);
+    } else {
+      document.getElementById('statAvgRating').textContent = '–';
+    }
+  }).catch(function(){
+    document.getElementById('statRatings').textContent = '—';
+    document.getElementById('statAvgRating').textContent = '—';
+  });
+
+  // Activity (searches/views today)
+  AdminShared.apiFetch('/api/track').then(function(resp){
+    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok) throw new Error();
+    var todays = result.data.filter(function(r){ return isToday(r.timestamp); });
+    document.getElementById('statSearchesToday').textContent = todays.filter(function(r){ return r.type === 'search'; }).length;
+    document.getElementById('statViewsToday').textContent = todays.filter(function(r){ return r.type === 'item_view'; }).length;
+  }).catch(function(){
+    document.getElementById('statSearchesToday').textContent = '—';
+    document.getElementById('statViewsToday').textContent = '—';
+  });
+
+  // Recent audit changes
+  AdminShared.apiFetch('/api/audit-log').then(function(resp){
+    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok) throw new Error();
+    var rows = result.data.slice(0, 5);
+    var el = document.getElementById('auditFeed');
+    if (!rows.length){ el.innerHTML = '<div class="admin-empty" style="padding:14px;">No changes yet.</div>'; return; }
+    el.innerHTML = rows.map(function(r){
+      var desc = r.action === 'create' ? 'created' : ('updated ' + Object.keys(r.changes || {}).join(', '));
+      return '<div class="feed-item"><div class="main"><strong>' + esc(r.dishName) + '</strong> ' + esc(desc) + '<div class="sub">by ' + esc(r.username) + '</div></div><div class="when">' + esc(fmtDate(r.timestamp)) + '</div></div>';
+    }).join('');
+  }).catch(function(){
+    document.getElementById('auditFeed').innerHTML = '<div class="admin-empty" style="padding:14px;">Could not load.</div>';
+  });
+
+  // Recent sign-ins
+  AdminShared.apiFetch('/api/access-log').then(function(resp){
+    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok) throw new Error();
+    var rows = result.data.slice(0, 5);
+    var el = document.getElementById('accessFeed');
+    if (!rows.length){ el.innerHTML = '<div class="admin-empty" style="padding:14px;">No sign-ins yet.</div>'; return; }
+    el.innerHTML = rows.map(function(r){
+      var loc = [r.city, r.country].filter(Boolean).join(', ') || 'Unknown location';
+      return '<div class="feed-item"><div class="main"><strong>' + esc(r.username) + '</strong> · ' + esc(r.outcome) + '<div class="sub">' + esc(loc) + (r.device ? ' · ' + esc(r.device.browser) + ' / ' + esc(r.device.os) : '') + '</div></div><div class="when">' + esc(fmtDate(r.timestamp)) + '</div></div>';
+    }).join('');
+  }).catch(function(){
+    document.getElementById('accessFeed').innerHTML = '<div class="admin-empty" style="padding:14px;">Could not load.</div>';
+  });
+})();
 </script>
 
 </body>

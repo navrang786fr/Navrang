@@ -34,12 +34,15 @@ a{color:inherit;}
 
 .admin-nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
 .admin-nav-link{
+  display:inline-flex;align-items:center;gap:6px;
   font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:20px;
   text-decoration:none;color:var(--turmeric-light);border:1px solid rgba(255,255,255,.25);
   background:rgba(255,255,255,.06);
 }
+.admin-nav-link svg,.admin-nav-logout svg{flex:0 0 auto;}
 .admin-nav-link.active{background:var(--turmeric);color:var(--maroon-deep);border-color:var(--turmeric);}
 .admin-nav-logout{
+  display:inline-flex;align-items:center;gap:6px;
   margin-left:auto;font-size:12px;font-weight:700;padding:7px 12px;border-radius:20px;
   border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:var(--turmeric-light);cursor:pointer;
 }
@@ -55,11 +58,17 @@ a{color:inherit;}
 
 .admin-field{margin-bottom:12px;}
 .admin-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--maroon);margin-bottom:5px;}
-.admin-field input[type="text"],.admin-field input[type="number"],.admin-field input[type="password"],.admin-field select{
+.admin-field input[type="text"],.admin-field input[type="number"],.admin-field input[type="password"],.admin-field input[type="date"],.admin-field select{
   width:100%;border:1.3px solid var(--rule);border-radius:9px;padding:9px 11px;font-size:14px;
-  color:var(--ink);background:var(--paper);outline:none;
+  color:var(--ink);background:var(--paper);outline:none;font-family:inherit;
 }
 .admin-field input:focus,.admin-field select:focus{border-color:var(--maroon);}
+.admin-field input[type="date"]{cursor:pointer;}
+.admin-field input[type="date"]::-webkit-calendar-picker-indicator{
+  cursor:pointer;border-radius:4px;padding:3px;
+  filter:invert(21%) sepia(53%) saturate(1400%) hue-rotate(100deg) brightness(85%);
+}
+.admin-field input[type="date"]::-webkit-calendar-picker-indicator:hover{background:var(--paper-soft);}
 .admin-checkbox{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink);}
 
 .admin-btn{

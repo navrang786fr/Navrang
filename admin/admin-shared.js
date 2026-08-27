@@ -43,23 +43,39 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+
+  var ICON_PATHS = {
+    home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"/>',
+    ratings: '<path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18.2 22 12 18.1 5.8 22l1.7-7.6L2 9.6l7.1-.7z"/>',
+    dishes: '<path d="M20.59 13.41L11 3.83A2 2 0 009.83 3H4a1 1 0 00-1 1v5.83a2 2 0 00.59 1.41l9.58 9.59a2 2 0 002.83 0l4.59-4.59a2 2 0 000-2.83z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/>',
+    activity: '<path d="M3 12h4l2.5 7L13 5l2.5 7H21"/>',
+    audit: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6a1 1 0 011 1v1H8V4a1 1 0 011-1z"/><path d="M9 11h6M9 15h4"/>',
+    access: '<path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/>',
+    logout: '<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>'
+  };
+  function icon(name, size) {
+    var paths = ICON_PATHS[name];
+    if (!paths) return '';
+    return '<svg viewBox="0 0 24 24" width="' + (size || 15) + '" height="' + (size || 15) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+  }
+
   function renderNav(activeKey) {
     var nav = document.getElementById('adminNav');
     if (!nav) return;
     var items = [
-      { key: 'home', label: 'Home', href: 'index.html' },
-      { key: 'ratings', label: 'Ratings', href: 'ratings.html' },
-      { key: 'dishes', label: 'Dish Rates', href: 'dishes.html' },
-      { key: 'activity', label: 'Customer Activity', href: 'activity.html' },
-      { key: 'audit', label: 'Audit Log', href: 'audit-log.html' },
-      { key: 'access', label: 'Access Log', href: 'access-log.html' }
+      { key: 'home', label: 'Home', href: 'index.html', icon: 'home' },
+      { key: 'ratings', label: 'Ratings', href: 'ratings.html', icon: 'ratings' },
+      { key: 'dishes', label: 'Dish Rates', href: 'dishes.html', icon: 'dishes' },
+      { key: 'activity', label: 'Customer Activity', href: 'activity.html', icon: 'activity' },
+      { key: 'audit', label: 'Audit Log', href: 'audit-log.html', icon: 'audit' },
+      { key: 'access', label: 'Access Log', href: 'access-log.html', icon: 'access' }
     ];
     nav.innerHTML = items.map(function (it) {
-      return '<a class="admin-nav-link' + (it.key === activeKey ? ' active' : '') + '" href="' + it.href + '">' + esc(it.label) + '</a>';
-    }).join('') + '<button type="button" class="admin-nav-logout" id="adminLogoutBtn">Logout' + (getUsername() ? ' (' + esc(getUsername()) + ')' : '') + '</button>';
+      return '<a class="admin-nav-link' + (it.key === activeKey ? ' active' : '') + '" href="' + it.href + '">' + icon(it.icon) + '<span>' + esc(it.label) + '</span></a>';
+    }).join('') + '<button type="button" class="admin-nav-logout" id="adminLogoutBtn">' + icon('logout') + '<span>Logout' + (getUsername() ? ' (' + esc(getUsername()) + ')' : '') + '</span></button>';
     var btn = document.getElementById('adminLogoutBtn');
     if (btn) btn.addEventListener('click', logout);
   }
 
-  window.AdminShared = { getToken, getUsername, setSession, clearSession, requireAuthOrRedirect, apiFetch, logout, renderNav, esc, API_BASE };
+  window.AdminShared = { getToken, getUsername, setSession, clearSession, requireAuthOrRedirect, apiFetch, logout, renderNav, esc, icon, API_BASE };
 })(window);
