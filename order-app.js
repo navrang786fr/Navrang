@@ -10,6 +10,12 @@
   var qs = function(sel, ctx){ return (ctx||document).querySelector(sel); };
   var qsa = function(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); };
 
+  /* ---------- Language from QR code (?lang=en or ?lang=te) ---------- */
+  function getUrlLang(){
+    var m = /[?&]lang=([^&]+)/.exec(window.location.search);
+    return m ? decodeURIComponent(m[1]).toLowerCase() : '';
+  }
+
   /* ---------- Language ---------- */
   var STRINGS = {
     en: {
@@ -236,8 +242,10 @@
   }
 
   /* ---------- Init language (after DOM built so all nodes exist) ---------- */
+  var urlLang = getUrlLang();
   var storedLang = localStorage.getItem(LANG_KEY);
-  applyLanguage(LANGS.indexOf(storedLang) !== -1 ? storedLang : 'en');
+  var initialLang = LANGS.indexOf(urlLang) !== -1 ? urlLang : (LANGS.indexOf(storedLang) !== -1 ? storedLang : 'en');
+  applyLanguage(initialLang);
 
   /* ---------- Deep-link to a section via #hash (menu is built after page load) ---------- */
   if (window.location.hash){
