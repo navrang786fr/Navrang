@@ -3,8 +3,42 @@
 // GITHUB_TOKEN (fine-grained PAT, Contents: Read & write on this repo only)
 // and ALLOWED_ORIGIN are read from Vercel environment variables.
 
+const { getRequestInfo } = require('./_lib/requestInfo.js');
+const { isRateLimited } = require('./_lib/rateLimit.js');
+const { readJsonArray, writeJsonArrayWithRetry } = require('./_lib/github.js');
+
 const REPO = process.env.GITHUB_REPO || 'navrang786fr/Navrang';
 const FILE_PATH = 'ratings.json';
+const THROTTLE_WINDOW_MS = 60 * 60 * 1000;
+const MAX_RATINGS_PER_IP = 5;
+
+// IP-based throttling state lives in the PRIVATE admin-db repo, never in the
+// public ratings.json (which is served as-is by GitHub Pages) - customer IPs
+// must never end up in a publicly readable file.
+async function isIpThrottled(ip) {
+  const adminRepo = process.env.ADMIN_REPO;
+  const adminToken = process.env.ADMIN_GITHUB_TOKEN;
+  if (!adminRepo || !adminToken) return false; // fail open if not configured, rather than break ratings
+  try {
+    const log = await readJsonArray(adminRepo, 'rating-submissions.json', adminToken);
+    return isRateLimited(log, THROTTLE_WINDOW_MS, MAX_RATINGS_PER_IP, function (r) { return r.ip === ip; });
+  } catch (e) {
+    return false;
+  }
+}
+async function recordIpSubmission(ip) {
+  const adminRepo = process.env.ADMIN_REPO;
+  const adminToken = process.env.ADMIN_GITHUB_TOKEN;
+  if (!adminRepo || !adminToken) return;
+  try {
+    await writeJsonArrayWithRetry(adminRepo, 'rating-submissions.json', adminToken, function (arr) {
+      arr.push({ ip: ip, timestamp: new Date().toISOString() });
+      if (arr.length > 2000) arr.splice(0, arr.length - 2000);
+    }, 'Track rating submission for rate limiting');
+  } catch (e) {
+    // best-effort; a failure here shouldn't undo the already-saved rating
+  }
+}
 
 function ghHeaders(token) {
   return {
@@ -59,6 +93,8 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
 
   if (req.method === 'OPTIONS') {
     res.status(204).end();
@@ -72,6 +108,12 @@ module.exports = async function handler(req, res) {
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
     res.status(500).json({ error: 'Server not configured' });
+    return;
+  }
+
+  const ip = getRequestInfo(req).ip;
+  if (await isIpThrottled(ip)) {
+    res.status(429).json({ error: 'Too many ratings submitted recently. Please try again later.' });
     return;
   }
 
@@ -104,6 +146,7 @@ module.exports = async function handler(req, res) {
 
   try {
     await appendRatingWithRetry(apiUrl, ghHeaders(token), entry, 3);
+    await recordIpSubmission(ip);
     res.status(200).json({ ok: true });
   } catch (err) {
     res.status(502).json({ error: 'Failed to save rating', detail: String(err.message || err) });

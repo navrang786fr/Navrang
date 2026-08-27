@@ -3,7 +3,7 @@
 // parse for browser/OS/device type. No dependency.
 
 function clientIp(req) {
-  var fwd = req.headers['x-forwarded-for'];
+  var fwd = (req.headers || {})['x-forwarded-for'];
   if (fwd) return String(fwd).split(',')[0].trim();
   return (req.socket && req.socket.remoteAddress) || 'unknown';
 }
@@ -33,13 +33,14 @@ function parseUserAgent(ua) {
 }
 
 function getRequestInfo(req) {
-  var ua = req.headers['user-agent'] || '';
+  var headers = req.headers || {};
+  var ua = headers['user-agent'] || '';
   var device = parseUserAgent(ua);
   return {
     ip: clientIp(req),
-    country: req.headers['x-vercel-ip-country'] || null,
-    region: req.headers['x-vercel-ip-country-region'] || null,
-    city: req.headers['x-vercel-ip-city'] ? decodeURIComponent(req.headers['x-vercel-ip-city']) : null,
+    country: headers['x-vercel-ip-country'] || null,
+    region: headers['x-vercel-ip-country-region'] || null,
+    city: headers['x-vercel-ip-city'] ? decodeURIComponent(headers['x-vercel-ip-city']) : null,
     device: device,
     userAgent: ua.slice(0, 300)
   };

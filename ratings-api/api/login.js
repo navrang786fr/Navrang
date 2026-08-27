@@ -4,12 +4,19 @@
 const { readJsonArray, writeJsonArrayWithRetry } = require('./_lib/github.js');
 const { verifyPassword, signToken } = require('./_lib/auth.js');
 const { getRequestInfo } = require('./_lib/requestInfo.js');
+const { isRateLimited } = require('./_lib/rateLimit.js');
+
+const LOCKOUT_WINDOW_MS = 15 * 60 * 1000;
+const MAX_FAILURES_PER_USERNAME = 5;
+const MAX_FAILURES_PER_IP = 10;
 
 module.exports = async function handler(req, res) {
   const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://navrang786fr.github.io';
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
 
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
@@ -55,6 +62,21 @@ module.exports = async function handler(req, res) {
   if (!username || !password) {
     await logAccess('failed');
     res.status(400).json({ error: 'Username and password are required' });
+    return;
+  }
+
+  let recentLog;
+  try {
+    recentLog = await readJsonArray(adminRepo, 'access-log.json', adminToken);
+  } catch (e) {
+    recentLog = [];
+  }
+  const lockedOut =
+    isRateLimited(recentLog, LOCKOUT_WINDOW_MS, MAX_FAILURES_PER_USERNAME, function (e) { return e.outcome === 'failed' && e.username === username; }) ||
+    isRateLimited(recentLog, LOCKOUT_WINDOW_MS, MAX_FAILURES_PER_IP, function (e) { return e.outcome === 'failed' && e.ip === info.ip; });
+  if (lockedOut) {
+    await logAccess('blocked');
+    res.status(429).json({ error: 'Too many failed attempts. Please try again in 15 minutes.' });
     return;
   }
 
