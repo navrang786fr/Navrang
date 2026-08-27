@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:480px){ .home-grid{grid-template-columns:1fr;} }
+  .home-tile{
+    display:block;text-decoration:none;background:var(--paper-soft);border:1px solid var(--rule);
+    border-radius:13px;padding:16px;transition:transform .12s ease,box-shadow .12s ease;
+  }
+  .home-tile:active{transform:scale(.98);}
+  .home-tile h3{margin:0 0 4px;color:var(--maroon-deep);font-size:15px;}
+  .home-tile p{margin:0;font-size:12.5px;color:var(--ink);opacity:.75;}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <div class="admin-topbar-row">
+      <img src="../navrang_logo.png" alt="Navrang">
+      <h1>Navrang Admin</h1>
+    </div>
+    <nav class="admin-nav" id="adminNav"></nav>
+  </div>
+
+  <div class="admin-panel">
+    <h2>Welcome</h2>
+    <div class="home-grid">
+      <a class="home-tile" href="ratings.html">
+        <h3>Customer Ratings</h3>
+        <p>Browse and filter ratings submitted from the order page.</p>
+      </a>
+      <a class="home-tile" href="dishes.html">
+        <h3>Dish Rates</h3>
+        <p>Update prices/status or add new dishes to the live menu.</p>
+      </a>
+      <a class="home-tile" href="audit-log.html">
+        <h3>Audit Log</h3>
+        <p>See every field change made to a dish, by whom and when.</p>
+      </a>
+      <a class="home-tile" href="access-log.html">
+        <h3>Access Log</h3>
+        <p>See who has signed in to this admin panel and when.</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+  if (AdminShared.requireAuthOrRedirect()) {
+    AdminShared.renderNav('home');
+  }
+</script>
+
+</body>
+</html>

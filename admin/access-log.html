@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Access Log</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <div class="admin-topbar-row">
+      <img src="../navrang_logo.png" alt="Navrang">
+      <h1>Access Log</h1>
+    </div>
+    <nav class="admin-nav" id="adminNav"></nav>
+  </div>
+
+  <div class="admin-panel">
+    <h2>Who's accessed the admin panel</h2>
+    <div class="admin-table-wrap" id="listWrap">
+      <div class="admin-loading">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function(){
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('access');
+  var esc = AdminShared.esc;
+  var listWrap = document.getElementById('listWrap');
+
+  function fmtDate(iso){
+    var d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  }
+
+  AdminShared.apiFetch('/api/access-log').then(function(resp){
+    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok) throw new Error(result.data.error || 'Failed to load');
+    var rows = result.data;
+    if (!rows.length){ listWrap.innerHTML = '<div class="admin-empty">No access log entries yet.</div>'; return; }
+    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>Username</th><th>Outcome</th><th>IP</th><th>When</th></tr></thead><tbody>' +
+      rows.map(function(r){
+        var badge = r.outcome === 'success' ? 'active' : 'inactive';
+        return '<tr><td>' + esc(r.username) + '</td>' +
+          '<td><span class="admin-badge ' + badge + '">' + esc(r.outcome) + '</span></td>' +
+          '<td>' + esc(r.ip) + '</td>' +
+          '<td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }).catch(function(err){
+    listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Could not load access log.') + '</div>';
+  });
+})();
+</script>
+
+</body>
+</html>

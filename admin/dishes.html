@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Dish Rates</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:560px){ .form-grid{grid-template-columns:1fr;} }
+  .form-actions{display:flex;gap:10px;align-items:center;}
+  .search-row{display:flex;gap:8px;margin-bottom:12px;}
+  .search-row input{flex:1;border:1.3px solid var(--rule);border-radius:9px;padding:9px 11px;font-size:13.5px;background:var(--paper);outline:none;}
+  .search-row input:focus{border-color:var(--maroon);}
+  .edit-link{color:var(--maroon);font-weight:700;text-decoration:underline;cursor:pointer;font-size:12.5px;background:none;border:none;padding:0;}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <div class="admin-topbar-row">
+      <img src="../navrang_logo.png" alt="Navrang">
+      <h1>Dish Rates</h1>
+    </div>
+    <nav class="admin-nav" id="adminNav"></nav>
+  </div>
+
+  <div class="admin-panel">
+    <h2 id="formHeading">Create New Dish</h2>
+    <div class="admin-card">
+      <form id="dishForm">
+        <div class="form-grid">
+          <div class="admin-field">
+            <label for="fCategory">Category</label>
+            <select id="fCategory" required></select>
+          </div>
+          <div class="admin-field">
+            <label for="fName">Name (English)</label>
+            <input type="text" id="fName" required maxlength="80">
+          </div>
+          <div class="admin-field">
+            <label for="fNameTe">Name (Telugu)</label>
+            <input type="text" id="fNameTe" required maxlength="80">
+          </div>
+          <div class="admin-field">
+            <label for="fPrice">Price (₹, blank = "Ask staff")</label>
+            <input type="number" id="fPrice" min="0" step="1">
+          </div>
+          <div class="admin-field">
+            <label for="fStatus">Status</label>
+            <select id="fStatus">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+          <div class="admin-field" style="display:flex;flex-direction:column;justify-content:flex-end;gap:8px;">
+            <label class="admin-checkbox"><input type="checkbox" id="fVeg"> Vegetarian</label>
+            <label class="admin-checkbox"><input type="checkbox" id="fTop"> Top Pick</label>
+            <label class="admin-checkbox"><input type="checkbox" id="fWeekly"> Weekly Dish</label>
+          </div>
+          <div class="admin-field">
+            <label for="fImage">Dish Photo (optional)</label>
+            <input type="file" id="fImage" accept="image/*">
+            <p id="imageHint" style="font-size:11px;color:var(--maroon);opacity:.75;margin:5px 0 0;"></p>
+          </div>
+          <div class="admin-field" id="imagePreviewWrap" style="display:none;">
+            <label>Preview (100×100 thumb)</label>
+            <img id="imagePreview" style="width:70px;height:70px;object-fit:cover;border-radius:8px;border:1px solid var(--rule);">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="admin-btn" id="submitBtn">Create Dish</button>
+          <button type="button" class="admin-btn admin-btn-secondary" id="cancelBtn" style="display:none;">Cancel Edit</button>
+        </div>
+        <p class="admin-status" id="formStatus"></p>
+      </form>
+    </div>
+
+    <h2>All Dishes</h2>
+    <div class="search-row">
+      <input type="text" id="searchBox" placeholder="Filter by name…">
+    </div>
+    <div class="admin-table-wrap" id="listWrap">
+      <div class="admin-loading">Loading dishes…</div>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function(){
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('dishes');
+  var esc = AdminShared.esc;
+
+  var menu = {}, categories = [];
+  var editingId = null;
+
+  var form = document.getElementById('dishForm');
+  var fCategory = document.getElementById('fCategory');
+  var fName = document.getElementById('fName');
+  var fNameTe = document.getElementById('fNameTe');
+  var fPrice = document.getElementById('fPrice');
+  var fStatus = document.getElementById('fStatus');
+  var fVeg = document.getElementById('fVeg');
+  var fTop = document.getElementById('fTop');
+  var fWeekly = document.getElementById('fWeekly');
+  var fImage = document.getElementById('fImage');
+  var imageHint = document.getElementById('imageHint');
+  var imagePreviewWrap = document.getElementById('imagePreviewWrap');
+  var imagePreview = document.getElementById('imagePreview');
+  var submitBtn = document.getElementById('submitBtn');
+  var cancelBtn = document.getElementById('cancelBtn');
+  var formStatus = document.getElementById('formStatus');
+  var formHeading = document.getElementById('formHeading');
+  var listWrap = document.getElementById('listWrap');
+  var searchBox = document.getElementById('searchBox');
+
+  function allDishesFlat(){
+    var out = [];
+    Object.keys(menu).forEach(function(catId){
+      menu[catId].forEach(function(d){ out.push(Object.assign({ categoryId: catId }, d)); });
+    });
+    return out;
+  }
+
+  function slugify(name){
+    return String(name).toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  /** Draws `file` into a square canvas of `size`x`size` (center-cropped, like object-fit:cover) and returns a JPEG data URL. */
+  function resizeImageToDataUrl(file, size, quality){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function(){
+        URL.revokeObjectURL(url);
+        var srcSize = Math.min(img.naturalWidth, img.naturalHeight);
+        var sx = (img.naturalWidth - srcSize) / 2;
+        var sy = (img.naturalHeight - srcSize) / 2;
+        var canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, sx, sy, srcSize, srcSize, 0, 0, size, size);
+        resolve(canvas.toDataURL('image/jpeg', quality || 0.85));
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('Could not read image file')); };
+      img.src = url;
+    });
+  }
+
+  function fileToDataUrl(file){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onload = function(){ resolve(reader.result); };
+      reader.onerror = function(){ reject(new Error('Could not read file')); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /** Downscales (preserving aspect ratio, no crop) so the longest side is at most maxDim. Used only as a size safety-net for very large originals. */
+  function downscaleImageToDataUrl(file, maxDim, quality){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function(){
+        URL.revokeObjectURL(url);
+        var scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+        var w = Math.round(img.naturalWidth * scale);
+        var h = Math.round(img.naturalHeight * scale);
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality || 0.85));
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('Could not read image file')); };
+      img.src = url;
+    });
+  }
+
+  function buildImagesPayload(file){
+    if (file.size > 8 * 1024 * 1024) return Promise.reject(new Error('Image is too large (max 8MB).'));
+    var ext = (file.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+    var originalPromise = file.size > 3 * 1024 * 1024 ? downscaleImageToDataUrl(file, 1600, 0.85) : fileToDataUrl(file);
+    return Promise.all([
+      resizeImageToDataUrl(file, 500, 0.85),
+      resizeImageToDataUrl(file, 100, 0.85),
+      originalPromise
+    ]).then(function(results){
+      return { originalExt: ext, photoDataUrl: results[0], thumbDataUrl: results[1], originalDataUrl: results[2] };
+    });
+  }
+
+  fImage.addEventListener('change', function(){
+    var file = fImage.files[0];
+    if (!file){ imageHint.textContent = ''; imagePreviewWrap.style.display = 'none'; return; }
+    var slug = slugify(fName.value) || 'dish';
+    imageHint.textContent = 'Will store as images/menu/' + slug + '-100.jpg / -500.jpg (and the original under images/menu/original/)';
+    resizeImageToDataUrl(file, 100, 0.85).then(function(dataUrl){
+      imagePreview.src = dataUrl;
+      imagePreviewWrap.style.display = '';
+    }).catch(function(){});
+  });
+
+  function resetForm(){
+    editingId = null;
+    form.reset();
+    fImage.value = '';
+    imageHint.textContent = '';
+    imagePreviewWrap.style.display = 'none';
+    fCategory.disabled = false;
+    formHeading.textContent = 'Create New Dish';
+    submitBtn.textContent = 'Create Dish';
+    cancelBtn.style.display = 'none';
+    formStatus.textContent = '';
+    formStatus.className = 'admin-status';
+  }
+
+  function startEdit(dish){
+    editingId = dish.id;
+    fCategory.value = dish.categoryId;
+    fCategory.disabled = true;
+    fName.value = dish.name;
+    fNameTe.value = dish.nameTe;
+    fPrice.value = dish.price === null || dish.price === undefined ? '' : dish.price;
+    fStatus.value = dish.status || 'Active';
+    fVeg.checked = !!dish.veg;
+    fTop.checked = !!dish.top;
+    fWeekly.checked = !!dish.weeklyDishInd;
+    formHeading.textContent = 'Edit Dish #' + dish.id;
+    submitBtn.textContent = 'Save Changes';
+    cancelBtn.style.display = '';
+    formStatus.textContent = '';
+    formStatus.className = 'admin-status';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelBtn.addEventListener('click', resetForm);
+
+  function renderList(){
+    var q = searchBox.value.trim().toLowerCase();
+    var rows = allDishesFlat().filter(function(d){
+      return !q || d.name.toLowerCase().indexOf(q) !== -1 || d.nameTe.indexOf(q) !== -1;
+    }).sort(function(a,b){ return a.id - b.id; });
+
+    if (!rows.length){ listWrap.innerHTML = '<div class="admin-empty">No dishes match.</div>'; return; }
+
+    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Veg</th><th>Status</th><th></th></tr></thead><tbody>' +
+      rows.map(function(d){
+        var cat = categories.find(function(c){ return c.id === d.categoryId; });
+        var badge = d.status === 'Active' ? 'active' : 'inactive';
+        return '<tr>' +
+          '<td>' + d.id + '</td>' +
+          '<td>' + esc(d.name) + '<br><span style="opacity:.6;">' + esc(d.nameTe) + '</span></td>' +
+          '<td>' + esc(cat ? cat.title : d.categoryId) + '</td>' +
+          '<td>' + (d.price === null || d.price === undefined ? '<span style="opacity:.5;">Ask staff</span>' : '₹' + d.price) + '</td>' +
+          '<td>' + (d.veg ? 'Veg' : 'Non-Veg') + '</td>' +
+          '<td><span class="admin-badge ' + badge + '">' + esc(d.status || 'Active') + '</span></td>' +
+          '<td><button type="button" class="edit-link" data-id="' + d.id + '">Edit</button></td>' +
+          '</tr>';
+      }).join('') + '</tbody></table>';
+
+    Array.prototype.forEach.call(listWrap.querySelectorAll('.edit-link'), function(btn){
+      btn.addEventListener('click', function(){
+        var id = parseInt(btn.dataset.id, 10);
+        var dish = allDishesFlat().find(function(d){ return d.id === id; });
+        if (dish) startEdit(dish);
+      });
+    });
+  }
+
+  searchBox.addEventListener('input', renderList);
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var priceVal = fPrice.value.trim();
+    var dish = {
+      name: fName.value.trim(),
+      nameTe: fNameTe.value.trim(),
+      price: priceVal === '' ? null : Number(priceVal),
+      veg: fVeg.checked,
+      status: fStatus.value,
+      top: fTop.checked,
+      weeklyDishInd: fWeekly.checked
+    };
+
+    submitBtn.disabled = true;
+    formStatus.textContent = '';
+    formStatus.className = 'admin-status';
+
+    var wasEdit = !!editingId;
+    var file = fImage.files[0];
+    var imagesPromise = file ? buildImagesPayload(file) : Promise.resolve(null);
+
+    imagesPromise.then(function(images){
+      var payload = editingId
+        ? { action: 'update', id: editingId, dish: dish }
+        : { action: 'create', categoryId: fCategory.value, dish: dish };
+      if (images) payload.images = images;
+      return AdminShared.apiFetch('/api/dishes', { method: 'POST', body: JSON.stringify(payload) });
+    })
+      .then(function(resp){ return resp.json().then(function(data){ return { ok: resp.ok, data: data }; }); })
+      .then(function(result){
+        if (!result.ok) throw new Error(result.data.error || 'Save failed');
+        return loadMenu();
+      })
+      .then(function(){
+        resetForm();
+        formStatus.textContent = wasEdit ? 'Saved.' : 'Dish created.';
+        formStatus.className = 'admin-status success';
+      })
+      .catch(function(err){
+        formStatus.textContent = err.message || 'Something went wrong.';
+        formStatus.className = 'admin-status error';
+      })
+      .finally(function(){ submitBtn.disabled = false; });
+  });
+
+  function loadMenu(){
+    return AdminShared.apiFetch('/api/dishes').then(function(resp){
+      return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+    }).then(function(result){
+      if (!result.ok) throw new Error(result.data.error || 'Failed to load dishes');
+      menu = result.data.menu;
+      categories = result.data.categories;
+      fCategory.innerHTML = categories.map(function(c){ return '<option value="' + esc(c.id) + '">' + esc(c.title) + '</option>'; }).join('');
+      renderList();
+    }).catch(function(err){
+      listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Could not load dishes.') + '</div>';
+    });
+  }
+
+  loadMenu();
+})();
+</script>
+
+</body>
+</html>

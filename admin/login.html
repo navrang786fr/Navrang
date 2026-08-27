@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  #loginForm{text-align:left;}
+</style>
+</head>
+<body>
+
+<div class="login-shell">
+  <div class="login-card">
+    <img src="../navrang_logo.png" alt="Navrang">
+    <h1>Navrang Admin</h1>
+    <p class="sub">Sign in to manage ratings, dish rates &amp; logs</p>
+    <form id="loginForm">
+      <div class="admin-field">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" required>
+      </div>
+      <div class="admin-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="admin-btn" id="loginBtn" style="width:100%;">Sign In</button>
+      <p class="admin-status" id="loginStatus"></p>
+    </form>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function(){
+  if (AdminShared.getToken()) { window.location.href = 'index.html'; }
+
+  var form = document.getElementById('loginForm');
+  var btn = document.getElementById('loginBtn');
+  var status = document.getElementById('loginStatus');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var username = document.getElementById('username').value.trim();
+    var password = document.getElementById('password').value;
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+    status.textContent = '';
+    status.className = 'admin-status';
+
+    fetch(AdminShared.API_BASE + '/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: username, password: password })
+    }).then(function(resp){
+      return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+    }).then(function(result){
+      if (!result.ok) throw new Error(result.data.error || 'Login failed');
+      AdminShared.setSession(result.data.token, result.data.username);
+      window.location.href = 'index.html';
+    }).catch(function(err){
+      status.textContent = err.message || 'Invalid username or password';
+      status.className = 'admin-status error';
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

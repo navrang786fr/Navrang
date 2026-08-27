@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Ratings</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .summary-card{background:var(--paper-soft);border:1px solid var(--rule);border-radius:13px;padding:12px 10px;text-align:center;}
+  .summary-card .val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:var(--maroon-deep);}
+  .summary-card .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--maroon);font-weight:700;margin-top:3px;opacity:.85;}
+  .filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:16px;}
+  .preset-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .preset-btn{border:1.3px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:20px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;}
+  .preset-btn.active{background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));border-color:var(--maroon-deep);color:var(--turmeric-light);}
+  .rating-stars{color:var(--turmeric);font-size:14px;}
+  .rating-stars .off{color:var(--rule);}
+  .dish-tag{background:var(--turmeric-light);color:var(--maroon-deep);border:1px solid rgba(216,154,27,.4);border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700;margin:0 4px 4px 0;display:inline-block;}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <div class="admin-topbar-row">
+      <img src="../navrang_logo.png" alt="Navrang">
+      <h1>Customer Ratings</h1>
+    </div>
+    <nav class="admin-nav" id="adminNav"></nav>
+  </div>
+
+  <div class="admin-panel">
+    <div class="summary-grid" id="summaryGrid">
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statCount">–</div><div class="lbl">Ratings</div></div>
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statAvg">–</div><div class="lbl">Avg Stars</div></div>
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statTopDish">–</div><div class="lbl">Top Dish</div></div>
+    </div>
+
+    <div class="admin-card filter-bar">
+      <div class="admin-field" style="margin-bottom:0;">
+        <label for="fromDate">From</label>
+        <input type="date" id="fromDate">
+      </div>
+      <div class="admin-field" style="margin-bottom:0;">
+        <label for="toDate">To</label>
+        <input type="date" id="toDate">
+      </div>
+      <div class="preset-row" id="presetRow">
+        <button type="button" class="preset-btn" data-range="today">Today</button>
+        <button type="button" class="preset-btn" data-range="7">7 Days</button>
+        <button type="button" class="preset-btn" data-range="30">30 Days</button>
+        <button type="button" class="preset-btn active" data-range="all">All Time</button>
+      </div>
+    </div>
+
+    <div class="admin-table-wrap" id="listWrap">
+      <div class="admin-loading">Loading ratings…</div>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function(){
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('ratings');
+  var esc = AdminShared.esc;
+
+  var listWrap = document.getElementById('listWrap');
+  var fromDate = document.getElementById('fromDate');
+  var toDate = document.getElementById('toDate');
+  var presetRow = document.getElementById('presetRow');
+  var allRatings = [];
+
+  function fmtDate(iso){
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
+  }
+  function starRow(n){
+    var out = '';
+    for (var i = 1; i <= 5; i++) out += (i <= n ? '★' : '<span class="off">★</span>');
+    return out;
+  }
+  function dayStart(s){ return new Date(s + 'T00:00:00'); }
+  function dayEnd(s){ return new Date(s + 'T23:59:59.999'); }
+  function toISODate(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+
+  function setActivePreset(range){
+    Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){ b.classList.toggle('active', b.dataset.range === range); });
+  }
+  function applyPreset(range){
+    var now = new Date(), to = new Date(now), from;
+    if (range === 'today') from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    else if (range === '7') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+    else if (range === '30') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+    else { fromDate.value = ''; toDate.value = ''; setActivePreset('all'); render(); return; }
+    fromDate.value = toISODate(from);
+    toDate.value = toISODate(to);
+    setActivePreset(range);
+    render();
+  }
+  function getFiltered(){
+    var from = fromDate.value ? dayStart(fromDate.value) : null;
+    var to = toDate.value ? dayEnd(toDate.value) : null;
+    return allRatings.filter(function(r){
+      var t = new Date(r.submittedAt);
+      if (isNaN(t)) return false;
+      if (from && t < from) return false;
+      if (to && t > to) return false;
+      return true;
+    });
+  }
+  function renderSummary(rows){
+    var count = rows.length;
+    document.getElementById('statCount').textContent = count;
+    if (!count){ document.getElementById('statAvg').textContent = '–'; document.getElementById('statTopDish').textContent = '–'; return; }
+    var sum = 0, dishCounts = {};
+    rows.forEach(function(r){ sum += (r.rating||0); (r.dishes||[]).forEach(function(d){ dishCounts[d] = (dishCounts[d]||0)+1; }); });
+    document.getElementById('statAvg').textContent = (sum/count).toFixed(1);
+    var topDish = Object.keys(dishCounts).sort(function(a,b){ return dishCounts[b]-dishCounts[a]; })[0];
+    document.getElementById('statTopDish').textContent = topDish || '–';
+  }
+  function render(){
+    var rows = getFiltered().slice().sort(function(a,b){ return new Date(b.submittedAt) - new Date(a.submittedAt); });
+    renderSummary(rows);
+    if (!rows.length){ listWrap.innerHTML = '<div class="admin-empty">No ratings in this date range.</div>'; return; }
+    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>Name</th><th>Rating</th><th>Dishes</th><th>Comments</th><th>Date</th></tr></thead><tbody>' +
+      rows.map(function(r){
+        return '<tr><td>' + esc(r.name) + '</td>' +
+          '<td class="rating-stars">' + starRow(r.rating||0) + '</td>' +
+          '<td>' + (r.dishes||[]).map(function(d){ return '<span class="dish-tag">' + esc(d) + '</span>'; }).join('') + '</td>' +
+          '<td>' + (r.comments ? esc(r.comments) : '<span style="opacity:.5;">—</span>') + '</td>' +
+          '<td style="white-space:nowrap;">' + esc(fmtDate(r.submittedAt)) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){ b.addEventListener('click', function(){ applyPreset(b.dataset.range); }); });
+  fromDate.addEventListener('change', function(){ setActivePreset(''); render(); });
+  toDate.addEventListener('change', function(){ setActivePreset(''); render(); });
+
+  fetch('../ratings.json', { cache: 'no-store' })
+    .then(function(resp){ return resp.ok ? resp.json() : []; })
+    .then(function(data){ allRatings = Array.isArray(data) ? data : []; render(); })
+    .catch(function(){ listWrap.innerHTML = '<div class="admin-empty">Could not load ratings.json.</div>'; });
+})();
+</script>
+
+</body>
+</html>

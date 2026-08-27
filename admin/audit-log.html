@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Audit Log</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .change-list{margin:0;padding:0;list-style:none;font-size:12px;}
+  .change-list li{margin-bottom:2px;}
+  .change-list .field{font-weight:700;color:var(--maroon);}
+  .change-list .from{color:var(--nonveg);text-decoration:line-through;opacity:.8;}
+  .change-list .to{color:var(--leaf);font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <div class="admin-topbar-row">
+      <img src="../navrang_logo.png" alt="Navrang">
+      <h1>Audit Log</h1>
+    </div>
+    <nav class="admin-nav" id="adminNav"></nav>
+  </div>
+
+  <div class="admin-panel">
+    <h2>Item master field changes</h2>
+    <div class="admin-table-wrap" id="listWrap">
+      <div class="admin-loading">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function(){
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('audit');
+  var esc = AdminShared.esc;
+  var listWrap = document.getElementById('listWrap');
+
+  function fmtDate(iso){
+    var d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  }
+  function renderChanges(entry){
+    if (entry.action === 'create'){
+      return '<span style="color:var(--leaf);font-weight:700;">new dish created</span>';
+    }
+    var changes = entry.changes || {};
+    var keys = Object.keys(changes);
+    if (!keys.length) return '<span style="opacity:.5;">—</span>';
+    return '<ul class="change-list">' + keys.map(function(k){
+      var c = changes[k];
+      return '<li><span class="field">' + esc(k) + ':</span> <span class="from">' + esc(c.from) + '</span> → <span class="to">' + esc(c.to) + '</span></li>';
+    }).join('') + '</ul>';
+  }
+
+  AdminShared.apiFetch('/api/audit-log').then(function(resp){
+    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok) throw new Error(result.data.error || 'Failed to load');
+    var rows = result.data;
+    if (!rows.length){ listWrap.innerHTML = '<div class="admin-empty">No audit log entries yet.</div>'; return; }
+    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>When</th><th>By</th><th>Action</th><th>Dish</th><th>Category</th><th>Changes</th></tr></thead><tbody>' +
+      rows.map(function(r){
+        return '<tr><td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td>' +
+          '<td>' + esc(r.username) + '</td>' +
+          '<td>' + esc(r.action) + '</td>' +
+          '<td>' + esc(r.dishName) + ' <span style="opacity:.5;">#' + esc(r.dishId) + '</span></td>' +
+          '<td>' + esc(r.categoryId) + '</td>' +
+          '<td>' + renderChanges(r) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }).catch(function(err){
+    listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Could not load audit log.') + '</div>';
+  });
+})();
+</script>
+
+</body>
+</html>
