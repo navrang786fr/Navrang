@@ -66,7 +66,7 @@ var MENU_DATA = {
     { id: 55, name: "Fry Biryani", nameTe: "ఫ్రై బిర్యానీ", price: 180, veg: false, status: "Active", weeklyDishInd: false },
     { id: 56, name: "Mutton Fry Biryani", nameTe: "మటన్ ఫ్రై బిర్యానీ", price: 360, veg: false, status: "Active", weeklyDishInd: false },
     { id: 57, name: "Natukodi Fry Biryani", nameTe: "నాటుకోడి ఫ్రై బిర్యానీ", price: 310, veg: false, status: "Active", weeklyDishInd: false },
-    { id: 58, name: "Prawns Fry Biryani", nameTe: "రొయ్యల ఫ్రై బిర్యానీ", price: 320, veg: false, status: "Active", weeklyDishInd: false },
+    { id: 58, name: "Prawns Fry Biryani", nameTe: "రొయ్యల ఫ్రై బిర్యానీ", price: 320, veg: false, thumb: "images/menu/prawns-fry-biryani-100.jpg", photo: "images/menu/prawns-fry-biryani-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 59, name: "SP Biryani", nameTe: "SP బిర్యానీ", price: 220, veg: false, status: "Active", weeklyDishInd: false }
   ],
   "roti": [
