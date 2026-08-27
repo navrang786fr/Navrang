@@ -2,7 +2,7 @@
 var MENU_DATA = {
   "egg-curries": [
     { id: 1, name: "Egg Burji", nameTe: "గుడ్డు బుర్జీ", price: 110, veg: false, thumb: "images/menu/egg-burji-100.jpg", photo: "images/menu/egg-burji-500.jpg", top: true, ingredients: ["Eggs", "Onion", "Tomato", "Green Chili", "Ginger-Garlic", "Turmeric", "Coriander Leaves"], ingredientsTe: ["గుడ్లు", "ఉల్లిపాయ", "టమాట", "పచ్చిమిర్చి", "అల్లం-వెల్లుల్లి", "పసుపు", "కొత్తిమీర"], status: "Active", weeklyDishInd: false },
-    { id: 2, name: "Egg Chilli", nameTe: "గుడ్డు చిల్లీ", price: 130, veg: false, status: "Active", weeklyDishInd: false },
+    { id: 2, name: "Egg Chilli", nameTe: "గుడ్డు చిల్లీ", price: 130, veg: false, thumb: "images/menu/egg-chilli-100.jpg", photo: "images/menu/egg-chilli-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 3, name: "Egg Curry", nameTe: "గుడ్డు కర్రీ", price: 110, veg: false, thumb: "images/menu/egg-currey-100.jpg", photo: "images/menu/egg-currey-500.jpg", status: "Active", weeklyDishInd: false },
     { id: 4, name: "Egg Dal", nameTe: "గుడ్డు దాల్", price: 130, veg: false, thumb: "images/menu/egg-dal-100.jpg", photo: "images/menu/egg-dal-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 5, name: "Egg Fry", nameTe: "గుడ్డు ఫ్రై", price: 130, veg: false, thumb: "images/menu/egg-fry-100.jpg", photo: "images/menu/egg-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
