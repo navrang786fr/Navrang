@@ -103,7 +103,7 @@ var MENU_DATA = {
     { id: 86, name: "Natukodi Curry", nameTe: "నాటుకోడి కర్రీ", price: 310, veg: false, thumb: "images/menu/natukodi-curry-100.jpg", photo: "images/menu/natukodi-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 87, name: "Natukodi Fry", nameTe: "నాటుకోడి ఫ్రై", price: 310, veg: false, thumb: "images/menu/natukodi-fry-100.jpg", photo: "images/menu/natukodi-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 88, name: "Nellore Chicken", nameTe: "నెల్లూరు చికెన్", price: 360, veg: false, status: "Active", weeklyDishInd: false },
-    { id: 89, name: "Panjabi Chicken", nameTe: "పంజాబీ చికెన్", price: 280, veg: false, top: false, status: "Active", weeklyDishInd: false },
+    { id: 89, name: "Panjabi Chicken", nameTe: "పంజాబీ చికెన్", price: 280, veg: false, thumb: "images/menu/panjabi-chicken-100.jpg", photo: "images/menu/panjabi-chicken-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 90, name: "Prawns Curry", nameTe: "రొయ్యల కర్రీ", price: 280, veg: false, thumb: "images/menu/prawns-curry-100.jpg", photo: "images/menu/prawns-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 91, name: "Prawns Fry", nameTe: "రొయ్యల ఫ్రై", price: 290, veg: false, thumb: "images/menu/prawns-fry-100.jpg", photo: "images/menu/prawns-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 92, name: "Rambha Chicken", nameTe: "రంభా చికెన్", price: 280, veg: false, status: "Active", weeklyDishInd: false },
