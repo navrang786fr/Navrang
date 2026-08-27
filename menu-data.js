@@ -98,7 +98,7 @@ var MENU_DATA = {
     { id: 81, name: "Kaju Chicken", nameTe: "కాజు చికెన్", price: 290, veg: false, status: "Active", weeklyDishInd: false },
     { id: 82, name: "Lollipop Curry", nameTe: "లాలీపాప్ కర్రీ", price: 260, veg: false, status: "Active", weeklyDishInd: false },
     { id: 83, name: "Mughlai Chicken", nameTe: "మొఘలై చికెన్", price: 280, veg: false, status: "Active", weeklyDishInd: false },
-    { id: 84, name: "Mutton Curry", nameTe: "మటన్ కర్రీ", price: 330, veg: false, status: "Active", weeklyDishInd: false },
+    { id: 84, name: "Mutton Curry", nameTe: "మటన్ కర్రీ", price: 330, veg: false, thumb: "images/menu/mutton-curry-100.jpg", photo: "images/menu/mutton-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 85, name: "Mutton Fry", nameTe: "మటన్ ఫ్రై", price: 360, veg: false, thumb: "images/menu/mutton-fry-100.jpg", photo: "images/menu/mutton-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 86, name: "Natukodi Curry", nameTe: "నాటుకోడి కర్రీ", price: 310, veg: false, thumb: "images/menu/natukodi-curry-100.jpg", photo: "images/menu/natukodi-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 87, name: "Natukodi Fry", nameTe: "నాటుకోడి ఫ్రై", price: 310, veg: false, thumb: "images/menu/natukodi-fry-100.jpg", photo: "images/menu/natukodi-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
