@@ -30,6 +30,11 @@
       footerNote: 'Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.',
       instaTitle: 'Follow us on Instagram',
       ingredientsLabel: 'Ingredients',
+      priceAny: 'Any Price',
+      priceUnder100: 'Under ₹100',
+      price100to200: '₹100 – ₹200',
+      price200to300: '₹200 – ₹300',
+      price300plus: '₹300+',
       rateCta: 'Rate Your Food',
       rateTitle: 'Rate Your Food',
       rateName: 'Your Name',
@@ -57,6 +62,11 @@
       footerNote: 'ఆర్డర్ చేయడానికి సిద్ధంగా ఉన్నారా? మీ వెయిటర్‌కు తెలియజేయండి. అన్ని ధరలలో వర్తించే పన్నులు కలిపి ఉన్నాయి — ఏవైనా ఆహార అలర్జీల గురించి మీ సర్వర్‌కు తెలియజేయండి.',
       instaTitle: 'ఇన్‌స్టాగ్రామ్‌లో మమ్మల్ని ఫాలో అవ్వండి',
       ingredientsLabel: 'పదార్థాలు',
+      priceAny: 'ఏదైనా ధర',
+      priceUnder100: '₹100 లోపు',
+      price100to200: '₹100 – ₹200',
+      price200to300: '₹200 – ₹300',
+      price300plus: '₹300+',
       rateCta: 'మీ ఆహారాన్ని రేట్ చేయండి',
       rateTitle: 'మీ ఆహారాన్ని రేట్ చేయండి',
       rateName: 'మీ పేరు',
@@ -87,6 +97,12 @@
     searchInput.placeholder = S.searchPlaceholder;
     qs('#vegLabel').textContent = S.veg;
     qs('#topToggleLabel').textContent = S.topPicks;
+    var priceOpts = qs('#priceFilter').options;
+    priceOpts[0].textContent = S.priceAny;
+    priceOpts[1].textContent = S.priceUnder100;
+    priceOpts[2].textContent = S.price100to200;
+    priceOpts[3].textContent = S.price200to300;
+    priceOpts[4].textContent = S.price300plus;
     qs('#footerNote').textContent = S.footerNote;
     var instaLink = qs('#instaLink');
     if (instaLink){ instaLink.title = S.instaTitle; instaLink.setAttribute('aria-label', S.instaTitle); }
@@ -180,6 +196,7 @@
       row.dataset.name = item.name.toLowerCase();
       row.dataset.veg = item.veg ? '1' : '0';
       row.dataset.top = item.top ? '1' : '0';
+      row.dataset.price = item.price === null || item.price === undefined ? '' : item.price;
 
       var priceLabel = item.price === null ? '<span class="no-price">Ask staff</span>' : ('<span class="dish-price">' + CUR + item.price + '</span>');
       var thumbSrc = item.thumb || NO_IMAGE_THUMB;
@@ -206,8 +223,11 @@
   var searchInput = qs('#searchInput');
   var vegToggle = qs('#vegToggle');
   var topToggle = qs('#topToggle');
+  var priceFilter = qs('#priceFilter');
   var vegOnly = false;
   var topOnly = false;
+  var priceMin = null;
+  var priceMax = null;
 
   function applyFilters(){
     var q = searchInput.value.trim().toLowerCase();
@@ -217,7 +237,9 @@
         var matchesQ = !q || row.dataset.name.indexOf(q) !== -1;
         var matchesVeg = !vegOnly || row.dataset.veg === '1';
         var matchesTop = !topOnly || row.dataset.top === '1';
-        var show = matchesQ && matchesVeg && matchesTop;
+        var matchesPrice = priceMin === null ||
+          (row.dataset.price !== '' && Number(row.dataset.price) >= priceMin && Number(row.dataset.price) <= priceMax);
+        var show = matchesQ && matchesVeg && matchesTop && matchesPrice;
         row.style.display = show ? '' : 'none';
         if (show) visibleCount++;
       });
@@ -247,6 +269,16 @@
   topToggle.addEventListener('click', function(){
     topOnly = !topOnly;
     topToggle.classList.toggle('active', topOnly);
+    applyFilters();
+  });
+  priceFilter.addEventListener('change', function(){
+    var v = priceFilter.value;
+    if (!v){ priceMin = null; priceMax = null; }
+    else {
+      var parts = v.split('-');
+      priceMin = parseInt(parts[0], 10);
+      priceMax = parseInt(parts[1], 10);
+    }
     applyFilters();
   });
 
