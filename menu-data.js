@@ -2,7 +2,7 @@
 var MENU_DATA = {
   "egg-curries": [
     { name: "Egg Burji", nameTe: "గుడ్డు బుర్జీ", price: 110, veg: false, thumb: "images/menu/egg-burji-100.jpg", photo: "images/menu/egg-burji-500.jpg", top: true },
-    { name: "Egg Keema", nameTe: "గుడ్డు కీమా", price: 110, veg: false },
+    { name: "Egg Keema", nameTe: "గుడ్డు కీమా", price: 110, veg: false, thumb: "images/menu/egg-keema-100.jpg", photo: "images/menu/egg-keema-500.jpg" },
     { name: "Egg Curry", nameTe: "గుడ్డు కర్రీ", price: 110, veg: false },
     { name: "Egg Fry", nameTe: "గుడ్డు ఫ్రై", price: 130, veg: false },
     { name: "Egg Roast", nameTe: "గుడ్డు రోస్ట్", price: 130, veg: false },
