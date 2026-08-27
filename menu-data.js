@@ -62,7 +62,7 @@ var MENU_DATA = {
     { id: 53, name: "Paneer Manchuria", nameTe: "పనీర్ మంచూరియా", price: 210, veg: true, status: "Active", weeklyDishInd: false }
   ],
   "biryani": [
-    { id: 54, name: "Dum Biryani", nameTe: "దమ్ బిర్యానీ", price: 170, veg: false, top: true, status: "Active", weeklyDishInd: false },
+    { id: 54, name: "Dum Biryani", nameTe: "దమ్ బిర్యానీ", price: 170, veg: false, thumb: "images/menu/dum-biryani-100.jpg", photo: "images/menu/dum-biryani-500.jpg", top: true, status: "Active", weeklyDishInd: false },
     { id: 55, name: "Fry Biryani", nameTe: "ఫ్రై బిర్యానీ", price: 180, veg: false, thumb: "images/menu/fry-biryani-100.jpg", photo: "images/menu/fry-biryani-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 56, name: "Mutton Fry Biryani", nameTe: "మటన్ ఫ్రై బిర్యానీ", price: 360, veg: false, thumb: "images/menu/mutton-fry-biryani-100.jpg", photo: "images/menu/mutton-fry-biryani-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 57, name: "Natukodi Fry Biryani", nameTe: "నాటుకోడి ఫ్రై బిర్యానీ", price: 310, veg: false, thumb: "images/menu/natukodi-fry-biryani-100.jpg", photo: "images/menu/natukodi-fry-biryani-500.jpg", top: false, status: "Active", weeklyDishInd: false },
