@@ -60,6 +60,7 @@
     box-shadow:var(--shadow-sm);
   }
   .topbar .brand-wrap{display:flex;align-items:center;}
+  .brand-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
   .brand-mark{
     width:32px;height:32px;border-radius:50%;flex:0 0 auto;margin-right:9px;
     background:#fff;border:1.4px solid var(--turmeric);
@@ -69,7 +70,7 @@
   }
   .brand-mark img{width:100%;height:100%;object-fit:cover;display:block;}
   .topbar .brand{font-family:'Yatra One',cursive;font-size:22px;color:#F7E7B4;letter-spacing:.5px;}
-  .topbar .brand-ar{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:14px;direction:rtl;color:var(--turmeric);margin-left:8px;}
+  .topbar .brand-ar{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:13px;direction:rtl;color:var(--turmeric);}
   .topbar-actions{display:flex;align-items:center;gap:8px;}
   .lang-toggle{
     display:flex;align-items:center;background:rgba(255,255,255,.08);
@@ -364,8 +365,10 @@
   <div class="topbar">
     <div class="brand-wrap">
       <span class="brand-mark" aria-hidden="true"><img src="navrang_logo.png" alt=""></span>
-      <span class="brand">Navrang</span>
-      <span class="brand-ar">نڤارنگ</span>
+      <span class="brand-text">
+        <span class="brand">Navrang</span>
+        <span class="brand-ar">نڤارنگ</span>
+      </span>
     </div>
     <div class="topbar-actions">
       <div class="lang-toggle" id="langToggle" role="group" aria-label="Switch language">
