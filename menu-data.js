@@ -96,7 +96,7 @@ var MENU_DATA = {
     { id: 79, name: "Fish Fry (2 pc)", nameTe: "చేప ఫ్రై (2 ముక్కలు)", price: 140, veg: false, thumb: "images/menu/fish-fry-2-pc-100.jpg", photo: "images/menu/fish-fry-2-pc-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 80, name: "Kadai Chicken", nameTe: "కడాయి చికెన్", price: 270, veg: false, status: "Active", weeklyDishInd: false },
     { id: 81, name: "Kaju Chicken", nameTe: "కాజు చికెన్", price: 290, veg: false, status: "Active", weeklyDishInd: false },
-    { id: 82, name: "Lollipop Curry", nameTe: "లాలీపాప్ కర్రీ", price: 260, veg: false, status: "Active", weeklyDishInd: false },
+    { id: 82, name: "Lollipop Curry", nameTe: "లాలీపాప్ కర్రీ", price: 260, veg: false, thumb: "images/menu/lollipop-curry-100.jpg", photo: "images/menu/lollipop-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 83, name: "Mughlai Chicken", nameTe: "మొఘలై చికెన్", price: 280, veg: false, status: "Active", weeklyDishInd: false },
     { id: 84, name: "Mutton Curry", nameTe: "మటన్ కర్రీ", price: 330, veg: false, thumb: "images/menu/mutton-curry-100.jpg", photo: "images/menu/mutton-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 85, name: "Mutton Fry", nameTe: "మటన్ ఫ్రై", price: 360, veg: false, thumb: "images/menu/mutton-fry-100.jpg", photo: "images/menu/mutton-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
