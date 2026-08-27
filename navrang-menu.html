@@ -90,6 +90,7 @@
 
   /* ---------- Hero (page 1) ---------- */
   .hero{
+    position:relative;
     background:linear-gradient(180deg,var(--maroon) 0%, var(--maroon-deep) 100%);
     color:var(--turmeric-light);
     text-align:center;
@@ -97,18 +98,24 @@
     margin-bottom:16px;
   }
   .hero-logo-img{
-    width:64px;height:64px;border-radius:50%;object-fit:cover;
-    background:#fff;border:2px solid var(--turmeric);
-    box-shadow:0 0 0 3px rgba(243,217,138,.25);
-    display:block;margin:0 auto 8px;
+    position:absolute;top:0;left:50%;
+    width:112px;height:112px;border-radius:50%;object-fit:cover;
+    background:#fff;border:3px solid var(--turmeric);
+    box-shadow:0 0 0 4px rgba(243,217,138,.25),0 8px 20px rgba(0,0,0,.3);
+    display:block;transform:translate(-50%,-50%);z-index:2;
   }
   .hero .ar-name{
     font-family:'Aref Ruqaa',serif;
     font-size:30px;font-weight:700;
     direction:rtl;
     color:var(--turmeric);
-    margin:0 0 2px;
+    margin:38px 0 2px;
     letter-spacing:0;
+  }
+  .hero-mashallah{
+    position:absolute;top:8px;right:12px;
+    font-family:'Aref Ruqaa',serif;font-weight:700;font-size:15px;
+    direction:rtl;color:var(--turmeric);opacity:.9;z-index:2;
   }
   .hero h1{
     font-family:'Yatra One',cursive;
@@ -256,6 +263,7 @@
 <!-- ===================== PAGE 1 ===================== -->
 <section class="sheet">
   <div class="hero">
+    <span class="hero-mashallah">ماشاءالله</span>
     <img class="hero-logo-img" src="navrang_logo.png" alt="Navrang">
     <div class="ar-name">نڤارنگ</div>
     <h1>Navrang</h1>
