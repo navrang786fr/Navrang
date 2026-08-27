@@ -128,10 +128,9 @@
       var thumb = item.thumb ? '<img class="dish-thumb" src="' + esc(item.thumb) + '" data-full="' + esc(item.photo || item.thumb) + '" alt="">' : '';
 
       row.innerHTML =
-        '<span class="dot ' + (item.veg ? 'veg' : 'nonveg') + '"></span>' +
         thumb +
         '<span class="dish-info"><span class="dish-name" data-en="' + esc(item.name) + '" data-te="' + esc(item.nameTe) + '">' + esc(item.name) + '</span></span>' +
-        priceLabel;
+        '<span class="dish-side">' + priceLabel + '<span class="dot ' + (item.veg ? 'veg' : 'nonveg') + '"></span></span>';
 
       if (item.thumb){
         row.querySelector('.dish-thumb').addEventListener('click', function(){
