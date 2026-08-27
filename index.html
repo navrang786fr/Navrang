@@ -7,7 +7,17 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Yatra+One&family=Aref+Ruqaa:wght@400;700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
-  :root,
+  /* Default palette — sampled directly from navrang_logo.png (deep emblem green + halal gold) */
+  :root{
+    --paper:#F7F1DE;
+    --ink:#16231A;
+    --maroon:#12401C;
+    --maroon-deep:#0A2A12;
+    --turmeric:#B3821E;
+    --turmeric-light:#E7CB86;
+    --leaf:#4C7A1E;
+    --rule:rgba(22,35,26,.18);
+  }
   html[data-theme="classic"]{
     --paper:#F9EFD8;
     --ink:#2A2016;
@@ -19,14 +29,14 @@
     --rule:rgba(42,32,22,.18);
   }
   html[data-theme="emerald"]{
-    --paper:#F5F2E2;
-    --ink:#1C2A1B;
-    --maroon:#1F5C3A;
-    --maroon-deep:#123C26;
-    --turmeric:#C9A227;
-    --turmeric-light:#E9D98D;
-    --leaf:#2E7D4F;
-    --rule:rgba(28,42,27,.18);
+    --paper:#F7F1DE;
+    --ink:#16231A;
+    --maroon:#12401C;
+    --maroon-deep:#0A2A12;
+    --turmeric:#B3821E;
+    --turmeric-light:#E7CB86;
+    --leaf:#4C7A1E;
+    --rule:rgba(22,35,26,.18);
   }
   html[data-theme="royal"]{
     --paper:#F3EFE3;
@@ -237,8 +247,8 @@
     </ul>
     <div class="topbar-right">
       <div class="theme-picker" role="group" aria-label="Choose site color theme">
-        <button class="theme-swatch active" data-theme="classic" style="--sw1:#7A1220;--sw2:#D89A1B" title="Classic — Maroon &amp; Turmeric" aria-label="Classic theme"></button>
-        <button class="theme-swatch" data-theme="emerald" style="--sw1:#1F5C3A;--sw2:#C9A227" title="Emerald &amp; Gold" aria-label="Emerald theme"></button>
+        <button class="theme-swatch" data-theme="classic" style="--sw1:#7A1220;--sw2:#D89A1B" title="Classic — Maroon &amp; Turmeric" aria-label="Classic theme"></button>
+        <button class="theme-swatch active" data-theme="emerald" style="--sw1:#12401C;--sw2:#B3821E" title="Logo — Green &amp; Gold" aria-label="Logo theme"></button>
         <button class="theme-swatch" data-theme="royal" style="--sw1:#2A2470;--sw2:#D4AF37" title="Royal Indigo &amp; Gold" aria-label="Royal theme"></button>
         <button class="theme-swatch" data-theme="charcoal" style="--sw1:#3A2E28;--sw2:#B5651D" title="Charcoal &amp; Copper" aria-label="Charcoal theme"></button>
       </div>
@@ -385,7 +395,7 @@
   document.querySelectorAll('.theme-swatch').forEach(function(btn){
     btn.addEventListener('click',function(){apply(btn.dataset.theme);});
   });
-  apply(root.getAttribute('data-theme')||'classic');
+  apply(root.getAttribute('data-theme')||'emerald');
 })();
 </script>
 
