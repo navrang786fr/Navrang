@@ -12,7 +12,7 @@ var MENU_DATA = {
     { name: "Egg Manchuria", nameTe: "గుడ్డు మంచూరియా", price: 140, veg: false },
     { name: "Egg Roast", nameTe: "గుడ్డు రోస్ట్", price: 130, veg: false, thumb: "images/menu/egg-roast-100.jpg", photo: "images/menu/egg-roast-500.jpg" },
     { name: "Egg Tamata", nameTe: "గుడ్డు టమాట", price: 130, veg: false },
-    { name: "Omlete", nameTe: "ఆమ్లెట్", price: 70, veg: false }
+    { name: "Omlete", nameTe: "ఆమ్లెట్", price: 60, veg: false }
   ],
   "non-veg-starter": [
     { name: "Chicken 65", nameTe: "చికెన్ 65", price: 260, veg: false, top: true },
