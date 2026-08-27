@@ -4,6 +4,18 @@ Running log of changes made by the coding agent in this repo. Newest entries at 
 
 ## 2026-08-27
 
+- **Done:** Security review of every API + admin login, at the user's request ("think like an IS agent"). Findings and fixes:
+  - `login.js` had **no brute-force protection at all** — fixed with a lockout (5 failed/username or 10 failed/IP within 15 min → 429), checked against `access-log.json` before verifying the password.
+  - `track.js` (public, unauthenticated write) and `rate.js` (public ratings submission, also unauthenticated, pre-existing code) had **no abuse throttling** — added per-IP limits (60/5min, 5/hour respectively). For `rate.js` specifically: rate-limit state (ip+timestamp) goes in a **new private-repo file** `rating-submissions.json`, never into the public `ratings.json` — verified no rating entry ever gains an `ip` field, since that file is served publicly by GitHub Pages.
+  - Added `Cache-Control: no-store` + `X-Content-Type-Options: nosniff` to all five endpoints.
+  - Confirmed already-correct: origin-restricted CORS (not `*`), Authorization-header auth (no CSRF surface), generic login error (no username enumeration), scrypt-hashed passwords never logged.
+  - Residual gaps flagged to the user rather than silently left unmentioned: `ADMIN_GITHUB_TOKEN` is still the broad-scope `gh` CLI OAuth token, not a repo-scoped fine-grained PAT (can't fix without the user's manual action in GitHub's UI); no session revocation list (stolen token valid for full ~12h); no self-service password change.
+  - Tested with mocked-GitHub unit tests for every throttle path, then verified live in production (security headers present, real 401 on a live failed-login attempt) — deliberately stopped after 2 real failed attempts to avoid tripping the lockout on the real admin account. `[[navrang-admin-panel]]`
+
+- **Done:** Dish photo upload now shows a spinner + "Resizing image…" / "Uploading photo…" in the upload zone during submit (previously only a disabled button, no real feedback) — verified with a delayed-response mock that it actually appears mid-flight.
+
+- **Done:** Several rounds of `navrang-menu.html` hero polish per iterative user feedback: logo grown to 156px and repositioned fully inside the banner (print-safe, no clipping); "Navrang" swapped to appear before the Arabic name with tightened line-height/margins (closed the gap twice, per follow-up "remove more space"); "ماشاءالله" switched to the Amiri typeface at a larger size; veg/non-veg dots enlarged 9px→13px.
+
 - **Done:** Batch of admin panel improvements (commits `149f93a`..`23253c0`, rebased twice onto real live admin edits — the user is actively using the deployed dishes editor, e.g. uploaded photos for Cool Drinks and Ice Cream mid-session):
   - Dish editor: auto-populate Telugu name from a word-level dictionary mined from existing dish names (offline, no translation API); explicit mutually-exclusive Veg/Non-Veg checkboxes; dish list now shows thumbnails. Caught and fixed a real bug during testing — the Telugu auto-fill left a stale suggestion in place when the English name changed to something with no dictionary match, instead of clearing it.
   - `_lib/requestInfo.js`: enriches audit-log and access-log entries with country/region/city (via Vercel's built-in `x-vercel-ip-*` headers, zero extra latency) and parsed device/browser/OS from User-Agent. Both log pages display it.
