@@ -4,6 +4,18 @@ Running log of changes made by the coding agent in this repo. Newest entries at 
 
 ## 2026-08-27
 
+- **Done:** Three quick order-page requests, each verified with Playwright before committing (commits `03be4a5`, `3e134c2`, `20facf1`):
+  - Stacked the Arabic brand text below "Navrang" in the topbar (was inline beside it).
+  - Added a sequential integer `id` (primary key) to all 98 dishes in `MENU_DATA` — sets up the admin dish-editing API (in progress, see below) to match dishes by a stable id instead of by name.
+  - Added a price-range filter (Any/Under ₹100/₹100–200/₹200–300/₹300+) next to the Veg/Top Picks toggles, bilingual, combined with the existing search/veg/top filters via a shared `applyFilters()`. Made `.search-bar` wrap instead of overflow on narrow screens to fit the new control.
+
+- **In progress:** Building a JSON-DB-backed admin panel (login, ratings page, dish-rate editor, audit log for item-master field changes, access/visit log) per user request. Key architecture decisions and why:
+  - **Security blocker surfaced and resolved via user choice:** everything in the `navrang786fr/Navrang` repo's `main` branch is publicly served by GitHub Pages (same as `ratings.json` today) — storing credentials/audit/access logs there would make them publicly downloadable. Asked the user; they chose a **new private GitHub repo** (`navrang786fr/navrang-admin-db`, created and seeded with `users.json`/`audit-log.json`/`access-log.json`) over the public repo or an external DB, and chose **hashed** (scrypt) passwords over plaintext.
+  - Created the private repo via `gh repo create`, seeded one admin user (username `admin`, scrypt hash+salt — plaintext password was shown to the user once, never committed anywhere).
+  - Vercel env vars added to the existing `ratings-api` project (via `vercel env add`, piped directly so no secret ever touched disk): `ADMIN_GITHUB_TOKEN` (reusing the `gh` CLI's own OAuth token, which already has `repo` scope covering both the public and new private repo — pragmatic since fine-grained PATs can't be created non-interactively; noted as a tightening opportunity later), `ADMIN_REPO`, `JWT_SECRET` (random, for hand-rolled HMAC session tokens — no `jsonwebtoken` dependency, matching the existing zero-dependency style of `ratings-api`).
+  - Built and unit-tested `ratings-api/api/_lib/github.js` (read/write JSON arrays via GitHub Contents API with 409-retry, reused/generalized from `rate.js`'s pattern) and `_lib/auth.js` (scrypt password hashing, HMAC-signed session tokens with expiry — verified sign/verify roundtrip and expiry rejection).
+  - **Not yet built:** `login.js`, `dishes.js` (GET/create/update, with audit-log diffing), `audit-log.js`, `access-log.js` endpoints; the `admin/*.html` front-end pages (login, ratings, dish editor, audit log, access log) and their nav shell; wiring `order.html`'s Rate dialog / dish list to stay unaffected. Resume from here.
+
 - **Done:** Wired up `status` filtering on the order page (commit `7de8c5b`) — `MENU_DATA[cat.id]` is now filtered to `status === 'Active'` both in the main menu render and the rate-dialog dish picker, so flipping a dish to any other status hides it without deleting it. Verified end-to-end by temporarily marking a dish Inactive (Playwright: confirmed it disappeared from the rendered list, the section's item count, and the rating dropdown) then restoring it before committing.
 
 - **Done:** Added `status: "Active"` and `weeklyDishInd: false` to every dish in `MENU_DATA` (commit `01ccea2`), plus a manual price revision + 4 item removals (Crab Curry, Crab Roast, Kamju Curry/Roast) the user made directly (commit `e5e57ec`).
