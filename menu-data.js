@@ -39,7 +39,7 @@ var MENU_DATA = {
     { id: 32, name: "Palak Paneer", nameTe: "పాలక్ పనీర్", price: 170, veg: true, thumb: "images/menu/palak-paneer-100.jpg", photo: "images/menu/palak-paneer-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 33, name: "Paneer Butter Masala", nameTe: "పనీర్ బటర్ మసాలా", price: 190, veg: true, thumb: "images/menu/paneer-butter-masala-100.jpg", photo: "images/menu/paneer-butter-masala-500.jpg", top: true, status: "Active", weeklyDishInd: false },
     { id: 34, name: "Tamata Curry", nameTe: "టమాట కర్రీ", price: 110, veg: true, status: "Active", weeklyDishInd: false },
-    { id: 35, name: "Veg Mix Curry", nameTe: "వెజ్ మిక్స్ కర్రీ", price: 130, veg: true, status: "Active", weeklyDishInd: false }
+    { id: 35, name: "Veg Mix Curry", nameTe: "వెజ్ మిక్స్ కర్రీ", price: 130, veg: true, thumb: "images/menu/veg-mix-curry-100.jpg", photo: "images/menu/veg-mix-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false }
   ],
   "veg-starters": [
     { id: 36, name: "Alasandha Fry", nameTe: "అలసంద ఫ్రై", price: 130, veg: true, thumb: "images/menu/alasandha-fry-100.jpg", photo: "images/menu/alasandha-fry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
