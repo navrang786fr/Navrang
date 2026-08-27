@@ -79,7 +79,7 @@ var MENU_DATA = {
     { id: 64, name: "Curd Rice", nameTe: "పెరుగు అన్నం", price: 80, veg: true, thumb: "images/menu/curd-rice-100.jpg", photo: "images/menu/curd-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 65, name: "Egg Rice", nameTe: "గుడ్డు రైస్", price: 110, veg: false, status: "Active", weeklyDishInd: false },
     { id: 66, name: "Gobi Rice", nameTe: "గోబీ రైస్", price: 130, veg: true, thumb: "images/menu/gobi-rice-100.jpg", photo: "images/menu/gobi-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
-    { id: 67, name: "Jeera Rice", nameTe: "జీరా రైస్", price: 130, veg: true, status: "Active", weeklyDishInd: false },
+    { id: 67, name: "Jeera Rice", nameTe: "జీరా రైస్", price: 130, veg: true, thumb: "images/menu/jeera-rice-100.jpg", photo: "images/menu/jeera-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 68, name: "Kaju Rice", nameTe: "కాజు రైస్", price: 180, veg: true, thumb: "images/menu/kaju-rice-100.jpg", photo: "images/menu/kaju-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 69, name: "Mushroom Rice", nameTe: "మష్రూమ్ రైస్", price: 150, veg: true, thumb: "images/menu/mushroom-rice-100.jpg", photo: "images/menu/mushroom-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 70, name: "Paneer Rice", nameTe: "పనీర్ రైస్", price: 170, veg: true, thumb: "images/menu/paneer-rice-100.jpg", photo: "images/menu/paneer-rice-500.jpg", top: false, status: "Active", weeklyDishInd: false },
