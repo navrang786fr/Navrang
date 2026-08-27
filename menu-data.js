@@ -34,7 +34,7 @@ var MENU_DATA = {
     { id: 27, name: "Kaju Paneer", nameTe: "కాజు పనీర్", price: 220, veg: true, thumb: "images/menu/kaju-paneer-100.jpg", photo: "images/menu/kaju-paneer-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 28, name: "Kaju Tamata", nameTe: "కాజు టమాట", price: 170, veg: true, status: "Active", weeklyDishInd: false },
     { id: 29, name: "Methi Chaman", nameTe: "మేథీ చమన్", price: 200, veg: true, thumb: "images/menu/methi-chaman-100.jpg", photo: "images/menu/methi-chaman-500.jpg", top: false, status: "Active", weeklyDishInd: false },
-    { id: 30, name: "Mushroom Curry", nameTe: "మష్రూమ్ కర్రీ", price: 170, veg: true, status: "Active", weeklyDishInd: false },
+    { id: 30, name: "Mushroom Curry", nameTe: "మష్రూమ్ కర్రీ", price: 170, veg: true, thumb: "images/menu/mushroom-curry-100.jpg", photo: "images/menu/mushroom-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 31, name: "Palak Curry", nameTe: "పాలక్ కర్రీ", price: 110, veg: true, status: "Active", weeklyDishInd: false },
     { id: 32, name: "Palak Paneer", nameTe: "పాలక్ పనీర్", price: 170, veg: true, thumb: "images/menu/palak-paneer-100.jpg", photo: "images/menu/palak-paneer-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 33, name: "Paneer Butter Masala", nameTe: "పనీర్ బటర్ మసాలా", price: 190, veg: true, thumb: "images/menu/paneer-butter-masala-100.jpg", photo: "images/menu/paneer-butter-masala-500.jpg", top: true, status: "Active", weeklyDishInd: false },
