@@ -10,7 +10,7 @@ var MENU_DATA = {
     { id: 7, name: "Egg Manchuria", nameTe: "గుడ్డు మంచూరియా", price: 140, veg: false, status: "Active", weeklyDishInd: false },
     { id: 8, name: "Egg Roast", nameTe: "గుడ్డు రోస్ట్", price: 130, veg: false, thumb: "images/menu/egg-roast-100.jpg", photo: "images/menu/egg-roast-500.jpg", status: "Active", weeklyDishInd: false },
     { id: 9, name: "Egg Tamata", nameTe: "గుడ్డు టమాట", price: 130, veg: false, status: "Active", weeklyDishInd: false },
-    { id: 10, name: "Omlete", nameTe: "ఆమ్లెట్", price: 60, veg: false, status: "Active", weeklyDishInd: false }
+    { id: 10, name: "Omlete", nameTe: "ఆమ్లెట్", price: 60, veg: false, thumb: "images/menu/omlete-100.jpg", photo: "images/menu/omlete-500.jpg", top: false, status: "Active", weeklyDishInd: false }
   ],
   "non-veg-starter": [
     { id: 11, name: "Chicken 65", nameTe: "చికెన్ 65", price: 260, veg: false, top: true, status: "Active", weeklyDishInd: false },
