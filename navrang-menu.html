@@ -170,6 +170,21 @@
   .theme-swatch.active{border-color:var(--ink);box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink);}
   @media print{.theme-picker{display:none;}}
 
+  /* ---------- PDF download button ---------- */
+  .pdf-download{
+    position:fixed;bottom:16px;right:16px;z-index:50;
+    display:flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));color:#fff;
+    border:none;text-decoration:none;
+    padding:11px 18px;border-radius:24px;font-weight:700;font-size:13px;
+    font-family:'Karla',sans-serif;
+    box-shadow:0 8px 20px rgba(0,0,0,.28);
+    transition:transform .12s ease;
+  }
+  .pdf-download:active{transform:scale(.96);}
+  .pdf-download svg{width:16px;height:16px;flex:0 0 auto;}
+  @media print{.pdf-download{display:none;}}
+
   /* ---------- Category header ---------- */
   .cat-head{
     display:flex;align-items:center;gap:7px;
@@ -251,6 +266,11 @@
 </style>
 </head>
 <body>
+
+<a class="pdf-download" href="Navrang-Menu-English.pdf" download title="Download PDF">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+  Download PDF
+</a>
 
 <div class="theme-picker" role="group" aria-label="Choose menu color theme">
   <span class="tp-label">Theme</span>
