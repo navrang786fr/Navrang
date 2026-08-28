@@ -55,6 +55,12 @@
       emptyState: 'No dishes match your search.',
       footerNote: 'Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.',
       instaTitle: 'Follow us on Instagram',
+      instagramLabel: 'Instagram',
+      offersLabel: 'Special Offers',
+      offersTitle: 'Special Offers',
+      offersSub: 'Coming Soon',
+      offersMsg: "We're preparing exclusive deals and combo offers just for you. Check back soon — good things are on the way!",
+      offersOk: 'Got it',
       ingredientsLabel: 'Ingredients',
       priceAny: 'Any Price',
       priceUnder100: 'Under ₹100',
@@ -87,6 +93,12 @@
       emptyState: 'మీ శోధనకు సరిపోలే వంటకాలు లేవు.',
       footerNote: 'ఆర్డర్ చేయడానికి సిద్ధంగా ఉన్నారా? మీ వెయిటర్‌కు తెలియజేయండి. అన్ని ధరలలో వర్తించే పన్నులు కలిపి ఉన్నాయి — ఏవైనా ఆహార అలర్జీల గురించి మీ సర్వర్‌కు తెలియజేయండి.',
       instaTitle: 'ఇన్‌స్టాగ్రామ్‌లో మమ్మల్ని ఫాలో అవ్వండి',
+      instagramLabel: 'ఇన్‌స్టాగ్రామ్',
+      offersLabel: 'ప్రత్యేక ఆఫర్‌లు',
+      offersTitle: 'ప్రత్యేక ఆఫర్‌లు',
+      offersSub: 'త్వరలో వస్తుంది',
+      offersMsg: 'మీ కోసం ప్రత్యేక డీల్స్ మరియు కాంబో ఆఫర్‌లను సిద్ధం చేస్తున్నాము. త్వరలో మళ్ళీ చూడండి — మంచి విషయాలు రాబోతున్నాయి!',
+      offersOk: 'సరే',
       ingredientsLabel: 'పదార్థాలు',
       priceAny: 'ఏదైనా ధర',
       priceUnder100: '₹100 లోపు',
@@ -132,6 +144,13 @@
     qs('#footerNote').textContent = S.footerNote;
     var instaLink = qs('#instaLink');
     if (instaLink){ instaLink.title = S.instaTitle; instaLink.setAttribute('aria-label', S.instaTitle); }
+    var fabOffersLabel = qs('#fabOffersLabel'); if (fabOffersLabel) fabOffersLabel.textContent = S.offersLabel;
+    var fabRatingLabel = qs('#fabRatingLabel'); if (fabRatingLabel) fabRatingLabel.textContent = S.rateCta;
+    var fabInstaLabel = qs('#fabInstaLabel'); if (fabInstaLabel) fabInstaLabel.textContent = S.instagramLabel;
+    var offersTitleEl = qs('#offersTitle'); if (offersTitleEl) offersTitleEl.textContent = S.offersTitle;
+    var offersSubEl = qs('#offersSub'); if (offersSubEl) offersSubEl.textContent = S.offersSub;
+    var offersMsgEl = qs('#offersMsg'); if (offersMsgEl) offersMsgEl.textContent = S.offersMsg;
+    var offersOkEl = qs('#offersOkBtn'); if (offersOkEl) offersOkEl.textContent = S.offersOk;
     langOpts.forEach(function(btn){
       btn.classList.toggle('active', btn.dataset.lang === currentLang);
     });

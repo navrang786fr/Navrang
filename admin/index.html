@@ -73,11 +73,11 @@
 
     <div class="panel-grid">
       <div class="admin-card">
-        <div class="panel-head"><h3><span class="panel-icon" data-icon="audit"></span>Recent Dish Changes</h3><a href="audit-log.html">View all →</a></div>
+        <div class="panel-head"><h3><span class="panel-icon" data-icon="ratings"></span>Customer Ratings</h3><a href="ratings.html">View all →</a></div>
         <div id="auditFeed"><div class="admin-loading">Loading…</div></div>
       </div>
       <div class="admin-card">
-        <div class="panel-head"><h3><span class="panel-icon" data-icon="access"></span>Recent Sign-ins</h3><a href="access-log.html">View all →</a></div>
+        <div class="panel-head"><h3><span class="panel-icon" data-icon="activity"></span>Customer Activities</h3><a href="activity.html">View all →</a></div>
         <div id="accessFeed"><div class="admin-loading">Loading…</div></div>
       </div>
     </div>
@@ -138,12 +138,27 @@
     } else {
       document.getElementById('statAvgRating').textContent = '–';
     }
+
+    var rows = ratings.slice().sort(function(a, b){ return new Date(b.submittedAt) - new Date(a.submittedAt); }).slice(0, 5);
+    var el = document.getElementById('auditFeed');
+    if (!rows.length){ el.innerHTML = '<div class="admin-empty" style="padding:14px;">No ratings yet.</div>'; return; }
+    el.innerHTML = rows.map(function(r){
+      var stars = '★'.repeat(r.rating || 0) + '☆'.repeat(5 - (r.rating || 0));
+      var dishes = (r.dishes || []).join(', ');
+      return '<div class="feed-item"><div class="main"><strong>' + esc(r.name || 'Anonymous') + '</strong> · ' + esc(stars) +
+        '<div class="sub">' + esc(dishes) + (r.comments ? ' — “' + esc(r.comments) + '”' : '') + '</div></div><div class="when">' + esc(fmtDate(r.submittedAt)) + '</div></div>';
+    }).join('');
   }).catch(function(){
     document.getElementById('statRatings').textContent = '—';
     document.getElementById('statAvgRating').textContent = '—';
+    document.getElementById('auditFeed').innerHTML = '<div class="admin-empty" style="padding:14px;">Could not load.</div>';
   });
 
-  // Activity (searches/views today)
+  // Activity (searches/views today + recent customer activity feed)
+  var ACTIVITY_TYPE_LABELS = {
+    search: 'Search', item_view: 'Item View', category_click: 'Category Click',
+    veg_filter: 'Veg Filter', top_filter: 'Top Picks Filter', price_filter: 'Price Filter'
+  };
   AdminShared.apiFetch('/api/track').then(function(resp){
     return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
   }).then(function(result){
@@ -151,40 +166,19 @@
     var todays = result.data.filter(function(r){ return isToday(r.timestamp); });
     document.getElementById('statSearchesToday').textContent = todays.filter(function(r){ return r.type === 'search'; }).length;
     document.getElementById('statViewsToday').textContent = todays.filter(function(r){ return r.type === 'item_view'; }).length;
+
+    var rows = result.data.slice(0, 5);
+    var el = document.getElementById('accessFeed');
+    if (!rows.length){ el.innerHTML = '<div class="admin-empty" style="padding:14px;">No activity yet.</div>'; return; }
+    el.innerHTML = rows.map(function(r){
+      var loc = [r.city, r.country].filter(Boolean).join(', ') || 'Unknown location';
+      var label = ACTIVITY_TYPE_LABELS[r.type] || r.type;
+      return '<div class="feed-item"><div class="main"><strong>' + esc(label) + '</strong> · ' + esc(r.value) +
+        '<div class="sub">' + esc(loc) + (r.device ? ' · ' + esc(r.device.browser) + ' / ' + esc(r.device.os) : '') + '</div></div><div class="when">' + esc(fmtDate(r.timestamp)) + '</div></div>';
+    }).join('');
   }).catch(function(){
     document.getElementById('statSearchesToday').textContent = '—';
     document.getElementById('statViewsToday').textContent = '—';
-  });
-
-  // Recent audit changes
-  AdminShared.apiFetch('/api/audit-log').then(function(resp){
-    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
-  }).then(function(result){
-    if (!result.ok) throw new Error();
-    var rows = result.data.slice(0, 5);
-    var el = document.getElementById('auditFeed');
-    if (!rows.length){ el.innerHTML = '<div class="admin-empty" style="padding:14px;">No changes yet.</div>'; return; }
-    el.innerHTML = rows.map(function(r){
-      var desc = r.action === 'create' ? 'created' : ('updated ' + Object.keys(r.changes || {}).join(', '));
-      return '<div class="feed-item"><div class="main"><strong>' + esc(r.dishName) + '</strong> ' + esc(desc) + '<div class="sub">by ' + esc(r.username) + '</div></div><div class="when">' + esc(fmtDate(r.timestamp)) + '</div></div>';
-    }).join('');
-  }).catch(function(){
-    document.getElementById('auditFeed').innerHTML = '<div class="admin-empty" style="padding:14px;">Could not load.</div>';
-  });
-
-  // Recent sign-ins
-  AdminShared.apiFetch('/api/access-log').then(function(resp){
-    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
-  }).then(function(result){
-    if (!result.ok) throw new Error();
-    var rows = result.data.slice(0, 5);
-    var el = document.getElementById('accessFeed');
-    if (!rows.length){ el.innerHTML = '<div class="admin-empty" style="padding:14px;">No sign-ins yet.</div>'; return; }
-    el.innerHTML = rows.map(function(r){
-      var loc = [r.city, r.country].filter(Boolean).join(', ') || 'Unknown location';
-      return '<div class="feed-item"><div class="main"><strong>' + esc(r.username) + '</strong> · ' + esc(r.outcome) + '<div class="sub">' + esc(loc) + (r.device ? ' · ' + esc(r.device.browser) + ' / ' + esc(r.device.os) : '') + '</div></div><div class="when">' + esc(fmtDate(r.timestamp)) + '</div></div>';
-    }).join('');
-  }).catch(function(){
     document.getElementById('accessFeed').innerHTML = '<div class="admin-empty" style="padding:14px;">Could not load.</div>';
   });
 })();
