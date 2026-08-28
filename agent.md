@@ -2,7 +2,11 @@
 
 Running log of changes made by the coding agent in this repo. Newest entries at the top.
 
-## 2026-08-27
+## 2026-08-27 / 2026-08-28
+
+- **Done:** Added "Orders" and "Menu (EN)"/"Menu (TE)" shortcuts to the shared admin nav (`admin-shared.js`'s `renderNav()`, so they appear on every admin page) — these link out to `order.html`/`navrang-menu.html`/`navrang-menu-te.html`, opened in a new tab since they're public pages, not admin sub-pages. Styled with a dashed border + external-link icon to distinguish from internal nav items.
+- **Done:** Regenerated both printable menu PDFs after the user finished uploading photos for literally every dish (99/99 now have photos) and made further price/detail tweaks via the live admin panel — confirmed still 2 pages each.
+- **Note:** By this point the user had used the live admin dishes editor to add photos for all 99 dishes (dozens of rebases were needed throughout this session to keep pushing without clobbering that work — always `git fetch` + rebase onto `navrang786fr/main` before pushing, never force). Real customer ratings are also now landing in `ratings.json` via the live order page (e.g., a real "Kheer" rating came in mid-session) — reinforces [[project-live-ratings-writes]].
 
 - **Done:** Root-caused and fixed why customer activity tracking wasn't capturing anything at all — a real, confirmed bug. `navigator.sendBeacon()` was called with a `Blob` of type `"application/json"`; since that's not a CORS-safelisted content type, the cross-origin (github.io → vercel.app) beacon needed a preflight it can't reliably perform, and the browser silently dropped or failed it (reproduced with a real cross-origin Playwright test: saw an actual CORS preflight error in the console, and confirmed zero events reached the live server). Fixed by switching to `type: 'text/plain'` (CORS-safelisted, no preflight ever needed) — the server already `JSON.parse`s the body regardless of Content-Type, so no backend change was needed for the fix itself. Verified before/after against the real deployed endpoint. `[[navrang-tracking-beacon-fix]]`
   - While in there, finished the tracking coverage the user originally asked for: category chip clicks, veg/top-picks/price filter changes now fire the same as search/item-view already did. `track.js` now records full request context (country/region/city/device) on every event via the existing `_lib/requestInfo.js`, not just a bare IP. `admin/activity.html` shows proper type labels and Location/Device columns.
