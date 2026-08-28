@@ -31,7 +31,7 @@ var MENU_DATA = {
     { id: 24, name: "Dal Curry", nameTe: "దాల్ కర్రీ", price: 110, veg: true, thumb: "images/menu/dal-curry-100.jpg", photo: "images/menu/dal-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 25, name: "Dal Tadka", nameTe: "దాల్ తడ్కా", price: 130, veg: true, thumb: "images/menu/dal-tadka-100.jpg", photo: "images/menu/dal-tadka-500.jpg", status: "Active", weeklyDishInd: false },
     { id: 26, name: "Kaju Curry", nameTe: "కాజు కర్రీ", price: 200, veg: true, thumb: "images/menu/kaju-curry-100.jpg", photo: "images/menu/kaju-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
-    { id: 27, name: "Kaju Paneer", nameTe: "కాజు పనీర్", price: 220, veg: true, thumb: "images/menu/kaju-paneer-100.jpg", photo: "images/menu/kaju-paneer-500.jpg", top: false, status: "Active", weeklyDishInd: false },
+    { id: 27, name: "Kaju Paneer", nameTe: "కాజు పనీర్", price: 220, veg: true, thumb: "images/menu/kaju-paneer-100.jpg", photo: "images/menu/kaju-paneer-500.jpg", top: true, status: "Active", weeklyDishInd: false },
     { id: 28, name: "Kaju Tamata", nameTe: "కాజు టమాట", price: 170, veg: true, thumb: "images/menu/kaju-tamata-100.jpg", photo: "images/menu/kaju-tamata-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 29, name: "Methi Chaman", nameTe: "మేథీ చమన్", price: 200, veg: true, thumb: "images/menu/methi-chaman-100.jpg", photo: "images/menu/methi-chaman-500.jpg", top: false, status: "Active", weeklyDishInd: false },
     { id: 30, name: "Mushroom Curry", nameTe: "మష్రూమ్ కర్రీ", price: 170, veg: true, thumb: "images/menu/mushroom-curry-100.jpg", photo: "images/menu/mushroom-curry-500.jpg", top: false, status: "Active", weeklyDishInd: false },
