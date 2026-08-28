@@ -41,6 +41,8 @@ a{color:inherit;}
 }
 .admin-nav-link svg,.admin-nav-logout svg{flex:0 0 auto;}
 .admin-nav-link.active{background:var(--turmeric);color:var(--maroon-deep);border-color:var(--turmeric);}
+.admin-nav-external{border-style:dashed;opacity:.9;}
+.admin-nav-external svg:last-child{opacity:.7;}
 .admin-nav-logout{
   display:inline-flex;align-items:center;gap:6px;
   margin-left:auto;font-size:12px;font-weight:700;padding:7px 12px;border-radius:20px;

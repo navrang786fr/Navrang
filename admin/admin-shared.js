@@ -51,6 +51,9 @@
     activity: '<path d="M3 12h4l2.5 7L13 5l2.5 7H21"/>',
     audit: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6a1 1 0 011 1v1H8V4a1 1 0 011-1z"/><path d="M9 11h6M9 15h4"/>',
     access: '<path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/>',
+    orders: '<path d="M6 2h9l3 3v17a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M9 9h6M9 13h6M9 17h3"/>',
+    menu: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M9 7h7M9 11h7"/>',
+    external: '<path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/>',
     logout: '<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>'
   };
   function icon(name, size) {
@@ -70,8 +73,15 @@
       { key: 'audit', label: 'Audit Log', href: 'audit-log.html', icon: 'audit' },
       { key: 'access', label: 'Access Log', href: 'access-log.html', icon: 'access' }
     ];
+    var externalItems = [
+      { label: 'Orders', href: '../order.html', icon: 'orders' },
+      { label: 'Menu (EN)', href: '../navrang-menu.html', icon: 'menu' },
+      { label: 'Menu (TE)', href: '../navrang-menu-te.html', icon: 'menu' }
+    ];
     nav.innerHTML = items.map(function (it) {
       return '<a class="admin-nav-link' + (it.key === activeKey ? ' active' : '') + '" href="' + it.href + '">' + icon(it.icon) + '<span>' + esc(it.label) + '</span></a>';
+    }).join('') + externalItems.map(function (it) {
+      return '<a class="admin-nav-link admin-nav-external" href="' + it.href + '" target="_blank" rel="noopener">' + icon(it.icon) + '<span>' + esc(it.label) + '</span>' + icon('external', 11) + '</a>';
     }).join('') + '<button type="button" class="admin-nav-logout" id="adminLogoutBtn">' + icon('logout') + '<span>Logout' + (getUsername() ? ' (' + esc(getUsername()) + ')' : '') + '</span></button>';
     var btn = document.getElementById('adminLogoutBtn');
     if (btn) btn.addEventListener('click', logout);
