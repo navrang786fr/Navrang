@@ -42,6 +42,11 @@
     </aside>
     <main class="admin-main">
   <div class="admin-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+      <h2 style="margin:0;">Customer Activity</h2>
+      <button type="button" class="admin-btn admin-btn-secondary" id="backupNowBtn" style="font-size:12px;padding:8px 14px;">Backup Last 7 Days</button>
+    </div>
+    <p class="admin-status" id="backupStatus" style="margin:0 0 14px;"></p>
     <div class="summary-grid">
       <div class="admin-card" style="text-align:center;"><div class="val" id="statSearches">–</div><div class="lbl">Searches</div></div>
       <div class="admin-card" style="text-align:center;"><div class="val" id="statViews">–</div><div class="lbl">Item Views</div></div>
@@ -91,6 +96,27 @@
   if (!AdminShared.requireAuthOrRedirect()) return;
   AdminShared.renderNav('activity');
   var esc = AdminShared.esc;
+
+  var backupBtn = document.getElementById('backupNowBtn');
+  var backupStatus = document.getElementById('backupStatus');
+  backupBtn.addEventListener('click', function(){
+    backupBtn.disabled = true;
+    backupBtn.textContent = 'Backing up…';
+    backupStatus.textContent = '';
+    backupStatus.className = 'admin-status';
+    AdminShared.apiFetch('/api/backup-activity', { method: 'POST' })
+      .then(function(resp){ return resp.json().then(function(data){ return { ok: resp.ok, data: data }; }); })
+      .then(function(result){
+        if (!result.ok) throw new Error(result.data.error || 'Backup failed');
+        backupStatus.textContent = 'Backed up ' + result.data.count + ' entries to ' + result.data.file;
+        backupStatus.className = 'admin-status success';
+      })
+      .catch(function(err){
+        backupStatus.textContent = err.message || 'Backup failed.';
+        backupStatus.className = 'admin-status error';
+      })
+      .finally(function(){ backupBtn.disabled = false; backupBtn.textContent = 'Backup Last 7 Days'; });
+  });
 
   var all = [];
   var fromDate = document.getElementById('fromDate');
