@@ -548,4 +548,43 @@
       });
     });
   }
+
+  /* ---------- Floating quick-links stack + Special Offers dialog ---------- */
+  var fabStack = qs('#fabStack');
+  var fabMainBtn = qs('#fabMainBtn');
+  var offersDialog = qs('#offersDialog');
+  var offersCard = qs('#offersCard');
+
+  function closeFab(){
+    fabStack.classList.remove('open');
+    fabMainBtn.setAttribute('aria-expanded', 'false');
+  }
+  if (fabMainBtn){
+    fabMainBtn.addEventListener('click', function(){
+      var isOpen = fabStack.classList.toggle('open');
+      fabMainBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    document.addEventListener('click', function(e){
+      if (fabStack.classList.contains('open') && !fabStack.contains(e.target)) closeFab();
+    });
+  }
+
+  function openOffersDialog(){
+    offersDialog.classList.add('show');
+    offersDialog.setAttribute('aria-hidden', 'false');
+  }
+  function closeOffersDialog(){
+    offersDialog.classList.remove('show');
+    offersDialog.setAttribute('aria-hidden', 'true');
+  }
+  if (offersDialog){
+    offersDialog.addEventListener('click', closeOffersDialog);
+    offersCard.addEventListener('click', function(e){ e.stopPropagation(); });
+    qs('#offersOkBtn').addEventListener('click', closeOffersDialog);
+    qs('#fabOffersBtn').addEventListener('click', function(){ closeFab(); openOffersDialog(); trackEvent('item_view', 'Special Offers (coming soon)'); });
+  }
+  var fabRatingBtn = qs('#fabRatingBtn');
+  if (fabRatingBtn) fabRatingBtn.addEventListener('click', function(){ closeFab(); openRateDialog(); });
+  var fabInstaBtn = qs('#fabInstaBtn');
+  if (fabInstaBtn) fabInstaBtn.addEventListener('click', closeFab);
 })();

@@ -201,6 +201,73 @@
   .rate-status{text-align:center;font-size:12.5px;margin:10px 0 0;min-height:16px;font-weight:600;}
   .rate-status.error{color:var(--nonveg);}
   .rate-status.success{color:var(--leaf);}
+
+  /* ---------- Floating quick-links stack ---------- */
+  .fab-stack{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:12px;}
+  .fab-item{
+    display:flex;align-items:center;gap:9px;
+    opacity:0;transform:translateY(10px) scale(.85);pointer-events:none;
+    transition:opacity .16s ease,transform .16s ease;
+  }
+  .fab-stack.open .fab-item{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+  .fab-stack.open .fab-item:nth-child(1){transition-delay:.08s;}
+  .fab-stack.open .fab-item:nth-child(2){transition-delay:.04s;}
+  .fab-stack.open .fab-item:nth-child(3){transition-delay:0s;}
+  .fab-item-label{
+    background:var(--maroon-deep);color:#fff;font-size:12px;font-weight:700;
+    padding:6px 12px;border-radius:14px;box-shadow:var(--shadow-sm);white-space:nowrap;
+    font-family:'Karla','Noto Sans Telugu',sans-serif;
+  }
+  .fab-item-btn{
+    width:46px;height:46px;border-radius:50%;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    border:none;cursor:pointer;box-shadow:var(--shadow-md);color:#fff;
+    text-decoration:none;padding:0;
+  }
+  .fab-item-btn svg{width:20px;height:20px;flex:0 0 auto;}
+  .fab-item-btn img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;}
+  .fab-offers .fab-item-btn{background:linear-gradient(135deg,var(--turmeric),#7a5210);}
+  .fab-rating .fab-item-btn{background:linear-gradient(135deg,var(--turmeric),var(--maroon-deep));}
+  .fab-insta .fab-item-btn{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);padding:9px;}
+  .fab-item-btn:active{transform:scale(.92);}
+  .fab-main{
+    width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;
+    background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));color:#fff;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.32);
+    transition:transform .15s ease;align-self:flex-end;position:relative;
+  }
+  .fab-main svg{width:23px;height:23px;position:absolute;transition:opacity .15s ease,transform .2s ease;}
+  .fab-main .fab-icon-close{opacity:0;transform:rotate(-45deg);}
+  .fab-stack.open .fab-main .fab-icon-stack{opacity:0;transform:rotate(45deg);}
+  .fab-stack.open .fab-main .fab-icon-close{opacity:1;transform:rotate(0);}
+  .fab-main:active{transform:scale(.92);}
+
+  /* ---------- Special Offers "coming soon" dialog ---------- */
+  .offers-dialog{
+    position:fixed;inset:0;z-index:96;background:rgba(10,15,10,.82);
+    display:flex;align-items:center;justify-content:center;padding:24px;
+    opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .offers-dialog.show{opacity:1;pointer-events:auto;}
+  .offers-card{
+    position:relative;max-width:340px;width:100%;background:var(--paper);border-radius:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);padding:34px 26px 26px;text-align:center;
+  }
+  .offers-icon{
+    width:64px;height:64px;border-radius:50%;margin:0 auto 16px;
+    background:linear-gradient(135deg,var(--turmeric),var(--maroon-deep));color:#fff;
+    display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);
+  }
+  .offers-icon svg{width:30px;height:30px;}
+  .offers-card h3{font-family:'Yatra One',cursive;font-weight:400;font-size:25px;color:var(--maroon-deep);margin:0 0 5px;}
+  .offers-sub{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--turmeric);margin:0 0 14px;}
+  .offers-msg{font-size:14px;line-height:1.6;color:var(--ink);opacity:.85;margin:0 0 22px;font-family:'Karla','Noto Sans Telugu',sans-serif;}
+  .offers-ok-btn{
+    width:100%;background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));color:#fff;border:none;
+    padding:13px;border-radius:11px;font-size:14.5px;font-weight:700;cursor:pointer;
+    box-shadow:var(--shadow-sm);transition:transform .12s ease;font-family:inherit;
+  }
+  .offers-ok-btn:active{transform:scale(.98);}
   .hero-strip .ar{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:21px;direction:rtl;color:var(--maroon-deep);margin-bottom:1px;}
   .hero-divider{display:flex;align-items:center;justify-content:center;gap:7px;margin:8px 0 9px;}
   .hero-divider span{width:38px;height:1px;background:linear-gradient(90deg,transparent,var(--turmeric));}
@@ -481,6 +548,43 @@
       <p class="rate-status" id="rateStatus"></p>
     </div>
   </div>
+</div>
+
+<div class="offers-dialog" id="offersDialog" role="dialog" aria-label="Special Offers" aria-hidden="true">
+  <div class="offers-card" id="offersCard">
+    <div class="offers-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C10 2 12 5 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C14 2 12 5 12 7z"/></svg>
+    </div>
+    <h3>Special Offers</h3>
+    <p class="offers-sub">Coming Soon</p>
+    <p class="offers-msg">We're preparing exclusive deals and combo offers just for you. Check back soon — good things are on the way!</p>
+    <button class="offers-ok-btn" id="offersOkBtn" type="button">Got it</button>
+  </div>
+</div>
+
+<div class="fab-stack" id="fabStack">
+  <div class="fab-item fab-offers">
+    <span class="fab-item-label">Offers</span>
+    <button type="button" class="fab-item-btn" id="fabOffersBtn" aria-label="Special Offers">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C10 2 12 5 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C14 2 12 5 12 7z"/></svg>
+    </button>
+  </div>
+  <div class="fab-item fab-rating">
+    <span class="fab-item-label">Rate Your Food</span>
+    <button type="button" class="fab-item-btn" id="fabRatingBtn" aria-label="Rate Your Food">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18.2 22 12 18.1 5.8 22l1.7-7.6L2 9.6l7.1-.7z"/></svg>
+    </button>
+  </div>
+  <div class="fab-item fab-insta">
+    <span class="fab-item-label">Instagram</span>
+    <a class="fab-item-btn" id="fabInstaBtn" href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" aria-label="Follow us on Instagram">
+      <img src="images/app/instagram.png" alt="">
+    </a>
+  </div>
+  <button type="button" class="fab-main" id="fabMainBtn" aria-label="Quick links" aria-expanded="false">
+    <svg class="fab-icon-stack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    <svg class="fab-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
 </div>
 
 <script src="config.js"></script>
