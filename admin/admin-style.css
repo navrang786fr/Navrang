@@ -20,37 +20,68 @@ body{
 button,input,select,textarea{font-family:inherit;}
 a{color:inherit;}
 
-.admin-shell{max-width:960px;margin:0 auto;min-height:100vh;background:var(--paper);box-shadow:var(--shadow-lg);}
+.admin-shell{min-height:100vh;background:var(--paper);display:flex;flex-direction:column;}
 
-.admin-topbar{
-  position:sticky;top:0;z-index:20;
+/* ---------- Top header bar (full width, holds mobile menu toggle) ---------- */
+.admin-header-bar{
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;gap:10px;
   background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));
-  color:var(--turmeric-light);padding:14px 18px;
+  color:#fff;padding:12px 16px;
   box-shadow:var(--shadow-sm);
 }
-.admin-topbar-row{display:flex;align-items:center;gap:12px;}
-.admin-topbar img{width:34px;height:34px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 0 2px rgba(255,255,255,.25);}
-.admin-topbar h1{font-family:'Yatra One',cursive;font-weight:400;font-size:19px;margin:0;color:#fff;flex:1;}
+.admin-header-bar img{width:32px;height:32px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 0 2px rgba(255,255,255,.25);}
+.admin-header-bar h1{font-family:'Yatra One',cursive;font-weight:400;font-size:18px;margin:0;color:#fff;}
+.sidebar-toggle{
+  display:none;flex:0 0 auto;background:rgba(255,255,255,.1);border:none;border-radius:8px;
+  color:#fff;width:34px;height:34px;align-items:center;justify-content:center;cursor:pointer;
+}
+.sidebar-toggle:active{transform:scale(.94);}
 
-.admin-nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+/* ---------- Body row: sidebar + main content ---------- */
+.admin-body{display:flex;flex:1;min-height:0;position:relative;}
+
+.admin-sidebar{
+  width:230px;flex:0 0 auto;background:var(--maroon-deep);
+  position:sticky;top:53px;align-self:flex-start;height:calc(100vh - 53px);overflow-y:auto;
+}
+.admin-nav{display:flex;flex-direction:column;padding:10px 0;}
+.admin-nav-section{padding:14px 18px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.35);font-weight:700;}
 .admin-nav-link{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:20px;
-  text-decoration:none;color:var(--turmeric-light);border:1px solid rgba(255,255,255,.25);
-  background:rgba(255,255,255,.06);
+  display:flex;align-items:center;gap:12px;
+  font-size:13px;font-weight:600;padding:11px 18px;
+  text-decoration:none;color:var(--turmeric-light);
+  border-left:3px solid transparent;
 }
-.admin-nav-link svg,.admin-nav-logout svg{flex:0 0 auto;}
-.admin-nav-link.active{background:var(--turmeric);color:var(--maroon-deep);border-color:var(--turmeric);}
-.admin-nav-external{border-style:dashed;opacity:.9;}
-.admin-nav-external svg:last-child{opacity:.7;}
+.admin-nav-link:hover{background:rgba(255,255,255,.06);}
+.admin-nav-link svg{flex:0 0 auto;opacity:.8;}
+.admin-nav-link.active{background:rgba(255,255,255,.1);border-left-color:var(--turmeric);color:#fff;}
+.admin-nav-link.active svg{opacity:1;color:var(--turmeric);}
+.admin-nav-external{opacity:.85;}
+.admin-nav-external svg:last-child{margin-left:auto;opacity:.6;width:12px;height:12px;}
 .admin-nav-logout{
-  display:inline-flex;align-items:center;gap:6px;
-  margin-left:auto;font-size:12px;font-weight:700;padding:7px 12px;border-radius:20px;
-  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:var(--turmeric-light);cursor:pointer;
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  font-size:13px;font-weight:600;padding:12px 18px;margin-top:10px;
+  border:none;border-top:1px solid rgba(255,255,255,.12);background:none;color:var(--turmeric-light);cursor:pointer;
 }
-.admin-nav-logout:active{transform:scale(.96);}
+.admin-nav-logout:active{background:rgba(255,255,255,.06);}
 
-.admin-panel{padding:16px 18px 40px;}
+.sidebar-overlay{display:none;}
+
+.admin-main{flex:1;min-width:0;}
+.admin-panel{padding:16px 18px 40px;max-width:960px;}
+
+@media (max-width:860px){
+  .sidebar-toggle{display:flex;}
+  .admin-sidebar{
+    position:fixed;top:0;left:0;bottom:0;height:100vh;z-index:60;width:250px;
+    transform:translateX(-100%);transition:transform .2s ease;box-shadow:0 0 30px rgba(0,0,0,.4);
+  }
+  .admin-sidebar.open{transform:translateX(0);}
+  .sidebar-overlay.open{
+    display:block;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.4);
+  }
+}
 .admin-panel h2{font-family:'Yatra One',cursive;font-weight:400;font-size:22px;color:var(--maroon-deep);margin:0 0 14px;}
 
 .admin-card{

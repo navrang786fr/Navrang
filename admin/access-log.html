@@ -28,14 +28,19 @@
 <body>
 
 <div class="admin-shell">
-  <div class="admin-topbar">
-    <div class="admin-topbar-row">
-      <img src="../navrang_logo.png" alt="Navrang">
-      <h1>Access Log</h1>
-    </div>
-    <nav class="admin-nav" id="adminNav"></nav>
+  <div class="admin-header-bar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <img src="../navrang_logo.png" alt="Navrang">
+    <h1>Access Log</h1>
   </div>
-
+  <div class="admin-body">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="admin-sidebar" id="adminSidebar">
+      <nav class="admin-nav" id="adminNav"></nav>
+    </aside>
+    <main class="admin-main">
   <div class="admin-panel">
     <h2>Blocked IPs</h2>
     <div class="admin-card" id="blockedWrap">
@@ -71,6 +76,8 @@
     <div class="admin-table-wrap" id="listWrap">
       <div class="admin-loading">Loading…</div>
     </div>
+  </div>
+    </main>
   </div>
 </div>
 

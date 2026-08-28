@@ -80,11 +80,28 @@
     ];
     nav.innerHTML = items.map(function (it) {
       return '<a class="admin-nav-link' + (it.key === activeKey ? ' active' : '') + '" href="' + it.href + '">' + icon(it.icon) + '<span>' + esc(it.label) + '</span></a>';
-    }).join('') + externalItems.map(function (it) {
+    }).join('') + '<div class="admin-nav-section">Shortcuts</div>' + externalItems.map(function (it) {
       return '<a class="admin-nav-link admin-nav-external" href="' + it.href + '" target="_blank" rel="noopener">' + icon(it.icon) + '<span>' + esc(it.label) + '</span>' + icon('external', 11) + '</a>';
     }).join('') + '<button type="button" class="admin-nav-logout" id="adminLogoutBtn">' + icon('logout') + '<span>Logout' + (getUsername() ? ' (' + esc(getUsername()) + ')' : '') + '</span></button>';
     var btn = document.getElementById('adminLogoutBtn');
     if (btn) btn.addEventListener('click', logout);
+    initSidebarToggle();
+  }
+
+  function initSidebarToggle() {
+    var toggle = document.getElementById('sidebarToggle');
+    var sidebar = document.getElementById('adminSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    if (!toggle || !sidebar) return;
+    function open() { sidebar.classList.add('open'); if (overlay) overlay.classList.add('open'); }
+    function close() { sidebar.classList.remove('open'); if (overlay) overlay.classList.remove('open'); }
+    toggle.addEventListener('click', function () {
+      sidebar.classList.contains('open') ? close() : open();
+    });
+    if (overlay) overlay.addEventListener('click', close);
+    Array.prototype.forEach.call(sidebar.querySelectorAll('a, button'), function (el) {
+      el.addEventListener('click', close);
+    });
   }
 
   window.AdminShared = { getToken, getUsername, setSession, clearSession, requireAuthOrRedirect, apiFetch, logout, renderNav, esc, icon, API_BASE };
