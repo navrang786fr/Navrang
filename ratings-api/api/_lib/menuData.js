@@ -69,6 +69,25 @@ function serializeMenuDataFile(menuData, restSrc) {
   return joined.endsWith('\n') ? joined : joined + '\n';
 }
 
+/** Rebuild the CATEGORY_META block (header comment + declaration) from a (mutated) categories array. */
+function serializeCategoryMetaFile(categories) {
+  let out = '/* Category display order, titles and icons — shared by the printed menu and the order app. */\n';
+  out += 'var CATEGORY_META = [\n';
+  categories.forEach(function (c, i) {
+    const firstLineKeys = ['id', 'title', 'titleTe', 'short', 'shortTe'];
+    const firstLine = firstLineKeys.map(function (k) { return k + ': ' + JSON.stringify(c[k]); }).join(', ') + ',';
+    out += '  { ' + firstLine + '\n';
+    if (c.image) out += '    image: ' + JSON.stringify(c.image) + ',\n';
+    out += '    icon: ' + JSON.stringify(c.icon) + ' }' + (i < categories.length - 1 ? ',' : '') + '\n';
+  });
+  out += '];\n';
+  return out;
+}
+
+function findCategoryById(categories, id) {
+  return categories.find(function (c) { return c.id === id; }) || null;
+}
+
 function findDishById(menuData, id) {
   for (const catId in menuData) {
     const idx = menuData[catId].findIndex(function (d) { return d.id === id; });
@@ -85,4 +104,4 @@ function nextId(menuData) {
   return max + 1;
 }
 
-module.exports = { KEY_ORDER, parseMenuData, parseCategoryMeta, serializeMenuDataFile, findDishById, nextId };
+module.exports = { KEY_ORDER, parseMenuData, parseCategoryMeta, serializeMenuDataFile, serializeCategoryMetaFile, findDishById, findCategoryById, nextId };

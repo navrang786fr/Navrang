@@ -147,10 +147,13 @@ module.exports = async function handler(req, res) {
     } else {
       const id = parseInt(body.id, 10);
       if (!id) { res.status(400).json({ error: 'id is required to update a dish' }); return; }
+      const newCategoryId = body.categoryId ? String(body.categoryId) : null;
 
       const outcome = await mutateMenuData(publicRepo, publicToken, function (menuData) {
         const found = findDishById(menuData, id);
         if (!found) throw new Error('dish-not-found:' + id);
+        if (newCategoryId && !menuData[newCategoryId]) throw new Error('unknown-category:' + newCategoryId);
+
         const before = Object.assign({}, found.dish);
         Object.assign(found.dish, submitted);
         const changes = {};
@@ -159,7 +162,16 @@ module.exports = async function handler(req, res) {
             changes[k] = { from: before[k] === undefined ? null : before[k], to: found.dish[k] };
           }
         });
-        return { dish: found.dish, categoryId: found.catId, changes };
+
+        let categoryId = found.catId;
+        if (newCategoryId && newCategoryId !== found.catId) {
+          menuData[found.catId].splice(found.idx, 1);
+          menuData[newCategoryId].push(found.dish);
+          changes.categoryId = { from: found.catId, to: newCategoryId };
+          categoryId = newCategoryId;
+        }
+
+        return { dish: found.dish, categoryId: categoryId, changes };
       }, `Admin: update dish #${id} (${auth.sub})`);
 
       auditPayload = { action: 'update', categoryId: outcome.categoryId, dishId: id, dishName: outcome.dish.name, changes: outcome.changes };

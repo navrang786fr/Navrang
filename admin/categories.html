@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Categories</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .cat-table td{vertical-align:middle;}
+  .cat-icon-preview{width:28px;height:28px;color:var(--maroon);flex:0 0 auto;}
+  .cat-icon-preview svg{width:100%;height:100%;}
+  .cat-id{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--maroon);opacity:.75;white-space:nowrap;}
+  .cat-input{width:100%;min-width:120px;border:1.3px solid var(--rule);border-radius:8px;padding:7px 9px;font-size:13px;background:var(--paper);outline:none;font-family:inherit;}
+  .cat-input:focus{border-color:var(--maroon);}
+  .cat-row-status{font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .cat-row-status.success{color:var(--leaf);}
+  .cat-row-status.error{color:var(--nonveg);}
+  .cat-save-btn{
+    background:var(--maroon-deep);color:#fff;border:none;border-radius:8px;
+    padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;
+  }
+  .cat-save-btn:active{transform:scale(.96);}
+  .cat-save-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .cat-hint{font-size:12.5px;color:var(--maroon);opacity:.75;margin:0 0 14px;}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-header-bar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <img src="../navrang_logo.png" alt="Navrang">
+    <h1>Categories</h1>
+  </div>
+  <div class="admin-body">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="admin-sidebar" id="adminSidebar">
+      <nav class="admin-nav" id="adminNav"></nav>
+    </aside>
+    <main class="admin-main">
+  <div class="admin-panel">
+    <h2>Edit Categories</h2>
+    <p class="cat-hint">Category names shown on the order page and printed menus. Categories themselves can't be added or removed here — only their titles/labels.</p>
+    <div class="admin-table-wrap" id="listWrap">
+      <div class="admin-loading">Loading categories…</div>
+    </div>
+  </div>
+    </main>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function(){
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('categories');
+  var esc = AdminShared.esc;
+  var listWrap = document.getElementById('listWrap');
+
+  function iconSvg(paths){
+    return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+  }
+
+  function renderList(categories){
+    listWrap.innerHTML = '<table class="admin-table cat-table"><thead><tr><th></th><th>ID</th><th>Title (EN)</th><th>Title (TE)</th><th>Short (EN)</th><th>Short (TE)</th><th></th><th></th></tr></thead><tbody>' +
+      categories.map(function(c){
+        return '<tr data-id="' + esc(c.id) + '">' +
+          '<td><span class="cat-icon-preview">' + iconSvg(c.icon || '') + '</span></td>' +
+          '<td><span class="cat-id">' + esc(c.id) + '</span></td>' +
+          '<td><input class="cat-input" data-field="title" value="' + esc(c.title) + '"></td>' +
+          '<td><input class="cat-input" data-field="titleTe" value="' + esc(c.titleTe) + '"></td>' +
+          '<td><input class="cat-input" data-field="short" value="' + esc(c.short) + '"></td>' +
+          '<td><input class="cat-input" data-field="shortTe" value="' + esc(c.shortTe) + '"></td>' +
+          '<td><button type="button" class="cat-save-btn">Save</button></td>' +
+          '<td><span class="cat-row-status"></span></td>' +
+          '</tr>';
+      }).join('') + '</tbody></table>';
+
+    Array.prototype.forEach.call(listWrap.querySelectorAll('tbody tr'), function(row){
+      var id = row.dataset.id;
+      var btn = row.querySelector('.cat-save-btn');
+      var status = row.querySelector('.cat-row-status');
+      btn.addEventListener('click', function(){
+        var payload = { id: id };
+        Array.prototype.forEach.call(row.querySelectorAll('.cat-input'), function(input){
+          payload[input.dataset.field] = input.value.trim();
+        });
+        if (!payload.title || !payload.titleTe){
+          status.textContent = 'Title (EN/TE) required.';
+          status.className = 'cat-row-status error';
+          return;
+        }
+        btn.disabled = true;
+        status.textContent = 'Saving…';
+        status.className = 'cat-row-status';
+        AdminShared.apiFetch('/api/categories', { method: 'POST', body: JSON.stringify(payload) })
+          .then(function(resp){ return resp.json().then(function(data){ return { ok: resp.ok, data: data }; }); })
+          .then(function(result){
+            if (!result.ok) throw new Error(result.data.error || 'Save failed');
+            status.textContent = 'Saved.';
+            status.className = 'cat-row-status success';
+          })
+          .catch(function(err){
+            status.textContent = err.message || 'Something went wrong.';
+            status.className = 'cat-row-status error';
+          })
+          .finally(function(){ btn.disabled = false; });
+      });
+    });
+  }
+
+  function loadCategories(){
+    return AdminShared.apiFetch('/api/categories').then(function(resp){
+      return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+    }).then(function(result){
+      if (!result.ok) throw new Error(result.data.error || 'Failed to load categories');
+      renderList(result.data.categories || []);
+    }).catch(function(err){
+      listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Failed to load categories.') + '</div>';
+    });
+  }
+
+  loadCategories();
+})();
+</script>
+</body>
+</html>

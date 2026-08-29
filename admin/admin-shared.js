@@ -48,6 +48,7 @@
     home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"/>',
     ratings: '<path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18.2 22 12 18.1 5.8 22l1.7-7.6L2 9.6l7.1-.7z"/>',
     dishes: '<path d="M20.59 13.41L11 3.83A2 2 0 009.83 3H4a1 1 0 00-1 1v5.83a2 2 0 00.59 1.41l9.58 9.59a2 2 0 002.83 0l4.59-4.59a2 2 0 000-2.83z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/>',
+    categories: '<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>',
     activity: '<path d="M3 12h4l2.5 7L13 5l2.5 7H21"/>',
     audit: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6a1 1 0 011 1v1H8V4a1 1 0 011-1z"/><path d="M9 11h6M9 15h4"/>',
     access: '<path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/>',
@@ -69,6 +70,7 @@
       { key: 'home', label: 'Home', href: 'index.html', icon: 'home' },
       { key: 'ratings', label: 'Ratings', href: 'ratings.html', icon: 'ratings' },
       { key: 'dishes', label: 'Dish Rates', href: 'dishes.html', icon: 'dishes' },
+      { key: 'categories', label: 'Categories', href: 'categories.html', icon: 'categories' },
       { key: 'activity', label: 'Customer Activity', href: 'activity.html', icon: 'activity' },
       { key: 'audit', label: 'Audit Log', href: 'audit-log.html', icon: 'audit' },
       { key: 'access', label: 'Access Log', href: 'access-log.html', icon: 'access' }

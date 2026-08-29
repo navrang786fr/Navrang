@@ -410,7 +410,6 @@
     lastAutoTe = '';
     teHint.textContent = '';
     showEmptyUpload();
-    fCategory.disabled = false;
     formHeading.textContent = 'Create New Dish';
     submitBtn.textContent = 'Create Dish';
     cancelBtn.style.display = 'none';
@@ -421,7 +420,6 @@
   function startEdit(dish){
     editingId = dish.id;
     fCategory.value = dish.categoryId;
-    fCategory.disabled = true;
     fName.value = dish.name;
     fNameTe.value = dish.nameTe;
     fPrice.value = dish.price === null || dish.price === undefined ? '' : dish.price;
@@ -522,7 +520,7 @@
       if (file) setUploadProcessing(true, 'Uploading photo…');
       submitBtn.textContent = 'Saving…';
       var payload = editingId
-        ? { action: 'update', id: editingId, dish: dish }
+        ? { action: 'update', id: editingId, categoryId: fCategory.value, dish: dish }
         : { action: 'create', categoryId: fCategory.value, dish: dish };
       if (images) payload.images = images;
       return AdminShared.apiFetch('/api/dishes', { method: 'POST', body: JSON.stringify(payload) });
