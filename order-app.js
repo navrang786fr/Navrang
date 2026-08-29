@@ -218,6 +218,8 @@
     var chipIcon = cat.image ? '<img class="chip-icon" src="' + esc(cat.image) + '" alt="">' : iconSvg(cat.icon);
     chip.innerHTML = chipIcon + '<span class="chip-label" data-en="' + esc(cat.short) + '" data-te="' + esc(cat.shortTe) + '">' + esc(cat.short) + '</span>';
     chip.addEventListener('click', function(){
+      qsa('.chip').forEach(function(c){ c.classList.toggle('active', c === chip); });
+      suppressActiveSync();
       var section = document.getElementById('sec-' + cat.id);
       if (section) section.scrollIntoView({ behavior:'smooth', block:'start' });
       trackEvent('category_click', cat.short);
@@ -347,9 +349,29 @@
   /* ---------- Active chip highlight ---------- */
   var chips = qsa('.chip');
   var observer = null;
+
+  /* A chip click sets the active chip immediately, then scrolls; while that scroll is in
+     flight the scroll-spy observer below would otherwise re-highlight whatever section
+     briefly crosses its threshold mid-animation. Suppress it until scrolling settles (or a
+     fallback timeout, in case the target was already in view and no scroll event fires). */
+  var scrollSpySuppressed = false;
+  var suppressFallbackTimer = null;
+  var suppressSettleTimer = null;
+  function suppressActiveSync(){
+    scrollSpySuppressed = true;
+    clearTimeout(suppressFallbackTimer);
+    suppressFallbackTimer = setTimeout(function(){ scrollSpySuppressed = false; }, 900);
+  }
+  window.addEventListener('scroll', function(){
+    if (!scrollSpySuppressed) return;
+    clearTimeout(suppressSettleTimer);
+    suppressSettleTimer = setTimeout(function(){ scrollSpySuppressed = false; }, 150);
+  }, { passive: true });
+
   function setupObserver(headerHeight){
     if (observer) observer.disconnect();
     observer = new IntersectionObserver(function(entries){
+      if (scrollSpySuppressed) return;
       entries.forEach(function(entry){
         if (!entry.isIntersecting) return;
         var id = entry.target.id.replace('sec-', '');
