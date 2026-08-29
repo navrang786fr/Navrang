@@ -9,7 +9,7 @@ const { requireAuth } = require('./_lib/auth.js');
 const { parseMenuData, parseCategoryMeta, serializeMenuDataFile, findDishById, nextId } = require('./_lib/menuData.js');
 const { getRequestInfo } = require('./_lib/requestInfo.js');
 
-const EDITABLE_FIELDS = ['name', 'nameTe', 'price', 'veg', 'thumb', 'photo', 'top', 'status', 'weeklyDishInd'];
+const EDITABLE_FIELDS = ['name', 'nameTe', 'price', 'strike', 'veg', 'thumb', 'photo', 'top', 'status', 'weeklyDishInd'];
 
 function pickEditable(src) {
   const out = {};
@@ -118,6 +118,9 @@ module.exports = async function handler(req, res) {
   }
   if (submitted.price !== null && typeof submitted.price !== 'number') {
     res.status(400).json({ error: 'Price must be a number or null' }); return;
+  }
+  if (submitted.strike !== undefined && submitted.strike !== null && typeof submitted.strike !== 'number') {
+    res.status(400).json({ error: 'Strike price must be a number or null' }); return;
   }
   if (typeof submitted.veg !== 'boolean') {
     res.status(400).json({ error: 'veg must be true or false' }); return;

@@ -3,7 +3,7 @@
 
 const vm = require('vm');
 
-const KEY_ORDER = ['id', 'name', 'nameTe', 'price', 'veg', 'thumb', 'photo', 'top', 'ingredients', 'ingredientsTe', 'status', 'weeklyDishInd'];
+const KEY_ORDER = ['id', 'name', 'nameTe', 'price', 'strike', 'veg', 'thumb', 'photo', 'top', 'ingredients', 'ingredientsTe', 'status', 'weeklyDishInd'];
 
 function splitFile(raw) {
   const lines = raw.split(/\r?\n/);
