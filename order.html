@@ -124,10 +124,23 @@
     background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);
     padding:14px 14px 16px;
   }
+  .lightbox-img-wrap{position:relative;}
   .lightbox-card img{
     display:block;width:100%;max-height:68vh;object-fit:contain;
     border-radius:10px;background:#fff;
   }
+  .lightbox-spinner{
+    display:none;position:absolute;inset:0;align-items:center;justify-content:center;
+  }
+  .lightbox-img-wrap.loading{min-height:180px;}
+  .lightbox-img-wrap.loading .lightbox-spinner{display:flex;}
+  .lightbox-img-wrap.loading img{visibility:hidden;}
+  .lightbox-spinner::after{
+    content:'';width:34px;height:34px;border-radius:50%;
+    border:3px solid rgba(122,26,26,.18);border-top-color:var(--maroon-deep);
+    animation:lightbox-spin .7s linear infinite;
+  }
+  @keyframes lightbox-spin{to{transform:rotate(360deg);}}
   .lightbox-caption{
     margin:12px 0 0;text-align:center;font-family:'Karla','Noto Sans Telugu',sans-serif;
     font-weight:700;font-size:15px;color:var(--ink);
@@ -337,15 +350,16 @@
   .chip{
     flex:0 0 auto;display:flex;align-items:center;gap:6px;
     padding:7px 13px;border-radius:20px;
-    background:var(--paper-soft);border:1px solid var(--rule);
-    font-size:12.5px;font-weight:700;color:var(--ink);
+    background:var(--paper);border:1.4px solid var(--maroon);
+    font-size:12.5px;font-weight:700;color:var(--maroon);
     cursor:pointer;white-space:nowrap;
-    transition:background .15s ease,color .15s ease,box-shadow .15s ease,border-color .15s ease;
+    box-shadow:var(--shadow-xs);
+    transition:background .15s ease,color .15s ease,box-shadow .15s ease,border-color .15s ease,transform .12s ease;
   }
   .chip:active{transform:scale(.96);}
   .chip svg{width:13px;height:13px;flex:0 0 auto;}
   .chip-icon{width:18px;height:18px;border-radius:50%;object-fit:cover;flex:0 0 auto;display:block;}
-  .chip.active{background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));border-color:var(--maroon-deep);color:var(--turmeric-light);box-shadow:var(--shadow-sm);}
+  .chip.active{background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));border-color:var(--maroon-deep);color:var(--turmeric-light);box-shadow:var(--shadow-sm);transform:scale(1.03);}
 
   /* ---------- Menu content ---------- */
   .menu-content{flex:1;padding:6px 14px 16px;}
@@ -385,12 +399,12 @@
   .dish .dot.veg{color:var(--leaf);}
   .dish .dot.nonveg{color:var(--nonveg);}
   .dish-thumb-wrap{
-    width:84px;height:84px;flex:0 0 auto;position:relative;cursor:pointer;
+    width:104px;height:104px;flex:0 0 auto;position:relative;cursor:pointer;
     transition:transform .12s ease;
   }
   .dish-thumb-wrap:active{transform:scale(.94);}
   .dish-thumb-clip{
-    width:100%;height:100%;border-radius:14px;overflow:hidden;display:block;
+    width:100%;height:100%;border-radius:16px;overflow:hidden;display:block;
     border:1px solid var(--rule);box-shadow:var(--shadow-xs);
   }
   .dish-thumb{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.35);}
@@ -421,6 +435,7 @@
 
   .menu-footer{padding:10px 24px 30px;text-align:center;}
   .menu-footer p{margin:10px 0 0;font-size:11.5px;color:rgba(42,32,22,.55);line-height:1.55;font-style:italic;}
+  .menu-footer p.menu-version{font-size:10px;font-style:normal;letter-spacing:.03em;opacity:.6;}
 
   @media (min-width:601px){
     body{
@@ -450,9 +465,6 @@
         <button type="button" class="lang-opt" data-lang="en" title="View in English" aria-label="View in English">English</button>
         <button type="button" class="lang-opt" data-lang="te" title="తెలుగులో చూడండి" aria-label="తెలుగులో చూడండి">తెలుగు</button>
       </div>
-      <button class="icon-btn" id="rateTopBtn" type="button" title="Rate Your Food" aria-label="Rate Your Food">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18.2 22 12 18.1 5.8 22l1.7-7.6L2 9.6l7.1-.7z"/></svg>
-      </button>
       <a class="icon-btn icon-btn-img" id="instaLink" href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" title="Follow us on Instagram" aria-label="Follow us on Instagram">
         <img src="images/app/instagram.png" alt="">
       </a>
@@ -498,6 +510,7 @@
       <span id="rateCtaLabel">Rate Your Food</span>
     </button>
     <p id="footerNote">Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.</p>
+    <p class="menu-version">v26.08</p>
   </div>
 
 </div>
@@ -505,7 +518,10 @@
 <div class="image-lightbox" id="imageLightbox" role="dialog" aria-label="Image preview" aria-hidden="true">
   <div class="lightbox-card" id="lightboxCard">
     <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close">✕</button>
-    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-img-wrap">
+      <img id="lightboxImg" src="" alt="">
+      <span class="lightbox-spinner" id="lightboxSpinner" aria-hidden="true"></span>
+    </div>
     <p class="lightbox-caption" id="lightboxCaption"></p>
     <p class="lightbox-ingredients" id="lightboxIngredients"></p>
   </div>

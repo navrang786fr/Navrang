@@ -3,6 +3,7 @@
 // records an audit-log entry (who/when/what changed) in the private admin
 // repo.
 
+const crypto = require('crypto');
 const { readRawFile, putFile, getFileSha, putFileBase64, writeJsonArrayWithRetry } = require('./_lib/github.js');
 const { requireAuth } = require('./_lib/auth.js');
 const { parseMenuData, parseCategoryMeta, serializeMenuDataFile, findDishById, nextId } = require('./_lib/menuData.js');
@@ -44,7 +45,11 @@ async function uploadDishImages(publicRepo, token, dishName, images, username) {
     const put = await putFileBase64(publicRepo, f.path, token, base64, sha, `Admin: upload ${f.path} for "${dishName}" (${username})`);
     if (!put.ok) throw new Error('image-upload-failed:' + f.path);
   }
-  return { thumb: `images/menu/${slug}-100.jpg`, photo: `images/menu/${slug}-500.jpg` };
+  // Cache-buster derived from the uploaded photo's own bytes: unrelated dishes keep their
+  // already-cached URL untouched, but a re-uploaded photo gets a new URL so customers on
+  // the order page (and any CDN edge cache) fetch the new image instead of a stale one.
+  const version = crypto.createHash('sha1').update(images.photoDataUrl || images.originalDataUrl).digest('hex').slice(0, 10);
+  return { thumb: `images/menu/${slug}-100.jpg?v=${version}`, photo: `images/menu/${slug}-500.jpg?v=${version}` };
 }
 
 async function mutateMenuData(publicRepo, githubToken, mutator, commitMessage, maxRetries) {

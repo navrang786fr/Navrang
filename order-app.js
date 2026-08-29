@@ -230,7 +230,7 @@
 
     var head = document.createElement('div');
     head.className = 'section-head';
-    var headIcon = cat.image ? '<img src="' + esc(cat.image) + '" alt="">' : iconSvg(cat.icon);
+    var headIcon = cat.image ? '<img src="' + esc(cat.image) + '" alt="" loading="lazy" decoding="async">' : iconSvg(cat.icon);
     head.innerHTML = '<span class="cat-icon' + (cat.image ? ' cat-icon-img' : '') + '">' + headIcon + '</span>' +
       '<span class="section-title" data-en="' + esc(cat.title) + '" data-te="' + esc(cat.titleTe) + '">' + esc(cat.title) + '</span>' +
       '<span class="n section-count" data-count="' + items.length + '">' + items.length + ' items</span>';
@@ -247,7 +247,7 @@
       var priceLabel = item.price === null ? '<span class="no-price">Ask staff</span>' : ('<span class="dish-price">' + CUR + item.price + '</span>');
       var thumbSrc = item.thumb || NO_IMAGE_THUMB;
       var topBadge = item.top ? '<span class="top-badge">' + esc(STRINGS[currentLang].topBadge) + '</span>' : '';
-      var thumb = '<span class="dish-thumb-wrap"><span class="dish-thumb-clip"><img class="dish-thumb" src="' + esc(thumbSrc) + '" alt=""></span>' + topBadge + '</span>';
+      var thumb = '<span class="dish-thumb-wrap"><span class="dish-thumb-clip"><img class="dish-thumb" src="' + esc(thumbSrc) + '" alt="" loading="lazy" decoding="async" width="104" height="104"></span>' + topBadge + '</span>';
 
       row.innerHTML =
         thumb +
@@ -393,10 +393,12 @@
   var imageLightbox = qs('#imageLightbox');
   var lightboxCard = qs('#lightboxCard');
   var lightboxImg = qs('#lightboxImg');
+  var lightboxImgWrap = qs('#lightboxImg').parentElement;
   var lightboxCaption = qs('#lightboxCaption');
   var lightboxIngredients = qs('#lightboxIngredients');
   var lightboxClose = qs('#lightboxClose');
   function openLightbox(src, caption, ingredients){
+    lightboxImgWrap.classList.add('loading');
     lightboxImg.src = src;
     lightboxImg.alt = caption || '';
     lightboxCaption.textContent = caption || '';
@@ -406,6 +408,8 @@
     imageLightbox.classList.add('show');
     imageLightbox.setAttribute('aria-hidden', 'false');
   }
+  lightboxImg.addEventListener('load', function(){ lightboxImgWrap.classList.remove('loading'); });
+  lightboxImg.addEventListener('error', function(){ lightboxImgWrap.classList.remove('loading'); });
   function closeLightbox(){
     imageLightbox.classList.remove('show');
     imageLightbox.setAttribute('aria-hidden', 'true');
@@ -521,9 +525,7 @@
     rateDialog.setAttribute('aria-hidden', 'true');
   }
 
-  var rateTopBtn = qs('#rateTopBtn');
   if (rateCta) rateCta.addEventListener('click', openRateDialog);
-  if (rateTopBtn) rateTopBtn.addEventListener('click', openRateDialog);
   if (rateClose) rateClose.addEventListener('click', closeRateDialog);
   if (rateDialog) rateDialog.addEventListener('click', closeRateDialog);
   if (rateCard) rateCard.addEventListener('click', function(e){ e.stopPropagation(); });

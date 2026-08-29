@@ -65,6 +65,7 @@ a{color:inherit;}
   border:none;border-top:1px solid rgba(255,255,255,.12);background:none;color:var(--turmeric-light);cursor:pointer;
 }
 .admin-nav-logout:active{background:rgba(255,255,255,.06);}
+.admin-nav-version{padding:10px 18px 14px;font-size:10px;letter-spacing:.03em;color:rgba(255,255,255,.35);text-align:left;}
 
 .sidebar-overlay{display:none;}
 
