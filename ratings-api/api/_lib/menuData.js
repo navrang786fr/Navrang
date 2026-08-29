@@ -104,4 +104,15 @@ function nextId(menuData) {
   return max + 1;
 }
 
-module.exports = { KEY_ORDER, parseMenuData, parseCategoryMeta, serializeMenuDataFile, serializeCategoryMetaFile, findDishById, findCategoryById, nextId };
+/** Next incremental category id (a string, since ids are used as MENU_DATA object keys) —
+ * only counts existing purely-numeric ids, so the fixed slug ids (e.g. "egg-curries") never
+ * collide with newly created ones. */
+function nextCategoryId(categories) {
+  let max = 0;
+  categories.forEach(function (c) {
+    if (/^\d+$/.test(String(c.id)) && Number(c.id) > max) max = Number(c.id);
+  });
+  return String(max + 1);
+}
+
+module.exports = { KEY_ORDER, parseMenuData, parseCategoryMeta, serializeMenuDataFile, serializeCategoryMetaFile, findDishById, findCategoryById, nextId, nextCategoryId };

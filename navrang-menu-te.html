@@ -376,20 +376,27 @@
   </div>
 </section>
 
-<script src="menu-data.js"></script>
 <script>
 (function(){
-  document.querySelectorAll('.category').forEach(function(cat){
-    var data = MENU_DATA[cat.id];
-    if(!data) return;
-    var wrap = cat.querySelector('.items, .items-2col, .specials-grid');
-    var countEl = cat.querySelector('.count');
-    wrap.innerHTML = data.map(function(it){
-      var price = it.price===null ? '—' : ('₹'+it.price);
-      return '<div class="item"><span class="dot '+(it.veg?'veg':'nonveg')+'"></span><span class="name">'+it.nameTe+'</span><span class="leader"></span><span class="price">'+price+'</span></div>';
-    }).join('');
-    if(countEl) countEl.textContent = data.length+' వస్తువులు';
-  });
+  /* menu-data.js changes whenever an admin edits a dish/category; a plain
+     <script src> can get stuck cached by the browser or GitHub Pages' CDN,
+     so bust it with a fresh query string on every load. */
+  var menuScript = document.createElement('script');
+  menuScript.src = 'menu-data.js?v=' + Date.now();
+  menuScript.onload = function(){
+    document.querySelectorAll('.category').forEach(function(cat){
+      var data = MENU_DATA[cat.id];
+      if(!data) return;
+      var wrap = cat.querySelector('.items, .items-2col, .specials-grid');
+      var countEl = cat.querySelector('.count');
+      wrap.innerHTML = data.map(function(it){
+        var price = it.price===null ? '—' : ('₹'+it.price);
+        return '<div class="item"><span class="dot '+(it.veg?'veg':'nonveg')+'"></span><span class="name">'+it.nameTe+'</span><span class="leader"></span><span class="price">'+price+'</span></div>';
+      }).join('');
+      if(countEl) countEl.textContent = data.length+' వస్తువులు';
+    });
+  };
+  document.body.appendChild(menuScript);
 })();
 </script>
 <script>

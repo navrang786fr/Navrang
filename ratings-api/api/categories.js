@@ -1,16 +1,21 @@
-// Admin category-master API: GET returns the current categories, POST edits
-// a category's display text (title/short labels in both languages) — writing
-// menu-data.js in the public Navrang repo — and records an audit-log entry
-// in the private admin repo. Categories themselves aren't created or deleted
-// here: their ids are load-bearing (MENU_DATA is keyed by them), so this is
-// an edit-only master for the title/short label fields.
+// Admin category-master API: GET returns the current categories, POST either
+// creates a new category (auto-incremented id, an empty MENU_DATA array
+// created for it so it's immediately usable in the dish editor) or edits an
+// existing category's display text (title/short labels in both languages) —
+// writing menu-data.js in the public Navrang repo — and records an
+// audit-log entry in the private admin repo. Existing category ids stay
+// immutable once created: they're load-bearing (MENU_DATA is keyed by them),
+// so renaming one here would orphan its dishes.
 
 const { readRawFile, putFile, writeJsonArrayWithRetry } = require('./_lib/github.js');
 const { requireAuth } = require('./_lib/auth.js');
-const { parseMenuData, parseCategoryMeta, serializeMenuDataFile, serializeCategoryMetaFile, findCategoryById } = require('./_lib/menuData.js');
+const { parseMenuData, parseCategoryMeta, serializeMenuDataFile, serializeCategoryMetaFile, findCategoryById, nextCategoryId } = require('./_lib/menuData.js');
 const { getRequestInfo } = require('./_lib/requestInfo.js');
 
 const EDITABLE_FIELDS = ['title', 'titleTe', 'short', 'shortTe'];
+
+// Generic bookmark/tag icon used for a newly created category until an admin picks a real one.
+const DEFAULT_ICON = '<path d="M18 8h22a4 4 0 014 4v40l-15-9-15 9V12a4 4 0 014-4z"/>';
 
 async function mutateCategoryMeta(publicRepo, githubToken, mutator, commitMessage, maxRetries) {
   maxRetries = maxRetries || 4;
@@ -19,7 +24,7 @@ async function mutateCategoryMeta(publicRepo, githubToken, mutator, commitMessag
     if (!raw) throw new Error('menu-data.js not found in public repo');
     const { menuData, restSrc } = parseMenuData(raw);
     const categories = parseCategoryMeta(restSrc);
-    const result = mutator(categories);
+    const result = mutator(menuData, categories);
     const newRestSrc = serializeCategoryMetaFile(categories);
     const newContent = serializeMenuDataFile(menuData, newRestSrc);
     const put = await putFile(publicRepo, 'menu-data.js', githubToken, newContent, sha, commitMessage);
@@ -67,8 +72,7 @@ module.exports = async function handler(req, res) {
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
   body = body || {};
 
-  const id = String(body.id || '');
-  if (!id) { res.status(400).json({ error: 'id is required' }); return; }
+  const action = body.action === 'create' ? 'create' : 'update';
 
   const submitted = {};
   EDITABLE_FIELDS.forEach(function (k) {
@@ -80,24 +84,43 @@ module.exports = async function handler(req, res) {
   if (!submitted.shortTe) submitted.shortTe = submitted.titleTe;
 
   try {
-    const outcome = await mutateCategoryMeta(publicRepo, publicToken, function (categories) {
-      const cat = findCategoryById(categories, id);
-      if (!cat) throw new Error('category-not-found:' + id);
-      const before = Object.assign({}, cat);
-      Object.assign(cat, submitted);
-      const changes = {};
-      EDITABLE_FIELDS.forEach(function (k) {
-        if (before[k] !== cat[k]) changes[k] = { from: before[k] === undefined ? null : before[k], to: cat[k] };
-      });
-      return { category: cat, changes };
-    }, `Admin: update category "${id}" (${auth.sub})`);
+    let auditPayload;
 
-    res.status(200).json({ ok: true, category: outcome.category, changes: outcome.changes });
+    if (action === 'create') {
+      const outcome = await mutateCategoryMeta(publicRepo, publicToken, function (menuData, categories) {
+        const id = nextCategoryId(categories);
+        const category = Object.assign({ id: id, icon: DEFAULT_ICON }, submitted);
+        categories.push(category);
+        menuData[id] = [];
+        return { category: category };
+      }, `Admin: create category "${submitted.title}" (${auth.sub})`);
+
+      auditPayload = { action: 'create-category', categoryId: outcome.category.id, changes: outcome.category };
+      res.status(200).json({ ok: true, category: outcome.category });
+    } else {
+      const id = String(body.id || '');
+      if (!id) { res.status(400).json({ error: 'id is required to update a category' }); return; }
+
+      const outcome = await mutateCategoryMeta(publicRepo, publicToken, function (menuData, categories) {
+        const cat = findCategoryById(categories, id);
+        if (!cat) throw new Error('category-not-found:' + id);
+        const before = Object.assign({}, cat);
+        Object.assign(cat, submitted);
+        const changes = {};
+        EDITABLE_FIELDS.forEach(function (k) {
+          if (before[k] !== cat[k]) changes[k] = { from: before[k] === undefined ? null : before[k], to: cat[k] };
+        });
+        return { category: cat, changes: changes };
+      }, `Admin: update category "${id}" (${auth.sub})`);
+
+      auditPayload = { action: 'update-category', categoryId: id, changes: outcome.changes };
+      res.status(200).json({ ok: true, category: outcome.category, changes: outcome.changes });
+    }
 
     try {
       const info = getRequestInfo(req);
       await writeJsonArrayWithRetry(adminRepo, 'audit-log.json', adminToken, function (arr) {
-        arr.push({
+        arr.push(Object.assign({
           username: auth.sub,
           timestamp: new Date().toISOString(),
           ip: info.ip,
@@ -105,12 +128,9 @@ module.exports = async function handler(req, res) {
           region: info.region,
           city: info.city,
           device: info.device,
-          userAgent: info.userAgent,
-          action: 'update-category',
-          categoryId: id,
-          changes: outcome.changes
-        });
-      }, `Audit: update category "${id}" by ${auth.sub}`);
+          userAgent: info.userAgent
+        }, auditPayload));
+      }, `Audit: ${auditPayload.action} "${auditPayload.categoryId}" by ${auth.sub}`);
     } catch (e) {
       // audit log failure shouldn't undo the already-successful category write
     }

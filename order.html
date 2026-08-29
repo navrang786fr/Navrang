@@ -604,7 +604,20 @@
 </div>
 
 <script src="config.js"></script>
-<script src="menu-data.js"></script>
-<script src="order-app.js"></script>
+<script>
+(function(){
+  /* menu-data.js changes whenever an admin edits a dish/category; a plain
+     <script src> can get stuck cached by the browser or GitHub Pages' CDN,
+     so bust it with a fresh query string on every load. */
+  var menuScript = document.createElement('script');
+  menuScript.src = 'menu-data.js?v=' + Date.now();
+  menuScript.onload = function(){
+    var appScript = document.createElement('script');
+    appScript.src = 'order-app.js';
+    document.body.appendChild(appScript);
+  };
+  document.body.appendChild(menuScript);
+})();
+</script>
 </body>
 </html>

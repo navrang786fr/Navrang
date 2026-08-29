@@ -8,6 +8,9 @@
 <link rel="icon" href="../navrang_logo.png">
 <link rel="stylesheet" href="admin-style.css">
 <style>
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:560px){ .form-grid{grid-template-columns:1fr;} }
+  .form-actions{display:flex;gap:10px;align-items:center;margin-top:4px;}
   .cat-table td{vertical-align:middle;}
   .cat-icon-preview{width:28px;height:28px;color:var(--maroon);flex:0 0 auto;}
   .cat-icon-preview svg{width:100%;height:100%;}
@@ -43,8 +46,36 @@
     </aside>
     <main class="admin-main">
   <div class="admin-panel">
+    <h2>New Category</h2>
+    <div class="admin-card">
+      <form id="createForm">
+        <div class="form-grid">
+          <div class="admin-field">
+            <label for="cNewTitle">Title (English)</label>
+            <input type="text" id="cNewTitle" required maxlength="60">
+          </div>
+          <div class="admin-field">
+            <label for="cNewTitleTe">Title (Telugu)</label>
+            <input type="text" id="cNewTitleTe" required maxlength="60">
+          </div>
+          <div class="admin-field">
+            <label for="cNewShort">Short label (English, optional)</label>
+            <input type="text" id="cNewShort" maxlength="30">
+          </div>
+          <div class="admin-field">
+            <label for="cNewShortTe">Short label (Telugu, optional)</label>
+            <input type="text" id="cNewShortTe" maxlength="30">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="admin-btn" id="createBtn">Create Category</button>
+        </div>
+        <p class="admin-status" id="createStatus"></p>
+      </form>
+    </div>
+
     <h2>Edit Categories</h2>
-    <p class="cat-hint">Category names shown on the order page and printed menus. Categories themselves can't be added or removed here — only their titles/labels.</p>
+    <p class="cat-hint">Category names shown on the order page and printed menus. Ids are permanent once created (dishes are filed under them), so a category can't be renamed or removed here — only its title/labels.</p>
     <div class="admin-table-wrap" id="listWrap">
       <div class="admin-loading">Loading categories…</div>
     </div>
@@ -123,6 +154,37 @@
       listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Failed to load categories.') + '</div>';
     });
   }
+
+  var createForm = document.getElementById('createForm');
+  var createBtn = document.getElementById('createBtn');
+  var createStatus = document.getElementById('createStatus');
+  createForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var payload = {
+      action: 'create',
+      title: document.getElementById('cNewTitle').value.trim(),
+      titleTe: document.getElementById('cNewTitleTe').value.trim(),
+      short: document.getElementById('cNewShort').value.trim(),
+      shortTe: document.getElementById('cNewShortTe').value.trim()
+    };
+    createBtn.disabled = true;
+    createStatus.textContent = '';
+    createStatus.className = 'admin-status';
+    AdminShared.apiFetch('/api/categories', { method: 'POST', body: JSON.stringify(payload) })
+      .then(function(resp){ return resp.json().then(function(data){ return { ok: resp.ok, data: data }; }); })
+      .then(function(result){
+        if (!result.ok) throw new Error(result.data.error || 'Create failed');
+        createForm.reset();
+        createStatus.textContent = 'Category "' + result.data.category.title + '" created.';
+        createStatus.className = 'admin-status success';
+        return loadCategories();
+      })
+      .catch(function(err){
+        createStatus.textContent = err.message || 'Something went wrong.';
+        createStatus.className = 'admin-status error';
+      })
+      .finally(function(){ createBtn.disabled = false; });
+  });
 
   loadCategories();
 })();
