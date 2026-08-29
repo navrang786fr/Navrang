@@ -144,12 +144,60 @@
     });
   }
 
+  /* ---------- Auto-populate Telugu title from existing category vocabulary ---------- */
+  var teDict = {};
+  function buildTeDictionary(categories){
+    var counts = {};
+    categories.forEach(function(c){
+      [[c.title, c.titleTe], [c.short, c.shortTe]].forEach(function(pair){
+        var en = (pair[0] || '').trim().split(/\s+/);
+        var te = (pair[1] || '').trim().split(/\s+/);
+        if (!en[0] || en.length !== te.length) return;
+        en.forEach(function(w, i){
+          var key = w.toLowerCase();
+          counts[key] = counts[key] || {};
+          counts[key][te[i]] = (counts[key][te[i]] || 0) + 1;
+        });
+      });
+    });
+    teDict = {};
+    Object.keys(counts).forEach(function(key){
+      teDict[key] = Object.keys(counts[key]).sort(function(a, b){ return counts[key][b] - counts[key][a]; })[0];
+    });
+  }
+  function translateWords(textEn){
+    var words = textEn.trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return null;
+    var out = words.map(function(w){ return teDict[w.toLowerCase()]; });
+    if (out.some(function(w){ return !w; })) return null;
+    return out.join(' ');
+  }
+  function wireAutoTranslate(srcInput, teInput){
+    var lastAuto = '';
+    srcInput.addEventListener('input', function(){
+      var suggestion = translateWords(srcInput.value);
+      if (suggestion){
+        if (!teInput.value.trim() || teInput.value === lastAuto){
+          teInput.value = suggestion;
+          lastAuto = suggestion;
+        }
+      } else if (teInput.value === lastAuto){
+        teInput.value = '';
+        lastAuto = '';
+      }
+    });
+  }
+  wireAutoTranslate(document.getElementById('cNewTitle'), document.getElementById('cNewTitleTe'));
+  wireAutoTranslate(document.getElementById('cNewShort'), document.getElementById('cNewShortTe'));
+
   function loadCategories(){
     return AdminShared.apiFetch('/api/categories').then(function(resp){
       return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
     }).then(function(result){
       if (!result.ok) throw new Error(result.data.error || 'Failed to load categories');
-      renderList(result.data.categories || []);
+      var categories = result.data.categories || [];
+      buildTeDictionary(categories);
+      renderList(categories);
     }).catch(function(err){
       listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Failed to load categories.') + '</div>';
     });
