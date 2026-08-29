@@ -254,7 +254,7 @@
         '<span class="dish-info"><span class="dish-name" data-en="' + esc(item.name) + '" data-te="' + esc(item.nameTe) + '">' + esc(item.name) + '</span></span>' +
         '<span class="dish-side">' + priceLabel + '<span class="dot ' + (item.veg ? 'veg' : 'nonveg') + '"></span></span>';
 
-      row.querySelector('.dish-thumb-wrap').addEventListener('click', function(){
+      row.addEventListener('click', function(){
         var ingredients = currentLang === 'te' ? item.ingredientsTe : item.ingredients;
         openLightbox(item.photo || item.thumb || NO_IMAGE_FULL, currentLang === 'te' ? item.nameTe : item.name, ingredients);
         trackEvent('item_view', item.name);
