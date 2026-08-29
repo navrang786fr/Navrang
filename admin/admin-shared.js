@@ -85,7 +85,7 @@
     }).join('') + '<div class="admin-nav-section">Shortcuts</div>' + externalItems.map(function (it) {
       return '<a class="admin-nav-link admin-nav-external" href="' + it.href + '" target="_blank" rel="noopener">' + icon(it.icon) + '<span>' + esc(it.label) + '</span>' + icon('external', 11) + '</a>';
     }).join('') + '<button type="button" class="admin-nav-logout" id="adminLogoutBtn">' + icon('logout') + '<span>Logout' + (getUsername() ? ' (' + esc(getUsername()) + ')' : '') + '</span></button>' +
-      '<div class="admin-nav-version">v26.08</div>';
+      '<div class="admin-nav-version">v26.08.1</div>';
     var btn = document.getElementById('adminLogoutBtn');
     if (btn) btn.addEventListener('click', logout);
     initSidebarToggle();

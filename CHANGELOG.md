@@ -3,12 +3,14 @@
 Version shown in the order-page and admin-panel footers (`vYY.MM`). Bumped when a
 meaningfully-sized batch of changes ships; entries are grouped by that version, newest first.
 
-## v26.08 — 2026-08
+## v26.08.1 — 2026-08-29
 
 **Admin panel**
 - New **Category Master** (`admin/categories.html`, `ratings-api/api/categories.js`): edit a
-  category's English/Telugu title and short label. Categories can't be added/removed here —
-  their ids are load-bearing (`MENU_DATA` is keyed by them) — this edits display text only.
+  category's English/Telugu title and short label, and create new categories (auto-assigned
+  an incremental id, with a matching empty `MENU_DATA` array so it's immediately usable in
+  the dish editor). Existing category ids stay permanent once created — they're load-bearing
+  (`MENU_DATA` is keyed by them) — so a category can't be renamed or removed here.
 - Dish editor: the category dropdown is now editable when editing an existing dish (was
   locked to the category it was created in). The backend moves the dish between category
   arrays in `menu-data.js`, validates the target category exists, and records the move in
