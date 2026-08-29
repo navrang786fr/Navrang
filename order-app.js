@@ -611,6 +611,11 @@
       if (fabStack.classList.contains('open') && !fabStack.contains(e.target)) closeFab();
     });
   }
+  qsa('.fab-item').forEach(function(item){
+    var label = item.querySelector('.fab-item-label');
+    var btn = item.querySelector('.fab-item-btn');
+    if (label && btn) label.addEventListener('click', function(){ btn.click(); });
+  });
 
   function openOffersDialog(){
     offersDialog.classList.add('show');
