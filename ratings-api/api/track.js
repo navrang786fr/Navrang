@@ -8,7 +8,7 @@ const { requireAuth } = require('./_lib/auth.js');
 const { getRequestInfo } = require('./_lib/requestInfo.js');
 const { isRateLimited } = require('./_lib/rateLimit.js');
 
-const ALLOWED_TYPES = ['search', 'item_view', 'category_click', 'veg_filter', 'top_filter', 'price_filter'];
+const ALLOWED_TYPES = ['search', 'item_view', 'category_click', 'veg_filter', 'top_filter', 'price_filter', 'page_view'];
 const THROTTLE_WINDOW_MS = 5 * 60 * 1000;
 const MAX_EVENTS_PER_IP = 60;
 

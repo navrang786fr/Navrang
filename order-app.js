@@ -36,6 +36,9 @@
     fetch(TRACK_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function(){});
   }
 
+  /* ---------- Count each page load as a scan (device OS breakdown lives server-side) ---------- */
+  trackEvent('page_view', 'menu');
+
   /* ---------- Language from QR code (?lang=en or ?lang=te) ---------- */
   function getUrlLang(){
     var m = /[?&]lang=([^&]+)/.exec(window.location.search);

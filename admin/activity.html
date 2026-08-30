@@ -8,7 +8,8 @@
 <link rel="icon" href="../navrang_logo.png">
 <link rel="stylesheet" href="admin-style.css">
 <style>
-  .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+  @media (max-width:640px){ .summary-grid{grid-template-columns:repeat(2,1fr);} }
   .summary-card{background:var(--paper-soft);border:1px solid var(--rule);border-radius:13px;padding:12px 10px;text-align:center;}
   .summary-card .val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:var(--maroon-deep);}
   .summary-card .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--maroon);font-weight:700;margin-top:3px;opacity:.85;}
@@ -51,6 +52,7 @@
       <div class="admin-card" style="text-align:center;"><div class="val" id="statSearches">–</div><div class="lbl">Searches</div></div>
       <div class="admin-card" style="text-align:center;"><div class="val" id="statViews">–</div><div class="lbl">Item Views</div></div>
       <div class="admin-card" style="text-align:center;"><div class="val" id="statSessions">–</div><div class="lbl">Unique Sessions</div></div>
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statScans">–</div><div class="lbl">QR Scans</div></div>
     </div>
 
     <div class="admin-card filter-bar">
@@ -80,6 +82,9 @@
         <div class="admin-card" id="topItems"></div>
       </div>
     </div>
+
+    <h2 style="font-size:16px;">QR Scans by Platform</h2>
+    <div class="admin-card" id="platformBars"></div>
 
     <h2>Recent Activity</h2>
     <div class="admin-table-wrap" id="listWrap">
@@ -178,8 +183,18 @@
 
   var TYPE_LABELS = {
     search: 'Search', item_view: 'Item View', category_click: 'Category Click',
-    veg_filter: 'Veg Filter', top_filter: 'Top Picks Filter', price_filter: 'Price Filter'
+    veg_filter: 'Veg Filter', top_filter: 'Top Picks Filter', price_filter: 'Price Filter',
+    page_view: 'QR Scan'
   };
+  function platformList(rows){
+    var counts = {};
+    rows.filter(function(r){ return r.type === 'page_view'; }).forEach(function(r){
+      var os = (r.device && r.device.os) || 'Unknown';
+      counts[os] = (counts[os] || 0) + 1;
+    });
+    return Object.keys(counts).map(function(k){ return { value: k, count: counts[k] }; })
+      .sort(function(a,b){ return b.count - a.count; });
+  }
   function fmtType(t){ return TYPE_LABELS[t] || t; }
   function fmtLocation(r){
     var parts = [r.city, r.region, r.country].filter(Boolean);
@@ -200,9 +215,11 @@
     document.getElementById('statSearches').textContent = searches.length;
     document.getElementById('statViews').textContent = views.length;
     document.getElementById('statSessions').textContent = Object.keys(sessions).length;
+    document.getElementById('statScans').textContent = rows.filter(function(r){ return r.type === 'page_view'; }).length;
 
     renderBars(document.getElementById('topSearches'), topList(rows, 'search'));
     renderBars(document.getElementById('topItems'), topList(rows, 'item_view'));
+    renderBars(document.getElementById('platformBars'), platformList(rows));
 
     var listWrap = document.getElementById('listWrap');
     var recent = rows.slice().sort(function(a,b){ return new Date(b.timestamp) - new Date(a.timestamp); }).slice(0, 200);
