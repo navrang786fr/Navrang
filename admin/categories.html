@@ -27,6 +27,7 @@
   .cat-save-btn:active{transform:scale(.96);}
   .cat-save-btn:disabled{opacity:.5;cursor:not-allowed;}
   .cat-hint{font-size:12.5px;color:var(--maroon);opacity:.75;margin:0 0 14px;}
+  .auto-te-hint{font-size:11px;color:var(--maroon);opacity:.7;margin:4px 0 0;min-height:14px;}
 </style>
 </head>
 <body>
@@ -57,6 +58,7 @@
           <div class="admin-field">
             <label for="cNewTitleTe">Title (Telugu)</label>
             <input type="text" id="cNewTitleTe" required maxlength="60">
+            <p class="auto-te-hint" id="cNewTitleTeHint"></p>
           </div>
           <div class="admin-field">
             <label for="cNewShort">Short label (English, optional)</label>
@@ -65,6 +67,7 @@
           <div class="admin-field">
             <label for="cNewShortTe">Short label (Telugu, optional)</label>
             <input type="text" id="cNewShortTe" maxlength="30">
+            <p class="auto-te-hint" id="cNewShortTeHint"></p>
           </div>
         </div>
         <div class="form-actions">
@@ -172,23 +175,59 @@
     if (out.some(function(w){ return !w; })) return null;
     return out.join(' ');
   }
-  function wireAutoTranslate(srcInput, teInput){
+
+  /* Fallback for words not seen in any existing category: machine-translate via MyMemory's free API. */
+  function fetchMachineTranslation(textEn){
+    var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(textEn) + '&langpair=en|te';
+    return fetch(url).then(function(resp){ return resp.json(); }).then(function(data){
+      var t = data && data.responseData && data.responseData.translatedText;
+      return (t && !/^(NO QUERY|INVALID|PLEASE)/i.test(t)) ? t : null;
+    }).catch(function(){ return null; });
+  }
+
+  function wireAutoTranslate(srcInput, teInput, hintEl){
     var lastAuto = '';
-    srcInput.addEventListener('input', function(){
-      var suggestion = translateWords(srcInput.value);
-      if (suggestion){
-        if (!teInput.value.trim() || teInput.value === lastAuto){
-          teInput.value = suggestion;
-          lastAuto = suggestion;
-        }
-      } else if (teInput.value === lastAuto){
+    var debounceTimer = null;
+    var requestSeq = 0;
+
+    function applyAuto(suggestion, hintText){
+      if (!teInput.value.trim() || teInput.value === lastAuto){
+        teInput.value = suggestion;
+        lastAuto = suggestion;
+        if (hintEl) hintEl.textContent = hintText;
+      }
+    }
+    function clearAuto(){
+      if (teInput.value === lastAuto){
         teInput.value = '';
         lastAuto = '';
+        if (hintEl) hintEl.textContent = '';
       }
+    }
+
+    srcInput.addEventListener('input', function(){
+      clearTimeout(debounceTimer);
+      requestSeq++;
+      var text = srcInput.value;
+      var dictSuggestion = translateWords(text);
+      if (dictSuggestion){
+        applyAuto(dictSuggestion, 'Auto-filled from existing categories — check before saving.');
+        return;
+      }
+      clearAuto();
+      if (!text.trim()) return;
+      var seq = requestSeq;
+      debounceTimer = setTimeout(function(){
+        fetchMachineTranslation(text.trim()).then(function(result){
+          if (seq !== requestSeq || !result) return;
+          applyAuto(result, 'Machine-translated — please verify before saving.');
+        });
+      }, 600);
     });
+    if (hintEl) teInput.addEventListener('input', function(){ if (teInput.value !== lastAuto) hintEl.textContent = ''; });
   }
-  wireAutoTranslate(document.getElementById('cNewTitle'), document.getElementById('cNewTitleTe'));
-  wireAutoTranslate(document.getElementById('cNewShort'), document.getElementById('cNewShortTe'));
+  wireAutoTranslate(document.getElementById('cNewTitle'), document.getElementById('cNewTitleTe'), document.getElementById('cNewTitleTeHint'));
+  wireAutoTranslate(document.getElementById('cNewShort'), document.getElementById('cNewShortTe'), document.getElementById('cNewShortTeHint'));
 
   function loadCategories(){
     return AdminShared.apiFetch('/api/categories').then(function(resp){
