@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — QR Scans</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .summary-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;}
+  @media (max-width:720px){ .summary-grid{grid-template-columns:repeat(2,1fr);} }
+  .summary-card{background:var(--paper-soft);border:1px solid var(--rule);border-radius:13px;padding:12px 10px;text-align:center;}
+  .summary-card .val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:var(--maroon-deep);}
+  .summary-card .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--maroon);font-weight:700;margin-top:3px;opacity:.85;}
+  .filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:16px;}
+  .preset-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .preset-btn{border:1.3px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:20px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;}
+  .preset-btn.active{background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));border-color:var(--maroon-deep);color:var(--turmeric-light);}
+  .qr-table td, .qr-table th{text-align:right;}
+  .qr-table td:first-child, .qr-table th:first-child{text-align:left;}
+  .qr-table .total-col{font-weight:700;color:var(--maroon-deep);}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-header-bar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <img src="../navrang_logo.png" alt="Navrang">
+    <h1>QR Scans</h1>
+  </div>
+  <div class="admin-body">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="admin-sidebar" id="adminSidebar">
+      <nav class="admin-nav" id="adminNav"></nav>
+    </aside>
+    <main class="admin-main">
+  <div class="admin-panel">
+    <h2>QR Scans</h2>
+    <p class="cat-hint" style="font-size:12.5px;color:var(--maroon);opacity:.75;margin:0 0 14px;">
+      Counts each load of the order page, tagged by which QR code was scanned (English or Telugu table-tent) and by
+      the visitor's device platform.
+    </p>
+    <div class="summary-grid">
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statTotal">–</div><div class="lbl">Total Scans</div></div>
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statEn">–</div><div class="lbl">English QR</div></div>
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statTe">–</div><div class="lbl">Telugu QR</div></div>
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statAndroid">–</div><div class="lbl">Android</div></div>
+      <div class="admin-card" style="text-align:center;"><div class="val" id="statIos">–</div><div class="lbl">iOS</div></div>
+    </div>
+
+    <div class="admin-card filter-bar">
+      <div class="admin-field" style="margin-bottom:0;">
+        <label for="fromDate">From</label>
+        <input type="date" id="fromDate">
+      </div>
+      <div class="admin-field" style="margin-bottom:0;">
+        <label for="toDate">To</label>
+        <input type="date" id="toDate">
+      </div>
+      <div class="preset-row" id="presetRow">
+        <button type="button" class="preset-btn" data-range="today">Today</button>
+        <button type="button" class="preset-btn" data-range="7">7 Days</button>
+        <button type="button" class="preset-btn active" data-range="30">30 Days</button>
+        <button type="button" class="preset-btn" data-range="all">All Time</button>
+      </div>
+    </div>
+
+    <h2 style="font-size:16px;">Daily Breakdown</h2>
+    <div class="admin-table-wrap" id="listWrap">
+      <div class="admin-loading">Loading…</div>
+    </div>
+  </div>
+    </main>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function(){
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('qrscans');
+  var esc = AdminShared.esc;
+
+  var all = [];
+  var fromDate = document.getElementById('fromDate');
+  var toDate = document.getElementById('toDate');
+  var presetRow = document.getElementById('presetRow');
+  var listWrap = document.getElementById('listWrap');
+
+  function dayStart(s){ return new Date(s + 'T00:00:00'); }
+  function dayEnd(s){ return new Date(s + 'T23:59:59.999'); }
+  function toISODate(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function fmtDay(key){
+    var d = new Date(key + 'T00:00:00');
+    if (isNaN(d)) return key;
+    return d.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function setActivePreset(range){
+    Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){ b.classList.toggle('active', b.dataset.range === range); });
+  }
+  function applyPreset(range){
+    var now = new Date(), to = new Date(now), from;
+    if (range === 'today') from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    else if (range === '7') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+    else if (range === '30') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+    else { fromDate.value = ''; toDate.value = ''; setActivePreset('all'); render(); return; }
+    fromDate.value = toISODate(from);
+    toDate.value = toISODate(to);
+    setActivePreset(range);
+    render();
+  }
+
+  function getFiltered(){
+    var from = fromDate.value ? dayStart(fromDate.value) : null;
+    var to = toDate.value ? dayEnd(toDate.value) : null;
+    return all.filter(function(r){
+      if (r.type !== 'page_view') return false;
+      var t = new Date(r.timestamp);
+      if (isNaN(t)) return false;
+      if (from && t < from) return false;
+      if (to && t > to) return false;
+      return true;
+    });
+  }
+
+  function emptyRow(){ return { total: 0, en: 0, te: 0, direct: 0, android: 0, ios: 0, other: 0 }; }
+
+  function render(){
+    var rows = getFiltered();
+    var byDay = {};
+    var summary = emptyRow();
+
+    rows.forEach(function(r){
+      var t = new Date(r.timestamp);
+      var key = toISODate(t);
+      if (!byDay[key]) byDay[key] = emptyRow();
+      var day = byDay[key];
+      day.total++; summary.total++;
+      if (r.value === 'en'){ day.en++; summary.en++; }
+      else if (r.value === 'te'){ day.te++; summary.te++; }
+      else { day.direct++; summary.direct++; }
+      var os = (r.device && r.device.os) || '';
+      if (os === 'Android'){ day.android++; summary.android++; }
+      else if (os === 'iOS'){ day.ios++; summary.ios++; }
+      else { day.other++; summary.other++; }
+    });
+
+    document.getElementById('statTotal').textContent = summary.total;
+    document.getElementById('statEn').textContent = summary.en;
+    document.getElementById('statTe').textContent = summary.te;
+    document.getElementById('statAndroid').textContent = summary.android;
+    document.getElementById('statIos').textContent = summary.ios;
+
+    var days = Object.keys(byDay).sort().reverse();
+    if (!days.length){ listWrap.innerHTML = '<div class="admin-empty">No scans in this range.</div>'; return; }
+    listWrap.innerHTML = '<table class="admin-table qr-table"><thead><tr>' +
+      '<th>Date</th><th>Total</th><th>English</th><th>Telugu</th><th>Direct</th><th>Android</th><th>iOS</th><th>Other</th>' +
+      '</tr></thead><tbody>' +
+      days.map(function(key){
+        var d = byDay[key];
+        return '<tr><td>' + esc(fmtDay(key)) + '</td>' +
+          '<td class="total-col">' + d.total + '</td>' +
+          '<td>' + d.en + '</td>' +
+          '<td>' + d.te + '</td>' +
+          '<td>' + d.direct + '</td>' +
+          '<td>' + d.android + '</td>' +
+          '<td>' + d.ios + '</td>' +
+          '<td>' + d.other + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){ b.addEventListener('click', function(){ applyPreset(b.dataset.range); }); });
+  fromDate.addEventListener('change', function(){ setActivePreset(''); render(); });
+  toDate.addEventListener('change', function(){ setActivePreset(''); render(); });
+
+  AdminShared.apiFetch('/api/track').then(function(resp){
+    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok) throw new Error(result.data.error || 'Failed to load');
+    all = result.data;
+    applyPreset('30');
+  }).catch(function(err){
+    listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Could not load scan data.') + '</div>';
+  });
+})();
+</script>
+
+</body>
+</html>

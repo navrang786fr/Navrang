@@ -50,6 +50,7 @@
     dishes: '<path d="M20.59 13.41L11 3.83A2 2 0 009.83 3H4a1 1 0 00-1 1v5.83a2 2 0 00.59 1.41l9.58 9.59a2 2 0 002.83 0l4.59-4.59a2 2 0 000-2.83z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/>',
     categories: '<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>',
     activity: '<path d="M3 12h4l2.5 7L13 5l2.5 7H21"/>',
+    qr: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14h2M14 19h2M19 19h2"/>',
     audit: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6a1 1 0 011 1v1H8V4a1 1 0 011-1z"/><path d="M9 11h6M9 15h4"/>',
     access: '<path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/>',
     orders: '<path d="M6 2h9l3 3v17a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M9 9h6M9 13h6M9 17h3"/>',
@@ -72,6 +73,7 @@
       { key: 'dishes', label: 'Dish Rates', href: 'dishes.html', icon: 'dishes' },
       { key: 'categories', label: 'Categories', href: 'categories.html', icon: 'categories' },
       { key: 'activity', label: 'Customer Activity', href: 'activity.html', icon: 'activity' },
+      { key: 'qrscans', label: 'QR Scans', href: 'qr-scans.html', icon: 'qr' },
       { key: 'audit', label: 'Audit Log', href: 'audit-log.html', icon: 'audit' },
       { key: 'access', label: 'Access Log', href: 'access-log.html', icon: 'access' }
     ];
