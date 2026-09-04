@@ -34,6 +34,40 @@
   .feed-item .sub{font-size:11px;color:var(--maroon);opacity:.7;margin-top:2px;}
   .feed-item .when{flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--maroon);opacity:.75;white-space:nowrap;}
 
+  .dash-qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px;}
+  @media (max-width:680px){ .dash-qr-grid{grid-template-columns:1fr;} }
+  .dash-qr-card{
+    background:var(--paper);border:1.3px solid var(--rule);border-radius:12px;
+    padding:14px;display:flex;gap:14px;align-items:center;
+  }
+  @media (max-width:440px){ .dash-qr-card{flex-direction:column;text-align:center;} }
+  .dash-qr-img-frame{
+    width:90px;height:90px;flex:0 0 auto;background:#fff;border:1.5px solid #e2e8f0;
+    border-radius:10px;padding:6px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.06);
+  }
+  .dash-qr-img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;}
+  .dash-qr-info{flex:1;min-width:0;}
+  .dash-qr-badge{
+    display:inline-block;font-size:10.5px;font-weight:700;color:var(--maroon-deep);
+    background:rgba(18,64,28,.08);border:1px solid var(--rule);border-radius:12px;
+    padding:2px 8px;margin-bottom:4px;
+  }
+  .dash-qr-title{font-size:14px;font-weight:700;color:var(--maroon-deep);margin-bottom:2px;}
+  .dash-qr-sub{font-size:11.5px;color:var(--maroon);opacity:.75;margin-bottom:8px;}
+  .dash-qr-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  @media (max-width:440px){ .dash-qr-actions{justify-content:center;} }
+  .dash-qr-btn{
+    font-size:11px;font-weight:700;text-decoration:none;border-radius:6px;
+    padding:5px 9px;border:1px solid var(--rule);background:var(--paper-soft);
+    color:var(--maroon);display:inline-flex;align-items:center;gap:4px;
+  }
+  .dash-qr-btn:hover{background:rgba(18,64,28,.1);border-color:var(--maroon);}
+  .dash-qr-btn.primary{
+    background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));
+    color:#fff;border-color:var(--maroon-deep);
+  }
+
   .quick-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
   .quick-link{
     display:inline-flex;align-items:center;gap:6px;
@@ -82,7 +116,54 @@
       </div>
     </div>
 
+    <div class="admin-card" style="margin-top:16px;">
+      <div class="panel-head">
+        <h3><span class="panel-icon" data-icon="qr"></span>Customer Menu QR Codes</h3>
+        <a href="qr-scans.html">View Scan Analytics →</a>
+      </div>
+      <div class="dash-qr-grid">
+        <div class="dash-qr-card">
+          <div class="dash-qr-img-frame">
+            <img src="../images/qr-cards/qr_en.png" alt="English Menu QR" class="dash-qr-img">
+          </div>
+          <div class="dash-qr-info">
+            <div class="dash-qr-badge">🇬🇧 English Live Menu</div>
+            <div class="dash-qr-title">English Menu QR</div>
+            <div class="dash-qr-sub">Scan to load <code>order.html?lang=en</code></div>
+            <div class="dash-qr-actions">
+              <a href="../images/qr-cards/qr_en.png" download="navrang_qr_english.png" class="dash-qr-btn primary">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download QR
+              </a>
+              <a href="../images/qr-cards/qr_menu_en.png" download="navrang_table_card_en.png" class="dash-qr-btn">Table Card</a>
+              <a href="../order.html?lang=en" target="_blank" rel="noopener" class="dash-qr-btn">Open Menu ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-qr-card">
+          <div class="dash-qr-img-frame">
+            <img src="../images/qr-cards/qr_te.png" alt="Telugu Menu QR" class="dash-qr-img">
+          </div>
+          <div class="dash-qr-info">
+            <div class="dash-qr-badge">🇮🇳 Telugu Live Menu (తెలుగు)</div>
+            <div class="dash-qr-title">Telugu Menu QR</div>
+            <div class="dash-qr-sub">Scan to load <code>order.html?lang=te</code></div>
+            <div class="dash-qr-actions">
+              <a href="../images/qr-cards/qr_te.png" download="navrang_qr_telugu.png" class="dash-qr-btn primary">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download QR
+              </a>
+              <a href="../images/qr-cards/qr_menu_te.png" download="navrang_table_card_te.png" class="dash-qr-btn">Table Card</a>
+              <a href="../order.html?lang=te" target="_blank" rel="noopener" class="dash-qr-btn">Open Menu ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="quick-links">
+      <a class="quick-link" href="qr-scans.html"><span data-icon="qr"></span>QR Codes &amp; Scans</a>
       <a class="quick-link" href="ratings.html"><span data-icon="ratings"></span>Customer Ratings</a>
       <a class="quick-link" href="dishes.html"><span data-icon="dishes"></span>Dish Rates</a>
       <a class="quick-link" href="activity.html"><span data-icon="activity"></span>Customer Activity</a>
