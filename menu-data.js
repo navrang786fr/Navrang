@@ -118,25 +118,24 @@ var MENU_DATA = {
     { id: 99, name: "Coffee", nameTe: "కాఫీ", price: 20, veg: true, thumb: "images/menu/coffee-500.jpg", photo: "images/menu/coffee-500.jpg", top: false, status: "Active", weeklyDishInd: false }
   ]
 };
-
 /* Category display order, titles and icons — shared by the printed menu and the order app. */
 var CATEGORY_META = [
   { id: "egg-curries", title: "Egg Curries", titleTe: "గుడ్డు కూరలు", short: "Egg Curries", shortTe: "గుడ్డు కూరలు",
-    icon: '<path d="M32 8C20 8 12 26 12 38a20 20 0 0040 0C52 26 44 8 32 8z"/>' },
+    icon: "<path d=\"M32 8C20 8 12 26 12 38a20 20 0 0040 0C52 26 44 8 32 8z\"/>" },
   { id: "non-veg-starter", title: "Non-Veg Starter", titleTe: "నాన్-వెజ్ స్టార్టర్", short: "Starters", shortTe: "స్టార్టర్స్",
-    icon: '<path d="M12 52L52 12"/><circle cx="24" cy="40" r="7"/><circle cx="34" cy="30" r="7"/><circle cx="44" cy="20" r="7"/>' },
+    icon: "<path d=\"M12 52L52 12\"/><circle cx=\"24\" cy=\"40\" r=\"7\"/><circle cx=\"34\" cy=\"30\" r=\"7\"/><circle cx=\"44\" cy=\"20\" r=\"7\"/>" },
   { id: "veg-curries", title: "Veg Curries", titleTe: "వెజ్ కూరలు", short: "Veg Curries", shortTe: "వెజ్ కూరలు",
-    icon: '<path d="M10 32h44a22 22 0 01-44 0z"/><path d="M24 30c0-6 2-9 2-9M32 30c0-8 3-11 3-11M40 30c0-6 2-9 2-9"/>' },
+    icon: "<path d=\"M10 32h44a22 22 0 01-44 0z\"/><path d=\"M24 30c0-6 2-9 2-9M32 30c0-8 3-11 3-11M40 30c0-6 2-9 2-9\"/>" },
   { id: "veg-starters", title: "Veg Starters", titleTe: "వెజ్ స్టార్టర్స్", short: "Veg Starters", shortTe: "వెజ్ స్టార్టర్స్",
-    icon: '<path d="M32 6c6 10-4 12-4 20 0 4 3 7 7 7s8-4 8-9c6 4 9 11 9 17 0 13-11 23-24 23S8 54 8 41c0-9 5-16 9-21 2 8 7 10 7 10-2-9 2-16 8-24z"/>' },
+    icon: "<path d=\"M32 6c6 10-4 12-4 20 0 4 3 7 7 7s8-4 8-9c6 4 9 11 9 17 0 13-11 23-24 23S8 54 8 41c0-9 5-16 9-21 2 8 7 10 7 10-2-9 2-16 8-24z\"/>" },
   { id: "biryani", title: "Biryani", titleTe: "బిర్యానీ", short: "Biryani", shortTe: "బిర్యానీ",
-    icon: '<path d="M14 30h36l-3 20a6 6 0 01-6 5H23a6 6 0 01-6-5z"/><path d="M10 30h44"/><path d="M22 30v-8a10 10 0 0120 0v8"/><circle cx="32" cy="12" r="3"/>' },
+    icon: "<path d=\"M14 30h36l-3 20a6 6 0 01-6 5H23a6 6 0 01-6-5z\"/><path d=\"M10 30h44\"/><path d=\"M22 30v-8a10 10 0 0120 0v8\"/><circle cx=\"32\" cy=\"12\" r=\"3\"/>" },
   { id: "roti", title: "Roti", titleTe: "రొట్టె", short: "Roti", shortTe: "రొట్టె",
-    icon: '<circle cx="32" cy="32" r="21"/><path d="M32 15v10M32 39v10M15 32h10M39 32h10M21 21l7 7M36 36l7 7M43 21l-7 7M28 36l-7 7"/>' },
+    icon: "<circle cx=\"32\" cy=\"32\" r=\"21\"/><path d=\"M32 15v10M32 39v10M15 32h10M39 32h10M21 21l7 7M36 36l7 7M43 21l-7 7M28 36l-7 7\"/>" },
   { id: "fried-rice", title: "Fried Rice", titleTe: "ఫ్రైడ్ రైస్", short: "Fried Rice", shortTe: "ఫ్రైడ్ రైస్",
-    icon: '<path d="M10 32h44a22 22 0 01-44 0z"/><circle cx="24" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="32" cy="21" r="1.6" fill="currentColor" stroke="none"/><circle cx="40" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="28" cy="29" r="1.6" fill="currentColor" stroke="none"/><circle cx="36" cy="29" r="1.6" fill="currentColor" stroke="none"/>' },
-  { id: "chicken-curries", title: "Chicken, Mutton & Seafood Curries", titleTe: "చికెన్, మటన్ & సీఫుడ్ కూరలు", short: "Chicken & Mutton", shortTe: "చికెన్ & మటన్",
-    icon: '<path d="M8 32c10-11 25-15 36-8 4 2.5 7 5.5 9 8-2 2.5-5 5.5-9 8-11 7-26 3-36-8z"/><path d="M44 32l12-9v18z"/><circle cx="18" cy="29" r="1.8" fill="currentColor" stroke="none"/>' },
+    icon: "<path d=\"M10 32h44a22 22 0 01-44 0z\"/><circle cx=\"24\" cy=\"25\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"32\" cy=\"21\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"40\" cy=\"25\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"28\" cy=\"29\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"36\" cy=\"29\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/>" },
+  { id: "chicken-curries", title: "Non-Veg Curries", titleTe: "నాన్-వెజ్ కూరలు", short: "Non-Veg", shortTe: "నాన్-వెజ్",
+    icon: "<path d=\"M8 32c10-11 25-15 36-8 4 2.5 7 5.5 9 8-2 2.5-5 5.5-9 8-11 7-26 3-36-8z\"/><path d=\"M44 32l12-9v18z\"/><circle cx=\"18\" cy=\"29\" r=\"1.8\" fill=\"currentColor\" stroke=\"none\"/>" },
   { id: "specials", title: "Navrang Specials", titleTe: "నవ్రంగ్ స్పెషల్స్", short: "Specials", shortTe: "స్పెషల్స్",
-    icon: '<path d="M32 6l7 16 17 2-13 12 4 18-15-9-15 9 4-18-13-12 17-2z"/>' }
+    icon: "<path d=\"M32 6l7 16 17 2-13 12 4 18-15-9-15 9 4-18-13-12 17-2z\"/>" }
 ];
