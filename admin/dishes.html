@@ -471,7 +471,7 @@
           '<td>' + d.id + '</td>' +
           '<td>' + esc(d.name) + '<br><span style="opacity:.6;">' + esc(d.nameTe) + '</span></td>' +
           '<td>' + esc(cat ? cat.title : d.categoryId) + '</td>' +
-          '<td>' + (d.price === null || d.price === undefined ? '<span style="opacity:.5;">Ask staff</span>' : (d.strike ? '<span style="opacity:.5;text-decoration:line-through;">₹' + d.strike + '</span> ' : '') + '₹' + d.price) + '</td>' +
+          '<td>' + (d.price === null || d.price === undefined ? '<span style="opacity:.5;">Ask staff</span>' : ((d.strike != null && Number(d.strike) > Number(d.price)) ? '<span style="opacity:.5;text-decoration:line-through;">₹' + d.strike + '</span> ' : '') + '₹' + d.price) + '</td>' +
           '<td>' + (d.veg ? 'Veg' : 'Non-Veg') + '</td>' +
           '<td><span class="admin-badge ' + badge + '">' + esc(d.status || 'Active') + '</span></td>' +
           '<td><button type="button" class="edit-link" data-id="' + d.id + '">Edit</button></td>' +
@@ -499,11 +499,16 @@
     e.preventDefault();
     var priceVal = fPrice.value.trim();
     var strikeVal = fStrikePrice.value.trim();
+    var parsedPrice = priceVal === '' ? null : Number(priceVal);
+    var parsedStrike = strikeVal === '' ? null : Number(strikeVal);
+    if (parsedStrike !== null && parsedPrice !== null && parsedStrike <= parsedPrice) {
+      parsedStrike = null;
+    }
     var dish = {
       name: fName.value.trim(),
       nameTe: fNameTe.value.trim(),
-      price: priceVal === '' ? null : Number(priceVal),
-      strike: strikeVal === '' ? null : Number(strikeVal),
+      price: parsedPrice,
+      strike: parsedStrike,
       veg: fVeg.checked,
       status: fStatus.value,
       top: fTop.checked,

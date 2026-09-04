@@ -119,8 +119,13 @@ module.exports = async function handler(req, res) {
   if (submitted.price !== null && typeof submitted.price !== 'number') {
     res.status(400).json({ error: 'Price must be a number or null' }); return;
   }
-  if (submitted.strike !== undefined && submitted.strike !== null && typeof submitted.strike !== 'number') {
-    res.status(400).json({ error: 'Strike price must be a number or null' }); return;
+  if (submitted.strike !== undefined && submitted.strike !== null) {
+    if (typeof submitted.strike !== 'number') {
+      res.status(400).json({ error: 'Strike price must be a number or null' }); return;
+    }
+    if (submitted.price !== null && submitted.strike <= submitted.price) {
+      submitted.strike = null;
+    }
   }
   if (typeof submitted.veg !== 'boolean') {
     res.status(400).json({ error: 'veg must be true or false' }); return;

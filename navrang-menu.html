@@ -396,7 +396,8 @@
       var countEl = cat.querySelector('.count');
       wrap.innerHTML = data.map(function(it){
         var price = it.price===null ? '—' : ('₹'+it.price);
-        var strike = (it.strike && it.price!==null) ? ('<span class="price-strike">₹'+it.strike+'</span>') : '';
+        var hasDiscount = it.strike != null && it.price !== null && Number(it.strike) > Number(it.price);
+        var strike = hasDiscount ? ('<span class="price-strike">₹'+it.strike+'</span>') : '';
         return '<div class="item"><span class="dot '+(it.veg?'veg':'nonveg')+'"></span><span class="name">'+it.name+'</span><span class="leader"></span>'+strike+'<span class="price">'+price+'</span></div>';
       }).join('');
       if(countEl) countEl.textContent = data.length+' items';

@@ -442,7 +442,8 @@
       row.dataset.top = item.top ? '1' : '0';
       row.dataset.price = item.price === null || item.price === undefined ? '' : item.price;
 
-      var strikeLabel = (item.strike && item.price !== null) ? '<span class="dish-strike">' + CUR + item.strike + '</span>' : '';
+      var hasDiscount = item.strike != null && item.price !== null && Number(item.strike) > Number(item.price);
+      var strikeLabel = hasDiscount ? '<span class="dish-strike">' + CUR + item.strike + '</span>' : '';
       var priceLabel = item.price === null ? '<span class="no-price">Ask staff</span>' : (strikeLabel + '<span class="dish-price">' + CUR + item.price + '</span>');
       var thumbSrc = item.thumb || NO_IMAGE_THUMB;
       var topBadge = item.top ? '<span class="top-badge">' + esc(STRINGS[currentLang].topBadge) + '</span>' : '';
