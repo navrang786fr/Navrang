@@ -994,22 +994,76 @@
     margin:8px 0 0;min-height:16px;line-height:1.4;transition:opacity .2s ease;
   }
   .split-qr-card{
-    display:flex;align-items:center;gap:12px;margin-top:14px;
-    background:rgba(22,35,26,0.04);border:1px solid var(--rule-strong);
-    border-radius:14px;padding:10px 14px;text-align:left;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    margin-top:16px;
+    background:#ffffff;
+    border:1.5px solid rgba(212,155,34,0.4);
+    border-radius:18px;
+    padding:16px 14px 14px;
+    box-shadow:0 4px 18px rgba(10,26,14,0.06);
   }
-  .split-qr-img{
-    width:48px;height:48px;border-radius:8px;background:#fff;
-    padding:3px;box-shadow:0 2px 6px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.06);
-    flex:0 0 auto;display:block;object-fit:contain;
+  .split-qr-badge-wrap{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(212,155,34,0.12);
+    border:1px solid rgba(212,155,34,0.32);
+    padding:4px 12px;
+    border-radius:20px;
+    color:var(--maroon-deep);
+    margin-bottom:12px;
   }
-  .split-qr-info{display:flex;flex-direction:column;gap:2px;}
+  .split-qr-badge-wrap svg{flex:0 0 auto;color:var(--turmeric-gold);}
   .split-qr-badge{
-    font-size:12px;font-weight:700;color:var(--maroon-deep);
+    font-size:12px;
+    font-weight:700;
+    color:var(--maroon-deep);
     font-family:'Karla','Noto Sans Telugu',sans-serif;
   }
+  .split-qr-frame{
+    width:168px;
+    height:168px;
+    background:#ffffff;
+    border:2px solid #e2e8f0;
+    border-radius:14px;
+    padding:10px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.08);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 10px;
+  }
+  .split-qr-img{
+    width:148px;
+    height:148px;
+    display:block;
+    object-fit:contain;
+    image-rendering:-webkit-optimize-contrast;
+    image-rendering:pixelated;
+  }
+  .split-qr-info{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    max-width:280px;
+  }
   .split-qr-text{
-    font-size:11px;color:var(--ink-secondary);line-height:1.35;
+    font-size:13px;
+    font-weight:700;
+    color:var(--ink);
+    line-height:1.35;
+    font-family:'Karla','Noto Sans Telugu',sans-serif;
+  }
+  .split-qr-sub{
+    font-size:11.5px;
+    color:var(--ink-secondary);
+    line-height:1.3;
+    font-family:'Karla','Noto Sans Telugu',sans-serif;
   }
 
   /* Dish Golden Highlight Pulse on Deep Scroll */
@@ -1710,12 +1764,18 @@
       </div>
       <p class="split-toast" id="splitToast"></p>
 
-      <!-- Menu QR English Footer Banner -->
+      <!-- Menu QR English Section (Camera-Scannable) -->
       <div class="split-qr-card" id="splitQrCard">
-        <img src="images/qr-cards/qr_en.png" alt="Menu QR English" class="split-qr-img" width="48" height="48" loading="lazy">
+        <div class="split-qr-badge-wrap">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span class="split-qr-badge" id="splitQrBadge">English Menu QR</span>
+        </div>
+        <div class="split-qr-frame">
+          <img src="images/qr-cards/qr_en.png" alt="Scan to view Navrang English Menu" class="split-qr-img" id="splitQrImg" width="148" height="148" loading="eager">
+        </div>
         <div class="split-qr-info">
-          <div class="split-qr-badge" id="splitQrBadge">English Menu QR</div>
-          <div class="split-qr-text" id="splitQrText">Scan to view full menu & order online</div>
+          <div class="split-qr-text" id="splitQrText">Scan with phone camera to view live menu & order</div>
+          <div class="split-qr-sub" id="splitQrSub">Point camera at the QR code above</div>
         </div>
       </div>
     </div>

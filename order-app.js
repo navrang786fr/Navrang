@@ -117,7 +117,8 @@
       splitCopy: 'Copy Breakdown',
       splitCopiedToast: 'Breakdown copied to clipboard!',
       splitQrBadge: 'English Menu QR',
-      splitQrText: 'Scan to view full menu & order online',
+      splitQrText: 'Scan with phone camera to view live menu & order',
+      splitQrSub: 'Point camera at the QR code above',
       splitShareMessage: function(total, people, each){
         return '🍽️ *Navrang Restaurant Bill Split*\n' +
                '• Total Bill: ₹' + total + '\n' +
@@ -195,7 +196,8 @@
       splitCopy: 'కాపీ చేయండి',
       splitCopiedToast: 'వివరాలు కాపీ చేయబడ్డాయి!',
       splitQrBadge: 'ఇంగ్లీష్ మెనూ QR',
-      splitQrText: 'లైవ్ మెనూ చూడటానికి & ఆర్డర్ చేయడానికి స్కాన్ చేయండి',
+      splitQrText: 'లైవ్ మెనూ చూడటానికి ఫోన్ కెమెరాతో స్కాన్ చేయండి',
+      splitQrSub: 'పైనున్న QR కోడ్‌ను మీ కెమెరాతో స్కాన్ చేయండి',
       splitShareMessage: function(total, people, each){
         return '🍽️ *నవరంగ్ రెస్టారెంట్ బిల్ విభజన*\n' +
                '• మొత్తం బిల్లు: ₹' + total + '\n' +
@@ -363,6 +365,7 @@
     var splitCopyLabel = qs('#splitCopyLabel'); if (splitCopyLabel) splitCopyLabel.textContent = S.splitCopy;
     var splitQrBadge = qs('#splitQrBadge'); if (splitQrBadge) splitQrBadge.textContent = S.splitQrBadge;
     var splitQrText = qs('#splitQrText'); if (splitQrText) splitQrText.textContent = S.splitQrText;
+    var splitQrSub = qs('#splitQrSub'); if (splitQrSub) splitQrSub.textContent = S.splitQrSub;
     if (typeof calculateSplitBill === 'function') calculateSplitBill();
 
     var emptyP = qs('#emptyState p');
@@ -1156,7 +1159,7 @@
       var qrImg = assets.qr;
       try {
         var w = 600;
-        var h = 900;
+        var h = 970;
         var canvas = document.createElement('canvas');
         canvas.width = w * 2;
         canvas.height = h * 2;
@@ -1176,7 +1179,7 @@
         ctx.fillRect(0, 0, w, h);
 
         // 2. Inner Receipt Card with golden border
-        var cardX = 22, cardY = 20, cardW = 556, cardH = 860, cardR = 24;
+        var cardX = 22, cardY = 20, cardW = 556, cardH = 930, cardR = 24;
         var cardGrad = ctx.createLinearGradient(cardX, cardY, cardX, cardY + cardH);
         cardGrad.addColorStop(0, '#0d1727');
         cardGrad.addColorStop(1, '#111f36');
@@ -1362,7 +1365,7 @@
         ctx.fillText(opts.isTe ? '✓ సమాన వాటా నిర్ధారించబడింది' : '✓ FAIR SHARE CALCULATED', w / 2, fBadgeY + 16);
 
         // 7. Bottom Perforation Line
-        var bPerfY = 582;
+        var bPerfY = 576;
         ctx.beginPath();
         ctx.setLineDash([6, 5]);
         ctx.strokeStyle = '#1e2f47';
@@ -1372,55 +1375,59 @@
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // 8. Menu QR English Section (Bottom Side)
+        // 8. Menu QR English Section (Enhanced Size & High Contrast for Instant Camera Scan)
         ctx.textAlign = 'center';
         ctx.fillStyle = '#10b981';
-        ctx.font = 'bold 12.5px "Noto Sans Telugu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.font = 'bold 13px "Noto Sans Telugu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
         ctx.fillText(opts.isTe ? '📱 ఆన్‌లైన్ మెనూ (ఇంగ్లీష్) కోసం స్కాన్ చేయండి' : '📱 SCAN FOR LIVE MENU (ENGLISH)', w / 2, bPerfY + 24);
 
-        // QR Code Container Box
-        var qrBoxW = 118, qrBoxH = 118, qrBoxR = 16;
+        // Large High-Contrast Pure White QR Box (190 x 190 px with 14px quiet zone)
+        var qrBoxW = 190, qrBoxH = 190, qrBoxR = 16;
         var qrBoxX = (w - qrBoxW) / 2;
         var qrBoxY = bPerfY + 38;
 
+        // Solid white container with crisp outline for camera autofocus & exposure lock
         ctx.fillStyle = '#ffffff';
         ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
         drawRoundedRect(ctx, qrBoxX, qrBoxY, qrBoxW, qrBoxH, qrBoxR, true, true);
 
         if (qrImg){
-          var qrPad = 8;
-          ctx.drawImage(qrImg, qrBoxX + qrPad, qrBoxY + qrPad, qrBoxW - qrPad * 2, qrBoxH - qrPad * 2);
+          var qrPad = 14;
+          var qrDrawSize = qrBoxW - qrPad * 2; // 162 x 162 px (324 x 324 retina px)
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(qrImg, qrBoxX + qrPad, qrBoxY + qrPad, qrDrawSize, qrDrawSize);
+          ctx.imageSmoothingEnabled = true;
         }
 
         // Subtitle badge under QR
-        var qrBadgeW = 150, qrBadgeH = 22, qrBadgeR = 11;
+        var qrBadgeW = 180, qrBadgeH = 24, qrBadgeR = 12;
         var qrBadgeX = w / 2 - qrBadgeW / 2;
-        var qrBadgeY = qrBoxY + qrBoxH + 12;
+        var qrBadgeY = qrBoxY + qrBoxH + 14;
         ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-        ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
         ctx.lineWidth = 1;
         drawRoundedRect(ctx, qrBadgeX, qrBadgeY, qrBadgeW, qrBadgeH, qrBadgeR, true, true);
 
         ctx.fillStyle = '#fbbf24';
-        ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillText('English Menu QR', w / 2, qrBadgeY + 15);
+        ctx.font = 'bold 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText('English Menu QR • Live', w / 2, qrBadgeY + 16);
 
-        // Explanatory text
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = '500 12px "Noto Sans Telugu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillText(opts.isTe ? 'ఫోన్ కెమెరాతో స్కాన్ చేసి నేరుగా ఆర్డర్ చేయండి' : 'Scan with phone camera to order & view menu', w / 2, qrBadgeY + 44);
+        // Explanatory camera scan instruction
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '600 13px "Noto Sans Telugu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText(opts.isTe ? 'ఫోన్ కెమెరాతో స్కాన్ చేసి నేరుగా ఆర్డర్ చేయండి' : 'Point phone camera to view full menu & order', w / 2, qrBadgeY + 44);
 
         // Hostname / URL
         var hostName = window.location.hostname ? window.location.hostname : 'navrangrestaurant.com';
         ctx.fillStyle = '#f59e0b';
         ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillText(hostName + '/order.html', w / 2, qrBadgeY + 62);
+        ctx.fillText(hostName + '/order.html', w / 2, qrBadgeY + 64);
 
         // Verification & Tagline
-        ctx.fillStyle = '#475569';
+        ctx.fillStyle = '#64748b';
         ctx.font = '400 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillText('✓ Verified Navrang Bill Calculator  •  Authentic Flavors', w / 2, qrBadgeY + 80);
+        ctx.fillText('✓ Verified Navrang Bill Calculator  •  Authentic Flavors', w / 2, qrBadgeY + 84);
 
         canvas.toBlob(function(blob){
           if (blob){

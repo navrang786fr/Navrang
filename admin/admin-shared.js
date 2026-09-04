@@ -56,6 +56,7 @@
     orders: '<path d="M6 2h9l3 3v17a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M9 9h6M9 13h6M9 17h3"/>',
     menu: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M9 7h7M9 11h7"/>',
     external: '<path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/>',
+    lock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>',
     logout: '<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>'
   };
   function icon(name, size) {
@@ -75,7 +76,8 @@
       { key: 'activity', label: 'Customer Activity', href: 'activity.html', icon: 'activity' },
       { key: 'qrscans', label: 'QR Scans', href: 'qr-scans.html', icon: 'qr' },
       { key: 'audit', label: 'Audit Log', href: 'audit-log.html', icon: 'audit' },
-      { key: 'access', label: 'Access Log', href: 'access-log.html', icon: 'access' }
+      { key: 'access', label: 'Access Log', href: 'access-log.html', icon: 'access' },
+      { key: 'password', label: 'Change Password', href: 'change-password.html', icon: 'lock' }
     ];
     var externalItems = [
       { label: 'Orders', href: '../order.html', icon: 'orders' },

@@ -13,6 +13,140 @@
   .change-list .field{font-weight:700;color:var(--maroon);}
   .change-list .from{color:var(--nonveg);text-decoration:line-through;opacity:.8;}
   .change-list .to{color:var(--leaf);font-weight:700;}
+
+  /* ---------- Filter Bar Styles ---------- */
+  .filter-card {
+    padding: 14px;
+    margin-bottom: 16px;
+    background: var(--paper-soft);
+    border: 1px solid var(--rule);
+    border-radius: 13px;
+  }
+  .filter-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+  }
+  .filter-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .filter-col label {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    color: var(--maroon);
+  }
+  .filter-input, .filter-select {
+    border: 1.3px solid var(--rule);
+    border-radius: 9px;
+    padding: 8px 10px;
+    font-size: 13px;
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+    font-family: inherit;
+    min-height: 38px;
+  }
+  .filter-input:focus, .filter-select:focus {
+    border-color: var(--maroon);
+  }
+  .search-wrap {
+    flex: 1;
+    min-width: 200px;
+  }
+  .search-wrap input {
+    width: 100%;
+  }
+  .preset-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .pill-btn {
+    border: 1.3px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s ease;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .pill-btn:hover {
+    border-color: var(--maroon);
+  }
+  .pill-btn.active {
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    border-color: var(--maroon-deep);
+    color: var(--turmeric-light);
+  }
+  .reset-btn {
+    border: 1.3px solid var(--rule);
+    background: var(--paper);
+    color: var(--maroon);
+    border-radius: 9px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .15s ease;
+    white-space: nowrap;
+  }
+  .reset-btn:hover {
+    background: rgba(18, 64, 28, .08);
+    border-color: var(--maroon);
+  }
+
+  .filter-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 14px 0 10px;
+    font-size: 12.5px;
+    color: var(--maroon);
+    font-weight: 600;
+  }
+  .filter-meta strong {
+    color: var(--ink);
+  }
+
+  /* ---------- Badges ---------- */
+  .badge-action {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    white-space: nowrap;
+  }
+  .badge-update { background: rgba(179, 130, 30, .18); color: #785207; border: 1px solid rgba(179, 130, 30, .3); }
+  .badge-create { background: rgba(76, 122, 30, .18); color: #2d5509; border: 1px solid rgba(76, 122, 30, .3); }
+  .badge-category { background: rgba(30, 100, 140, .18); color: #0f4f73; border: 1px solid rgba(30, 100, 140, .3); }
+  .badge-security { background: rgba(168, 58, 40, .18); color: #822213; border: 1px solid rgba(168, 58, 40, .3); }
+
+  .cat-pill {
+    display: inline-block;
+    padding: 2px 7px;
+    background: rgba(18, 64, 28, .07);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--maroon);
+  }
 </style>
 </head>
 <body>
@@ -31,12 +165,72 @@
       <nav class="admin-nav" id="adminNav"></nav>
     </aside>
     <main class="admin-main">
-  <div class="admin-panel">
-    <h2>Item master field changes</h2>
-    <div class="admin-table-wrap" id="listWrap">
-      <div class="admin-loading">Loading…</div>
-    </div>
-  </div>
+      <div class="admin-panel">
+        <h2>Item master &amp; security changes</h2>
+
+        <!-- Filter Controls Card -->
+        <div class="filter-card">
+          <div class="filter-grid">
+            <div class="filter-col">
+              <label for="fromDate">From</label>
+              <input type="date" id="fromDate" class="filter-input">
+            </div>
+            <div class="filter-col">
+              <label for="toDate">To</label>
+              <input type="date" id="toDate" class="filter-input">
+            </div>
+
+            <div class="filter-col">
+              <label>Timeframe</label>
+              <div class="preset-row" id="datePresets">
+                <button type="button" class="pill-btn" data-range="today">Today</button>
+                <button type="button" class="pill-btn" data-range="7">7 Days</button>
+                <button type="button" class="pill-btn" data-range="30">30 Days</button>
+                <button type="button" class="pill-btn active" data-range="all">All Time</button>
+              </div>
+            </div>
+
+            <div class="filter-col">
+              <label>Action</label>
+              <div class="preset-row" id="actionPresets">
+                <button type="button" class="pill-btn active" data-action="">All</button>
+                <button type="button" class="pill-btn" data-action="update">Dish Updates</button>
+                <button type="button" class="pill-btn" data-action="create">New Dishes</button>
+                <button type="button" class="pill-btn" data-action="category">Categories</button>
+                <button type="button" class="pill-btn" data-action="change-password">Security</button>
+              </div>
+            </div>
+
+            <div class="filter-col">
+              <label for="categoryFilter">Category</label>
+              <select id="categoryFilter" class="filter-select">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+
+            <div class="filter-col search-wrap">
+              <label for="searchBox">Search</label>
+              <input type="text" id="searchBox" class="filter-input" placeholder="Search dish, user, category, IP or change details…">
+            </div>
+
+            <div class="filter-col">
+              <label>&nbsp;</label>
+              <button type="button" class="reset-btn" id="resetBtn" title="Reset all filters">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-meta">
+          <div>Showing <strong id="matchCount">0</strong> of <strong id="totalCount">0</strong> audit entries</div>
+        </div>
+
+        <div class="admin-table-wrap" id="listWrap">
+          <div class="admin-loading">Loading audit records…</div>
+        </div>
+      </div>
     </main>
   </div>
 </div>
@@ -46,53 +240,267 @@
 (function(){
   if (!AdminShared.requireAuthOrRedirect()) return;
   AdminShared.renderNav('audit');
+
   var esc = AdminShared.esc;
   var listWrap = document.getElementById('listWrap');
+  var fromDate = document.getElementById('fromDate');
+  var toDate = document.getElementById('toDate');
+  var datePresets = document.getElementById('datePresets');
+  var actionPresets = document.getElementById('actionPresets');
+  var categoryFilter = document.getElementById('categoryFilter');
+  var searchBox = document.getElementById('searchBox');
+  var resetBtn = document.getElementById('resetBtn');
+  var matchCount = document.getElementById('matchCount');
+  var totalCount = document.getElementById('totalCount');
+
+  var allRows = [];
+  var currentAction = '';
 
   function fmtDate(iso){
     var d = new Date(iso);
     if (isNaN(d)) return iso;
-    return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) + ' ' +
+           d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit', second:'2-digit' });
   }
+
   function fmtLocation(r){
     var parts = [r.city, r.region, r.country].filter(Boolean);
     return parts.length ? parts.join(', ') : 'Unknown location';
   }
+
   function fmtDevice(r){
     if (!r.device) return '';
     return esc(r.device.browser) + ' · ' + esc(r.device.os) + ' (' + esc(r.device.type) + ')';
   }
+
+  function renderActionBadge(action){
+    var cls = 'badge-update';
+    var label = action;
+    if (action === 'create') {
+      cls = 'badge-create';
+      label = 'Create Dish';
+    } else if (action === 'update') {
+      cls = 'badge-update';
+      label = 'Update Dish';
+    } else if (action === 'create-category') {
+      cls = 'badge-category';
+      label = 'New Category';
+    } else if (action === 'update-category') {
+      cls = 'badge-category';
+      label = 'Edit Category';
+    } else if (action === 'change-password') {
+      cls = 'badge-security';
+      label = 'Password Changed';
+    }
+    return '<span class="badge-action ' + cls + '">' + esc(label) + '</span>';
+  }
+
   function renderChanges(entry){
     if (entry.action === 'create'){
       return '<span style="color:var(--leaf);font-weight:700;">new dish created</span>';
+    }
+    if (entry.action === 'create-category'){
+      return '<span style="color:var(--leaf);font-weight:700;">new category created</span>';
+    }
+    if (entry.action === 'change-password'){
+      return '<span style="color:var(--maroon);font-weight:700;">security credentials updated</span>';
     }
     var changes = entry.changes || {};
     var keys = Object.keys(changes);
     if (!keys.length) return '<span style="opacity:.5;">—</span>';
     return '<ul class="change-list">' + keys.map(function(k){
-      var c = changes[k];
-      return '<li><span class="field">' + esc(k) + ':</span> <span class="from">' + esc(c.from) + '</span> → <span class="to">' + esc(c.to) + '</span></li>';
+      var c = changes[k] || {};
+      var fromVal = c.from == null ? '—' : c.from;
+      var toVal = c.to == null ? '—' : c.to;
+      return '<li><span class="field">' + esc(k) + ':</span> <span class="from">' + esc(fromVal) + '</span> → <span class="to">' + esc(toVal) + '</span></li>';
     }).join('') + '</ul>';
   }
 
+  function dayStart(s){ return new Date(s + 'T00:00:00'); }
+  function dayEnd(s){ return new Date(s + 'T23:59:59.999'); }
+  function toISODate(d){
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  function setActiveDatePreset(range){
+    Array.prototype.forEach.call(datePresets.querySelectorAll('.pill-btn'), function(b){
+      b.classList.toggle('active', b.dataset.range === range);
+    });
+  }
+
+  function applyDatePreset(range){
+    var now = new Date(), to = new Date(now), from;
+    if (range === 'today') from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    else if (range === '7') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+    else if (range === '30') from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+    else {
+      fromDate.value = '';
+      toDate.value = '';
+      setActiveDatePreset('all');
+      render();
+      return;
+    }
+    fromDate.value = toISODate(from);
+    toDate.value = toISODate(to);
+    setActiveDatePreset(range);
+    render();
+  }
+
+  function populateCategories(rows){
+    var catMap = {};
+    rows.forEach(function(r){
+      if (r.categoryId && r.categoryId !== 'security' && r.categoryId !== 'admin') {
+        catMap[r.categoryId] = true;
+      }
+    });
+    var cats = Object.keys(catMap).sort();
+    var prev = categoryFilter.value;
+    categoryFilter.innerHTML = '<option value="">All Categories</option>' + cats.map(function(c){
+      return '<option value="' + esc(c) + '">' + esc(c) + '</option>';
+    }).join('');
+    if (catMap[prev]) {
+      categoryFilter.value = prev;
+    }
+  }
+
+  function getFiltered(){
+    var from = fromDate.value ? dayStart(fromDate.value) : null;
+    var to = toDate.value ? dayEnd(toDate.value) : null;
+    var cat = categoryFilter.value;
+    var q = searchBox.value.trim().toLowerCase();
+
+    return allRows.filter(function(r){
+      var t = new Date(r.timestamp);
+      if (isNaN(t)) return false;
+      if (from && t < from) return false;
+      if (to && t > to) return false;
+
+      if (currentAction) {
+        if (currentAction === 'update' && r.action !== 'update') return false;
+        if (currentAction === 'create' && r.action !== 'create') return false;
+        if (currentAction === 'category' && (r.action !== 'create-category' && r.action !== 'update-category')) return false;
+        if (currentAction === 'change-password' && r.action !== 'change-password') return false;
+      }
+
+      if (cat && r.categoryId !== cat) return false;
+
+      if (q) {
+        var match = false;
+        if (r.username && r.username.toLowerCase().indexOf(q) !== -1) match = true;
+        if (!match && r.dishName && r.dishName.toLowerCase().indexOf(q) !== -1) match = true;
+        if (!match && r.dishId != null && String(r.dishId).toLowerCase().indexOf(q) !== -1) match = true;
+        if (!match && r.categoryId && r.categoryId.toLowerCase().indexOf(q) !== -1) match = true;
+        if (!match && r.action && r.action.toLowerCase().indexOf(q) !== -1) match = true;
+        if (!match && r.ip && String(r.ip).toLowerCase().indexOf(q) !== -1) match = true;
+        if (!match && r.city && r.city.toLowerCase().indexOf(q) !== -1) match = true;
+        if (!match && r.country && r.country.toLowerCase().indexOf(q) !== -1) match = true;
+        if (!match && r.changes) {
+          try {
+            var changesStr = JSON.stringify(r.changes).toLowerCase();
+            if (changesStr.indexOf(q) !== -1) match = true;
+          } catch(e){}
+        }
+        if (!match) return false;
+      }
+
+      return true;
+    });
+  }
+
+  function render(){
+    var filtered = getFiltered();
+    matchCount.textContent = filtered.length;
+    totalCount.textContent = allRows.length;
+
+    if (!filtered.length) {
+      listWrap.innerHTML = '<div class="admin-empty">' +
+        '<div style="font-size:15px;font-weight:700;color:var(--maroon);margin-bottom:6px;">No audit records found</div>' +
+        '<div style="margin-bottom:14px;opacity:.8;">No entries match your selected filters. Try changing or clearing them.</div>' +
+        '<button type="button" class="reset-btn" id="emptyResetBtn"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Clear Filters</button>' +
+        '</div>';
+      var emptyReset = document.getElementById('emptyResetBtn');
+      if (emptyReset) emptyReset.addEventListener('click', function(){ resetBtn.click(); });
+      return;
+    }
+
+    listWrap.innerHTML = '<table class="admin-table">' +
+      '<thead><tr><th>When</th><th>By</th><th>Action</th><th>Target / Dish</th><th>Category</th><th>Changes</th></tr></thead>' +
+      '<tbody>' +
+      filtered.map(function(r){
+        var dishCol = r.dishName
+          ? esc(r.dishName) + (r.dishId != null ? ' <span style="opacity:.5;">#' + esc(r.dishId) + '</span>' : '')
+          : '<span style="opacity:.5;">—</span>';
+        var catCol = r.categoryId
+          ? '<span class="cat-pill">' + esc(r.categoryId) + '</span>'
+          : '<span style="opacity:.5;">—</span>';
+
+        return '<tr>' +
+          '<td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td>' +
+          '<td>' + esc(r.username) + '<br><span style="font-size:10.5px;opacity:.65;">' + esc(fmtLocation(r)) + (r.device ? ' · ' + fmtDevice(r) : '') + '</span></td>' +
+          '<td>' + renderActionBadge(r.action) + '</td>' +
+          '<td>' + dishCol + '</td>' +
+          '<td>' + catCol + '</td>' +
+          '<td>' + renderChanges(r) + '</td>' +
+        '</tr>';
+      }).join('') +
+      '</tbody></table>';
+  }
+
+  // --- Event Bindings ---
+  datePresets.addEventListener('click', function(e){
+    var btn = e.target.closest('.pill-btn');
+    if (!btn) return;
+    applyDatePreset(btn.dataset.range);
+  });
+
+  actionPresets.addEventListener('click', function(e){
+    var btn = e.target.closest('.pill-btn');
+    if (!btn) return;
+    currentAction = btn.dataset.action || '';
+    Array.prototype.forEach.call(actionPresets.querySelectorAll('.pill-btn'), function(b){
+      b.classList.toggle('active', b === btn);
+    });
+    render();
+  });
+
+  fromDate.addEventListener('change', function(){
+    setActiveDatePreset('custom');
+    render();
+  });
+  toDate.addEventListener('change', function(){
+    setActiveDatePreset('custom');
+    render();
+  });
+
+  categoryFilter.addEventListener('change', render);
+  searchBox.addEventListener('input', render);
+
+  resetBtn.addEventListener('click', function(){
+    fromDate.value = '';
+    toDate.value = '';
+    setActiveDatePreset('all');
+    currentAction = '';
+    Array.prototype.forEach.call(actionPresets.querySelectorAll('.pill-btn'), function(b){
+      b.classList.toggle('active', (b.dataset.action || '') === '');
+    });
+    categoryFilter.value = '';
+    searchBox.value = '';
+    render();
+  });
+
+  // --- Load Data ---
   AdminShared.apiFetch('/api/audit-log').then(function(resp){
     return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
   }).then(function(result){
-    if (!result.ok) throw new Error(result.data.error || 'Failed to load');
-    var rows = result.data;
-    if (!rows.length){ listWrap.innerHTML = '<div class="admin-empty">No audit log entries yet.</div>'; return; }
-    listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>When</th><th>By</th><th>Action</th><th>Dish</th><th>Category</th><th>Changes</th></tr></thead><tbody>' +
-      rows.map(function(r){
-        return '<tr><td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td>' +
-          '<td>' + esc(r.username) + '<br><span style="font-size:10.5px;opacity:.65;">' + esc(fmtLocation(r)) + (r.device ? ' · ' + fmtDevice(r) : '') + '</span></td>' +
-          '<td>' + esc(r.action) + '</td>' +
-          '<td>' + esc(r.dishName) + ' <span style="opacity:.5;">#' + esc(r.dishId) + '</span></td>' +
-          '<td>' + esc(r.categoryId) + '</td>' +
-          '<td>' + renderChanges(r) + '</td></tr>';
-      }).join('') + '</tbody></table>';
+    if (!result.ok) throw new Error(result.data.error || 'Failed to load audit records');
+    allRows = result.data || [];
+    allRows.sort(function(a, b){ return new Date(b.timestamp) - new Date(a.timestamp); });
+    populateCategories(allRows);
+    render();
   }).catch(function(err){
     listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Could not load audit log.') + '</div>';
   });
+
 })();
 </script>
 
