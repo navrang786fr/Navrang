@@ -18,13 +18,13 @@
   }
 
   .dc-kpis {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;
   }
-  @media (max-width: 1024px) {
-    .dc-kpis { grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (max-width: 600px) {
+  @media (max-width: 900px) {
     .dc-kpis { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .dc-kpis { grid-template-columns: 1fr; }
   }
 
   .dc-kpi-card {
@@ -255,7 +255,7 @@
           </div>
         </div>
 
-        <!-- Collection Summary KPIs -->
+        <!-- Top KPI Cards (4 Column Grid) -->
         <div class="dc-kpis">
           <div class="dc-kpi-card">
             <div class="val" id="kpiBillsCount">0</div>
@@ -272,14 +272,6 @@
           <div class="dc-kpi-card upi-kpi">
             <div class="val" id="kpiUpiSales">₹0.00</div>
             <div class="lbl">📱 UPI / QR Payments</div>
-          </div>
-          <div class="dc-kpi-card">
-            <div class="val" id="kpiCardSales">₹0.00</div>
-            <div class="lbl">💳 Card Sales</div>
-          </div>
-          <div class="dc-kpi-card">
-            <div class="val" id="kpiDueSales">₹0.00</div>
-            <div class="lbl">⏳ Due / Credit</div>
           </div>
         </div>
 
@@ -405,7 +397,6 @@
                 <button type="button" class="date-pill active pay-filter-pill" data-pay="all">All Modes</button>
                 <button type="button" class="date-pill pay-filter-pill" data-pay="Cash">Cash Only</button>
                 <button type="button" class="date-pill pay-filter-pill" data-pay="UPI">UPI / QR Only</button>
-                <button type="button" class="date-pill pay-filter-pill" data-pay="Card">Card Only</button>
               </div>
               <input type="text" id="searchBills" placeholder="🔍 Search bill #, waiter, table…" style="padding:6px 10px;border:1px solid var(--rule);border-radius:8px;font-size:12px;min-width:210px;">
             </div>
@@ -586,18 +577,16 @@
     var grossSales = 0;
     var cashSales = 0;
     var upiSales = 0;
-    var cardSales = 0;
-    var dueSales = 0;
 
     bills.forEach(function (b) {
       var total = Number(b.grandTotal) || 0;
       grossSales += total;
       var mode = (b.paymentMode || 'Cash').toLowerCase();
-      if (mode.indexOf('cash') !== -1) cashSales += total;
-      else if (mode.indexOf('upi') !== -1 || mode.indexOf('qr') !== -1) upiSales += total;
-      else if (mode.indexOf('card') !== -1) cardSales += total;
-      else if (mode.indexOf('due') !== -1) dueSales += total;
-      else cashSales += total;
+      if (mode.indexOf('upi') !== -1 || mode.indexOf('qr') !== -1) {
+        upiSales += total;
+      } else {
+        cashSales += total;
+      }
     });
 
     // Update KPI cards
@@ -605,8 +594,6 @@
     document.getElementById('kpiGrossSales').textContent = '₹' + grossSales.toFixed(2);
     document.getElementById('kpiCashSales').textContent = '₹' + cashSales.toFixed(2);
     document.getElementById('kpiUpiSales').textContent = '₹' + upiSales.toFixed(2);
-    document.getElementById('kpiCardSales').textContent = '₹' + cardSales.toFixed(2);
-    document.getElementById('kpiDueSales').textContent = '₹' + dueSales.toFixed(2);
 
     // Update reconciliation expected cash
     document.getElementById('reconExpectedCash').textContent = '₹' + cashSales.toFixed(2);
@@ -920,7 +907,6 @@
     var gross = document.getElementById('kpiGrossSales').textContent;
     var cash = document.getElementById('kpiCashSales').textContent;
     var upi = document.getElementById('kpiUpiSales').textContent;
-    var card = document.getElementById('kpiCardSales').textContent;
     var phys = document.getElementById('denomGrandTotal').textContent;
     var variance = document.getElementById('reconVariance').textContent;
 
@@ -941,7 +927,6 @@
         '<div style="display:flex;justify-content:space-between;"><span>GROSS SALES:</span><strong>' + gross + '</strong></div>' +
         '<div style="display:flex;justify-content:space-between;"><span>CASH SALES:</span><strong>' + cash + '</strong></div>' +
         '<div style="display:flex;justify-content:space-between;"><span>UPI / DIGITAL:</span><strong>' + upi + '</strong></div>' +
-        '<div style="display:flex;justify-content:space-between;"><span>CARD SALES:</span><strong>' + card + '</strong></div>' +
         '<div style="display:flex;justify-content:space-between;margin-top:4px;border-top:1px dashed #000;padding-top:4px;"><span>COUNTED CASH:</span><strong>' + phys + '</strong></div>' +
         '<div style="display:flex;justify-content:space-between;"><span>VARIANCE:</span><strong>' + variance + '</strong></div>' +
       '</div>';

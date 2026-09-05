@@ -13,9 +13,12 @@
     var stored = sessionStorage.getItem(ROLE_KEY);
     if (stored) return stored;
     var u = (getUsername() || '').toLowerCase();
-    return (u === 'counter' || u === 'cashier') ? 'counter' : 'admin';
+    if (u === 'counter' || u === 'cashier') return 'counter';
+    if (sessionStorage.getItem('navrang_waiter_id')) return 'waiter';
+    return 'admin';
   }
   function isCounter() { return getRole() === 'counter'; }
+  function isWaiter() { return getRole() === 'waiter'; }
   function isAdmin() { return getRole() === 'admin'; }
 
   function setSession(token, username, role) {
@@ -28,6 +31,10 @@
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(USER_KEY);
     sessionStorage.removeItem(ROLE_KEY);
+    sessionStorage.removeItem('navrang_waiter_id');
+    sessionStorage.removeItem('navrang_waiter_name');
+    sessionStorage.removeItem('navrang_waiter_code');
+    sessionStorage.removeItem('navrang_waiter_tables');
   }
   function requireAuthOrRedirect(requiredRole) {
     if (!getToken()) {
@@ -36,8 +43,8 @@
     }
     var role = getRole();
     var filename = (window.location.pathname.split('/').pop() || '').toLowerCase();
-    // Counter staff is strictly restricted to billing.html only
-    if (role === 'counter') {
+    // Counter and Waiter staff are strictly restricted to billing.html only
+    if (role === 'counter' || role === 'waiter') {
       if (filename && filename !== 'billing.html' && filename !== 'login.html') {
         window.location.replace('billing.html');
         return false;
@@ -196,6 +203,17 @@
 
   // Returns navigation groups visible to the current user role
   function getVisibleNavGroups() {
+    if (isWaiter()) {
+      return [
+        {
+          type: 'direct',
+          key: 'billing',
+          label: 'Table Ordering (POS)',
+          href: 'billing.html',
+          icon: 'billing'
+        }
+      ];
+    }
     if (isCounter()) {
       return [
         {
@@ -251,7 +269,7 @@
 
       var badge = document.createElement('span');
       badge.className = 'admin-header-badge';
-      badge.textContent = isCounter() ? 'POS Terminal' : 'Admin Portal';
+      badge.textContent = isWaiter() ? 'Waiter Terminal' : (isCounter() ? 'POS Terminal' : 'Admin Portal');
       titleWrap.appendChild(badge);
 
       brand.appendChild(titleWrap);
@@ -263,12 +281,18 @@
     actions.className = 'admin-header-actions';
 
     var username = getUsername();
-    var userInitial = (username.charAt(0) || (isCounter() ? 'C' : 'A')).toUpperCase();
-    var roleDesc = isCounter() ? 'Counter Cashier &amp; Billing Staff' : 'Store Manager &amp; Administrator';
-    var statusText = isCounter() ? 'Active POS Shift' : 'Online Session';
+    var userInitial = (username.charAt(0) || (isWaiter() ? 'W' : (isCounter() ? 'C' : 'A'))).toUpperCase();
+    var roleDesc = isWaiter() ? 'Table Service &amp; Waiter Staff' : (isCounter() ? 'Counter Cashier &amp; Billing Staff' : 'Store Manager &amp; Administrator');
+    var statusText = isWaiter() ? 'Active Waiter Shift' : (isCounter() ? 'Active POS Shift' : 'Online Session');
+    var avatarBg = isWaiter() ? 'background:#0E4D26;' : (isCounter() ? 'background:#C48B1E;' : '');
 
     var popupLinks = '';
-    if (isCounter()) {
+    if (isWaiter()) {
+      popupLinks =
+        '<a href="billing.html" class="admin-popup-link active">' +
+          icon('billing', 14) + '<span>Table Ordering (POS)</span>' +
+        '</a>';
+    } else if (isCounter()) {
       popupLinks =
         '<a href="billing.html" class="admin-popup-link active">' +
           icon('billing', 14) + '<span>Counter Billing (POS)</span>' +
@@ -289,22 +313,22 @@
         '</a>';
     }
 
-    var logoutLabel = isCounter() ? 'End Shift / Sign Out' : 'Sign Out / Logout';
+    var logoutLabel = (isWaiter() || isCounter()) ? 'End Shift / Sign Out' : 'Sign Out / Logout';
 
-    // User Avatar + Popup Menu Container (Live Menu removed, Logout moved inside popup)
+    // User Avatar + Popup Menu Container
     actions.innerHTML =
       '<div class="admin-header-user-wrap" id="adminUserWrap">' +
         '<button type="button" class="admin-header-user-btn" id="adminUserBtn" aria-haspopup="true" aria-expanded="false" title="User Menu">' +
-          '<div class="admin-user-avatar" style="' + (isCounter() ? 'background:#C48B1E;' : '') + '">' + esc(userInitial) + '</div>' +
+          '<div class="admin-user-avatar" style="' + avatarBg + '">' + esc(userInitial) + '</div>' +
           '<div class="admin-user-meta">' +
             '<span class="admin-user-name">' + esc(username) + '</span>' +
-            '<span class="admin-user-status">' + (isCounter() ? 'POS Active' : 'Online') + '</span>' +
+            '<span class="admin-user-status">' + (isWaiter() ? 'Waiter Active' : (isCounter() ? 'POS Active' : 'Online')) + '</span>' +
           '</div>' +
           '<span class="admin-user-arrow">&#9662;</span>' +
         '</button>' +
         '<div class="admin-user-popup" id="adminUserPopup">' +
           '<div class="admin-popup-header">' +
-            '<div class="admin-popup-avatar" style="' + (isCounter() ? 'background:#C48B1E;' : '') + '">' + esc(userInitial) + '</div>' +
+            '<div class="admin-popup-avatar" style="' + avatarBg + '">' + esc(userInitial) + '</div>' +
             '<div class="admin-popup-userinfo">' +
               '<div class="admin-popup-name">' + esc(username) + '</div>' +
               '<div class="admin-popup-role">' + esc(roleDesc) + '</div>' +
@@ -601,6 +625,7 @@
     getUsername: getUsername,
     getRole: getRole,
     isCounter: isCounter,
+    isWaiter: isWaiter,
     isAdmin: isAdmin,
     setSession: setSession,
     clearSession: clearSession,

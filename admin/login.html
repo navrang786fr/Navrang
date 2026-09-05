@@ -23,9 +23,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 10px 12px;
-    font-size: 13px;
+    gap: 5px;
+    padding: 9px 8px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--ink-muted);
     border: none;
@@ -34,11 +34,15 @@
     cursor: pointer;
     transition: all .18s ease;
     font-family: inherit;
+    white-space: nowrap;
   }
   .login-role-tab.active {
     background: #fff;
     color: var(--maroon-deep);
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .login-role-tab.active[data-role="waiter"] {
+    color: #0E4D26;
   }
   .login-role-tab.active[data-role="counter"] {
     color: #B45309;
@@ -65,6 +69,11 @@
     color: #92400E;
     border: 1px solid rgba(245,158,11,0.35);
   }
+  .badge-waiter {
+    background: rgba(14,77,38,0.12);
+    color: #0E4D26;
+    border: 1px solid rgba(14,77,38,0.3);
+  }
 </style>
 </head>
 <body>
@@ -73,39 +82,43 @@
   <div class="login-card">
     <img src="../navrang_logo.png" alt="Navrang">
     <h1 id="loginTitle">Navrang Portal</h1>
-    <p class="sub" id="loginSubtitle">Select your login mode to continue</p>
+    <p class="sub" id="loginSubtitle">Select your login role to continue</p>
 
-    <!-- Role Selection Tabs -->
+    <!-- Role Selection Tabs (3 Roles) -->
     <div class="login-role-tabs">
-      <button type="button" class="login-role-tab active" data-role="counter" id="tabCounter">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        <span>Counter Login</span>
+      <button type="button" class="login-role-tab active" data-role="waiter" id="tabWaiter">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span>Waiter</span>
+      </button>
+      <button type="button" class="login-role-tab" data-role="counter" id="tabCounter">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <span>Cashier</span>
       </button>
       <button type="button" class="login-role-tab" data-role="admin" id="tabAdmin">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span>Admin Login</span>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Admin</span>
       </button>
     </div>
 
     <div style="text-align:center;">
-      <span class="role-indicator-badge badge-counter" id="roleBadge">
+      <span class="role-indicator-badge badge-waiter" id="roleBadge">
         <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span id="roleBadgeText">Counter Billing POS Only</span>
+        <span id="roleBadgeText">Table Ordering &amp; Waiter Access</span>
       </span>
     </div>
 
     <form id="loginForm">
       <div class="admin-field">
-        <label for="username" id="labelUsername">Cashier ID / Terminal User</label>
-        <input type="text" id="username" autocomplete="username" placeholder="e.g. counter" required value="counter">
+        <label for="username" id="labelUsername">Staff Code / Waiter Name</label>
+        <input type="text" id="username" autocomplete="username" placeholder="e.g. W-01 or Raju" required value="W-01">
       </div>
       <div class="admin-field">
-        <label for="password" id="labelPassword">Cashier PIN / Password</label>
-        <input type="password" id="password" autocomplete="current-password" placeholder="Enter password or PIN" required>
+        <label for="password" id="labelPassword">4-Digit Login PIN</label>
+        <input type="password" id="password" autocomplete="current-password" placeholder="Enter 4-digit PIN (e.g. 1234)" required>
       </div>
 
       <button type="submit" class="admin-btn" id="loginBtn" style="width:100%;">
-        Open Counter Billing
+        Open Table Ordering
       </button>
       <p class="admin-status" id="loginStatus"></p>
     </form>
@@ -117,7 +130,7 @@
 (function(){
   // If already logged in, redirect to appropriate landing page
   if (AdminShared.getToken()) {
-    if (AdminShared.isCounter()) {
+    if (AdminShared.isCounter() || AdminShared.isWaiter()) {
       window.location.href = 'billing.html';
     } else {
       window.location.href = 'index.html';
@@ -125,8 +138,9 @@
     return;
   }
 
-  var activeRole = 'counter';
+  var activeRole = 'waiter';
 
+  var tabWaiter = document.getElementById('tabWaiter');
   var tabCounter = document.getElementById('tabCounter');
   var tabAdmin = document.getElementById('tabAdmin');
   var roleBadge = document.getElementById('roleBadge');
@@ -164,18 +178,68 @@
     return validUser && validPin;
   }
 
+  function verifyWaiterLocal(codeOrName, pin) {
+    var q = (codeOrName || '').trim().toLowerCase();
+    var p = (pin || '').trim();
+    if (!q || !p) return { error: 'Please enter Staff Code and PIN' };
+
+    var list = [];
+    try {
+      var raw = localStorage.getItem('navrang_waiters_master');
+      if (raw) list = JSON.parse(raw);
+    } catch (e) {}
+
+    if (!Array.isArray(list) || list.length === 0) {
+      list = [
+        { id: 'w1', code: 'W-01', name: 'Raju', status: 'Active', pin: '1234', tables: ['Table 1', 'Table 2', 'Table 3', 'Table 4'] },
+        { id: 'w2', code: 'W-02', name: 'Ravi', status: 'Active', pin: '2345', tables: ['Table 5', 'Table 6', 'Table 7', 'Table 8'] },
+        { id: 'w3', code: 'W-03', name: 'Suresh', status: 'Active', pin: '3456', tables: ['Table 9', 'Table 10', 'Table 11', 'Table 12', 'VIP Cabin'] },
+        { id: 'w4', code: 'W-04', name: 'Kiran', status: 'Active', pin: '4567', tables: ['Parcel / Counter'] }
+      ];
+    }
+
+    var match = list.find(function (w) {
+      var codeMatch = (w.code || '').trim().toLowerCase() === q;
+      var nameMatch = (w.name || '').trim().toLowerCase() === q;
+      return codeMatch || nameMatch;
+    });
+
+    if (!match) return { error: 'Staff Code / Waiter Name "' + codeOrName + '" not found in Waiter Master.' };
+    if (match.status !== 'Active') return { error: 'Server "' + match.name + '" is currently marked Off-Duty. Contact Manager.' };
+
+    var expectedPin = (match.pin || '1234').trim();
+    if (expectedPin !== p) return { error: 'Incorrect 4-digit PIN for ' + match.name + '.' };
+
+    return { success: true, waiter: match };
+  }
+
   function setRoleMode(role){
     activeRole = role;
     status.textContent = '';
     status.className = 'admin-status';
 
-    if (role === 'counter'){
-      tabCounter.classList.add('active');
-      tabAdmin.classList.remove('active');
+    tabWaiter.classList.toggle('active', role === 'waiter');
+    tabCounter.classList.toggle('active', role === 'counter');
+    tabAdmin.classList.toggle('active', role === 'admin');
+
+    if (role === 'waiter') {
+      roleBadge.className = 'role-indicator-badge badge-waiter';
+      roleBadgeText.textContent = 'Table Ordering & Server Access';
+      loginTitle.textContent = 'Navrang Waiter Terminal';
+      loginSubtitle.textContent = 'Sign in with Staff Code & PIN to punch table orders';
+      labelUsername.textContent = 'Staff Code / Waiter Name';
+      labelPassword.textContent = '4-Digit Login PIN';
+      usernameInput.placeholder = 'e.g. W-01 or Raju';
+      usernameInput.value = 'W-01';
+      passwordInput.placeholder = 'Enter 4-digit PIN (e.g. 1234)';
+      passwordInput.value = '';
+      loginBtn.textContent = 'Open Table Ordering';
+      passwordInput.focus();
+    } else if (role === 'counter') {
       roleBadge.className = 'role-indicator-badge badge-counter';
       roleBadgeText.textContent = 'Counter Billing POS Only';
-      loginTitle.textContent = 'Navrang POS Terminal';
-      loginSubtitle.textContent = 'Fast thermal billing login for counter staff';
+      loginTitle.textContent = 'Navrang Cashier POS';
+      loginSubtitle.textContent = 'Fast thermal billing login for counter cashier';
       labelUsername.textContent = 'Cashier ID / Terminal User';
       labelPassword.textContent = 'Cashier PIN / Password';
       var cfg = getActiveCashierConfig();
@@ -186,8 +250,6 @@
       loginBtn.textContent = 'Open Counter Billing';
       passwordInput.focus();
     } else {
-      tabAdmin.classList.add('active');
-      tabCounter.classList.remove('active');
       roleBadge.className = 'role-indicator-badge badge-admin';
       roleBadgeText.textContent = 'Full System Access';
       loginTitle.textContent = 'Navrang Admin Portal';
@@ -195,7 +257,7 @@
       labelUsername.textContent = 'Admin Username';
       labelPassword.textContent = 'Admin Password';
       usernameInput.placeholder = 'e.g. admin';
-      if (usernameInput.value === 'counter') usernameInput.value = 'admin';
+      if (usernameInput.value === 'counter' || usernameInput.value === 'W-01') usernameInput.value = 'admin';
       passwordInput.placeholder = 'Enter admin password';
       passwordInput.value = '';
       loginBtn.textContent = 'Sign In to Admin Portal';
@@ -203,6 +265,7 @@
     }
   }
 
+  tabWaiter.addEventListener('click', function(){ setRoleMode('waiter'); });
   tabCounter.addEventListener('click', function(){ setRoleMode('counter'); });
   tabAdmin.addEventListener('click', function(){ setRoleMode('admin'); });
 
@@ -213,11 +276,42 @@
     if (!username || !password) return;
 
     loginBtn.disabled = true;
-    loginBtn.textContent = 'Signing in…';
+    loginBtn.textContent = 'Verifying…';
     status.textContent = '';
     status.className = 'admin-status';
 
-    // Attempt API authentication
+    // 1. Waiter Role Login
+    if (activeRole === 'waiter') {
+      var waiterAuth = verifyWaiterLocal(username, password);
+      if (waiterAuth.error) {
+        status.textContent = waiterAuth.error;
+        status.className = 'admin-status error';
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Open Table Ordering';
+        return;
+      }
+      var w = waiterAuth.waiter;
+      var waiterToken = 'pos_waiter_token_' + Date.now();
+      AdminShared.setSession(waiterToken, w.name, 'waiter');
+      sessionStorage.setItem('navrang_waiter_id', w.id);
+      sessionStorage.setItem('navrang_waiter_name', w.name);
+      sessionStorage.setItem('navrang_waiter_code', w.code || '');
+      sessionStorage.setItem('navrang_waiter_tables', JSON.stringify(w.tables || []));
+      window.location.href = 'billing.html';
+      return;
+    }
+
+    // 2. Counter Role Login
+    if (activeRole === 'counter') {
+      if (verifyCounterLocal(username, password)) {
+        var counterToken = 'pos_counter_token_' + Date.now();
+        AdminShared.setSession(counterToken, username, 'counter');
+        window.location.href = 'billing.html';
+        return;
+      }
+    }
+
+    // 3. Admin / API Authentication
     fetch(AdminShared.API_BASE + '/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -226,7 +320,6 @@
       return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
     }).then(function(result){
       if (!result.ok) {
-        // Check dynamic Cashier PIN fallback if server rejected or counter user isn't in users.json yet
         if (activeRole === 'counter' && verifyCounterLocal(username, password)) {
           var mockToken = 'pos_counter_token_' + Date.now();
           AdminShared.setSession(mockToken, username, 'counter');
@@ -239,13 +332,12 @@
       var userRole = result.data.role || (activeRole === 'counter' ? 'counter' : 'admin');
       AdminShared.setSession(result.data.token, result.data.username || username, userRole);
 
-      if (userRole === 'counter') {
+      if (userRole === 'counter' || userRole === 'waiter') {
         window.location.href = 'billing.html';
       } else {
         window.location.href = 'index.html';
       }
     }).catch(function(err){
-      // Check offline / local fallback for counter terminal
       if (activeRole === 'counter' && verifyCounterLocal(username, password)) {
         var mockToken = 'pos_counter_token_' + Date.now();
         AdminShared.setSession(mockToken, username, 'counter');
@@ -259,8 +351,8 @@
     });
   });
 
-  // Default to counter mode
-  setRoleMode('counter');
+  // Default to waiter mode
+  setRoleMode('waiter');
 })();
 </script>
 

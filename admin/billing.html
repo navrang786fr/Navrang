@@ -547,6 +547,11 @@
             
             <!-- Order Meta & Table Selector -->
             <div class="admin-card pos-meta-card">
+              <!-- Waiter Session Notice Banner -->
+              <div id="waiterNoticeBanner" style="display:none;background:#F0FDF4;border:1px solid #BBF7D0;color:#15803D;padding:6px 10px;border-radius:6px;font-size:11.5px;font-weight:700;margin-bottom:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+                <span>🧑‍🍳 Logged in as: <strong id="waiterNoticeName">Server</strong></span>
+                <span>🍽️ Assigned Tables: <span id="waiterNoticeTables" style="color:#0E4D26;">All Tables</span></span>
+              </div>
               <div class="pos-meta-bar">
                 <div class="admin-field" style="margin-bottom:0;">
                   <label class="pos-meta-label">Order Type</label>
@@ -578,7 +583,7 @@
                 <div class="admin-field" style="margin-bottom:0;">
                   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
                     <label class="pos-meta-label" for="waiterInput" style="margin:0;">Waiter / Server</label>
-                    <a href="waiters.html" style="font-size:10.5px;font-weight:700;color:var(--maroon);text-decoration:none;" title="Manage Staff Directory">⚙ Waiter Master</a>
+                    <a href="waiters.html" id="linkWaiterMaster" style="font-size:10.5px;font-weight:700;color:var(--maroon);text-decoration:none;" title="Manage Staff Directory">⚙ Waiter Master</a>
                   </div>
                   <div class="pos-waiter-compact-row">
                     <input type="text" id="waiterInput" class="pos-meta-input" placeholder="Waiter name" value="Raju" style="font-weight:600;">
@@ -714,8 +719,6 @@
                 <div class="pos-pay-modes">
                   <button type="button" class="pos-pay-btn active" data-mode="Cash">💵 Cash</button>
                   <button type="button" class="pos-pay-btn" data-mode="UPI">📱 UPI / QR</button>
-                  <button type="button" class="pos-pay-btn" data-mode="Card" style="display:none;" aria-hidden="true">💳 Card</button>
-                  <button type="button" class="pos-pay-btn" data-mode="Due" style="display:none;" aria-hidden="true">⏳ Due</button>
                 </div>
               </div>
 
@@ -995,16 +998,98 @@
   AdminShared.requireAuthOrRedirect();
   AdminShared.renderNav('billing');
 
-  // Handle Counter Staff restrictions & cashier session indicator
+  // Handle Counter & Waiter Staff restrictions & session indicators
   if (window.AdminShared) {
     var isCounterStaff = AdminShared.isCounter();
+    var isWaiterStaff = AdminShared.isWaiter && AdminShared.isWaiter();
     var cashierPill = document.getElementById('cashierPill');
     var cashierPillName = document.getElementById('cashierPillName');
     var btnEndShift = document.getElementById('btnEndShift');
     var linkDailyCollections = document.getElementById('linkDailyCollections');
     var btnOpenSettings = document.getElementById('btnOpenSettings');
+    var linkWaiterMaster = document.getElementById('linkWaiterMaster');
 
-    if (isCounterStaff) {
+    if (isWaiterStaff) {
+      var waiterName = sessionStorage.getItem('navrang_waiter_name') || AdminShared.getUsername() || 'Waiter';
+      var rawTables = sessionStorage.getItem('navrang_waiter_tables');
+      var allocatedTables = [];
+      try { if (rawTables) allocatedTables = JSON.parse(rawTables); } catch (e) {}
+
+      // Header Pill
+      if (cashierPill) {
+        cashierPill.style.display = 'inline-flex';
+        cashierPill.style.background = 'rgba(14, 77, 38, 0.12)';
+        cashierPill.style.borderColor = 'rgba(14, 77, 38, 0.35)';
+        cashierPill.style.color = '#0E4D26';
+        cashierPill.innerHTML = '<span>🧑‍🍳</span><span>' + AdminShared.esc(waiterName) + '</span>' +
+          '<span style="font-size:10px;background:#0E4D26;color:#fff;padding:2px 6px;border-radius:4px;margin-left:2px;letter-spacing:0.3px;">WAITER</span>';
+      }
+
+      // Logout / Sign Out Button
+      if (btnEndShift) {
+        btnEndShift.style.display = 'inline-flex';
+        btnEndShift.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg><span>Sign Out</span>';
+        btnEndShift.addEventListener('click', function () {
+          if (confirm('Sign out of Waiter Table Ordering?')) {
+            AdminShared.logout();
+          }
+        });
+      }
+
+      // Hide admin-only features
+      if (linkDailyCollections) linkDailyCollections.style.display = 'none';
+      if (btnOpenSettings) btnOpenSettings.style.display = 'none';
+      if (linkWaiterMaster) linkWaiterMaster.style.display = 'none';
+
+      // Show Notice Banner
+      var banner = document.getElementById('waiterNoticeBanner');
+      var bName = document.getElementById('waiterNoticeName');
+      var bTables = document.getElementById('waiterNoticeTables');
+      if (banner && bName && bTables) {
+        banner.style.display = 'flex';
+        bName.textContent = waiterName;
+        bTables.textContent = (allocatedTables.length > 0) ? allocatedTables.join(', ') : 'All Tables';
+      }
+
+      // Lock Waiter Input
+      var waiterInput = document.getElementById('waiterInput');
+      if (waiterInput) {
+        waiterInput.value = waiterName;
+        waiterInput.readOnly = true;
+        waiterInput.style.background = '#F1F5F9';
+        waiterInput.style.color = '#0E4D26';
+        waiterInput.style.cursor = 'not-allowed';
+      }
+      var waiterChips = document.getElementById('waiterChips');
+      if (waiterChips) waiterChips.style.display = 'none';
+
+      // Populate Table Selector prioritizing allocated tables
+      var tableSelect = document.getElementById('tableSelect');
+      if (tableSelect && allocatedTables.length > 0) {
+        var allTablesList = [
+          'Table 1', 'Table 2', 'Table 3', 'Table 4',
+          'Table 5', 'Table 6', 'Table 7', 'Table 8',
+          'Table 9', 'Table 10', 'Table 11', 'Table 12',
+          'VIP Cabin', 'Parcel / Counter'
+        ];
+        var optHtml = '';
+        optHtml += '<optgroup label="⭐ Your Assigned Tables">';
+        allocatedTables.forEach(function (tbl, idx) {
+          optHtml += '<option value="' + AdminShared.esc(tbl) + '"' + (idx === 0 ? ' selected' : '') + '>' + AdminShared.esc(tbl) + ' (Assigned)</option>';
+        });
+        optHtml += '</optgroup>';
+
+        var otherTables = allTablesList.filter(function (t) { return allocatedTables.indexOf(t) === -1; });
+        if (otherTables.length > 0) {
+          optHtml += '<optgroup label="Other Restaurant Tables">';
+          otherTables.forEach(function (tbl) {
+            optHtml += '<option value="' + AdminShared.esc(tbl) + '">' + AdminShared.esc(tbl) + '</option>';
+          });
+          optHtml += '</optgroup>';
+        }
+        tableSelect.innerHTML = optHtml;
+      }
+    } else if (isCounterStaff) {
       if (cashierPill) {
         cashierPill.style.display = 'inline-flex';
         if (cashierPillName) cashierPillName.textContent = AdminShared.getUsername() || 'Cashier';
@@ -1419,6 +1504,18 @@
 
   // Waiters Master integration
   function initWaiterChips() {
+    if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter()) {
+      var wName = sessionStorage.getItem('navrang_waiter_name') || AdminShared.getUsername() || 'Server';
+      var wInput = document.getElementById('waiterInput');
+      if (wInput) {
+        wInput.value = wName;
+        wInput.readOnly = true;
+      }
+      var container = document.getElementById('waiterChips');
+      if (container) container.style.display = 'none';
+      return;
+    }
+
     var defaultWaiters = ['Raju', 'Ravi', 'Suresh', 'Kiran'];
     var activeNames = [];
     try {

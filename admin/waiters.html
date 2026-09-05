@@ -276,6 +276,89 @@
       flex-direction: column;
       gap: 14px;
     }
+    .table-picker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .table-picker-links {
+      display: flex;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .table-picker-links a {
+      color: var(--maroon);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .table-picker-links a:hover {
+      text-decoration: underline;
+    }
+    .table-picker-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 125px;
+      overflow-y: auto;
+      padding: 8px;
+      background: #F8FAFC;
+      border: 1.2px solid var(--rule);
+      border-radius: 8px;
+    }
+    .table-chip-select {
+      padding: 4px 9px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid #CBD5E1;
+      background: #FFFFFF;
+      color: #334155;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .table-chip-select:hover {
+      border-color: #0E4D26;
+      color: #0E4D26;
+      background: #F0FDF4;
+    }
+    .table-chip-select.selected {
+      background: #0E4D26;
+      border-color: #0E4D26;
+      color: #FFFFFF;
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(14, 77, 38, 0.2);
+    }
+    .waiter-pin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .waiter-table-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(14, 77, 38, 0.08);
+      color: #0E4D26;
+      border: 1px solid rgba(14, 77, 38, 0.2);
+      margin: 1px 2px;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -403,27 +486,52 @@
             <input type="text" id="wCode" required maxlength="10" placeholder="e.g. W-01, W-02">
           </div>
           <div class="admin-field">
-            <label for="wPhone">Mobile No. (Optional)</label>
-            <input type="tel" id="wPhone" maxlength="15" placeholder="e.g. 9876543210">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <label for="wPin" style="margin:0;">Login PIN (4 Digits) <span style="color:#DC2626;">*</span></label>
+              <button type="button" id="btnGenPin" style="background:none;border:none;color:var(--maroon);font-size:11px;font-weight:700;cursor:pointer;padding:0;">🎲 Gen PIN</button>
+            </div>
+            <input type="text" id="wPin" required maxlength="6" pattern="[0-9]{4,6}" placeholder="e.g. 1234" style="font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:2px;">
           </div>
         </div>
 
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="admin-field">
+            <label for="wPhone">Mobile No. (Optional)</label>
+            <input type="tel" id="wPhone" maxlength="15" placeholder="e.g. 9876543210">
+          </div>
+          <div class="admin-field">
+            <label for="wSection">Assigned Dining Section</label>
+            <select id="wSection" style="padding:8px 12px;border:1px solid var(--rule);border-radius:8px;font-size:13px;">
+              <option value="All Dining Sections">All Dining Sections</option>
+              <option value="Main Dining Hall">Main Dining Hall</option>
+              <option value="AC Family Section">AC Family Section</option>
+              <option value="Parcel &amp; Takeaway Counter">Parcel &amp; Takeaway Counter</option>
+              <option value="VIP Cabin">VIP Cabin</option>
+              <option value="Outdoor / Garden">Outdoor / Garden</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Table Allocation Multi-Select -->
         <div class="admin-field">
-          <label for="wSection">Assigned Dining Section / Area</label>
-          <select id="wSection" style="padding:8px 12px;border:1px solid var(--rule);border-radius:8px;font-size:13px;">
-            <option value="All Dining Sections">All Dining Sections</option>
-            <option value="Main Dining Hall">Main Dining Hall</option>
-            <option value="AC Family Section">AC Family Section</option>
-            <option value="Parcel &amp; Takeaway Counter">Parcel &amp; Takeaway Counter</option>
-            <option value="VIP Cabin">VIP Cabin</option>
-            <option value="Outdoor / Garden">Outdoor / Garden</option>
-          </select>
+          <div class="table-picker-header">
+            <label style="margin:0;font-size:12px;font-weight:700;color:var(--ink);">Allocated Tables (Multi-Select)</label>
+            <div class="table-picker-links">
+              <a id="btnSelectAllTables">Select All</a>
+              <span>•</span>
+              <a id="btnClearAllTables">Clear All</a>
+            </div>
+          </div>
+          <div class="table-picker-grid" id="tablePickerGrid"></div>
+          <small style="font-size:11px;color:var(--ink-muted);margin-top:4px;display:block;">
+            When this waiter logs into Table Ordering, only their allocated tables are highlighted and selected.
+          </small>
         </div>
 
         <div class="admin-field">
           <label for="wStatus">Service Status</label>
           <select id="wStatus" style="padding:8px 12px;border:1px solid var(--rule);border-radius:8px;font-size:13px;font-weight:600;">
-            <option value="Active">🟢 Active (Available for Counter Billing)</option>
+            <option value="Active">🟢 Active (Can log in &amp; serve tables)</option>
             <option value="Inactive">⚪ Inactive / Off-Duty</option>
           </select>
         </div>
@@ -446,23 +554,55 @@
   var STORAGE_KEY = 'navrang_waiters_master';
   var BILLS_STORAGE_KEY = 'navrang_pos_bills';
 
+  var ALL_TABLES = [
+    'Table 1', 'Table 2', 'Table 3', 'Table 4',
+    'Table 5', 'Table 6', 'Table 7', 'Table 8',
+    'Table 9', 'Table 10', 'Table 11', 'Table 12',
+    'VIP Cabin', 'Parcel / Counter'
+  ];
+
   var DEFAULT_WAITERS = [
-    { id: 'w1', code: 'W-01', name: 'Raju', phone: '9876543210', section: 'Main Dining Hall', status: 'Active' },
-    { id: 'w2', code: 'W-02', name: 'Ravi', phone: '9876543211', section: 'AC Family Section', status: 'Active' },
-    { id: 'w3', code: 'W-03', name: 'Suresh', phone: '9876543212', section: 'All Dining Sections', status: 'Active' },
-    { id: 'w4', code: 'W-04', name: 'Kiran', phone: '9876543213', section: 'Parcel & Takeaway Counter', status: 'Active' }
+    { id: 'w1', code: 'W-01', name: 'Raju', phone: '9876543210', section: 'Main Dining Hall', status: 'Active', pin: '1234', tables: ['Table 1', 'Table 2', 'Table 3', 'Table 4'] },
+    { id: 'w2', code: 'W-02', name: 'Ravi', phone: '9876543211', section: 'AC Family Section', status: 'Active', pin: '2345', tables: ['Table 5', 'Table 6', 'Table 7', 'Table 8'] },
+    { id: 'w3', code: 'W-03', name: 'Suresh', phone: '9876543212', section: 'All Dining Sections', status: 'Active', pin: '3456', tables: ['Table 9', 'Table 10', 'Table 11', 'Table 12', 'VIP Cabin'] },
+    { id: 'w4', code: 'W-04', name: 'Kiran', phone: '9876543213', section: 'Parcel & Takeaway Counter', status: 'Active', pin: '4567', tables: ['Parcel / Counter'] }
   ];
 
   function getWaiters() {
+    var list = [];
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         var parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
       }
     } catch (e) {}
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_WAITERS));
-    return DEFAULT_WAITERS.slice();
+    if (list.length === 0) {
+      list = DEFAULT_WAITERS.slice();
+    }
+
+    // Migrate any existing records missing pin or tables
+    var changed = false;
+    list = list.map(function (w, idx) {
+      var updated = Object.assign({}, w);
+      if (!updated.pin) {
+        updated.pin = '123' + (idx + 1);
+        changed = true;
+      }
+      if (!Array.isArray(updated.tables) || updated.tables.length === 0) {
+        if (idx === 0) updated.tables = ['Table 1', 'Table 2', 'Table 3', 'Table 4'];
+        else if (idx === 1) updated.tables = ['Table 5', 'Table 6', 'Table 7', 'Table 8'];
+        else if (idx === 2) updated.tables = ['Table 9', 'Table 10', 'Table 11', 'Table 12', 'VIP Cabin'];
+        else updated.tables = ['Parcel / Counter'];
+        changed = true;
+      }
+      return updated;
+    });
+
+    if (changed) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+    return list;
   }
 
   function saveWaiters(list) {
@@ -508,7 +648,8 @@
         var match = (w.name || '').toLowerCase().indexOf(q) !== -1 ||
                     (w.code || '').toLowerCase().indexOf(q) !== -1 ||
                     (w.section || '').toLowerCase().indexOf(q) !== -1 ||
-                    (w.phone || '').toLowerCase().indexOf(q) !== -1;
+                    (w.phone || '').toLowerCase().indexOf(q) !== -1 ||
+                    (w.tables && w.tables.join(' ').toLowerCase().indexOf(q) !== -1);
         if (!match) return false;
       }
       return true;
@@ -531,18 +672,30 @@
     filtered.forEach(function (w) {
       var initial = (w.name || 'W').charAt(0).toUpperCase();
       var isActive = w.status === 'Active';
+      var pinVal = w.pin || '1234';
+      var tableList = Array.isArray(w.tables) && w.tables.length > 0 ? w.tables : ['All Tables'];
 
       // Count orders punched today for this waiter
       var waiterBillsCount = todayBills.filter(function (b) {
         return (b.waiter || '').toLowerCase() === (w.name || '').toLowerCase();
       }).length;
 
+      var tablePillsHtml = tableList.map(function (tbl) {
+        return '<span class="waiter-table-pill">' + AdminShared.esc(tbl) + '</span>';
+      }).join('');
+
       html += '<div class="waiter-card' + (isActive ? '' : ' inactive') + '">' +
         '<div class="waiter-card-head">' +
           '<div class="waiter-avatar">' + AdminShared.esc(initial) + '</div>' +
           '<div class="waiter-meta">' +
             '<h4 class="waiter-name">' + AdminShared.esc(w.name) + '</h4>' +
-            '<span class="waiter-code">' + AdminShared.esc(w.code || 'STAFF') + '</span>' +
+            '<div style="display:flex;align-items:center;gap:6px;margin-top:2px;">' +
+              '<span class="waiter-code">' + AdminShared.esc(w.code || 'STAFF') + '</span>' +
+              '<span class="waiter-pin-badge" title="4-Digit Waiter Login PIN">' +
+                'PIN: <span id="pinText_' + w.id + '" data-pin="' + AdminShared.esc(pinVal) + '">••••</span>' +
+                '<button type="button" style="background:none;border:none;cursor:pointer;padding:0 2px;color:#92400E;font-size:11px;" onclick="togglePin(\'' + w.id + '\')" title="Show / Hide PIN">👁️</button>' +
+              '</span>' +
+            '</div>' +
           '</div>' +
           '<div>' +
             (isActive ? '<span class="waiter-badge-active">● Active</span>' : '<span class="waiter-badge-inactive">○ Off-Duty</span>') +
@@ -554,8 +707,18 @@
           '<strong style="color:var(--ink);">' + AdminShared.esc(w.section || 'All Sections') + '</strong>' +
         '</div>' +
 
+        '<div class="waiter-info-row" style="padding-top:6px;border-top:none;flex-direction:column;align-items:flex-start;gap:4px;">' +
+          '<div style="display:flex;justify-content:space-between;width:100%;font-size:12px;">' +
+            '<span>🍽️ Allocated Tables (' + tableList.length + '):</span>' +
+            '<a href="javascript:void(0)" onclick="editWaiter(\'' + w.id + '\', true)" style="font-size:11px;color:var(--maroon);font-weight:700;text-decoration:none;">Change</a>' +
+          '</div>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:2px;max-height:48px;overflow-y:auto;width:100%;">' +
+            tablePillsHtml +
+          '</div>' +
+        '</div>' +
+
         '<div class="waiter-info-row" style="padding-top:6px;border-top:none;">' +
-          '<span>📞 Phone:</span>' +
+          '<span>📞 Mobile:</span>' +
           '<span>' + (w.phone ? AdminShared.esc(w.phone) : '<em>Not specified</em>') + '</span>' +
         '</div>' +
 
@@ -568,11 +731,14 @@
           '<button type="button" class="waiter-btn-sm" onclick="editWaiter(\'' + w.id + '\')">' +
             '✏ Edit' +
           '</button>' +
+          '<button type="button" class="waiter-btn-sm" onclick="shareWaiterPass(\'' + w.id + '\')" title="Share Login PIN & Table Assignments via WhatsApp">' +
+            '📲 Share Pass' +
+          '</button>' +
           '<button type="button" class="waiter-btn-sm" onclick="toggleStatus(\'' + w.id + '\')">' +
-            (isActive ? '⏸ Set Off-Duty' : '▶ Set Active') +
+            (isActive ? '⏸ Off-Duty' : '▶ Active') +
           '</button>' +
           '<button type="button" class="waiter-btn-sm waiter-btn-danger" style="margin-left:auto;" onclick="deleteWaiter(\'' + w.id + '\')">' +
-            '🗑 Delete' +
+            '🗑' +
           '</button>' +
         '</div>' +
       '</div>';
@@ -581,18 +747,104 @@
     container.innerHTML = html;
   }
 
-  // Modal Controls
+  // Toggle PIN visibility on cards
+  window.togglePin = function (id) {
+    var el = document.getElementById('pinText_' + id);
+    if (!el) return;
+    var pin = el.getAttribute('data-pin');
+    if (el.textContent === '••••') {
+      el.textContent = pin;
+    } else {
+      el.textContent = '••••';
+    }
+  };
+
+  // Share Waiter Login Pass via WhatsApp or Copy
+  window.shareWaiterPass = function (id) {
+    var waiters = getWaiters();
+    var w = waiters.find(function (item) { return item.id === id; });
+    if (!w) return;
+
+    var tableStr = (w.tables && w.tables.length > 0) ? w.tables.join(', ') : 'All Tables';
+    var text = '🍽️ *NAVRANG RESTAURANT — WAITER LOGIN PASS*\n\n' +
+      '🧑‍🍳 *Staff Name:* ' + w.name + '\n' +
+      '🆔 *Staff Code:* ' + (w.code || 'STAFF') + '\n' +
+      '🔑 *Login PIN:* ' + (w.pin || '1234') + '\n' +
+      '📍 *Assigned Section:* ' + (w.section || 'All Dining Sections') + '\n' +
+      '🪑 *Allocated Tables:* ' + tableStr + '\n\n' +
+      '📱 *Login URL:* ' + window.location.origin + window.location.pathname.replace('waiters.html', 'login.html') + '\n' +
+      '👉 Click *Waiter Login* tab, enter your Staff Code and 4-digit PIN to punch orders!';
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(function () {});
+    }
+
+    var cleanPhone = (w.phone || '').replace(/[^0-9]/g, '');
+    var waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text);
+    if (cleanPhone.length >= 10) {
+      var waPhone = cleanPhone.length === 10 ? ('91' + cleanPhone) : cleanPhone;
+      waUrl = 'https://api.whatsapp.com/send?phone=' + waPhone + '&text=' + encodeURIComponent(text);
+    }
+
+    if (confirm('Staff Login Pass copied to clipboard!\n\nOpen WhatsApp to send pass to ' + w.name + '?')) {
+      window.open(waUrl, '_blank');
+    }
+  };
+
+  // Modal & Table Allocation Picker Controls
   var modal = document.getElementById('waiterModal');
   var form = document.getElementById('waiterForm');
+  var selectedTables = [];
+
+  function renderTablePicker(initSelected) {
+    selectedTables = (initSelected || []).slice();
+    var grid = document.getElementById('tablePickerGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    ALL_TABLES.forEach(function (tbl) {
+      var chip = document.createElement('div');
+      var isSel = selectedTables.indexOf(tbl) !== -1;
+      chip.className = 'table-chip-select' + (isSel ? ' selected' : '');
+      chip.textContent = tbl;
+      chip.addEventListener('click', function () {
+        var idx = selectedTables.indexOf(tbl);
+        if (idx !== -1) {
+          selectedTables.splice(idx, 1);
+          chip.classList.remove('selected');
+        } else {
+          selectedTables.push(tbl);
+          chip.classList.add('selected');
+        }
+      });
+      grid.appendChild(chip);
+    });
+  }
+
+  document.getElementById('btnSelectAllTables').addEventListener('click', function () {
+    renderTablePicker(ALL_TABLES.slice());
+  });
+  document.getElementById('btnClearAllTables').addEventListener('click', function () {
+    renderTablePicker([]);
+  });
+  document.getElementById('btnGenPin').addEventListener('click', function () {
+    var newPin = String(Math.floor(1000 + Math.random() * 9000));
+    document.getElementById('wPin').value = newPin;
+  });
 
   function openModal(isEdit, data) {
     document.getElementById('modalTitle').innerHTML = isEdit ? '<span>✏</span> Edit Waiter / Server' : '<span>➕</span> Add Waiter / Server';
     document.getElementById('waiterId').value = isEdit && data ? data.id : '';
     document.getElementById('wName').value = isEdit && data ? data.name : '';
     document.getElementById('wCode').value = isEdit && data ? data.code : ('W-0' + (getWaiters().length + 1));
+    document.getElementById('wPin').value = isEdit && data ? (data.pin || '1234') : String(Math.floor(1000 + Math.random() * 9000));
     document.getElementById('wPhone').value = isEdit && data ? (data.phone || '') : '';
     document.getElementById('wSection').value = isEdit && data ? (data.section || 'All Dining Sections') : 'All Dining Sections';
     document.getElementById('wStatus').value = isEdit && data ? (data.status || 'Active') : 'Active';
+
+    var currentTables = (isEdit && data && Array.isArray(data.tables)) ? data.tables : ['Table 1', 'Table 2', 'Table 3', 'Table 4'];
+    renderTablePicker(currentTables);
+
     modal.classList.add('open');
     document.getElementById('wName').focus();
   }
@@ -614,18 +866,31 @@
     var id = document.getElementById('waiterId').value;
     var name = document.getElementById('wName').value.trim();
     var code = document.getElementById('wCode').value.trim().toUpperCase();
+    var pin = document.getElementById('wPin').value.trim();
     var phone = document.getElementById('wPhone').value.trim();
     var section = document.getElementById('wSection').value;
     var status = document.getElementById('wStatus').value;
 
     if (!name || !code) return;
+    if (!pin) pin = '1234';
+
+    var tables = selectedTables.length > 0 ? selectedTables.slice() : ['Table 1'];
 
     var waiters = getWaiters();
     if (id) {
       // Edit
       waiters = waiters.map(function (w) {
         if (w.id === id) {
-          return { id: id, code: code, name: name, phone: phone, section: section, status: status };
+          return {
+            id: id,
+            code: code,
+            name: name,
+            pin: pin,
+            phone: phone,
+            section: section,
+            tables: tables,
+            status: status
+          };
         }
         return w;
       });
@@ -636,8 +901,10 @@
         id: newId,
         code: code,
         name: name,
+        pin: pin,
         phone: phone,
         section: section,
+        tables: tables,
         status: status
       });
     }
@@ -648,10 +915,16 @@
   });
 
   // Global Actions
-  window.editWaiter = function (id) {
+  window.editWaiter = function (id, focusTables) {
     var waiters = getWaiters();
     var waiter = waiters.find(function (w) { return w.id === id; });
-    if (waiter) openModal(true, waiter);
+    if (waiter) {
+      openModal(true, waiter);
+      if (focusTables) {
+        var grid = document.getElementById('tablePickerGrid');
+        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
   };
 
   window.toggleStatus = function (id) {
