@@ -211,13 +211,13 @@
                   </div>
                 </div>
                 <div class="admin-field" style="margin-bottom:0;">
-                  <label for="waiterInput">Waiter / Server</label>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                    <label for="waiterInput" style="margin:0;">Waiter / Server</label>
+                    <a href="waiters.html" style="font-size:11px;font-weight:700;color:var(--maroon);text-decoration:none;" title="Manage Staff Directory">⚙ Waiter Master</a>
+                  </div>
                   <input type="text" id="waiterInput" placeholder="Waiter name" value="Raju" style="font-weight:600;">
-                  <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;">
-                    <span class="waiter-chip" onclick="setWaiter('Raju')">Raju</span>
-                    <span class="waiter-chip" onclick="setWaiter('Ravi')">Ravi</span>
-                    <span class="waiter-chip" onclick="setWaiter('Suresh')">Suresh</span>
-                    <span class="waiter-chip" onclick="setWaiter('Kiran')">Kiran</span>
+                  <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;" id="waiterChips">
+                    <!-- Populated dynamically from Waiters Master -->
                   </div>
                 </div>
               </div>
@@ -825,6 +825,36 @@
     renderCart();
   };
 
+  // Waiters Master integration
+  function initWaiterChips() {
+    var defaultWaiters = ['Raju', 'Ravi', 'Suresh', 'Kiran'];
+    var activeNames = [];
+    try {
+      var raw = localStorage.getItem('navrang_waiters_master');
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          activeNames = parsed.filter(function (w) { return w.status === 'Active'; }).map(function (w) { return w.name; });
+        }
+      }
+    } catch (e) {}
+    if (activeNames.length === 0) activeNames = defaultWaiters;
+
+    var container = document.getElementById('waiterChips');
+    if (container) {
+      var html = '';
+      activeNames.forEach(function (name) {
+        html += '<span class="waiter-chip" onclick="setWaiter(\'' + AdminShared.esc(name) + '\')">' + AdminShared.esc(name) + '</span>';
+      });
+      container.innerHTML = html;
+    }
+
+    var cur = document.getElementById('waiterInput').value;
+    if (!cur && activeNames.length > 0) {
+      document.getElementById('waiterInput').value = activeNames[0];
+    }
+  }
+
   // Waiter Setter
   window.setWaiter = function (name) {
     document.getElementById('waiterInput').value = name;
@@ -1291,6 +1321,7 @@
 
   // Initial Load
   document.getElementById('previewBillNo').textContent = generateNextBillNo();
+  initWaiterChips();
   updateBillMetaBadges();
   renderDishes('', 'all');
   renderCart();

@@ -166,8 +166,7 @@
         { key: 'sc-orders', label: 'Online Orders', href: '../order.html', icon: 'orders', external: true },
         { key: 'sc-menu-en', label: 'Live Menu (EN)', href: '../navrang-menu.html', icon: 'menu', external: true },
         { key: 'sc-menu-te', label: 'Live Menu (TE)', href: '../navrang-menu-te.html', icon: 'menu', external: true },
-        { key: 'sc-ratings', label: 'Customer Ratings', href: 'ratings.html', icon: 'ratings' },
-        { key: 'sc-qr', label: 'Table Standee QR', href: 'qr-scans.html', icon: 'qr' }
+        { key: 'waiters', label: 'Waiter / Server Master', href: 'waiters.html', icon: 'user' }
       ]
     }
   ];

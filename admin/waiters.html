@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waiter / Server Master – Navrang Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Yatra+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+  <style>
+    .waiter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .waiter-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+    .waiter-card:hover {
+      border-color: rgba(196, 139, 30, 0.5);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+    .waiter-card.inactive {
+      opacity: 0.65;
+      background: var(--paper-soft);
+    }
+    .waiter-card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .waiter-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald-deep), var(--maroon));
+      color: #fff;
+      font-weight: 800;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+    .waiter-card.inactive .waiter-avatar {
+      background: #718096;
+    }
+    .waiter-meta {
+      min-width: 0;
+      flex: 1;
+    }
+    .waiter-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+    .waiter-code {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 4px;
+      background: rgba(196, 139, 30, 0.15);
+      color: var(--maroon-deep);
+      margin-top: 3px;
+    }
+    .waiter-info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+      color: var(--ink-muted);
+      border-top: 1px solid var(--rule);
+      padding-top: 10px;
+    }
+    .waiter-badge-active {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #15803D;
+      background: #DCFCE7;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .waiter-badge-inactive {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748B;
+      background: #F1F5F9;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .waiter-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: auto;
+      border-top: 1px solid var(--rule);
+      padding-top: 10px;
+    }
+    .waiter-btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--rule);
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .waiter-btn-sm:hover {
+      border-color: var(--maroon);
+      color: var(--maroon);
+      background: var(--paper-soft);
+    }
+    .waiter-btn-danger:hover {
+      border-color: #DC2626 !important;
+      color: #DC2626 !important;
+      background: #FEF2F2 !important;
+    }
+
+    /* Modal */
+    .waiter-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(6, 24, 13, 0.65);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .waiter-modal.open {
+      display: flex;
+    }
+    .waiter-modal-card {
+      background: #fff;
+      border-radius: 14px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      border: 1.5px solid rgba(196, 139, 30, 0.4);
+      overflow: hidden;
+      animation: adminPopupIn 0.16s ease;
+    }
+    .waiter-modal-header {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #081D10 0%, #0E4D26 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .waiter-modal-header h3 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .waiter-modal-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-header-bar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <img src="../navrang_logo.png" alt="Navrang">
+    <h1>Waiter / Server Master</h1>
+  </div>
+  <nav class="admin-topnav-bar" id="adminTopNav"></nav>
+
+  <div class="admin-body">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="admin-sidebar" id="adminSidebar">
+      <nav class="admin-nav" id="adminNav"></nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-panel" style="max-width:1440px;padding:16px 20px 40px;">
+
+        <!-- Header Controls -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;">
+          <div>
+            <h2 style="margin:0 0 4px;font-size:20px;font-weight:800;color:var(--ink);">Staff &amp; Server Directory</h2>
+            <p style="margin:0;font-size:13px;color:var(--ink-muted);">
+              Manage waiters and floor captains. Active servers immediately populate as quick-selection chips on the Counter Billing POS screen.
+            </p>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <a href="billing.html" class="waiter-btn-sm" style="padding:8px 14px;background:#FDF8E8;border-color:rgba(196,139,30,0.5);color:var(--maroon-deep);font-weight:700;">
+              🧾 Open Counter POS
+            </a>
+            <button type="button" class="admin-btn" id="btnOpenAddModal" style="display:inline-flex;align-items:center;gap:6px;">
+              <span>➕</span> Add Waiter / Server
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="stat-grid" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));margin-bottom:20px;">
+          <div class="stat-card">
+            <span class="stat-icon" data-icon="user"></span>
+            <div class="val" id="statTotalWaiters">0</div>
+            <div class="lbl">Total Servers</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon" data-icon="activity"></span>
+            <div class="val" id="statActiveWaiters" style="color:#15803D;">0</div>
+            <div class="lbl">Active On Duty</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon" data-icon="lock"></span>
+            <div class="val" id="statInactiveWaiters">0</div>
+            <div class="lbl">Inactive / Off Duty</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon" data-icon="billing"></span>
+            <div class="val" id="statBilledToday">0</div>
+            <div class="lbl">Orders Served Today</div>
+          </div>
+        </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="admin-card" style="padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:240px;">
+            <input type="text" id="searchWaiterInput" placeholder="🔍 Search by staff name, code (e.g. W-01), or section…" style="width:100%;max-width:380px;padding:8px 12px;border:1px solid var(--rule);border-radius:8px;font-size:13px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button type="button" class="feed-range-btn active" data-filter="all" id="btnFilterAll">All Staff</button>
+            <button type="button" class="feed-range-btn" data-filter="active" id="btnFilterActive">Active Only</button>
+            <button type="button" class="feed-range-btn" data-filter="inactive" id="btnFilterInactive">Inactive</button>
+          </div>
+        </div>
+
+        <!-- Waiters Cards Container -->
+        <div id="waitersContainer" class="waiter-grid">
+          <div class="admin-loading">Loading waiter master…</div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal: Add / Edit Waiter -->
+<div class="waiter-modal" id="waiterModal">
+  <div class="waiter-modal-card">
+    <div class="waiter-modal-header">
+      <h3 id="modalTitle"><span>➕</span> Add Waiter / Server</h3>
+      <button type="button" id="btnCloseModal" style="background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer;opacity:0.8;">✕</button>
+    </div>
+    <form id="waiterForm">
+      <input type="hidden" id="waiterId">
+      <div class="waiter-modal-body">
+        <div class="admin-field">
+          <label for="wName">Server Full Name <span style="color:#DC2626;">*</span></label>
+          <input type="text" id="wName" required maxlength="40" placeholder="e.g. Raju, Suresh, Naresh">
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="admin-field">
+            <label for="wCode">Staff Code / ID <span style="color:#DC2626;">*</span></label>
+            <input type="text" id="wCode" required maxlength="10" placeholder="e.g. W-01, W-02">
+          </div>
+          <div class="admin-field">
+            <label for="wPhone">Mobile No. (Optional)</label>
+            <input type="tel" id="wPhone" maxlength="15" placeholder="e.g. 9876543210">
+          </div>
+        </div>
+
+        <div class="admin-field">
+          <label for="wSection">Assigned Dining Section / Area</label>
+          <select id="wSection" style="padding:8px 12px;border:1px solid var(--rule);border-radius:8px;font-size:13px;">
+            <option value="All Dining Sections">All Dining Sections</option>
+            <option value="Main Dining Hall">Main Dining Hall</option>
+            <option value="AC Family Section">AC Family Section</option>
+            <option value="Parcel &amp; Takeaway Counter">Parcel &amp; Takeaway Counter</option>
+            <option value="VIP Cabin">VIP Cabin</option>
+            <option value="Outdoor / Garden">Outdoor / Garden</option>
+          </select>
+        </div>
+
+        <div class="admin-field">
+          <label for="wStatus">Service Status</label>
+          <select id="wStatus" style="padding:8px 12px;border:1px solid var(--rule);border-radius:8px;font-size:13px;font-weight:600;">
+            <option value="Active">🟢 Active (Available for Counter Billing)</option>
+            <option value="Inactive">⚪ Inactive / Off-Duty</option>
+          </select>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:10px;">
+          <button type="button" class="waiter-btn-sm" id="btnCancelModal" style="padding:8px 16px;">Cancel</button>
+          <button type="submit" class="admin-btn" id="btnSaveWaiter" style="padding:8px 20px;">Save Server</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function () {
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('waiters');
+
+  var STORAGE_KEY = 'navrang_waiters_master';
+  var BILLS_STORAGE_KEY = 'navrang_pos_bills';
+
+  var DEFAULT_WAITERS = [
+    { id: 'w1', code: 'W-01', name: 'Raju', phone: '9876543210', section: 'Main Dining Hall', status: 'Active' },
+    { id: 'w2', code: 'W-02', name: 'Ravi', phone: '9876543211', section: 'AC Family Section', status: 'Active' },
+    { id: 'w3', code: 'W-03', name: 'Suresh', phone: '9876543212', section: 'All Dining Sections', status: 'Active' },
+    { id: 'w4', code: 'W-04', name: 'Kiran', phone: '9876543213', section: 'Parcel & Takeaway Counter', status: 'Active' }
+  ];
+
+  function getWaiters() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_WAITERS));
+    return DEFAULT_WAITERS.slice();
+  }
+
+  function saveWaiters(list) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  }
+
+  function getBills() {
+    try {
+      var raw = localStorage.getItem(BILLS_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  var currentFilter = 'all';
+  var searchQuery = '';
+
+  function renderWaiters() {
+    var waiters = getWaiters();
+    var bills = getBills();
+
+    var todayStr = new Date().toISOString().slice(0, 10);
+    var todayBills = bills.filter(function (b) {
+      return (b.date || '').slice(0, 10) === todayStr;
+    });
+
+    // Update KPI counts
+    var activeCount = waiters.filter(function (w) { return w.status === 'Active'; }).length;
+    var inactiveCount = waiters.length - activeCount;
+    document.getElementById('statTotalWaiters').textContent = waiters.length;
+    document.getElementById('statActiveWaiters').textContent = activeCount;
+    document.getElementById('statInactiveWaiters').textContent = inactiveCount;
+    document.getElementById('statBilledToday').textContent = todayBills.length;
+
+    // Filter & Search
+    var filtered = waiters.filter(function (w) {
+      if (currentFilter === 'active' && w.status !== 'Active') return false;
+      if (currentFilter === 'inactive' && w.status === 'Active') return false;
+
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        var match = (w.name || '').toLowerCase().indexOf(q) !== -1 ||
+                    (w.code || '').toLowerCase().indexOf(q) !== -1 ||
+                    (w.section || '').toLowerCase().indexOf(q) !== -1 ||
+                    (w.phone || '').toLowerCase().indexOf(q) !== -1;
+        if (!match) return false;
+      }
+      return true;
+    });
+
+    var container = document.getElementById('waitersContainer');
+    if (filtered.length === 0) {
+      container.innerHTML = '<div class="admin-card" style="grid-column:1/-1;text-align:center;padding:36px 20px;">' +
+        '<div style="font-size:32px;margin-bottom:8px;">🧑‍🍳</div>' +
+        '<h3 style="margin:0 0 6px;">No servers found</h3>' +
+        '<p style="margin:0 0 16px;color:var(--ink-muted);font-size:13px;">No staff records matching your filter or search criteria.</p>' +
+        '<button type="button" class="admin-btn" onclick="document.getElementById(\'btnOpenAddModal\').click()">' +
+        '➕ Add New Waiter' +
+        '</button>' +
+        '</div>';
+      return;
+    }
+
+    var html = '';
+    filtered.forEach(function (w) {
+      var initial = (w.name || 'W').charAt(0).toUpperCase();
+      var isActive = w.status === 'Active';
+
+      // Count orders punched today for this waiter
+      var waiterBillsCount = todayBills.filter(function (b) {
+        return (b.waiter || '').toLowerCase() === (w.name || '').toLowerCase();
+      }).length;
+
+      html += '<div class="waiter-card' + (isActive ? '' : ' inactive') + '">' +
+        '<div class="waiter-card-head">' +
+          '<div class="waiter-avatar">' + AdminShared.esc(initial) + '</div>' +
+          '<div class="waiter-meta">' +
+            '<h4 class="waiter-name">' + AdminShared.esc(w.name) + '</h4>' +
+            '<span class="waiter-code">' + AdminShared.esc(w.code || 'STAFF') + '</span>' +
+          '</div>' +
+          '<div>' +
+            (isActive ? '<span class="waiter-badge-active">● Active</span>' : '<span class="waiter-badge-inactive">○ Off-Duty</span>') +
+          '</div>' +
+        '</div>' +
+
+        '<div class="waiter-info-row">' +
+          '<span>📍 Section:</span>' +
+          '<strong style="color:var(--ink);">' + AdminShared.esc(w.section || 'All Sections') + '</strong>' +
+        '</div>' +
+
+        '<div class="waiter-info-row" style="padding-top:6px;border-top:none;">' +
+          '<span>📞 Phone:</span>' +
+          '<span>' + (w.phone ? AdminShared.esc(w.phone) : '<em>Not specified</em>') + '</span>' +
+        '</div>' +
+
+        '<div class="waiter-info-row" style="padding-top:6px;border-top:none;">' +
+          '<span>🧾 Orders Today:</span>' +
+          '<strong style="color:var(--maroon);">' + waiterBillsCount + ' bills</strong>' +
+        '</div>' +
+
+        '<div class="waiter-actions">' +
+          '<button type="button" class="waiter-btn-sm" onclick="editWaiter(\'' + w.id + '\')">' +
+            '✏ Edit' +
+          '</button>' +
+          '<button type="button" class="waiter-btn-sm" onclick="toggleStatus(\'' + w.id + '\')">' +
+            (isActive ? '⏸ Set Off-Duty' : '▶ Set Active') +
+          '</button>' +
+          '<button type="button" class="waiter-btn-sm waiter-btn-danger" style="margin-left:auto;" onclick="deleteWaiter(\'' + w.id + '\')">' +
+            '🗑 Delete' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    });
+
+    container.innerHTML = html;
+  }
+
+  // Modal Controls
+  var modal = document.getElementById('waiterModal');
+  var form = document.getElementById('waiterForm');
+
+  function openModal(isEdit, data) {
+    document.getElementById('modalTitle').innerHTML = isEdit ? '<span>✏</span> Edit Waiter / Server' : '<span>➕</span> Add Waiter / Server';
+    document.getElementById('waiterId').value = isEdit && data ? data.id : '';
+    document.getElementById('wName').value = isEdit && data ? data.name : '';
+    document.getElementById('wCode').value = isEdit && data ? data.code : ('W-0' + (getWaiters().length + 1));
+    document.getElementById('wPhone').value = isEdit && data ? (data.phone || '') : '';
+    document.getElementById('wSection').value = isEdit && data ? (data.section || 'All Dining Sections') : 'All Dining Sections';
+    document.getElementById('wStatus').value = isEdit && data ? (data.status || 'Active') : 'Active';
+    modal.classList.add('open');
+    document.getElementById('wName').focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    form.reset();
+  }
+
+  document.getElementById('btnOpenAddModal').addEventListener('click', function () {
+    openModal(false);
+  });
+  document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+  document.getElementById('btnCancelModal').addEventListener('click', closeModal);
+
+  // Form Submit (Add or Update)
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var id = document.getElementById('waiterId').value;
+    var name = document.getElementById('wName').value.trim();
+    var code = document.getElementById('wCode').value.trim().toUpperCase();
+    var phone = document.getElementById('wPhone').value.trim();
+    var section = document.getElementById('wSection').value;
+    var status = document.getElementById('wStatus').value;
+
+    if (!name || !code) return;
+
+    var waiters = getWaiters();
+    if (id) {
+      // Edit
+      waiters = waiters.map(function (w) {
+        if (w.id === id) {
+          return { id: id, code: code, name: name, phone: phone, section: section, status: status };
+        }
+        return w;
+      });
+    } else {
+      // Add
+      var newId = 'w_' + Date.now();
+      waiters.push({
+        id: newId,
+        code: code,
+        name: name,
+        phone: phone,
+        section: section,
+        status: status
+      });
+    }
+
+    saveWaiters(waiters);
+    closeModal();
+    renderWaiters();
+  });
+
+  // Global Actions
+  window.editWaiter = function (id) {
+    var waiters = getWaiters();
+    var waiter = waiters.find(function (w) { return w.id === id; });
+    if (waiter) openModal(true, waiter);
+  };
+
+  window.toggleStatus = function (id) {
+    var waiters = getWaiters();
+    waiters = waiters.map(function (w) {
+      if (w.id === id) {
+        w.status = (w.status === 'Active') ? 'Inactive' : 'Active';
+      }
+      return w;
+    });
+    saveWaiters(waiters);
+    renderWaiters();
+  };
+
+  window.deleteWaiter = function (id) {
+    var waiters = getWaiters();
+    var target = waiters.find(function (w) { return w.id === id; });
+    if (!target) return;
+    if (!confirm('Are you sure you want to remove server "' + target.name + '" (' + target.code + ')?')) return;
+
+    waiters = waiters.filter(function (w) { return w.id !== id; });
+    saveWaiters(waiters);
+    renderWaiters();
+  };
+
+  // Search & Filter Listeners
+  document.getElementById('searchWaiterInput').addEventListener('input', function (e) {
+    searchQuery = e.target.value.trim();
+    renderWaiters();
+  });
+
+  var filterButtons = [
+    { id: 'btnFilterAll', key: 'all' },
+    { id: 'btnFilterActive', key: 'active' },
+    { id: 'btnFilterInactive', key: 'inactive' }
+  ];
+
+  filterButtons.forEach(function (fb) {
+    var btn = document.getElementById(fb.id);
+    if (btn) {
+      btn.addEventListener('click', function () {
+        filterButtons.forEach(function (other) {
+          document.getElementById(other.id).classList.remove('active');
+        });
+        btn.classList.add('active');
+        currentFilter = fb.key;
+        renderWaiters();
+      });
+    }
+  });
+
+  // Close modal on Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) {
+      closeModal();
+    }
+  });
+
+  // Initial render
+  renderWaiters();
+})();
+</script>
+</body>
+</html>
