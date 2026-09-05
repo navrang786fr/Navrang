@@ -34,6 +34,49 @@
   .feed-item .sub{font-size:11px;color:var(--maroon);opacity:.7;margin-top:2px;}
   .feed-item .when{flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--maroon);opacity:.75;white-space:nowrap;}
 
+  .feed-range-row{display:flex;gap:4px;align-items:center;}
+  .feed-range-btn{
+    border:1.2px solid var(--rule);background:var(--paper);color:var(--ink);
+    border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;
+  }
+  .feed-range-btn.active{
+    background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));
+    border-color:var(--maroon-deep);color:var(--turmeric-light);
+  }
+
+  .activity-badge{
+    display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+    padding:2px 6px;border-radius:6px;margin-right:5px;vertical-align:middle;
+  }
+  .badge-search{background:rgba(179,130,30,.15);color:#8B620C;}
+  .badge-no-result{background:rgba(216,74,54,.15);color:#A83A28;}
+  .badge-view{background:rgba(18,64,28,.12);color:var(--maroon-deep);}
+  .badge-zoom{background:rgba(76,122,30,.15);color:#365A14;}
+  .badge-filter{background:rgba(42,36,112,.12);color:#2A2470;}
+  .badge-split{background:rgba(212,175,55,.22);color:#70530A;}
+  .badge-action{background:rgba(0,0,0,.08);color:var(--ink);}
+
+  .unmet-demand-card{
+    background:linear-gradient(135deg,#FFFDF5,#FFF8E7);
+    border:1.5px solid var(--turmeric);border-radius:12px;padding:12px 14px;
+    margin-bottom:16px;box-shadow:0 2px 6px rgba(179,130,30,.08);
+  }
+  .unmet-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+  .unmet-title{display:flex;align-items:center;gap:6px;color:var(--maroon-deep);font-size:13.5px;}
+  .unmet-title svg{color:var(--nonveg);flex:0 0 auto;}
+  .unmet-badge{font-size:11px;background:var(--nonveg);color:#fff;padding:2px 7px;border-radius:10px;font-weight:700;}
+  .unmet-sub{font-size:11.5px;color:var(--maroon);opacity:.8;}
+  .unmet-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .unmet-tag{
+    background:#fff;border:1px solid rgba(179,130,30,.35);border-radius:16px;
+    padding:4px 10px;font-size:12px;color:var(--maroon-deep);font-weight:600;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .unmet-tag .tag-count{
+    background:rgba(168,58,40,.1);color:var(--nonveg);font-family:'IBM Plex Mono',monospace;
+    font-size:11px;padding:1px 6px;border-radius:8px;font-weight:700;
+  }
+
   .dash-qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px;}
   @media (max-width:680px){ .dash-qr-grid{grid-template-columns:1fr;} }
   .dash-qr-card{
@@ -101,8 +144,20 @@
       <div class="stat-card"><span class="stat-icon" data-icon="dishes"></span><div class="val" id="statActive">–</div><div class="lbl">Active Dishes</div></div>
       <div class="stat-card"><span class="stat-icon" data-icon="ratings"></span><div class="val" id="statRatings">–</div><div class="lbl">Total Ratings</div></div>
       <div class="stat-card"><span class="stat-icon" data-icon="ratings"></span><div class="val" id="statAvgRating">–</div><div class="lbl">Avg Rating</div></div>
-      <div class="stat-card"><span class="stat-icon" data-icon="activity"></span><div class="val" id="statSearchesToday">–</div><div class="lbl">Searches Today</div></div>
-      <div class="stat-card"><span class="stat-icon" data-icon="activity"></span><div class="val" id="statViewsToday">–</div><div class="lbl">Item Views Today</div></div>
+      <div class="stat-card"><span class="stat-icon" data-icon="activity"></span><div class="val" id="statSearchesToday">–</div><div class="lbl" id="lblSearches">Searches Today</div></div>
+      <div class="stat-card"><span class="stat-icon" data-icon="activity"></span><div class="val" id="statViewsToday">–</div><div class="lbl" id="lblViews">Item Views Today</div></div>
+    </div>
+
+    <div class="admin-card unmet-demand-card" id="unmetDemandCard" style="display:none;">
+      <div class="unmet-head">
+        <div class="unmet-title">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <strong>Unmet Customer Demand</strong>
+          <span class="unmet-badge" id="unmetCount">0</span>
+        </div>
+        <span class="unmet-sub">Zero-result searches — what guests want that isn't on the menu</span>
+      </div>
+      <div class="unmet-tags" id="unmetTags"></div>
     </div>
 
     <div class="panel-grid">
@@ -111,7 +166,18 @@
         <div id="auditFeed"><div class="admin-loading">Loading…</div></div>
       </div>
       <div class="admin-card">
-        <div class="panel-head"><h3><span class="panel-icon" data-icon="activity"></span>Customer Activities</h3><a href="activity.html">View all →</a></div>
+        <div class="panel-head">
+          <h3><span class="panel-icon" data-icon="activity"></span>Customer Activity</h3>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="feed-range-row" id="feedRangeRow">
+              <button type="button" class="feed-range-btn active" data-range="today">Today</button>
+              <button type="button" class="feed-range-btn" data-range="7">7D</button>
+              <button type="button" class="feed-range-btn" data-range="30">30D</button>
+              <button type="button" class="feed-range-btn" data-range="all">All</button>
+            </div>
+            <a href="activity.html" style="font-size:11.5px;font-weight:700;color:var(--maroon);text-decoration:underline;">View all →</a>
+          </div>
+        </div>
         <div id="accessFeed"><div class="admin-loading">Loading…</div></div>
       </div>
     </div>
@@ -237,27 +303,122 @@
   });
 
   // Activity (searches/views today + recent customer activity feed)
-  var ACTIVITY_TYPE_LABELS = {
-    search: 'Search', item_view: 'Item View', category_click: 'Category Click',
-    veg_filter: 'Veg Filter', top_filter: 'Top Picks Filter', price_filter: 'Price Filter'
+  // Activity (searches/views + unmet demand + customer activity feed)
+  var ACTIVITY_META = {
+    search: { label: 'Search', badge: 'badge-search' },
+    search_no_results: { label: 'Zero Results', badge: 'badge-no-result' },
+    item_view: { label: 'Dish View', badge: 'badge-view' },
+    dish_zoom: { label: 'Photo Zoom', badge: 'badge-zoom' },
+    dish_ingredients: { label: 'Ingredients', badge: 'badge-zoom' },
+    category_click: { label: 'Category', badge: 'badge-filter' },
+    veg_filter: { label: 'Veg Filter', badge: 'badge-filter' },
+    nonveg_filter: { label: 'Non-Veg Filter', badge: 'badge-filter' },
+    top_filter: { label: 'Top Picks', badge: 'badge-filter' },
+    price_filter: { label: 'Price Filter', badge: 'badge-filter' },
+    lang_switch: { label: 'Language', badge: 'badge-action' },
+    split_bill_open: { label: 'Split Bill', badge: 'badge-split' },
+    split_preset_click: { label: 'Split Preset', badge: 'badge-split' },
+    split_bill_download_image: { label: 'Bill Image', badge: 'badge-split' },
+    split_bill_copy: { label: 'Bill Copied', badge: 'badge-split' },
+    surprise_spin: { label: 'Roulette Spin', badge: 'badge-action' },
+    surprise_view_menu: { label: 'Roulette Pick', badge: 'badge-action' },
+    rate_food_open: { label: 'Rating Opened', badge: 'badge-action' },
+    instagram_click: { label: 'Instagram Click', badge: 'badge-action' },
+    offers_view: { label: 'Offers View', badge: 'badge-action' }
   };
+
+  var allActivity = [];
+  var currentRange = 'today';
+  var feedRangeRow = document.getElementById('feedRangeRow');
+
+  function filterActivityByRange(rows, range){
+    var now = new Date();
+    if (range === 'today'){
+      var start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      return rows.filter(function(r){ return new Date(r.timestamp) >= start; });
+    }
+    if (range === '7'){
+      var start7 = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+      return rows.filter(function(r){ return new Date(r.timestamp) >= start7; });
+    }
+    if (range === '30'){
+      var start30 = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+      return rows.filter(function(r){ return new Date(r.timestamp) >= start30; });
+    }
+    return rows;
+  }
+
+  function renderActivityView(){
+    var filtered = filterActivityByRange(allActivity, currentRange);
+
+    // Update KPI cards
+    var searches = filtered.filter(function(r){ return r.type === 'search'; });
+    var views = filtered.filter(function(r){ return r.type === 'item_view'; });
+    document.getElementById('statSearchesToday').textContent = searches.length;
+    document.getElementById('statViewsToday').textContent = views.length;
+
+    var rangeLabel = currentRange === 'today' ? 'Today' : (currentRange === '7' ? '7 Days' : (currentRange === '30' ? '30 Days' : 'All Time'));
+    var lblSearches = document.getElementById('lblSearches');
+    var lblViews = document.getElementById('lblViews');
+    if (lblSearches) lblSearches.textContent = 'Searches (' + rangeLabel + ')';
+    if (lblViews) lblViews.textContent = 'Item Views (' + rangeLabel + ')';
+
+    // Unmet Demand (Zero Result Searches)
+    var unmetCard = document.getElementById('unmetDemandCard');
+    var unmetCount = document.getElementById('unmetCount');
+    var unmetTags = document.getElementById('unmetTags');
+    var noResults = filtered.filter(function(r){ return r.type === 'search_no_results'; });
+    if (noResults.length > 0 && unmetCard && unmetCount && unmetTags){
+      unmetCard.style.display = 'block';
+      unmetCount.textContent = noResults.length + ' search' + (noResults.length === 1 ? '' : 'es');
+      var termCounts = {};
+      noResults.forEach(function(r){
+        var term = (r.value || '').trim();
+        if (term) termCounts[term] = (termCounts[term] || 0) + 1;
+      });
+      var sortedTerms = Object.keys(termCounts).sort(function(a,b){ return termCounts[b] - termCounts[a]; });
+      unmetTags.innerHTML = sortedTerms.map(function(term){
+        return '<span class="unmet-tag"><span>' + esc(term) + '</span><span class="tag-count">' + termCounts[term] + '</span></span>';
+      }).join('');
+    } else if (unmetCard){
+      unmetCard.style.display = 'none';
+    }
+
+    // Recent Activity Feed
+    var el = document.getElementById('accessFeed');
+    var feedRows = filtered.filter(function(r){ return r.type !== 'page_view'; }).slice(0, 6);
+    if (!feedRows.length){
+      el.innerHTML = '<div class="admin-empty" style="padding:14px;">No customer activity recorded for ' + esc(rangeLabel) + '.</div>';
+      return;
+    }
+    el.innerHTML = feedRows.map(function(r){
+      var loc = [r.city, r.country].filter(Boolean).join(', ') || 'Unknown location';
+      var meta = ACTIVITY_META[r.type] || { label: r.type, badge: 'badge-action' };
+      return '<div class="feed-item"><div class="main">' +
+        '<span class="activity-badge ' + meta.badge + '">' + esc(meta.label) + '</span> ' +
+        '<strong>' + esc(r.value || '—') + '</strong>' +
+        '<div class="sub">' + esc(loc) + (r.device ? ' · ' + esc(r.device.browser) + ' / ' + esc(r.device.os) : '') + '</div>' +
+        '</div><div class="when">' + esc(fmtDate(r.timestamp)) + '</div></div>';
+    }).join('');
+  }
+
+  if (feedRangeRow){
+    feedRangeRow.querySelectorAll('.feed-range-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        feedRangeRow.querySelectorAll('.feed-range-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentRange = btn.dataset.range;
+        renderActivityView();
+      });
+    });
+  }
+
   AdminShared.apiFetch('/api/track').then(function(resp){
     return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
   }).then(function(result){
     if (!result.ok) throw new Error();
-    var todays = result.data.filter(function(r){ return isToday(r.timestamp); });
-    document.getElementById('statSearchesToday').textContent = todays.filter(function(r){ return r.type === 'search'; }).length;
-    document.getElementById('statViewsToday').textContent = todays.filter(function(r){ return r.type === 'item_view'; }).length;
-
-    var rows = result.data.slice(0, 5);
-    var el = document.getElementById('accessFeed');
-    if (!rows.length){ el.innerHTML = '<div class="admin-empty" style="padding:14px;">No activity yet.</div>'; return; }
-    el.innerHTML = rows.map(function(r){
-      var loc = [r.city, r.country].filter(Boolean).join(', ') || 'Unknown location';
-      var label = ACTIVITY_TYPE_LABELS[r.type] || r.type;
-      return '<div class="feed-item"><div class="main"><strong>' + esc(label) + '</strong> · ' + esc(r.value) +
-        '<div class="sub">' + esc(loc) + (r.device ? ' · ' + esc(r.device.browser) + ' / ' + esc(r.device.os) : '') + '</div></div><div class="when">' + esc(fmtDate(r.timestamp)) + '</div></div>';
-    }).join('');
+    allActivity = Array.isArray(result.data) ? result.data : [];
+    renderActivityView();
   }).catch(function(){
     document.getElementById('statSearchesToday').textContent = '—';
     document.getElementById('statViewsToday').textContent = '—';

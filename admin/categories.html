@@ -17,6 +17,10 @@
   .cat-id{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--maroon);opacity:.75;white-space:nowrap;}
   .cat-input{width:100%;min-width:120px;border:1.3px solid var(--rule);border-radius:8px;padding:7px 9px;font-size:13px;background:var(--paper);outline:none;font-family:inherit;}
   .cat-input:focus{border-color:var(--maroon);}
+  .cat-img-cell{display:flex;align-items:center;gap:8px;}
+  .cat-thumb{width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--rule);background:var(--paper-soft);flex:0 0 36px;}
+  .cat-thumb-empty{width:36px;height:36px;border-radius:6px;border:1px dashed var(--rule);display:flex;align-items:center;justify-content:center;color:var(--maroon);opacity:.5;font-size:10px;background:rgba(0,0,0,.02);flex:0 0 36px;}
+  .cat-img-input{min-width:140px;}
   .cat-row-status{font-size:11.5px;font-weight:600;white-space:nowrap;}
   .cat-row-status.success{color:var(--leaf);}
   .cat-row-status.error{color:var(--nonveg);}
@@ -69,6 +73,13 @@
             <input type="text" id="cNewShortTe" maxlength="30">
             <p class="auto-te-hint" id="cNewShortTeHint"></p>
           </div>
+          <div class="admin-field" style="grid-column:1/-1;">
+            <label for="cNewImage">Image URL / Path (optional, e.g. images/starters.jpg)</label>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <input type="text" id="cNewImage" placeholder="images/category-image.jpg" style="flex:1;">
+              <img id="cNewImagePreview" src="" alt="Preview" style="display:none;width:38px;height:38px;border-radius:6px;object-fit:cover;border:1px solid var(--rule);background:var(--paper-soft);">
+            </div>
+          </div>
         </div>
         <div class="form-actions">
           <button type="submit" class="admin-btn" id="createBtn">Create Category</button>
@@ -100,11 +111,18 @@
   }
 
   function renderList(categories){
-    listWrap.innerHTML = '<table class="admin-table cat-table"><thead><tr><th></th><th>ID</th><th>Title (EN)</th><th>Title (TE)</th><th>Short (EN)</th><th>Short (TE)</th><th></th><th></th></tr></thead><tbody>' +
+    listWrap.innerHTML = '<table class="admin-table cat-table"><thead><tr><th></th><th>ID</th><th>Image</th><th>Title (EN)</th><th>Title (TE)</th><th>Short (EN)</th><th>Short (TE)</th><th></th><th></th></tr></thead><tbody>' +
       categories.map(function(c){
         return '<tr data-id="' + esc(c.id) + '">' +
           '<td><span class="cat-icon-preview">' + iconSvg(c.icon || '') + '</span></td>' +
           '<td><span class="cat-id">' + esc(c.id) + '</span></td>' +
+          '<td>' +
+            '<div class="cat-img-cell">' +
+              '<img class="cat-thumb" src="' + esc(c.image || '') + '" alt="" style="' + (c.image ? '' : 'display:none;') + '" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'flex\';">' +
+              '<div class="cat-thumb-empty" style="' + (c.image ? 'display:none;' : '') + '">No img</div>' +
+              '<input class="cat-input cat-img-input" data-field="image" placeholder="images/..." value="' + esc(c.image || '') + '">' +
+            '</div>' +
+          '</td>' +
           '<td><input class="cat-input" data-field="title" value="' + esc(c.title) + '"></td>' +
           '<td><input class="cat-input" data-field="titleTe" value="' + esc(c.titleTe) + '"></td>' +
           '<td><input class="cat-input" data-field="short" value="' + esc(c.short) + '"></td>' +
@@ -118,6 +136,25 @@
       var id = row.dataset.id;
       var btn = row.querySelector('.cat-save-btn');
       var status = row.querySelector('.cat-row-status');
+      var imgInput = row.querySelector('.cat-img-input');
+      var thumb = row.querySelector('.cat-thumb');
+      var empty = row.querySelector('.cat-thumb-empty');
+
+      if (imgInput && thumb && empty){
+        imgInput.addEventListener('input', function(){
+          var val = imgInput.value.trim();
+          if (val){
+            thumb.src = val;
+            thumb.style.display = 'inline-block';
+            empty.style.display = 'none';
+          } else {
+            thumb.src = '';
+            thumb.style.display = 'none';
+            empty.style.display = 'flex';
+          }
+        });
+      }
+
       btn.addEventListener('click', function(){
         var payload = { id: id };
         Array.prototype.forEach.call(row.querySelectorAll('.cat-input'), function(input){
@@ -229,12 +266,30 @@
   wireAutoTranslate(document.getElementById('cNewTitle'), document.getElementById('cNewTitleTe'), document.getElementById('cNewTitleTeHint'));
   wireAutoTranslate(document.getElementById('cNewShort'), document.getElementById('cNewShortTe'), document.getElementById('cNewShortTeHint'));
 
+  var newImgInput = document.getElementById('cNewImage');
+  var newImgPrev = document.getElementById('cNewImagePreview');
+  if (newImgInput && newImgPrev){
+    newImgInput.addEventListener('input', function(){
+      var val = newImgInput.value.trim();
+      if (val){
+        newImgPrev.src = val;
+        newImgPrev.style.display = 'block';
+      } else {
+        newImgPrev.src = '';
+        newImgPrev.style.display = 'none';
+      }
+    });
+    newImgPrev.addEventListener('error', function(){
+      newImgPrev.style.display = 'none';
+    });
+  }
+
   function loadCategories(){
     return AdminShared.apiFetch('/api/categories').then(function(resp){
       return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
     }).then(function(result){
       if (!result.ok) throw new Error(result.data.error || 'Failed to load categories');
-      var categories = result.data.categories || [];
+      var categories = Array.isArray(result.data) ? result.data : (result.data.categories || []);
       buildTeDictionary(categories);
       renderList(categories);
     }).catch(function(err){
@@ -252,7 +307,8 @@
       title: document.getElementById('cNewTitle').value.trim(),
       titleTe: document.getElementById('cNewTitleTe').value.trim(),
       short: document.getElementById('cNewShort').value.trim(),
-      shortTe: document.getElementById('cNewShortTe').value.trim()
+      shortTe: document.getElementById('cNewShortTe').value.trim(),
+      image: document.getElementById('cNewImage').value.trim()
     };
     createBtn.disabled = true;
     createStatus.textContent = '';
@@ -262,6 +318,7 @@
       .then(function(result){
         if (!result.ok) throw new Error(result.data.error || 'Create failed');
         createForm.reset();
+        if (newImgPrev) newImgPrev.style.display = 'none';
         createStatus.textContent = 'Category "' + result.data.category.title + '" created.';
         createStatus.className = 'admin-status success';
         return loadCategories();

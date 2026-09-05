@@ -373,7 +373,13 @@
   }
 
   langOpts.forEach(function(btn){
-    btn.addEventListener('click', function(){ applyLanguage(btn.dataset.lang); });
+    btn.addEventListener('click', function(){
+      var newLang = btn.dataset.lang;
+      if (newLang !== currentLang){
+        applyLanguage(newLang);
+        trackEvent('lang_switch', newLang);
+      }
+    });
   });
 
   /* ---------- Config ---------- */
@@ -404,7 +410,9 @@
     chip.type = 'button';
     chip.className = 'chip';
     chip.dataset.target = cat.id;
-    var chipIcon = cat.image ? '<img class="chip-icon" src="' + esc(cat.image) + '" alt="">' : iconSvg(cat.icon);
+    var chipIcon = cat.image
+      ? '<img class="chip-icon" src="' + esc(cat.image) + '" alt="" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'inline-block\'"><span style="display:none">' + iconSvg(cat.icon) + '</span>'
+      : iconSvg(cat.icon);
     chip.innerHTML = chipIcon + '<span class="chip-label" data-en="' + esc(cat.short) + '" data-te="' + esc(cat.shortTe) + '">' + esc(cat.short) + '</span>';
     chip.addEventListener('click', function(){
       qsa('.chip').forEach(function(c){ c.classList.toggle('active', c === chip); });
@@ -428,7 +436,9 @@
 
     var head = document.createElement('div');
     head.className = 'section-head';
-    var headIcon = cat.image ? '<img src="' + esc(cat.image) + '" alt="" loading="lazy" decoding="async">' : iconSvg(cat.icon);
+    var headIcon = cat.image
+      ? '<img src="' + esc(cat.image) + '" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'inline-block\'"><span style="display:none">' + iconSvg(cat.icon) + '</span>'
+      : iconSvg(cat.icon);
     head.innerHTML = '<span class="cat-icon' + (cat.image ? ' cat-icon-img' : '') + '">' + headIcon + '</span>' +
       '<span class="section-title" data-en="' + esc(cat.title) + '" data-te="' + esc(cat.titleTe) + '">' + esc(cat.title) + '</span>' +
       '<span class="n section-count" data-count="' + items.length + '">' + items.length + ' items</span>';
@@ -539,6 +549,12 @@
       if (q.length >= 2 && q.toLowerCase() !== lastTrackedQuery){
         lastTrackedQuery = q.toLowerCase();
         trackEvent('search', q);
+        var hasMatch = qsa('.dish').some(function(d){
+          return (d.dataset.name || '').indexOf(lastTrackedQuery) !== -1;
+        });
+        if (!hasMatch){
+          trackEvent('search_no_results', q);
+        }
       }
     }, 800);
   });
@@ -702,6 +718,10 @@
         });
       }
     }
+    if (item){
+      if (item.photo || item.thumb) trackEvent('dish_zoom', item.name);
+      if (ingredients && ingredients.length) trackEvent('dish_ingredients', item.name);
+    }
     imageLightbox.classList.add('show');
     imageLightbox.setAttribute('aria-hidden', 'false');
   }
@@ -816,6 +836,7 @@
     populateDishSelect();
     rateDialog.classList.add('show');
     rateDialog.setAttribute('aria-hidden', 'false');
+    trackEvent('rate_food_open', 'opened');
   }
   function closeRateDialog(){
     rateDialog.classList.remove('show');
@@ -904,12 +925,12 @@
     offersDialog.addEventListener('click', closeOffersDialog);
     offersCard.addEventListener('click', function(e){ e.stopPropagation(); });
     qs('#offersOkBtn').addEventListener('click', closeOffersDialog);
-    qs('#fabOffersBtn').addEventListener('click', function(){ closeFab(); openOffersDialog(); trackEvent('item_view', 'Special Offers (coming soon)'); });
+    qs('#fabOffersBtn').addEventListener('click', function(){ closeFab(); openOffersDialog(); trackEvent('offers_view', 'Special Offers'); });
   }
   var fabRatingBtn = qs('#fabRatingBtn');
   if (fabRatingBtn) fabRatingBtn.addEventListener('click', function(){ closeFab(); openRateDialog(); });
   var fabInstaBtn = qs('#fabInstaBtn');
-  if (fabInstaBtn) fabInstaBtn.addEventListener('click', closeFab);
+  if (fabInstaBtn) fabInstaBtn.addEventListener('click', function(){ closeFab(); trackEvent('instagram_click', 'clicked'); });
 
   /* ---------- Feature 1: "Can't Decide? Surprise Me!" Roulette ---------- */
   var surpriseDialog = qs('#surpriseDialog');

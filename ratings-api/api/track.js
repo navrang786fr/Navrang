@@ -8,7 +8,13 @@ const { requireAuth } = require('./_lib/auth.js');
 const { getRequestInfo } = require('./_lib/requestInfo.js');
 const { isRateLimited } = require('./_lib/rateLimit.js');
 
-const ALLOWED_TYPES = ['search', 'item_view', 'category_click', 'veg_filter', 'top_filter', 'price_filter', 'page_view'];
+const ALLOWED_TYPES = [
+  'search', 'search_no_results', 'item_view', 'dish_zoom', 'dish_ingredients',
+  'category_click', 'veg_filter', 'nonveg_filter', 'top_filter', 'price_filter',
+  'lang_switch', 'surprise_spin', 'surprise_view_menu', 'split_bill_open',
+  'split_preset_click', 'split_bill_download_image', 'split_bill_copy',
+  'rate_food_open', 'instagram_click', 'offers_view', 'page_view'
+];
 const THROTTLE_WINDOW_MS = 5 * 60 * 1000;
 const MAX_EVENTS_PER_IP = 60;
 

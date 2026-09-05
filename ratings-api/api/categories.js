@@ -12,7 +12,7 @@ const { requireAuth } = require('./_lib/auth.js');
 const { parseMenuData, parseCategoryMeta, serializeMenuDataFile, serializeCategoryMetaFile, findCategoryById, nextCategoryId } = require('./_lib/menuData.js');
 const { getRequestInfo } = require('./_lib/requestInfo.js');
 
-const EDITABLE_FIELDS = ['title', 'titleTe', 'short', 'shortTe'];
+const EDITABLE_FIELDS = ['title', 'titleTe', 'short', 'shortTe', 'image'];
 
 // Generic bookmark/tag icon used for a newly created category until an admin picks a real one.
 const DEFAULT_ICON = '<path d="M18 8h22a4 4 0 014 4v40l-15-9-15 9V12a4 4 0 014-4z"/>';
@@ -34,39 +34,37 @@ async function mutateCategoryMeta(publicRepo, githubToken, mutator, commitMessag
 }
 
 module.exports = async function handler(req, res) {
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://navrang786fr.github.io';
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === 'OPTIONS') { res.status(204).end(); return; }
-
-  const jwtSecret = process.env.JWT_SECRET;
-  const adminRepo = process.env.ADMIN_REPO;
-  const adminToken = process.env.ADMIN_GITHUB_TOKEN;
-  const publicRepo = process.env.GITHUB_REPO || 'navrang786fr/Navrang';
-  const publicToken = process.env.GITHUB_TOKEN;
-  if (!jwtSecret || !adminRepo || !adminToken || !publicToken) {
-    res.status(500).json({ error: 'Server not configured' });
-    return;
-  }
-
-  const auth = requireAuth(req, res, jwtSecret);
+  const auth = requireAuth(req, res);
   if (!auth) return;
+
+  const publicRepo = process.env.PUBLIC_REPO || 'rahamathalisk/navarang-menu';
+  const publicToken = process.env.PUBLIC_REPO_TOKEN || process.env.GITHUB_TOKEN;
+  const adminRepo = process.env.ADMIN_REPO || 'rahamathalisk/navrang-admin';
+  const adminToken = process.env.ADMIN_REPO_TOKEN || process.env.GITHUB_TOKEN;
 
   if (req.method === 'GET') {
     try {
       const { raw } = await readRawFile(publicRepo, 'menu-data.js', publicToken);
+      if (!raw) { res.status(404).json({ error: 'menu-data.js not found' }); return; }
       const { restSrc } = parseMenuData(raw);
       const categories = parseCategoryMeta(restSrc);
-      res.status(200).json({ categories });
+      res.status(200).json(categories);
     } catch (e) {
-      res.status(502).json({ error: 'Could not read categories', detail: String(e.message || e) });
+      res.status(502).json({ error: 'Could not load categories', detail: String(e.message || e) });
     }
     return;
   }
 
-  if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'GET, POST');
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  if (!publicToken) {
+    res.status(500).json({ error: 'PUBLIC_REPO_TOKEN not configured on server' });
+    return;
+  }
 
   let body = req.body;
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
@@ -76,7 +74,14 @@ module.exports = async function handler(req, res) {
 
   const submitted = {};
   EDITABLE_FIELDS.forEach(function (k) {
-    if (typeof body[k] === 'string' && body[k].trim()) submitted[k] = body[k].trim();
+    if (typeof body[k] === 'string') {
+      const val = body[k].trim();
+      if (k === 'image') {
+        submitted[k] = val;
+      } else if (val) {
+        submitted[k] = val;
+      }
+    }
   });
   if (typeof submitted.title !== 'string') { res.status(400).json({ error: 'title is required' }); return; }
   if (typeof submitted.titleTe !== 'string') { res.status(400).json({ error: 'titleTe is required' }); return; }
@@ -90,6 +95,7 @@ module.exports = async function handler(req, res) {
       const outcome = await mutateCategoryMeta(publicRepo, publicToken, function (menuData, categories) {
         const id = nextCategoryId(categories);
         const category = Object.assign({ id: id, icon: DEFAULT_ICON }, submitted);
+        if (!category.image) delete category.image;
         categories.push(category);
         menuData[id] = [];
         return { category: category };
@@ -106,9 +112,12 @@ module.exports = async function handler(req, res) {
         if (!cat) throw new Error('category-not-found:' + id);
         const before = Object.assign({}, cat);
         Object.assign(cat, submitted);
+        if (!cat.image) delete cat.image;
         const changes = {};
         EDITABLE_FIELDS.forEach(function (k) {
-          if (before[k] !== cat[k]) changes[k] = { from: before[k] === undefined ? null : before[k], to: cat[k] };
+          const fromVal = before[k] === undefined ? null : before[k];
+          const toVal = cat[k] === undefined ? null : cat[k];
+          if (fromVal !== toVal) changes[k] = { from: fromVal, to: toVal };
         });
         return { category: cat, changes: changes };
       }, `Admin: update category "${id}" (${auth.sub})`);

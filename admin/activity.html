@@ -8,7 +8,9 @@
 <link rel="icon" href="../navrang_logo.png">
 <link rel="stylesheet" href="admin-style.css">
 <style>
-  .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .summary-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;}
+  @media (max-width:960px){ .summary-grid{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:540px){ .summary-grid{grid-template-columns:repeat(2,1fr);} }
   .summary-card{background:var(--paper-soft);border:1px solid var(--rule);border-radius:13px;padding:12px 10px;text-align:center;}
   .summary-card .val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:var(--maroon-deep);}
   .summary-card .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--maroon);font-weight:700;margin-top:3px;opacity:.85;}
@@ -16,13 +18,28 @@
   .preset-row{display:flex;gap:6px;flex-wrap:wrap;}
   .preset-btn{border:1.3px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:20px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;}
   .preset-btn.active{background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));border-color:var(--maroon-deep);color:var(--turmeric-light);}
-  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  @media (max-width:640px){ .two-col{grid-template-columns:1fr;} }
+  
+  .stats-three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+  @media (max-width:880px){ .stats-three-col{grid-template-columns:1fr;} }
+  
   .bar-row{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:6px;}
-  .bar-row .term{flex:0 0 auto;min-width:110px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .bar-row .term{flex:0 0 auto;min-width:100px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .bar-row .bar-wrap{flex:1;background:var(--paper);border-radius:6px;height:14px;overflow:hidden;}
   .bar-row .bar{height:100%;background:linear-gradient(90deg,var(--turmeric),var(--maroon));}
+  .bar-row.unmet .bar{background:linear-gradient(90deg,#D84A36,#A83A28);}
   .bar-row .count{flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--maroon);width:26px;text-align:right;}
+
+  .activity-badge{
+    display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+    padding:2px 7px;border-radius:6px;white-space:nowrap;
+  }
+  .badge-search{background:rgba(179,130,30,.15);color:#8B620C;}
+  .badge-no-result{background:rgba(216,74,54,.15);color:#A83A28;}
+  .badge-view{background:rgba(18,64,28,.12);color:var(--maroon-deep);}
+  .badge-zoom{background:rgba(76,122,30,.15);color:#365A14;}
+  .badge-filter{background:rgba(42,36,112,.12);color:#2A2470;}
+  .badge-split{background:rgba(212,175,55,.22);color:#70530A;}
+  .badge-action{background:rgba(0,0,0,.08);color:var(--ink);}
 </style>
 </head>
 <body>
@@ -43,14 +60,17 @@
     <main class="admin-main">
   <div class="admin-panel">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
-      <h2 style="margin:0;">Customer Activity</h2>
+      <h2 style="margin:0;">Customer Activity Intelligence</h2>
       <button type="button" class="admin-btn admin-btn-secondary" id="backupNowBtn" style="font-size:12px;padding:8px 14px;">Backup Last 7 Days</button>
     </div>
     <p class="admin-status" id="backupStatus" style="margin:0 0 14px;"></p>
     <div class="summary-grid">
-      <div class="admin-card" style="text-align:center;"><div class="val" id="statSearches">–</div><div class="lbl">Searches</div></div>
-      <div class="admin-card" style="text-align:center;"><div class="val" id="statViews">–</div><div class="lbl">Item Views</div></div>
-      <div class="admin-card" style="text-align:center;"><div class="val" id="statSessions">–</div><div class="lbl">Unique Sessions</div></div>
+      <div class="summary-card"><div class="val" id="statSearches">–</div><div class="lbl">Searches</div></div>
+      <div class="summary-card"><div class="val" id="statViews">–</div><div class="lbl">Dish Views</div></div>
+      <div class="summary-card"><div class="val" id="statZooms">–</div><div class="lbl">Photo Zooms</div></div>
+      <div class="summary-card"><div class="val" id="statSplits">–</div><div class="lbl">Split Bill</div></div>
+      <div class="summary-card"><div class="val" id="statZeroResults" style="color:var(--nonveg);">–</div><div class="lbl" style="color:var(--nonveg);">Unmet Searches</div></div>
+      <div class="summary-card"><div class="val" id="statSessions">–</div><div class="lbl">Unique Guests</div></div>
     </div>
 
     <div class="admin-card filter-bar">
@@ -62,6 +82,22 @@
         <label for="toDate">To</label>
         <input type="date" id="toDate">
       </div>
+      <div class="admin-field" style="margin-bottom:0;">
+        <label for="typeFilter">Event Filter</label>
+        <select id="typeFilter" style="height:36px;padding:4px 10px;border-radius:8px;border:1.2px solid var(--rule);background:var(--paper);font-size:12.5px;">
+          <option value="all">All Events</option>
+          <option value="search">Searches (Matches)</option>
+          <option value="search_no_results">Zero Results (Unmet Demand)</option>
+          <option value="item_view">Dish Views</option>
+          <option value="dish_zoom">Photo Zooms</option>
+          <option value="dish_ingredients">Ingredients Viewed</option>
+          <option value="category_click">Category Clicks</option>
+          <option value="group_filters">Dietary &amp; Price Filters</option>
+          <option value="group_split">Split Bill Interactions</option>
+          <option value="lang_switch">Language Switches</option>
+          <option value="group_engagement">Ratings &amp; Social</option>
+        </select>
+      </div>
       <div class="preset-row" id="presetRow">
         <button type="button" class="preset-btn" data-range="today">Today</button>
         <button type="button" class="preset-btn" data-range="7">7 Days</button>
@@ -70,18 +106,28 @@
       </div>
     </div>
 
-    <div class="two-col">
+    <div class="stats-three-col">
       <div>
-        <h2 style="font-size:16px;">Top Searches</h2>
+        <h2 style="font-size:15px;margin-top:0;">Top Searches</h2>
         <div class="admin-card" id="topSearches"></div>
       </div>
       <div>
-        <h2 style="font-size:16px;">Most Viewed Items</h2>
+        <h2 style="font-size:15px;margin-top:0;">Most Viewed Items</h2>
         <div class="admin-card" id="topItems"></div>
+      </div>
+      <div>
+        <h2 style="font-size:15px;margin-top:0;color:var(--nonveg);display:flex;align-items:center;gap:6px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Unmet Demand (0 Results)
+        </h2>
+        <div class="admin-card" id="topZeroResults"></div>
       </div>
     </div>
 
-    <h2>Recent Activity</h2>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px;flex-wrap:wrap;gap:8px;">
+      <h2 style="margin:0;">Recent Activity Log</h2>
+      <div id="tableRecordCount" style="font-size:12px;color:var(--maroon);font-weight:600;"></div>
+    </div>
     <div class="admin-table-wrap" id="listWrap">
       <div class="admin-loading">Loading…</div>
     </div>
@@ -121,7 +167,31 @@
   var all = [];
   var fromDate = document.getElementById('fromDate');
   var toDate = document.getElementById('toDate');
+  var typeFilter = document.getElementById('typeFilter');
   var presetRow = document.getElementById('presetRow');
+
+  var ACTIVITY_META = {
+    search: { label: 'Search', badge: 'badge-search' },
+    search_no_results: { label: 'Zero Results', badge: 'badge-no-result' },
+    item_view: { label: 'Dish View', badge: 'badge-view' },
+    dish_zoom: { label: 'Photo Zoom', badge: 'badge-zoom' },
+    dish_ingredients: { label: 'Ingredients', badge: 'badge-zoom' },
+    category_click: { label: 'Category', badge: 'badge-filter' },
+    veg_filter: { label: 'Veg Filter', badge: 'badge-filter' },
+    nonveg_filter: { label: 'Non-Veg Filter', badge: 'badge-filter' },
+    top_filter: { label: 'Top Picks', badge: 'badge-filter' },
+    price_filter: { label: 'Price Filter', badge: 'badge-filter' },
+    lang_switch: { label: 'Language', badge: 'badge-action' },
+    split_bill_open: { label: 'Split Bill', badge: 'badge-split' },
+    split_preset_click: { label: 'Split Preset', badge: 'badge-split' },
+    split_bill_download_image: { label: 'Bill Image', badge: 'badge-split' },
+    split_bill_copy: { label: 'Bill Copied', badge: 'badge-split' },
+    surprise_spin: { label: 'Roulette Spin', badge: 'badge-action' },
+    surprise_view_menu: { label: 'Roulette Pick', badge: 'badge-action' },
+    rate_food_open: { label: 'Rating Opened', badge: 'badge-action' },
+    instagram_click: { label: 'Instagram Click', badge: 'badge-action' },
+    offers_view: { label: 'Offers View', badge: 'badge-action' }
+  };
 
   function fmtDate(iso){
     var d = new Date(iso);
@@ -146,7 +216,7 @@
     setActivePreset(range);
     render();
   }
-  function getFiltered(){
+  function getDateFiltered(){
     var from = fromDate.value ? dayStart(fromDate.value) : null;
     var to = toDate.value ? dayEnd(toDate.value) : null;
     return all.filter(function(r){
@@ -157,30 +227,39 @@
       return true;
     });
   }
+
+  function matchesTypeFilter(row, filterVal){
+    if (!filterVal || filterVal === 'all') return true;
+    if (filterVal === 'group_filters') return ['veg_filter','nonveg_filter','top_filter','price_filter','category_click'].indexOf(row.type) !== -1;
+    if (filterVal === 'group_split') return row.type.indexOf('split_') === 0;
+    if (filterVal === 'group_engagement') return ['rate_food_open','instagram_click','offers_view','surprise_spin','surprise_view_menu'].indexOf(row.type) !== -1;
+    return row.type === filterVal;
+  }
+
   function topList(rows, type, limit){
     var counts = {};
     rows.filter(function(r){ return r.type === type; }).forEach(function(r){
-      counts[r.value] = (counts[r.value] || 0) + 1;
+      var val = (r.value || '').trim();
+      if (val) counts[val] = (counts[val] || 0) + 1;
     });
     return Object.keys(counts).map(function(k){ return { value: k, count: counts[k] }; })
-      .sort(function(a,b){ return b.count - a.count; }).slice(0, limit || 10);
+      .sort(function(a,b){ return b.count - a.count; }).slice(0, limit || 8);
   }
-  function renderBars(el, list){
-    if (!list.length){ el.innerHTML = '<div class="admin-empty" style="padding:16px;">No data in this range.</div>'; return; }
+
+  function renderBars(el, list, isUnmet){
+    if (!list.length){
+      el.innerHTML = '<div class="admin-empty" style="padding:16px;">' + (isUnmet ? 'No zero-result searches in this range.' : 'No data in this range.') + '</div>';
+      return;
+    }
     var max = list[0].count;
     el.innerHTML = list.map(function(item){
       var pct = Math.max(6, Math.round((item.count / max) * 100));
-      return '<div class="bar-row"><span class="term" title="' + esc(item.value) + '">' + esc(item.value) + '</span>' +
+      return '<div class="bar-row ' + (isUnmet ? 'unmet' : '') + '"><span class="term" title="' + esc(item.value) + '">' + esc(item.value) + '</span>' +
         '<span class="bar-wrap"><span class="bar" style="width:' + pct + '%;"></span></span>' +
         '<span class="count">' + item.count + '</span></div>';
     }).join('');
   }
 
-  var TYPE_LABELS = {
-    search: 'Search', item_view: 'Item View', category_click: 'Category Click',
-    veg_filter: 'Veg Filter', top_filter: 'Top Picks Filter', price_filter: 'Price Filter'
-  };
-  function fmtType(t){ return TYPE_LABELS[t] || t; }
   function fmtLocation(r){
     var parts = [r.city, r.region, r.country].filter(Boolean);
     return parts.length ? parts.join(', ') : '<span style="opacity:.5;">—</span>';
@@ -191,42 +270,71 @@
   }
 
   function render(){
-    var rows = getFiltered();
-    var searches = rows.filter(function(r){ return r.type === 'search'; });
-    var views = rows.filter(function(r){ return r.type === 'item_view'; });
+    var dateRows = getDateFiltered();
+
+    // Summary KPIs calculated on date-filtered rows
+    var searches = dateRows.filter(function(r){ return r.type === 'search'; });
+    var views = dateRows.filter(function(r){ return r.type === 'item_view'; });
+    var zooms = dateRows.filter(function(r){ return r.type === 'dish_zoom' || r.type === 'dish_ingredients'; });
+    var splits = dateRows.filter(function(r){ return r.type.indexOf('split_') === 0; });
+    var zeroResults = dateRows.filter(function(r){ return r.type === 'search_no_results'; });
     var sessions = {};
-    rows.forEach(function(r){ if (r.sessionId) sessions[r.sessionId] = true; });
+    dateRows.forEach(function(r){ if (r.sessionId) sessions[r.sessionId] = true; });
 
     document.getElementById('statSearches').textContent = searches.length;
     document.getElementById('statViews').textContent = views.length;
+    document.getElementById('statZooms').textContent = zooms.length;
+    document.getElementById('statSplits').textContent = splits.length;
+    document.getElementById('statZeroResults').textContent = zeroResults.length;
     document.getElementById('statSessions').textContent = Object.keys(sessions).length;
 
-    renderBars(document.getElementById('topSearches'), topList(rows, 'search'));
-    renderBars(document.getElementById('topItems'), topList(rows, 'item_view'));
+    // Top analytics cards
+    renderBars(document.getElementById('topSearches'), topList(dateRows, 'search'));
+    renderBars(document.getElementById('topItems'), topList(dateRows, 'item_view'));
+    renderBars(document.getElementById('topZeroResults'), topList(dateRows, 'search_no_results'), true);
+
+    // Apply event type filter for the table
+    var selectedType = typeFilter ? typeFilter.value : 'all';
+    var tableRows = dateRows.filter(function(r){
+      return r.type !== 'page_view' && matchesTypeFilter(r, selectedType);
+    });
+
+    var countEl = document.getElementById('tableRecordCount');
+    if (countEl) countEl.textContent = 'Showing ' + Math.min(tableRows.length, 250) + ' of ' + tableRows.length + ' events';
 
     var listWrap = document.getElementById('listWrap');
-    var recent = rows.filter(function(r){ return r.type !== 'page_view'; }).sort(function(a,b){ return new Date(b.timestamp) - new Date(a.timestamp); }).slice(0, 200);
-    if (!recent.length){ listWrap.innerHTML = '<div class="admin-empty">No activity in this range.</div>'; return; }
+    var recent = tableRows.sort(function(a,b){ return new Date(b.timestamp) - new Date(a.timestamp); }).slice(0, 250);
+    if (!recent.length){
+      listWrap.innerHTML = '<div class="admin-empty">No activity matching the selected filters.</div>';
+      return;
+    }
+
     listWrap.innerHTML = '<table class="admin-table"><thead><tr><th>When</th><th>Type</th><th>Value</th><th>Location</th><th>Device</th><th>Session</th></tr></thead><tbody>' +
       recent.map(function(r){
-        return '<tr><td style="white-space:nowrap;">' + esc(fmtDate(r.timestamp)) + '</td>' +
-          '<td>' + esc(fmtType(r.type)) + '</td>' +
-          '<td>' + esc(r.value) + '</td>' +
+        var meta = ACTIVITY_META[r.type] || { label: r.type, badge: 'badge-action' };
+        return '<tr>' +
+          '<td style="white-space:nowrap;font-size:11.5px;">' + esc(fmtDate(r.timestamp)) + '</td>' +
+          '<td><span class="activity-badge ' + meta.badge + '">' + esc(meta.label) + '</span></td>' +
+          '<td><strong>' + esc(r.value || '—') + '</strong></td>' +
           '<td>' + fmtLocation(r) + '</td>' +
           '<td>' + fmtDevice(r) + '</td>' +
-          '<td style="opacity:.6;font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;">' + esc((r.sessionId || '').slice(0, 8)) + '</td></tr>';
+          '<td style="opacity:.6;font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;">' + esc((r.sessionId || '').slice(0, 8)) + '</td>' +
+          '</tr>';
       }).join('') + '</tbody></table>';
   }
 
-  Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){ b.addEventListener('click', function(){ applyPreset(b.dataset.range); }); });
+  Array.prototype.forEach.call(presetRow.querySelectorAll('.preset-btn'), function(b){
+    b.addEventListener('click', function(){ applyPreset(b.dataset.range); });
+  });
   fromDate.addEventListener('change', function(){ setActivePreset(''); render(); });
   toDate.addEventListener('change', function(){ setActivePreset(''); render(); });
+  if (typeFilter) typeFilter.addEventListener('change', render);
 
   AdminShared.apiFetch('/api/track').then(function(resp){
     return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
   }).then(function(result){
     if (!result.ok) throw new Error(result.data.error || 'Failed to load');
-    all = result.data;
+    all = Array.isArray(result.data) ? result.data : [];
     render();
   }).catch(function(err){
     document.getElementById('listWrap').innerHTML = '<div class="admin-empty">' + esc(err.message || 'Could not load activity.') + '</div>';
