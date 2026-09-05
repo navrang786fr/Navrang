@@ -89,7 +89,8 @@
     logout: '<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
     chevron: '<polyline points="9 18 15 12 9 6"/>',
     user: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
-    storefront: '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'
+    storefront: '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+    billing: '<path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/><path d="M8 8h8M8 12h8M8 16h5"/>'
   };
 
   function icon(name, size) {
@@ -106,6 +107,13 @@
       label: 'Dashboard',
       href: 'index.html',
       icon: 'home'
+    },
+    {
+      type: 'direct',
+      key: 'billing',
+      label: 'Counter Billing',
+      href: 'billing.html',
+      icon: 'billing'
     },
     {
       type: 'group',

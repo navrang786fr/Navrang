@@ -440,3 +440,301 @@ table.admin-table tr:hover td { background: var(--bg-surface-hover); }
   .admin-panel { padding: 14px 12px 32px; }
   .admin-card { padding: 14px; border-radius: 12px; }
 }
+
+/* ==========================================================================
+   POS Counter Billing & Thermal Receipt System
+   ========================================================================== */
+
+.pos-tabs-mobile {
+  display: none; gap: 8px; margin-bottom: 16px;
+}
+.pos-tab-btn {
+  flex: 1; padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--rule);
+  background: var(--bg-surface); color: var(--ink); font-weight: 700; font-size: 13px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.pos-tab-btn.active {
+  background: var(--emerald-gradient); color: #fff; border-color: var(--maroon-deep);
+  box-shadow: 0 2px 6px rgba(14, 77, 38, 0.25);
+}
+
+.pos-workspace {
+  display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 20px; align-items: flex-start;
+}
+@media (max-width: 960px) {
+  .pos-tabs-mobile { display: flex; }
+  .pos-workspace { display: block; }
+  .pos-col-menu { display: block; }
+  .pos-col-bill { display: none; }
+  .pos-col-menu.tab-hidden, .pos-col-bill.tab-hidden { display: none !important; }
+  .pos-col-menu.tab-visible, .pos-col-bill.tab-visible { display: block !important; }
+}
+
+/* Order Meta Top Bar */
+.pos-meta-bar {
+  display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 12px; margin-bottom: 14px;
+}
+@media (max-width: 600px) {
+  .pos-meta-bar { grid-template-columns: 1fr; gap: 10px; }
+}
+
+/* Category Filter Pills */
+.pos-cat-pills {
+  display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+.pos-cat-pills::-webkit-scrollbar { height: 4px; }
+.pos-cat-pills::-webkit-scrollbar-thumb { background: rgba(14, 77, 38, 0.2); border-radius: 4px; }
+.pos-cat-pill {
+  white-space: nowrap; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+  background: var(--bg-surface); border: 1.2px solid var(--rule); color: var(--ink-muted);
+  cursor: pointer; transition: all 0.15s ease;
+}
+.pos-cat-pill:hover { background: var(--bg-surface-soft); color: var(--ink); border-color: #CBD5E1; }
+.pos-cat-pill.active {
+  background: var(--emerald-gradient); color: #fff; border-color: var(--maroon-deep);
+  box-shadow: 0 1px 4px rgba(14, 77, 38, 0.2);
+}
+
+/* Dish Punching Grid */
+.pos-dish-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px;
+  max-height: 520px; overflow-y: auto; padding: 4px;
+}
+.pos-dish-grid::-webkit-scrollbar { width: 4px; }
+.pos-dish-grid::-webkit-scrollbar-thumb { background: rgba(14, 77, 38, 0.25); border-radius: 4px; }
+.pos-dish-card {
+  background: var(--bg-surface); border: 1.2px solid var(--rule); border-radius: var(--radius-md);
+  padding: 10px 8px; text-align: left; cursor: pointer; transition: all 0.12s ease;
+  position: relative; display: flex; flex-direction: column; justify-content: space-between;
+  min-height: 84px; box-shadow: var(--shadow-xs); user-select: none;
+}
+.pos-dish-card:hover {
+  transform: translateY(-2px); border-color: var(--maroon); box-shadow: var(--shadow-sm);
+}
+.pos-dish-card:active { transform: scale(0.96); background: var(--bg-surface-soft); }
+.pos-dish-id {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700;
+  background: rgba(15, 23, 42, 0.06); color: var(--ink-muted);
+  padding: 1px 5px; border-radius: 4px; display: inline-block;
+}
+.pos-dish-name {
+  font-size: 12.5px; font-weight: 700; color: var(--ink); margin: 4px 0 2px;
+  line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.pos-dish-te {
+  font-size: 10.5px; color: var(--ink-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pos-dish-footer {
+  display: flex; align-items: center; justify-content: space-between; margin-top: 6px;
+}
+.pos-dish-price {
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700; color: var(--maroon);
+}
+.pos-dish-dot {
+  width: 10px; height: 10px; border: 1.5px solid currentColor;
+  display: inline-flex; align-items: center; justify-content: center; border-radius: 2px;
+}
+.pos-dish-dot::after { content: ''; width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+.pos-dish-dot.veg { color: var(--leaf); }
+.pos-dish-dot.nonveg { color: var(--nonveg); }
+
+/* Live Bill Panel */
+.pos-bill-card {
+  background: var(--bg-surface); border: 1.5px solid var(--rule); border-radius: var(--radius-lg);
+  padding: 16px; box-shadow: var(--shadow-md); position: sticky; top: 76px;
+}
+.pos-bill-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 12px; border-bottom: 1.5px dashed var(--rule); margin-bottom: 12px;
+}
+.pos-bill-no-badge {
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
+  color: var(--maroon); background: rgba(14, 77, 38, 0.08); border: 1px solid rgba(14, 77, 38, 0.2);
+  padding: 3px 8px; border-radius: 6px;
+}
+
+/* Cart Items Table */
+.pos-cart-wrap {
+  max-height: 260px; overflow-y: auto; margin-bottom: 12px; border-bottom: 1px dashed var(--rule);
+}
+.pos-cart-wrap::-webkit-scrollbar { width: 4px; }
+.pos-cart-wrap::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+.pos-cart-item {
+  display: flex; align-items: center; gap: 8px; padding: 7px 0; font-size: 13px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+.pos-cart-item:last-child { border-bottom: none; }
+.pos-cart-name { flex: 1; min-width: 0; }
+.pos-cart-title { font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pos-cart-unit { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-muted); }
+.pos-cart-stepper {
+  display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 6px;
+  background: var(--bg-surface-soft); overflow: hidden;
+}
+.pos-step-btn {
+  width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;
+  color: var(--ink);
+}
+.pos-step-btn:hover { background: rgba(0,0,0,0.06); }
+.pos-step-val {
+  width: 28px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700;
+}
+.pos-cart-total {
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
+  color: var(--maroon-deep); min-width: 54px; text-align: right;
+}
+.pos-cart-remove {
+  background: none; border: none; color: #DC2626; opacity: 0.6; cursor: pointer;
+  padding: 3px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+}
+.pos-cart-remove:hover { opacity: 1; background: rgba(220, 38, 38, 0.1); }
+
+/* Quick Custom Item Row */
+.pos-custom-row {
+  display: flex; gap: 6px; margin-bottom: 12px;
+}
+.pos-custom-row input {
+  font-size: 12px; padding: 6px 8px; border: 1px solid var(--rule); border-radius: 6px; min-height: 32px;
+}
+
+/* Bill Calculation Breakdown */
+.pos-calc-rows {
+  display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; margin-bottom: 12px;
+}
+.pos-calc-row {
+  display: flex; justify-content: space-between; align-items: center; color: var(--ink-muted);
+}
+.pos-calc-row strong { color: var(--ink); font-weight: 600; }
+.pos-calc-val {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: var(--ink);
+}
+.pos-total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 8px; border-top: 1.5px solid var(--rule); margin-top: 4px;
+}
+.pos-total-row .lbl {
+  font-size: 15px; font-weight: 800; color: var(--maroon-deep); text-transform: uppercase;
+}
+.pos-total-row .val {
+  font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 800; color: var(--maroon);
+}
+
+/* Payment Mode Pills */
+.pos-pay-modes {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px;
+}
+.pos-pay-btn {
+  border: 1.2px solid var(--rule); background: var(--bg-surface-soft); border-radius: 8px;
+  padding: 8px 4px; font-size: 11.5px; font-weight: 700; color: var(--ink); cursor: pointer;
+  text-align: center; transition: all 0.12s ease;
+}
+.pos-pay-btn:hover { background: #E2E8F0; }
+.pos-pay-btn.active {
+  background: var(--maroon-deep); color: #fff; border-color: var(--maroon-deep);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Primary Action Buttons */
+.pos-actions {
+  display: grid; grid-template-columns: 2fr 1fr; gap: 8px;
+}
+.pos-punch-btn {
+  background: var(--emerald-gradient); color: #fff; border: none; border-radius: 10px;
+  padding: 12px; font-size: 14px; font-weight: 800; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 3px 8px rgba(14, 77, 38, 0.3); transition: all 0.12s ease;
+}
+.pos-punch-btn:hover { filter: brightness(1.08); box-shadow: 0 5px 12px rgba(14, 77, 38, 0.38); }
+.pos-punch-btn:active { transform: scale(0.97); }
+
+/* Thermal Receipt Slip Modal */
+.receipt-modal-backdrop {
+  position: fixed; inset: 0; z-index: 100; background: rgba(6, 24, 13, 0.7);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+  backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+}
+.receipt-modal-backdrop.open { opacity: 1; pointer-events: auto; }
+.receipt-modal-card {
+  background: #fff; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+  max-width: 440px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 20px;
+  position: relative;
+}
+
+/* 80mm Thermal Receipt Layout (CSS) */
+.thermal-receipt {
+  width: 100%; max-width: 340px; margin: 0 auto; background: #fff;
+  font-family: 'IBM Plex Mono', 'Courier New', Courier, monospace;
+  color: #000; font-size: 12.5px; line-height: 1.35; padding: 12px 10px;
+  border: 1px solid #E2E8F0; border-radius: 8px;
+}
+.thermal-receipt-header {
+  text-align: center; margin-bottom: 10px;
+}
+.thermal-receipt-title {
+  font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 3px;
+}
+.thermal-receipt-sub {
+  font-size: 10.5px; line-height: 1.3;
+}
+.thermal-divider {
+  border-top: 1px dashed #000; margin: 8px 0;
+}
+.thermal-divider-double {
+  border-top: 1.5px solid #000; border-bottom: 1.5px solid #000; height: 3px; margin: 8px 0;
+}
+.thermal-row {
+  display: flex; justify-content: space-between; font-size: 11.5px;
+}
+.thermal-row strong { font-weight: 700; }
+.thermal-items-head {
+  display: flex; font-size: 11px; font-weight: 800; border-bottom: 1px dashed #000; padding-bottom: 4px;
+}
+.thermal-item-row {
+  display: flex; font-size: 11.5px; padding: 3px 0;
+}
+.thermal-col-name { flex: 1; padding-right: 4px; word-break: break-word; }
+.thermal-col-qty { width: 34px; text-align: center; }
+.thermal-col-rate { width: 44px; text-align: right; }
+.thermal-col-amt { width: 52px; text-align: right; font-weight: 700; }
+
+.thermal-qr-box {
+  text-align: center; margin: 12px auto 6px; padding-top: 8px; border-top: 1px dashed #000;
+}
+.thermal-qr-box img {
+  width: 110px; height: 110px; image-rendering: pixelated; margin: 0 auto 4px; display: block;
+}
+.thermal-qr-caption {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+}
+
+/* Print Only Styles (ESC/POS Thermal Printer Optimization) */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+  html, body {
+    background: #fff !important; color: #000 !important; margin: 0 !important; padding: 0 !important;
+  }
+  /* Hide all regular interface elements */
+  .admin-header-bar, .admin-sidebar, .sidebar-overlay, .pos-workspace,
+  .pos-tabs-mobile, .admin-card, .receipt-modal-actions, .admin-sidebar-footer,
+  h2, .btn, button {
+    display: none !important;
+  }
+  .admin-shell, .admin-body, .admin-main, .admin-panel, .receipt-modal-backdrop, .receipt-modal-card {
+    display: block !important; padding: 0 !important; margin: 0 !important;
+    box-shadow: none !important; border: none !important; background: transparent !important;
+    position: static !important; width: 100% !important; max-width: 100% !important;
+  }
+  .thermal-receipt {
+    width: 76mm !important; max-width: 76mm !important; margin: 0 auto !important;
+    padding: 2mm 1mm !important; border: none !important; border-radius: 0 !important;
+    box-shadow: none !important; font-size: 11.5px !important; color: #000 !important;
+    page-break-inside: avoid;
+  }
+}
+

@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Counter Billing & POS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06180D">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .pos-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
+  }
+  .pos-toolbar h2 { margin: 0; }
+  .pos-toolbar-actions {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  }
+
+  .pos-register-kpis {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;
+  }
+  @media (max-width: 760px) {
+    .pos-register-kpis { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .register-kpi-card {
+    background: var(--bg-surface); border: 1px solid var(--rule); border-radius: var(--radius-md);
+    padding: 14px 12px; text-align: center; box-shadow: var(--shadow-xs);
+  }
+  .register-kpi-card .val {
+    font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 700; color: var(--maroon-deep);
+  }
+  .register-kpi-card .lbl {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--ink-muted);
+    font-weight: 700; margin-top: 4px;
+  }
+
+  .type-pill {
+    padding: 6px 14px; border-radius: 20px; border: 1.2px solid var(--rule);
+    background: var(--bg-surface); font-size: 12px; font-weight: 700; color: var(--ink);
+    cursor: pointer; transition: all 0.12s ease;
+  }
+  .type-pill:hover { background: var(--bg-surface-soft); border-color: #CBD5E1; }
+  .type-pill.active {
+    background: var(--emerald-gradient); color: #fff; border-color: var(--maroon-deep);
+    box-shadow: 0 1px 3px rgba(14, 77, 38, 0.2);
+  }
+
+  .waiter-chip {
+    font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 12px;
+    border: 1px solid var(--rule); background: var(--bg-surface-soft); color: var(--ink);
+    cursor: pointer; transition: all 0.1s ease;
+  }
+  .waiter-chip:hover { border-color: var(--maroon); color: var(--maroon); }
+
+  .tax-toggle-btn {
+    border: 1px solid var(--rule); background: var(--bg-surface-soft); font-size: 11.5px;
+    font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; color: var(--ink-muted);
+  }
+  .tax-toggle-btn.active {
+    background: var(--maroon-deep); color: #fff; border-color: var(--maroon-deep);
+  }
+
+  .amount-words-text {
+    font-size: 11px; color: var(--ink-muted); font-style: italic; text-align: right;
+    margin-top: 2px; line-height: 1.3;
+  }
+
+  .reprint-btn {
+    background: var(--bg-surface-soft); border: 1px solid var(--rule); color: var(--maroon);
+    font-weight: 700; font-size: 11px; padding: 4px 8px; border-radius: 6px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .reprint-btn:hover { background: rgba(14, 77, 38, 0.08); border-color: var(--maroon); }
+
+  .settings-modal-card {
+    background: #fff; border-radius: 16px; box-shadow: var(--shadow-xl); border: 1px solid var(--rule);
+    max-width: 460px; width: 100%; padding: 22px; position: relative;
+  }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-header-bar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <img src="../navrang_logo.png" alt="Navrang">
+    <h1>Counter Billing</h1>
+  </div>
+
+  <div class="admin-body">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="admin-sidebar" id="adminSidebar">
+      <nav class="admin-nav" id="adminNav"></nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-panel">
+        
+        <!-- Toolbar -->
+        <div class="pos-toolbar">
+          <div>
+            <h2>Counter Billing &amp; Thermal POS</h2>
+            <p style="margin:2px 0 0;font-size:12.5px;color:var(--ink-muted);">
+              Punch verbal waiter orders, generate bills with unique IDs, and print on 80mm Wi-Fi/POS printers.
+            </p>
+          </div>
+          <div class="pos-toolbar-actions">
+            <button type="button" class="admin-btn admin-btn-secondary" id="btnToggleRegister" style="font-size:12.5px;padding:8px 14px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              <span>Today's Bills (<strong id="badgeTodayCount">0</strong>)</span>
+            </button>
+            <button type="button" class="admin-btn admin-btn-secondary" id="btnOpenSettings" title="Configure restaurant info on bill" style="font-size:12.5px;padding:8px 12px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </button>
+            <button type="button" class="admin-btn" id="btnResetOrder" style="font-size:12.5px;padding:8px 14px;">
+              + New Order
+            </button>
+          </div>
+        </div>
+
+        <!-- Today's Register Summary View (Collapsible) -->
+        <div id="registerSection" style="display:none;margin-bottom:24px;">
+          <div class="pos-register-kpis">
+            <div class="register-kpi-card"><div class="val" id="kpiTodayBills">0</div><div class="lbl">Bills Today</div></div>
+            <div class="register-kpi-card"><div class="val" id="kpiTodaySales">₹0</div><div class="lbl">Total Sales</div></div>
+            <div class="register-kpi-card"><div class="val" id="kpiTodayCash">₹0</div><div class="lbl">Cash Collection</div></div>
+            <div class="register-kpi-card"><div class="val" id="kpiTodayUpi">₹0</div><div class="lbl">UPI / Digital</div></div>
+          </div>
+          <div class="admin-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+              <h3 style="margin:0;font-size:15px;color:var(--maroon-deep);">Today's Punched Bills</h3>
+              <input type="text" id="filterBillsInput" placeholder="Search bill no, table, waiter…" style="font-size:12px;padding:6px 10px;border:1px solid var(--rule);border-radius:6px;max-width:240px;">
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="registerTable">
+                <thead>
+                  <tr>
+                    <th>Bill No</th>
+                    <th>Time</th>
+                    <th>Table / Type</th>
+                    <th>Waiter</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="registerTableBody">
+                  <tr><td colspan="8" class="admin-empty">No bills punched today yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile View Tabs -->
+        <div class="pos-tabs-mobile">
+          <button type="button" class="pos-tab-btn active" id="tabBtnMenu">
+            <span>🍽️ 1. Punch Dishes</span>
+          </button>
+          <button type="button" class="pos-tab-btn" id="tabBtnBill">
+            <span>🧾 2. Active Bill (<strong id="mobileCartCount">0</strong>)</span>
+          </button>
+        </div>
+
+        <!-- Main POS Workspace -->
+        <div class="pos-workspace">
+          
+          <!-- Column 1: Order Punching & Menu Catalog -->
+          <div class="pos-col-menu tab-visible">
+            
+            <!-- Order Meta & Table Selector -->
+            <div class="admin-card" style="margin-bottom:14px;padding:14px;">
+              <div class="pos-meta-bar">
+                <div class="admin-field" style="margin-bottom:0;">
+                  <label>Order Type</label>
+                  <div style="display:flex;gap:4px;margin-top:2px;">
+                    <button type="button" class="type-pill active" data-type="Dine-In">Dine-In</button>
+                    <button type="button" class="type-pill" data-type="Takeaway">Parcel</button>
+                    <button type="button" class="type-pill" data-type="Delivery">Delivery</button>
+                  </div>
+                </div>
+                <div class="admin-field" style="margin-bottom:0;">
+                  <label for="tableSelect">Table Number</label>
+                  <div style="display:flex;gap:6px;">
+                    <select id="tableSelect" style="font-weight:700;">
+                      <option value="Table 1">Table 1</option>
+                      <option value="Table 2">Table 2</option>
+                      <option value="Table 3">Table 3</option>
+                      <option value="Table 4" selected>Table 4</option>
+                      <option value="Table 5">Table 5</option>
+                      <option value="Table 6">Table 6</option>
+                      <option value="Table 7">Table 7</option>
+                      <option value="Table 8">Table 8</option>
+                      <option value="Table 9">Table 9</option>
+                      <option value="Table 10">Table 10</option>
+                      <option value="Table 11">Table 11</option>
+                      <option value="Table 12">Table 12</option>
+                      <option value="Parcel">Parcel / Counter</option>
+                      <option value="VIP Cabin">VIP Cabin</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="admin-field" style="margin-bottom:0;">
+                  <label for="waiterInput">Waiter / Server</label>
+                  <input type="text" id="waiterInput" placeholder="Waiter name" value="Raju" style="font-weight:600;">
+                  <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;">
+                    <span class="waiter-chip" onclick="setWaiter('Raju')">Raju</span>
+                    <span class="waiter-chip" onclick="setWaiter('Ravi')">Ravi</span>
+                    <span class="waiter-chip" onclick="setWaiter('Suresh')">Suresh</span>
+                    <span class="waiter-chip" onclick="setWaiter('Kiran')">Kiran</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fast Search & Category Filters -->
+            <div class="admin-card" style="padding:14px;">
+              <div style="position:relative;margin-bottom:12px;">
+                <input type="text" id="dishSearchInput" placeholder="🔍 Type Dish # (e.g. 16) or Name (e.g. Biryani, Paneer, Chicken)… [Press Enter to Add]" style="font-size:14px;padding:10px 14px;border:1.5px solid var(--rule);border-radius:10px;width:100%;outline:none;" autofocus>
+              </div>
+
+              <!-- Category Pills -->
+              <div class="pos-cat-pills" id="categoryPills">
+                <button type="button" class="pos-cat-pill active" data-cat="all">All Items</button>
+                <button type="button" class="pos-cat-pill" data-cat="biryani">Biryani</button>
+                <button type="button" class="pos-cat-pill" data-cat="non-veg-starter">Non-Veg Starters</button>
+                <button type="button" class="pos-cat-pill" data-cat="veg-curries">Veg Curries</button>
+                <button type="button" class="pos-cat-pill" data-cat="chicken-curries">Non-Veg Curries</button>
+                <button type="button" class="pos-cat-pill" data-cat="roti">Roti / Breads</button>
+                <button type="button" class="pos-cat-pill" data-cat="veg-starters">Veg Starters</button>
+                <button type="button" class="pos-cat-pill" data-cat="fried-rice">Fried Rice</button>
+                <button type="button" class="pos-cat-pill" data-cat="egg-curries">Egg Curries</button>
+                <button type="button" class="pos-cat-pill" data-cat="specials">Specials</button>
+              </div>
+
+              <!-- Dish Punching Grid -->
+              <div class="pos-dish-grid" id="posDishGrid">
+                <div class="admin-loading">Loading menu items…</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column 2: Live Bill Summary & Totals -->
+          <div class="pos-col-bill tab-hidden">
+            <div class="pos-bill-card">
+              
+              <!-- Bill Header -->
+              <div class="pos-bill-header">
+                <div>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span class="pos-bill-no-badge" id="previewBillNo">NAV-260905-001</span>
+                    <span class="admin-badge active" id="badgeOrderType">Dine-In</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--ink-muted);margin-top:4px;" id="billDateTime">–</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-weight:700;font-size:13px;color:var(--maroon-deep);" id="badgeTable">Table 4</div>
+                  <div style="font-size:11px;color:var(--ink-muted);" id="badgeWaiter">Server: Raju</div>
+                </div>
+              </div>
+
+              <!-- Cart Line Items -->
+              <div class="pos-cart-wrap" id="posCartWrap">
+                <div class="admin-empty" id="cartEmptyMsg" style="padding:32px 10px;">
+                  No items added yet.<br>
+                  <span style="font-size:12px;opacity:0.8;">Click dishes on the left or type dish number above.</span>
+                </div>
+                <div id="cartItemsList"></div>
+              </div>
+
+              <!-- Custom Item Entry Row -->
+              <div class="pos-custom-row">
+                <input type="text" id="customItemName" placeholder="Special / Custom item" style="flex:1;">
+                <input type="number" id="customItemPrice" placeholder="₹ Rate" style="width:70px;">
+                <button type="button" class="admin-btn admin-btn-secondary" id="btnAddCustomItem" style="padding:6px 10px;font-size:11.5px;min-height:32px;">+ Add</button>
+              </div>
+
+              <!-- Calculations Breakdown -->
+              <div class="pos-calc-rows">
+                <div class="pos-calc-row">
+                  <span>Subtotal (<span id="cartItemsCount">0</span> items)</span>
+                  <span class="pos-calc-val" id="calcSubtotal">₹0.00</span>
+                </div>
+                
+                <!-- Tax / GST Toggle -->
+                <div class="pos-calc-row">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <strong>GST Option:</strong>
+                    <button type="button" class="tax-toggle-btn active" id="btnGstNone" onclick="setGstMode('none')">No Tax</button>
+                    <button type="button" class="tax-toggle-btn" id="btnGst5" onclick="setGstMode('5')">5% GST</button>
+                  </div>
+                  <span class="pos-calc-val" id="calcGstAmount">₹0.00</span>
+                </div>
+                <div class="pos-calc-row" id="gstBreakdownRow" style="display:none;font-size:11px;padding-left:10px;">
+                  <span>CGST (2.5%) + SGST (2.5%)</span>
+                  <span id="calcGstBreakdown">₹0.00 + ₹0.00</span>
+                </div>
+
+                <!-- Parcel / Container Charge -->
+                <div class="pos-calc-row">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span>Parcel Charge</span>
+                    <input type="number" id="parcelChargeInput" value="0" style="width:55px;padding:2px 5px;font-size:11.5px;border:1px solid var(--rule);border-radius:4px;min-height:24px;">
+                  </div>
+                  <span class="pos-calc-val" id="calcParcel">₹0.00</span>
+                </div>
+
+                <!-- Discount -->
+                <div class="pos-calc-row">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span>Discount (₹)</span>
+                    <input type="number" id="discountInput" value="0" style="width:55px;padding:2px 5px;font-size:11.5px;border:1px solid var(--rule);border-radius:4px;min-height:24px;">
+                  </div>
+                  <span class="pos-calc-val" id="calcDiscount" style="color:var(--leaf);">-₹0.00</span>
+                </div>
+
+                <!-- Round Off -->
+                <div class="pos-calc-row" style="font-size:11.5px;">
+                  <span>Round Off</span>
+                  <span class="pos-calc-val" id="calcRoundOff">₹0.00</span>
+                </div>
+
+                <!-- Grand Total -->
+                <div class="pos-total-row">
+                  <span class="lbl">Grand Total</span>
+                  <div style="text-align:right;">
+                    <span class="val" id="calcGrandTotal">₹0.00</span>
+                  </div>
+                </div>
+                <div class="amount-words-text" id="calcAmountWords">Zero Rupees Only</div>
+              </div>
+
+              <!-- Payment Mode -->
+              <div style="margin-top:10px;">
+                <label style="display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--ink-muted);margin-bottom:6px;">Payment Method</label>
+                <div class="pos-pay-modes">
+                  <button type="button" class="pos-pay-btn active" data-mode="Cash">💵 Cash</button>
+                  <button type="button" class="pos-pay-btn" data-mode="UPI">📱 UPI / QR</button>
+                  <button type="button" class="pos-pay-btn" data-mode="Card">💳 Card</button>
+                  <button type="button" class="pos-pay-btn" data-mode="Due">⏳ Due</button>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="pos-actions">
+                <button type="button" class="pos-punch-btn" id="btnPunchAndPrint">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                  <span>Punch &amp; Print Bill</span>
+                </button>
+                <button type="button" class="admin-btn admin-btn-secondary" id="btnPreviewBill" style="padding:10px;font-size:12.5px;">
+                  Preview
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     Thermal Receipt Modal & Print Slip (80mm ESC/POS Format)
+     ========================================================================== -->
+<div class="receipt-modal-backdrop" id="receiptModal">
+  <div class="receipt-modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="margin:0;font-size:16px;color:var(--maroon-deep);">Thermal Receipt Slip</h3>
+      <button type="button" onclick="closeReceiptModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-muted);">✕</button>
+    </div>
+
+    <!-- The Printable Thermal Slip -->
+    <div id="thermalPrintContainer">
+      <div class="thermal-receipt" id="thermalReceipt">
+        <div class="thermal-receipt-header">
+          <div class="thermal-receipt-title" id="rcptRestName">NAVRANG RESTAURANT</div>
+          <div class="thermal-receipt-sub" id="rcptRestTagline">Authentic Flavors &amp; Fine Dining</div>
+          <div class="thermal-receipt-sub" id="rcptRestAddress">Dhone, Andhra Pradesh</div>
+          <div class="thermal-receipt-sub" id="rcptRestPhone">Ph: +91 98765 43210</div>
+          <div class="thermal-receipt-sub" id="rcptGstinLine" style="display:none;">GSTIN: <span id="rcptGstin">37AAAAA0000A1Z5</span></div>
+          <div class="thermal-receipt-sub" id="rcptFssaiLine" style="display:none;">FSSAI: <span id="rcptFssai">13621014000123</span></div>
+        </div>
+
+        <div class="thermal-divider-double"></div>
+
+        <div class="thermal-row">
+          <span>Bill No: <strong id="rcptBillNo">NAV-260905-001</strong></span>
+          <span id="rcptDate">05/09/2026</span>
+        </div>
+        <div class="thermal-row">
+          <span>Table: <strong id="rcptTable">Table 4</strong></span>
+          <span id="rcptTime">10:30 AM</span>
+        </div>
+        <div class="thermal-row">
+          <span>Server: <span id="rcptWaiter">Raju</span></span>
+          <span>Type: <strong id="rcptType">Dine-In</strong></span>
+        </div>
+
+        <div class="thermal-divider"></div>
+
+        <!-- Items Table -->
+        <div class="thermal-items-head">
+          <span class="thermal-col-name">ITEM</span>
+          <span class="thermal-col-qty">QTY</span>
+          <span class="thermal-col-rate">RATE</span>
+          <span class="thermal-col-amt">AMT</span>
+        </div>
+        <div id="rcptItemsList"></div>
+
+        <div class="thermal-divider"></div>
+
+        <!-- Totals -->
+        <div class="thermal-row">
+          <span>Subtotal:</span>
+          <strong id="rcptSubtotal">₹0.00</strong>
+        </div>
+        <div class="thermal-row" id="rcptCgstRow" style="display:none;">
+          <span>CGST (2.5%):</span>
+          <span id="rcptCgst">₹0.00</span>
+        </div>
+        <div class="thermal-row" id="rcptSgstRow" style="display:none;">
+          <span>SGST (2.5%):</span>
+          <span id="rcptSgst">₹0.00</span>
+        </div>
+        <div class="thermal-row" id="rcptParcelRow" style="display:none;">
+          <span>Parcel Charges:</span>
+          <span id="rcptParcel">₹0.00</span>
+        </div>
+        <div class="thermal-row" id="rcptDiscountRow" style="display:none;">
+          <span>Discount:</span>
+          <span id="rcptDiscount">-₹0.00</span>
+        </div>
+        <div class="thermal-row">
+          <span>Round Off:</span>
+          <span id="rcptRoundOff">₹0.00</span>
+        </div>
+
+        <div class="thermal-divider-double"></div>
+
+        <div class="thermal-row" style="font-size:14px;">
+          <strong>NET PAYABLE:</strong>
+          <strong id="rcptGrandTotal">₹0.00</strong>
+        </div>
+
+        <div class="thermal-divider"></div>
+
+        <div style="font-size:10.5px;text-align:center;margin:4px 0;" id="rcptWords">
+          Rupees Zero Only
+        </div>
+        <div style="font-size:11px;text-align:center;font-weight:700;margin-bottom:6px;">
+          Paid via: <span id="rcptPaymentMode">Cash</span>
+        </div>
+
+        <!-- Dynamic UPI Payment QR Code -->
+        <div class="thermal-qr-box" id="rcptQrBox">
+          <img id="rcptQrImg" src="" alt="Scan &amp; Pay UPI QR">
+          <div class="thermal-qr-caption">Scan with PhonePe / GPay / Paytm</div>
+        </div>
+
+        <div class="thermal-divider"></div>
+        <div style="text-align:center;font-size:11px;font-weight:700;margin-top:6px;">
+          *** THANK YOU! VISIT AGAIN ***
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="receipt-modal-actions" style="display:flex;gap:8px;margin-top:16px;">
+      <button type="button" class="admin-btn" style="flex:1;" onclick="triggerPrint()">
+        🖨️ Print Receipt (Wi-Fi / POS)
+      </button>
+      <button type="button" class="admin-btn admin-btn-secondary" onclick="copyReceiptText()">
+        📋 Copy Text
+      </button>
+      <button type="button" class="admin-btn admin-btn-secondary" onclick="closeReceiptModal()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     Bill Settings Modal
+     ========================================================================== -->
+<div class="receipt-modal-backdrop" id="settingsModal">
+  <div class="settings-modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h3 style="margin:0;font-size:16px;color:var(--maroon-deep);">Thermal Receipt Header Settings</h3>
+      <button type="button" onclick="closeSettingsModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-muted);">✕</button>
+    </div>
+    <form id="settingsForm">
+      <div class="admin-field">
+        <label>Restaurant Name</label>
+        <input type="text" id="cfgRestName" value="NAVRANG RESTAURANT">
+      </div>
+      <div class="admin-field">
+        <label>Tagline</label>
+        <input type="text" id="cfgRestTagline" value="Authentic Flavors & Fine Dining">
+      </div>
+      <div class="admin-field">
+        <label>Address Line</label>
+        <input type="text" id="cfgRestAddress" value="Dhone, Andhra Pradesh">
+      </div>
+      <div class="admin-field">
+        <label>Phone Number</label>
+        <input type="text" id="cfgRestPhone" value="+91 98765 43210">
+      </div>
+      <div class="admin-field">
+        <label>UPI ID (for dynamic QR scan &amp; pay)</label>
+        <input type="text" id="cfgUpiId" value="navrang@upi" placeholder="e.g. yourname@oksbi / merchant@upi">
+      </div>
+      <div class="admin-field">
+        <label>GSTIN (Optional)</label>
+        <input type="text" id="cfgGstin" value="37AAAAA0000A1Z5" placeholder="Optional GSTIN">
+      </div>
+      <div class="admin-field">
+        <label>FSSAI License No (Optional)</label>
+        <input type="text" id="cfgFssai" value="13621014000123" placeholder="Optional FSSAI">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button type="submit" class="admin-btn" style="flex:1;">Save Settings</button>
+        <button type="button" class="admin-btn admin-btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script src="../menu-data.js"></script>
+<script>
+(function () {
+  AdminShared.requireAuthOrRedirect();
+  AdminShared.renderNav('billing');
+
+  var STORAGE_BILLS = 'navrang_pos_bills';
+  var STORAGE_SETTINGS = 'navrang_pos_settings';
+
+  // Flat menu catalog
+  var allDishes = [];
+  if (window.MENU_DATA) {
+    Object.keys(window.MENU_DATA).forEach(function (catKey) {
+      var list = window.MENU_DATA[catKey];
+      if (Array.isArray(list)) {
+        list.forEach(function (d) {
+          if (d.status !== 'Inactive') {
+            allDishes.push(Object.assign({}, d, { category: catKey, price: Number(d.price) || 0 }));
+          }
+        });
+      }
+    });
+  }
+
+  // Active Cart State
+  var cart = []; // { id, name, nameTe, price, qty, isCustom }
+  var activeOrderType = 'Dine-In';
+  var activeGstMode = 'none'; // 'none' or '5'
+  var activePaymentMode = 'Cash';
+
+  // Load Settings
+  function getSettings() {
+    try {
+      var saved = localStorage.getItem(STORAGE_SETTINGS);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      restName: 'NAVRANG RESTAURANT',
+      tagline: 'Authentic Flavors & Fine Dining',
+      address: 'Dhone, Andhra Pradesh',
+      phone: '+91 98765 43210',
+      upiId: 'navrang@upi',
+      gstin: '37AAAAA0000A1Z5',
+      fssai: '13621014000123'
+    };
+  }
+
+  function saveSettings(cfg) {
+    localStorage.setItem(STORAGE_SETTINGS, JSON.stringify(cfg));
+  }
+
+  // Stored Bills Register
+  function getStoredBills() {
+    try {
+      var saved = localStorage.getItem(STORAGE_BILLS);
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveStoredBills(bills) {
+    localStorage.setItem(STORAGE_BILLS, JSON.stringify(bills));
+  }
+
+  // Unique Bill Number Generator: NAV-YYMMDD-XXX
+  function generateNextBillNo() {
+    var now = new Date();
+    var yy = String(now.getFullYear()).slice(2);
+    var mm = String(now.getMonth() + 1).padStart(2, '0');
+    var dd = String(now.getDate()).padStart(2, '0');
+    var datePrefix = 'NAV-' + yy + mm + dd + '-';
+
+    var bills = getStoredBills();
+    var maxSeq = 0;
+    bills.forEach(function (b) {
+      if (b.billNo && b.billNo.startsWith(datePrefix)) {
+        var seqPart = parseInt(b.billNo.replace(datePrefix, ''), 10);
+        if (!isNaN(seqPart) && seqPart > maxSeq) maxSeq = seqPart;
+      }
+    });
+    return datePrefix + String(maxSeq + 1).padStart(3, '0');
+  }
+
+  // Indian currency in words
+  function numberToIndianWords(num) {
+    num = Math.round(Number(num) || 0);
+    if (num <= 0) return 'Zero Rupees Only';
+    var a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+    var b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    function inWords(n) {
+      if (n < 20) return a[n];
+      var digit = n % 10;
+      return b[Math.floor(n / 10)] + (digit ? ' ' + a[digit] : ' ');
+    }
+
+    var str = '';
+    var crore = Math.floor(num / 10000000);
+    num %= 10000000;
+    var lakh = Math.floor(num / 100000);
+    num %= 100000;
+    var thousand = Math.floor(num / 1000);
+    num %= 1000;
+    var hundred = Math.floor(num / 100);
+    var rest = num % 100;
+
+    if (crore > 0) str += inWords(crore) + 'Crore ';
+    if (lakh > 0) str += inWords(lakh) + 'Lakh ';
+    if (thousand > 0) str += inWords(thousand) + 'Thousand ';
+    if (hundred > 0) str += inWords(hundred) + 'Hundred ';
+    if (rest > 0) {
+      if (str !== '') str += 'and ';
+      str += inWords(rest);
+    }
+    return 'Rupees ' + str.trim() + ' Only';
+  }
+
+  // Render Dishes in Catalog Grid
+  var currentCategoryFilter = 'all';
+  function renderDishes(query, category) {
+    var grid = document.getElementById('posDishGrid');
+    if (!grid) return;
+
+    var filtered = allDishes.filter(function (d) {
+      if (category && category !== 'all' && d.category !== category) return false;
+      if (query) {
+        var q = query.toLowerCase().trim();
+        var idMatch = String(d.id) === q || String(d.id).startsWith(q);
+        var nameMatch = d.name.toLowerCase().indexOf(q) !== -1;
+        var nameTeMatch = d.nameTe && d.nameTe.toLowerCase().indexOf(q) !== -1;
+        return idMatch || nameMatch || nameTeMatch;
+      }
+      return true;
+    });
+
+    if (!filtered.length) {
+      grid.innerHTML = '<div class="admin-empty" style="grid-column:1/-1;padding:32px;">No dishes matching your search.</div>';
+      return;
+    }
+
+    var html = '';
+    filtered.forEach(function (d) {
+      html += '<div class="pos-dish-card" onclick="addToCart(' + d.id + ')">' +
+        '<div>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+            '<span class="pos-dish-id">#' + d.id + '</span>' +
+            '<span class="pos-dish-dot ' + (d.veg ? 'veg' : 'nonveg') + '"></span>' +
+          '</div>' +
+          '<div class="pos-dish-name">' + AdminShared.esc(d.name) + '</div>' +
+          '<div class="pos-dish-te">' + AdminShared.esc(d.nameTe || '') + '</div>' +
+        '</div>' +
+        '<div class="pos-dish-footer">' +
+          '<span class="pos-dish-price">₹' + d.price + '</span>' +
+          '<span style="font-size:11px;font-weight:700;color:var(--maroon);">+ ADD</span>' +
+        '</div>' +
+      '</div>';
+    });
+
+    grid.innerHTML = html;
+  }
+
+  // Cart Operations
+  window.addToCart = function (dishId) {
+    var dish = allDishes.find(function (d) { return d.id === dishId; });
+    if (!dish) return;
+
+    var existing = cart.find(function (it) { return it.id === dish.id; });
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({
+        id: dish.id,
+        name: dish.name,
+        nameTe: dish.nameTe || '',
+        price: dish.price,
+        qty: 1,
+        veg: dish.veg,
+        isCustom: false
+      });
+    }
+    renderCart();
+  };
+
+  window.changeQty = function (index, delta) {
+    if (!cart[index]) return;
+    cart[index].qty += delta;
+    if (cart[index].qty <= 0) {
+      cart.splice(index, 1);
+    }
+    renderCart();
+  };
+
+  window.removeCartItem = function (index) {
+    cart.splice(index, 1);
+    renderCart();
+  };
+
+  // Calculations
+  function calculateBill() {
+    var subtotal = cart.reduce(function (sum, it) { return sum + (it.price * it.qty); }, 0);
+    var parcelCharge = Math.max(0, Number(document.getElementById('parcelChargeInput').value) || 0);
+    var discount = Math.max(0, Number(document.getElementById('discountInput').value) || 0);
+
+    var gstAmount = 0;
+    var cgst = 0;
+    var sgst = 0;
+    if (activeGstMode === '5') {
+      cgst = Math.round((subtotal * 0.025) * 100) / 100;
+      sgst = Math.round((subtotal * 0.025) * 100) / 100;
+      gstAmount = cgst + sgst;
+    }
+
+    var rawTotal = Math.max(0, subtotal + gstAmount + parcelCharge - discount);
+    var grandTotal = Math.round(rawTotal);
+    var roundOff = Math.round((grandTotal - rawTotal) * 100) / 100;
+
+    return {
+      subtotal: subtotal,
+      cgst: cgst,
+      sgst: sgst,
+      gstAmount: gstAmount,
+      parcelCharge: parcelCharge,
+      discount: discount,
+      roundOff: roundOff,
+      grandTotal: grandTotal,
+      words: numberToIndianWords(grandTotal)
+    };
+  }
+
+  function renderCart() {
+    var list = document.getElementById('cartItemsList');
+    var emptyMsg = document.getElementById('cartEmptyMsg');
+    var countBadge = document.getElementById('cartItemsCount');
+    var mobileBadge = document.getElementById('mobileCartCount');
+
+    var totalCount = cart.reduce(function (c, it) { return c + it.qty; }, 0);
+    countBadge.textContent = totalCount;
+    if (mobileBadge) mobileBadge.textContent = totalCount;
+
+    if (!cart.length) {
+      emptyMsg.style.display = 'block';
+      list.innerHTML = '';
+    } else {
+      emptyMsg.style.display = 'none';
+      var html = '';
+      cart.forEach(function (it, idx) {
+        var lineTotal = it.price * it.qty;
+        html += '<div class="pos-cart-item">' +
+          '<div class="pos-cart-name">' +
+            '<div class="pos-cart-title">' + AdminShared.esc(it.name) + '</div>' +
+            '<div class="pos-cart-unit">₹' + it.price + ' each</div>' +
+          '</div>' +
+          '<div class="pos-cart-stepper">' +
+            '<button type="button" class="pos-step-btn" onclick="changeQty(' + idx + ', -1)">-</button>' +
+            '<span class="pos-step-val">' + it.qty + '</span>' +
+            '<button type="button" class="pos-step-btn" onclick="changeQty(' + idx + ', 1)">+</button>' +
+          '</div>' +
+          '<div class="pos-cart-total">₹' + lineTotal + '</div>' +
+          '<button type="button" class="pos-cart-remove" onclick="removeCartItem(' + idx + ')" title="Remove">✕</button>' +
+        '</div>';
+      });
+      list.innerHTML = html;
+    }
+
+    var calc = calculateBill();
+    document.getElementById('calcSubtotal').textContent = '₹' + calc.subtotal.toFixed(2);
+    document.getElementById('calcGstAmount').textContent = '₹' + calc.gstAmount.toFixed(2);
+    document.getElementById('calcGstBreakdown').textContent = '₹' + calc.cgst.toFixed(2) + ' + ₹' + calc.sgst.toFixed(2);
+    document.getElementById('calcParcel').textContent = '₹' + calc.parcelCharge.toFixed(2);
+    document.getElementById('calcDiscount').textContent = '-₹' + calc.discount.toFixed(2);
+    document.getElementById('calcRoundOff').textContent = (calc.roundOff >= 0 ? '+' : '') + '₹' + calc.roundOff.toFixed(2);
+    document.getElementById('calcGrandTotal').textContent = '₹' + calc.grandTotal.toFixed(2);
+    document.getElementById('calcAmountWords').textContent = calc.words;
+  }
+
+  // Tax Mode Toggle
+  window.setGstMode = function (mode) {
+    activeGstMode = mode;
+    document.getElementById('btnGstNone').classList.toggle('active', mode === 'none');
+    document.getElementById('btnGst5').classList.toggle('active', mode === '5');
+    document.getElementById('gstBreakdownRow').style.display = mode === '5' ? 'flex' : 'none';
+    renderCart();
+  };
+
+  // Waiter Setter
+  window.setWaiter = function (name) {
+    document.getElementById('waiterInput').value = name;
+    updateBillMetaBadges();
+  };
+
+  function updateBillMetaBadges() {
+    var table = document.getElementById('tableSelect').value;
+    var waiter = document.getElementById('waiterInput').value.trim() || 'Staff';
+    document.getElementById('badgeTable').textContent = table;
+    document.getElementById('badgeWaiter').textContent = 'Server: ' + waiter;
+    document.getElementById('badgeOrderType').textContent = activeOrderType;
+
+    var now = new Date();
+    document.getElementById('billDateTime').textContent = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Build Printable Thermal Bill Data
+  function buildBillData() {
+    var calc = calculateBill();
+    var now = new Date();
+    var billNo = generateNextBillNo();
+    var table = document.getElementById('tableSelect').value;
+    var waiter = document.getElementById('waiterInput').value.trim() || 'Staff';
+    var settings = getSettings();
+
+    return {
+      billNo: billNo,
+      timestamp: now.toISOString(),
+      dateStr: now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      timeStr: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      table: table,
+      waiter: waiter,
+      orderType: activeOrderType,
+      paymentMode: activePaymentMode,
+      items: cart.map(function (it) {
+        return { name: it.name, qty: it.qty, price: it.price, total: it.price * it.qty };
+      }),
+      subtotal: calc.subtotal,
+      cgst: calc.cgst,
+      sgst: calc.sgst,
+      gstAmount: calc.gstAmount,
+      parcelCharge: calc.parcelCharge,
+      discount: calc.discount,
+      roundOff: calc.roundOff,
+      grandTotal: calc.grandTotal,
+      amountWords: calc.words,
+      settings: settings
+    };
+  }
+
+  // Fill Thermal Slip DOM
+  function populateThermalSlip(bill) {
+    var s = bill.settings || getSettings();
+
+    document.getElementById('rcptRestName').textContent = s.restName || 'NAVRANG RESTAURANT';
+    document.getElementById('rcptRestTagline').textContent = s.tagline || 'Authentic Flavors & Fine Dining';
+    document.getElementById('rcptRestAddress').textContent = s.address || 'Dhone, Andhra Pradesh';
+    document.getElementById('rcptRestPhone').textContent = 'Ph: ' + (s.phone || '');
+
+    if (s.gstin && bill.gstAmount > 0) {
+      document.getElementById('rcptGstin').textContent = s.gstin;
+      document.getElementById('rcptGstinLine').style.display = 'block';
+    } else {
+      document.getElementById('rcptGstinLine').style.display = 'none';
+    }
+
+    if (s.fssai) {
+      document.getElementById('rcptFssai').textContent = s.fssai;
+      document.getElementById('rcptFssaiLine').style.display = 'block';
+    } else {
+      document.getElementById('rcptFssaiLine').style.display = 'none';
+    }
+
+    document.getElementById('rcptBillNo').textContent = bill.billNo;
+    document.getElementById('rcptDate').textContent = bill.dateStr;
+    document.getElementById('rcptTime').textContent = bill.timeStr;
+    document.getElementById('rcptTable').textContent = bill.table;
+    document.getElementById('rcptWaiter').textContent = bill.waiter;
+    document.getElementById('rcptType').textContent = bill.orderType;
+
+    // Items list
+    var itemsHtml = '';
+    bill.items.forEach(function (it) {
+      itemsHtml += '<div class="thermal-item-row">' +
+        '<span class="thermal-col-name">' + AdminShared.esc(it.name) + '</span>' +
+        '<span class="thermal-col-qty">' + it.qty + '</span>' +
+        '<span class="thermal-col-rate">' + it.price + '</span>' +
+        '<span class="thermal-col-amt">' + it.total + '</span>' +
+      '</div>';
+    });
+    document.getElementById('rcptItemsList').innerHTML = itemsHtml;
+
+    document.getElementById('rcptSubtotal').textContent = '₹' + bill.subtotal.toFixed(2);
+
+    if (bill.cgst > 0) {
+      document.getElementById('rcptCgst').textContent = '₹' + bill.cgst.toFixed(2);
+      document.getElementById('rcptCgstRow').style.display = 'flex';
+      document.getElementById('rcptSgst').textContent = '₹' + bill.sgst.toFixed(2);
+      document.getElementById('rcptSgstRow').style.display = 'flex';
+    } else {
+      document.getElementById('rcptCgstRow').style.display = 'none';
+      document.getElementById('rcptSgstRow').style.display = 'none';
+    }
+
+    if (bill.parcelCharge > 0) {
+      document.getElementById('rcptParcel').textContent = '₹' + bill.parcelCharge.toFixed(2);
+      document.getElementById('rcptParcelRow').style.display = 'flex';
+    } else {
+      document.getElementById('rcptParcelRow').style.display = 'none';
+    }
+
+    if (bill.discount > 0) {
+      document.getElementById('rcptDiscount').textContent = '-₹' + bill.discount.toFixed(2);
+      document.getElementById('rcptDiscountRow').style.display = 'flex';
+    } else {
+      document.getElementById('rcptDiscountRow').style.display = 'none';
+    }
+
+    document.getElementById('rcptRoundOff').textContent = (bill.roundOff >= 0 ? '+' : '') + '₹' + bill.roundOff.toFixed(2);
+    document.getElementById('rcptGrandTotal').textContent = '₹' + bill.grandTotal.toFixed(2);
+    document.getElementById('rcptWords').textContent = bill.amountWords;
+    document.getElementById('rcptPaymentMode').textContent = bill.paymentMode;
+
+    // Generate Dynamic UPI QR Code
+    var upiString = 'upi://pay?pa=' + encodeURIComponent(s.upiId || 'navrang@upi') +
+      '&pn=' + encodeURIComponent(s.restName || 'Navrang Restaurant') +
+      '&am=' + encodeURIComponent(bill.grandTotal.toFixed(2)) +
+      '&cu=INR&tn=' + encodeURIComponent('Bill ' + bill.billNo);
+
+    var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString);
+    document.getElementById('rcptQrImg').src = qrUrl;
+  }
+
+  // Open & Close Receipt Modal
+  window.openReceiptModal = function () {
+    document.getElementById('receiptModal').classList.add('open');
+  };
+  window.closeReceiptModal = function () {
+    document.getElementById('receiptModal').classList.remove('open');
+  };
+
+  // Trigger Print to Wi-Fi / Thermal POS Printer
+  window.triggerPrint = function () {
+    window.print();
+  };
+
+  // Copy Receipt Text
+  window.copyReceiptText = function () {
+    var receiptEl = document.getElementById('thermalReceipt');
+    if (!receiptEl) return;
+    var text = receiptEl.innerText || receiptEl.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        alert('Receipt text copied to clipboard!');
+      });
+    } else {
+      alert('Could not auto-copy. Please select and copy text manually.');
+    }
+  };
+
+  // Punch and Print Bill (Main Action)
+  function punchAndPrintBill() {
+    if (!cart.length) {
+      alert('Please add at least one dish before generating the bill!');
+      return;
+    }
+
+    var bill = buildBillData();
+
+    // Save to stored register
+    var bills = getStoredBills();
+    bills.unshift(bill);
+    saveStoredBills(bills);
+
+    // Populate and open print modal
+    populateThermalSlip(bill);
+    openReceiptModal();
+
+    // Auto-trigger browser print dialog for Wi-Fi printer
+    setTimeout(function () {
+      window.print();
+    }, 400);
+
+    // Refresh register and reset order
+    renderRegisterTable();
+    resetActiveOrder(true);
+  }
+
+  // Reset Order
+  function resetActiveOrder(silent) {
+    if (!silent && cart.length > 0 && !confirm('Are you sure you want to clear current items?')) {
+      return;
+    }
+    cart = [];
+    document.getElementById('customItemName').value = '';
+    document.getElementById('customItemPrice').value = '';
+    document.getElementById('parcelChargeInput').value = '0';
+    document.getElementById('discountInput').value = '0';
+    document.getElementById('dishSearchInput').value = '';
+    document.getElementById('previewBillNo').textContent = generateNextBillNo();
+    renderCart();
+    renderDishes('', currentCategoryFilter);
+  }
+
+  // Settings Modal Handlers
+  window.openSettingsModal = function () {
+    var s = getSettings();
+    document.getElementById('cfgRestName').value = s.restName || '';
+    document.getElementById('cfgRestTagline').value = s.tagline || '';
+    document.getElementById('cfgRestAddress').value = s.address || '';
+    document.getElementById('cfgRestPhone').value = s.phone || '';
+    document.getElementById('cfgUpiId').value = s.upiId || '';
+    document.getElementById('cfgGstin').value = s.gstin || '';
+    document.getElementById('cfgFssai').value = s.fssai || '';
+    document.getElementById('settingsModal').classList.add('open');
+  };
+
+  window.closeSettingsModal = function () {
+    document.getElementById('settingsModal').classList.remove('open');
+  };
+
+  // Render Register Table & Summary KPIs
+  function renderRegisterTable(filterQuery) {
+    var bills = getStoredBills();
+    var tbody = document.getElementById('registerTableBody');
+    var badgeCount = document.getElementById('badgeTodayCount');
+
+    // Filter for today's bills
+    var todayStr = new Date().toISOString().slice(0, 10);
+    var todayBills = bills.filter(function (b) {
+      return b.timestamp && b.timestamp.slice(0, 10) === todayStr;
+    });
+
+    badgeCount.textContent = todayBills.length;
+    document.getElementById('kpiTodayBills').textContent = todayBills.length;
+
+    var totalSales = todayBills.reduce(function (s, b) { return s + (b.grandTotal || 0); }, 0);
+    var cashSales = todayBills.filter(function (b) { return b.paymentMode === 'Cash'; }).reduce(function (s, b) { return s + (b.grandTotal || 0); }, 0);
+    var upiSales = todayBills.filter(function (b) { return b.paymentMode === 'UPI'; }).reduce(function (s, b) { return s + (b.grandTotal || 0); }, 0);
+
+    document.getElementById('kpiTodaySales').textContent = '₹' + totalSales.toLocaleString('en-IN');
+    document.getElementById('kpiTodayCash').textContent = '₹' + cashSales.toLocaleString('en-IN');
+    document.getElementById('kpiTodayUpi').textContent = '₹' + upiSales.toLocaleString('en-IN');
+
+    var listToShow = todayBills;
+    if (filterQuery) {
+      var q = filterQuery.toLowerCase().trim();
+      listToShow = todayBills.filter(function (b) {
+        return (b.billNo && b.billNo.toLowerCase().indexOf(q) !== -1) ||
+          (b.table && b.table.toLowerCase().indexOf(q) !== -1) ||
+          (b.waiter && b.waiter.toLowerCase().indexOf(q) !== -1);
+      });
+    }
+
+    if (!listToShow.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="admin-empty">No bills found for today.</td></tr>';
+      return;
+    }
+
+    var html = '';
+    listToShow.forEach(function (b, idx) {
+      var itemsCount = (b.items || []).reduce(function (s, it) { return s + (it.qty || 1); }, 0);
+      html += '<tr>' +
+        '<td><strong>' + AdminShared.esc(b.billNo) + '</strong></td>' +
+        '<td><span style="font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;">' + AdminShared.esc(b.timeStr) + '</span></td>' +
+        '<td>' + AdminShared.esc(b.table) + ' <span class="admin-badge" style="font-size:9.5px;padding:1px 5px;">' + AdminShared.esc(b.orderType) + '</span></td>' +
+        '<td>' + AdminShared.esc(b.waiter) + '</td>' +
+        '<td>' + itemsCount + ' items</td>' +
+        '<td><strong style="font-family:\'IBM Plex Mono\',monospace;color:var(--maroon-deep);">₹' + (b.grandTotal || 0) + '</strong></td>' +
+        '<td><span class="admin-badge active" style="font-size:10px;">' + AdminShared.esc(b.paymentMode) + '</span></td>' +
+        '<td>' +
+          '<button type="button" class="reprint-btn" onclick="reprintBill(\'' + b.billNo + '\')">' +
+            '🖨️ Reprint' +
+          '</button>' +
+        '</td>' +
+      '</tr>';
+    });
+
+    tbody.innerHTML = html;
+  }
+
+  // 1-Click Reprint function
+  window.reprintBill = function (billNo) {
+    var bills = getStoredBills();
+    var found = bills.find(function (b) { return b.billNo === billNo; });
+    if (!found) {
+      alert('Bill not found in storage!');
+      return;
+    }
+    populateThermalSlip(found);
+    openReceiptModal();
+  };
+
+  // Event Listeners Setup
+  document.getElementById('btnPunchAndPrint').addEventListener('click', punchAndPrintBill);
+
+  document.getElementById('btnPreviewBill').addEventListener('click', function () {
+    if (!cart.length) {
+      alert('Please add items first to preview the bill slip.');
+      return;
+    }
+    var bill = buildBillData();
+    populateThermalSlip(bill);
+    openReceiptModal();
+  });
+
+  document.getElementById('btnResetOrder').addEventListener('click', function () {
+    resetActiveOrder(false);
+  });
+
+  // Custom Item Button
+  document.getElementById('btnAddCustomItem').addEventListener('click', function () {
+    var name = document.getElementById('customItemName').value.trim();
+    var price = Number(document.getElementById('customItemPrice').value);
+    if (!name || isNaN(price) || price <= 0) {
+      alert('Please enter a valid custom item name and positive price.');
+      return;
+    }
+    cart.push({
+      id: 'cust_' + Date.now(),
+      name: name,
+      nameTe: '',
+      price: price,
+      qty: 1,
+      veg: true,
+      isCustom: true
+    });
+    document.getElementById('customItemName').value = '';
+    document.getElementById('customItemPrice').value = '';
+    renderCart();
+  });
+
+  // Calculation inputs live update
+  document.getElementById('parcelChargeInput').addEventListener('input', renderCart);
+  document.getElementById('discountInput').addEventListener('input', renderCart);
+  document.getElementById('tableSelect').addEventListener('change', updateBillMetaBadges);
+  document.getElementById('waiterInput').addEventListener('input', updateBillMetaBadges);
+
+  // Search input live filtering + Enter to add
+  var searchInput = document.getElementById('dishSearchInput');
+  searchInput.addEventListener('input', function () {
+    renderDishes(this.value, currentCategoryFilter);
+  });
+
+  searchInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      var q = this.value.trim().toLowerCase();
+      if (!q) return;
+
+      var exactMatch = allDishes.find(function (d) {
+        return String(d.id) === q || d.name.toLowerCase() === q;
+      });
+
+      if (!exactMatch) {
+        var partials = allDishes.filter(function (d) {
+          return String(d.id).startsWith(q) || d.name.toLowerCase().indexOf(q) !== -1;
+        });
+        if (partials.length === 1) exactMatch = partials[0];
+      }
+
+      if (exactMatch) {
+        addToCart(exactMatch.id);
+        this.value = '';
+        renderDishes('', currentCategoryFilter);
+      }
+    }
+  });
+
+  // Category Pills
+  var catPills = document.querySelectorAll('.pos-cat-pill');
+  Array.prototype.forEach.call(catPills, function (btn) {
+    btn.addEventListener('click', function () {
+      Array.prototype.forEach.call(catPills, function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentCategoryFilter = btn.getAttribute('data-cat');
+      renderDishes(searchInput.value, currentCategoryFilter);
+    });
+  });
+
+  // Order Type Pills
+  var typePills = document.querySelectorAll('.type-pill');
+  Array.prototype.forEach.call(typePills, function (btn) {
+    btn.addEventListener('click', function () {
+      Array.prototype.forEach.call(typePills, function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeOrderType = btn.getAttribute('data-type');
+      if (activeOrderType === 'Takeaway') {
+        document.getElementById('parcelChargeInput').value = '10';
+      }
+      updateBillMetaBadges();
+      renderCart();
+    });
+  });
+
+  // Payment Mode Buttons
+  var payButtons = document.querySelectorAll('.pos-pay-btn');
+  Array.prototype.forEach.call(payButtons, function (btn) {
+    btn.addEventListener('click', function () {
+      Array.prototype.forEach.call(payButtons, function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      activePaymentMode = btn.getAttribute('data-mode');
+    });
+  });
+
+  // Mobile Tabs
+  var tabBtnMenu = document.getElementById('tabBtnMenu');
+  var tabBtnBill = document.getElementById('tabBtnBill');
+  var colMenu = document.querySelector('.pos-col-menu');
+  var colBill = document.querySelector('.pos-col-bill');
+
+  tabBtnMenu.addEventListener('click', function () {
+    tabBtnMenu.classList.add('active');
+    tabBtnBill.classList.remove('active');
+    colMenu.classList.add('tab-visible');
+    colMenu.classList.remove('tab-hidden');
+    colBill.classList.remove('tab-visible');
+    colBill.classList.add('tab-hidden');
+  });
+
+  tabBtnBill.addEventListener('click', function () {
+    tabBtnBill.classList.add('active');
+    tabBtnMenu.classList.remove('active');
+    colBill.classList.add('tab-visible');
+    colBill.classList.remove('tab-hidden');
+    colMenu.classList.remove('tab-visible');
+    colMenu.classList.add('tab-hidden');
+  });
+
+  // Register view toggle
+  var btnToggleRegister = document.getElementById('btnToggleRegister');
+  var registerSection = document.getElementById('registerSection');
+  btnToggleRegister.addEventListener('click', function () {
+    var isHidden = registerSection.style.display === 'none';
+    registerSection.style.display = isHidden ? 'block' : 'none';
+    if (isHidden) {
+      renderRegisterTable();
+      registerSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  document.getElementById('filterBillsInput').addEventListener('input', function () {
+    renderRegisterTable(this.value);
+  });
+
+  // Settings Modal
+  document.getElementById('btnOpenSettings').addEventListener('click', openSettingsModal);
+  document.getElementById('settingsForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var cfg = {
+      restName: document.getElementById('cfgRestName').value.trim(),
+      tagline: document.getElementById('cfgRestTagline').value.trim(),
+      address: document.getElementById('cfgRestAddress').value.trim(),
+      phone: document.getElementById('cfgRestPhone').value.trim(),
+      upiId: document.getElementById('cfgUpiId').value.trim(),
+      gstin: document.getElementById('cfgGstin').value.trim(),
+      fssai: document.getElementById('cfgFssai').value.trim()
+    };
+    saveSettings(cfg);
+    closeSettingsModal();
+    alert('Bill header settings updated successfully!');
+  });
+
+  // Initial Load
+  document.getElementById('previewBillNo').textContent = generateNextBillNo();
+  updateBillMetaBadges();
+  renderDishes('', 'all');
+  renderCart();
+  renderRegisterTable();
+})();
+</script>
+</body>
+</html>
