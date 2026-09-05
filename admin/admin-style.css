@@ -76,7 +76,7 @@ a { color: inherit; }
 
 /* ---------- Top Header Bar (Full Width, Sticky) ---------- */
 .admin-header-bar {
-  position: sticky; top: 0; z-index: 40;
+  position: sticky; top: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
   background: var(--header-bg);
   border-bottom: 1px solid rgba(196, 139, 30, 0.22);
@@ -125,6 +125,10 @@ a { color: inherit; }
 
 .admin-header-user-wrap {
   position: relative;
+  z-index: 110;
+}
+.admin-header-user-wrap.open {
+  z-index: 125;
 }
 
 .admin-header-user-btn {
@@ -169,8 +173,8 @@ a { color: inherit; }
   position: absolute; top: calc(100% + 8px); right: 0;
   width: 250px; background: #FFFFFF; border-radius: 14px;
   border: 1px solid var(--rule);
-  box-shadow: 0 14px 35px rgba(6, 24, 13, 0.22);
-  padding: 10px; z-index: 100;
+  box-shadow: 0 14px 35px rgba(6, 24, 13, 0.35), 0 4px 14px rgba(0, 0, 0, 0.12);
+  padding: 10px; z-index: 200;
   display: none; flex-direction: column;
   animation: adminPopupIn 0.16s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -663,14 +667,14 @@ table.admin-table tr:hover td { background: var(--bg-surface-hover); }
   .sidebar-toggle { display: flex !important; }
   .admin-topnav-bar { display: none !important; }
   .admin-sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0; height: 100vh; z-index: 60; width: 275px;
+    position: fixed; top: 0; left: 0; bottom: 0; height: 100vh; z-index: 250; width: 275px;
     transform: translateX(-100%); transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 0 35px rgba(0, 0, 0, 0.5);
     display: flex; flex-direction: column;
   }
   .admin-sidebar.open { transform: translateX(0); }
   .sidebar-overlay.open {
-    display: block; position: fixed; inset: 0; z-index: 55;
+    display: block; position: fixed; inset: 0; z-index: 240;
     background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
   }

@@ -334,12 +334,14 @@
         e.stopPropagation();
         var isOpen = userWrap.classList.toggle('open');
         userBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (header) header.style.zIndex = isOpen ? '125' : '';
       });
 
       document.addEventListener('click', function (e) {
         if (!userWrap.contains(e.target)) {
           userWrap.classList.remove('open');
           userBtn.setAttribute('aria-expanded', 'false');
+          if (header) header.style.zIndex = '';
         }
       });
 
@@ -347,6 +349,7 @@
         if (e.key === 'Escape') {
           userWrap.classList.remove('open');
           userBtn.setAttribute('aria-expanded', 'false');
+          if (header) header.style.zIndex = '';
         }
       });
     }
