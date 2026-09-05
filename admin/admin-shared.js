@@ -5,19 +5,45 @@
   var USER_KEY = 'navrang_admin_user';
   var OPEN_GROUPS_KEY = 'navrang_admin_open_groups';
 
+  var ROLE_KEY = 'navrang_admin_role';
+
   function getToken() { return sessionStorage.getItem(TOKEN_KEY); }
   function getUsername() { return sessionStorage.getItem(USER_KEY) || 'admin'; }
-  function setSession(token, username) {
+  function getRole() {
+    var stored = sessionStorage.getItem(ROLE_KEY);
+    if (stored) return stored;
+    var u = (getUsername() || '').toLowerCase();
+    return (u === 'counter' || u === 'cashier') ? 'counter' : 'admin';
+  }
+  function isCounter() { return getRole() === 'counter'; }
+  function isAdmin() { return getRole() === 'admin'; }
+
+  function setSession(token, username, role) {
     sessionStorage.setItem(TOKEN_KEY, token);
     sessionStorage.setItem(USER_KEY, username || 'admin');
+    var determinedRole = role || ((username && (username.toLowerCase() === 'counter' || username.toLowerCase() === 'cashier')) ? 'counter' : 'admin');
+    sessionStorage.setItem(ROLE_KEY, determinedRole);
   }
   function clearSession() {
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(USER_KEY);
+    sessionStorage.removeItem(ROLE_KEY);
   }
-  function requireAuthOrRedirect() {
+  function requireAuthOrRedirect(requiredRole) {
     if (!getToken()) {
       window.location.href = 'login.html';
+      return false;
+    }
+    var role = getRole();
+    var filename = (window.location.pathname.split('/').pop() || '').toLowerCase();
+    // Counter staff is strictly restricted to billing.html only
+    if (role === 'counter') {
+      if (filename && filename !== 'billing.html' && filename !== 'login.html') {
+        window.location.replace('billing.html');
+        return false;
+      }
+    } else if (requiredRole && role !== requiredRole) {
+      window.location.replace('billing.html');
       return false;
     }
     return true;
@@ -168,6 +194,22 @@
     }
   ];
 
+  // Returns navigation groups visible to the current user role
+  function getVisibleNavGroups() {
+    if (isCounter()) {
+      return [
+        {
+          type: 'direct',
+          key: 'billing',
+          label: 'Counter Billing',
+          href: 'billing.html',
+          icon: 'billing'
+        }
+      ];
+    }
+    return NAV_GROUPS;
+  }
+
   function getOpenGroups() {
     try {
       var raw = sessionStorage.getItem(OPEN_GROUPS_KEY);
@@ -209,7 +251,7 @@
 
       var badge = document.createElement('span');
       badge.className = 'admin-header-badge';
-      badge.textContent = 'Portal';
+      badge.textContent = isCounter() ? 'POS Terminal' : 'Admin Portal';
       titleWrap.appendChild(badge);
 
       brand.appendChild(titleWrap);
@@ -221,46 +263,61 @@
     actions.className = 'admin-header-actions';
 
     var username = getUsername();
-    var userInitial = (username.charAt(0) || 'A').toUpperCase();
+    var userInitial = (username.charAt(0) || (isCounter() ? 'C' : 'A')).toUpperCase();
+    var roleDesc = isCounter() ? 'Counter Cashier &amp; Billing Staff' : 'Store Manager &amp; Administrator';
+    var statusText = isCounter() ? 'Active POS Shift' : 'Online Session';
+
+    var popupLinks = '';
+    if (isCounter()) {
+      popupLinks =
+        '<a href="billing.html" class="admin-popup-link active">' +
+          icon('billing', 14) + '<span>Counter Billing (POS)</span>' +
+        '</a>';
+    } else {
+      popupLinks =
+        '<a href="billing.html" class="admin-popup-link">' +
+          icon('billing', 14) + '<span>Counter Billing</span>' +
+        '</a>' +
+        '<a href="daily-collections.html" class="admin-popup-link">' +
+          icon('cash', 14) + '<span>Daily Collections &amp; Cash Match</span>' +
+        '</a>' +
+        '<a href="pos-audit.html" class="admin-popup-link">' +
+          icon('audit', 14) + '<span>POS &amp; Billing Audit Report</span>' +
+        '</a>' +
+        '<a href="change-password.html" class="admin-popup-link">' +
+          icon('lock', 14) + '<span>Change Password</span>' +
+        '</a>';
+    }
+
+    var logoutLabel = isCounter() ? 'End Shift / Sign Out' : 'Sign Out / Logout';
 
     // User Avatar + Popup Menu Container (Live Menu removed, Logout moved inside popup)
     actions.innerHTML =
       '<div class="admin-header-user-wrap" id="adminUserWrap">' +
-        '<button type="button" class="admin-header-user-btn" id="adminUserBtn" aria-haspopup="true" aria-expanded="false" title="Click for Admin Menu">' +
-          '<div class="admin-user-avatar">' + esc(userInitial) + '</div>' +
+        '<button type="button" class="admin-header-user-btn" id="adminUserBtn" aria-haspopup="true" aria-expanded="false" title="User Menu">' +
+          '<div class="admin-user-avatar" style="' + (isCounter() ? 'background:#C48B1E;' : '') + '">' + esc(userInitial) + '</div>' +
           '<div class="admin-user-meta">' +
             '<span class="admin-user-name">' + esc(username) + '</span>' +
-            '<span class="admin-user-status">Online</span>' +
+            '<span class="admin-user-status">' + (isCounter() ? 'POS Active' : 'Online') + '</span>' +
           '</div>' +
           '<span class="admin-user-arrow">&#9662;</span>' +
         '</button>' +
         '<div class="admin-user-popup" id="adminUserPopup">' +
           '<div class="admin-popup-header">' +
-            '<div class="admin-popup-avatar">' + esc(userInitial) + '</div>' +
+            '<div class="admin-popup-avatar" style="' + (isCounter() ? 'background:#C48B1E;' : '') + '">' + esc(userInitial) + '</div>' +
             '<div class="admin-popup-userinfo">' +
               '<div class="admin-popup-name">' + esc(username) + '</div>' +
-              '<div class="admin-popup-role">Store Manager &amp; Cashier</div>' +
-              '<div class="admin-popup-status"><span class="dot"></span> Online Session</div>' +
+              '<div class="admin-popup-role">' + esc(roleDesc) + '</div>' +
+              '<div class="admin-popup-status"><span class="dot"></span> ' + esc(statusText) + '</div>' +
             '</div>' +
           '</div>' +
           '<div class="admin-popup-links">' +
-            '<a href="billing.html" class="admin-popup-link">' +
-              icon('billing', 14) + '<span>Counter Billing</span>' +
-            '</a>' +
-            '<a href="daily-collections.html" class="admin-popup-link">' +
-              icon('cash', 14) + '<span>Daily Collections &amp; Cash Match</span>' +
-            '</a>' +
-            '<a href="pos-audit.html" class="admin-popup-link">' +
-              icon('audit', 14) + '<span>POS &amp; Billing Audit Report</span>' +
-            '</a>' +
-            '<a href="change-password.html" class="admin-popup-link">' +
-              icon('lock', 14) + '<span>Change Password</span>' +
-            '</a>' +
+            popupLinks +
           '</div>' +
           '<div class="admin-popup-divider"></div>' +
-          '<button type="button" class="admin-popup-logout-btn" id="adminPopupLogoutBtn" title="Sign out of Admin">' +
+          '<button type="button" class="admin-popup-logout-btn" id="adminPopupLogoutBtn" title="Sign out">' +
             icon('logout', 14) +
-            '<span>Sign Out / Logout</span>' +
+            '<span>' + esc(logoutLabel) + '</span>' +
           '</button>' +
         '</div>' +
       '</div>';
@@ -313,7 +370,8 @@
     }
 
     var html = '<div class="admin-topnav-container">';
-    NAV_GROUPS.forEach(function (g) {
+    var visibleGroups = getVisibleNavGroups();
+    visibleGroups.forEach(function (g) {
       if (g.type === 'direct') {
         var isAct = g.key === activeKey;
         html += '<a class="admin-topnav-link' + (isAct ? ' active' : '') + '" href="' + g.href + '">' +
@@ -403,9 +461,10 @@
     if (!nav) return;
 
     var openGroups = getOpenGroups();
+    var visibleGroups = getVisibleNavGroups();
 
     // Auto-open group that contains activeKey
-    NAV_GROUPS.forEach(function (g) {
+    visibleGroups.forEach(function (g) {
       if (g.type === 'group' && g.items) {
         var hasActive = g.items.some(function (it) { return it.key === activeKey; });
         if (hasActive && openGroups.indexOf(g.id) === -1) {
@@ -417,7 +476,7 @@
 
     var html = '';
 
-    NAV_GROUPS.forEach(function (g) {
+    visibleGroups.forEach(function (g) {
       if (g.type === 'direct') {
         var isAct = g.key === activeKey;
         html += '<a class="admin-nav-link' + (isAct ? ' active' : '') + '" href="' + g.href + '">' +
@@ -537,6 +596,9 @@
   window.AdminShared = {
     getToken: getToken,
     getUsername: getUsername,
+    getRole: getRole,
+    isCounter: isCounter,
+    isAdmin: isAdmin,
     setSession: setSession,
     clearSession: clearSession,
     requireAuthOrRedirect: requireAuthOrRedirect,

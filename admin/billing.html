@@ -458,7 +458,18 @@
               <span>Held Orders (<strong id="btnViewHeldCount">0</strong>)</span>
             </button>
 
-            <a href="daily-collections.html" class="admin-btn admin-btn-secondary" style="font-size:12.5px;padding:8px 14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+            <!-- Cashier Session Indicator & Quick Shift Handover -->
+            <div class="cashier-terminal-pill" id="cashierPill" style="display:none;background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.35);color:#92400E;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;align-items:center;gap:6px;">
+              <span>👤</span>
+              <span id="cashierPillName">Cashier</span>
+              <span style="font-size:10px;background:#92400E;color:#fff;padding:2px 6px;border-radius:4px;margin-left:2px;letter-spacing:0.3px;">POS TERMINAL</span>
+            </div>
+            <button type="button" class="admin-btn admin-btn-secondary" id="btnEndShift" style="display:none;font-size:12px;padding:8px 12px;color:var(--nonveg);border-color:rgba(197,48,48,0.3);" title="End cashier shift and logout">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+              <span>End Shift</span>
+            </button>
+
+            <a href="daily-collections.html" id="linkDailyCollections" class="admin-btn admin-btn-secondary" style="font-size:12.5px;padding:8px 14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg>
               <span>Daily Collections &amp; Cash Match</span>
             </a>
@@ -936,6 +947,33 @@
 (function () {
   AdminShared.requireAuthOrRedirect();
   AdminShared.renderNav('billing');
+
+  // Handle Counter Staff restrictions & cashier session indicator
+  if (window.AdminShared) {
+    var isCounterStaff = AdminShared.isCounter();
+    var cashierPill = document.getElementById('cashierPill');
+    var cashierPillName = document.getElementById('cashierPillName');
+    var btnEndShift = document.getElementById('btnEndShift');
+    var linkDailyCollections = document.getElementById('linkDailyCollections');
+    var btnOpenSettings = document.getElementById('btnOpenSettings');
+
+    if (isCounterStaff) {
+      if (cashierPill) {
+        cashierPill.style.display = 'inline-flex';
+        if (cashierPillName) cashierPillName.textContent = AdminShared.getUsername() || 'Cashier';
+      }
+      if (btnEndShift) {
+        btnEndShift.style.display = 'inline-flex';
+        btnEndShift.addEventListener('click', function () {
+          if (confirm('End your cashier shift and sign out of POS?')) {
+            AdminShared.logout();
+          }
+        });
+      }
+      if (linkDailyCollections) linkDailyCollections.style.display = 'none';
+      if (btnOpenSettings) btnOpenSettings.style.display = 'none';
+    }
+  }
 
   var STORAGE_BILLS = 'navrang_pos_bills';
   var STORAGE_SETTINGS = 'navrang_pos_settings';
