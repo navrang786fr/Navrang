@@ -352,9 +352,67 @@
       text-shadow: none !important;
       box-shadow: none !important;
     }
+    #rcptQrBox,
+    .thermal-qr-box {
+      display: block !important;
+      text-align: center !important;
+      margin: 8px auto 4px !important;
+      padding-top: 6px !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    #rcptQrContainer,
+    .thermal-qr-box > div {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      margin: 0 auto 3px !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    #rcptQrBox svg,
+    .thermal-qr-box svg {
+      display: block !important;
+      width: 120px !important;
+      height: 120px !important;
+      margin: 0 auto !important;
+      background: #fff !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    #rcptQrBox svg rect,
+    .thermal-qr-box svg rect {
+      fill: #fff !important;
+    }
+    #rcptQrBox svg path,
+    .thermal-qr-box svg path {
+      fill: #000 !important;
+    }
+    #rcptQrImg,
     .thermal-qr-box img {
-      width: 100px !important;
-      height: 100px !important;
+      display: block !important;
+      width: 120px !important;
+      height: 120px !important;
+      margin: 0 auto !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+      image-rendering: pixelated !important;
+      image-rendering: -moz-crisp-edges !important;
+      image-rendering: crisp-edges !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      visibility: visible !important;
+    }
+    .thermal-qr-caption {
+      display: block !important;
+      font-size: 9.5px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.2px !important;
+      margin-top: 2px !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
     }
   }
 </style>
@@ -757,7 +815,9 @@
 
         <!-- Dynamic UPI Payment QR Code -->
         <div class="thermal-qr-box" id="rcptQrBox">
-          <img id="rcptQrImg" src="" alt="Scan &amp; Pay UPI QR">
+          <div id="rcptQrContainer" style="display:flex;justify-content:center;align-items:center;min-height:120px;margin:0 auto 4px;">
+            <img id="rcptQrImg" src="" alt="Scan &amp; Pay UPI QR" style="width:120px;height:120px;margin:0 auto;display:block;">
+          </div>
           <div class="thermal-qr-caption">Scan with PhonePe / GPay / Paytm</div>
         </div>
 
@@ -772,9 +832,6 @@
     <div class="receipt-modal-actions" style="display:flex;gap:8px;margin-top:16px;">
       <button type="button" class="admin-btn" style="flex:1;" onclick="triggerPrint()">
         🖨️ Print Receipt (Wi-Fi / POS)
-      </button>
-      <button type="button" class="admin-btn admin-btn-secondary" onclick="copyReceiptText()">
-        📋 Copy Text
       </button>
       <button type="button" class="admin-btn admin-btn-secondary" onclick="closeReceiptModal()">
         Close
@@ -872,6 +929,7 @@
   <span id="posToastText">✓ Item added to bill</span>
 </div>
 
+<script src="qrcode.min.js"></script>
 <script src="admin-shared.js"></script>
 <script src="../menu-data.js"></script>
 <script>
@@ -1329,14 +1387,50 @@
     document.getElementById('rcptWords').textContent = bill.amountWords;
     document.getElementById('rcptPaymentMode').textContent = bill.paymentMode;
 
-    // Generate Dynamic UPI QR Code
+    // Generate Dynamic UPI QR Code (Instant, 100% Offline & Reliable)
     var upiString = 'upi://pay?pa=' + encodeURIComponent(s.upiId || 'navrang@upi') +
       '&pn=' + encodeURIComponent(s.restName || 'Navrang Restaurant') +
       '&am=' + encodeURIComponent(bill.grandTotal.toFixed(2)) +
       '&cu=INR&tn=' + encodeURIComponent('Bill ' + bill.billNo);
 
-    var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString);
-    document.getElementById('rcptQrImg').src = qrUrl;
+    var qrContainer = document.getElementById('rcptQrContainer');
+    var qrImg = document.getElementById('rcptQrImg');
+
+    try {
+      if (typeof qrcode === 'function') {
+        var qr = qrcode(0, 'M');
+        qr.addData(upiString);
+        qr.make();
+        // Generate crisp vector SVG for perfect thermal and laser printing
+        var svgHtml = qr.createSvgTag({ cellSize: 3, margin: 2, scalable: true });
+        if (qrContainer) {
+          qrContainer.innerHTML = svgHtml;
+          var svgEl = qrContainer.querySelector('svg');
+          if (svgEl) {
+            svgEl.setAttribute('width', '120');
+            svgEl.setAttribute('height', '120');
+            svgEl.style.width = '120px';
+            svgEl.style.height = '120px';
+            svgEl.style.display = 'block';
+            svgEl.style.margin = '0 auto';
+          }
+        }
+        if (qrImg) {
+          qrImg.src = qr.createDataURL(4, 2);
+          qrImg.style.display = 'none';
+        }
+      } else {
+        throw new Error('qrcode library not loaded');
+      }
+    } catch (qrErr) {
+      console.warn('Local QR generation failed, falling back to remote URL:', qrErr);
+      if (qrContainer) {
+        qrContainer.innerHTML = '<img id="rcptQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString) + '" alt="Scan &amp; Pay UPI QR" style="width:120px;height:120px;margin:0 auto;display:block;">';
+      } else if (qrImg) {
+        qrImg.style.display = 'block';
+        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString);
+      }
+    }
   }
 
   // Open & Close Receipt Modal

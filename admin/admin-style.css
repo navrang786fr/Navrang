@@ -952,10 +952,20 @@ table.admin-table tr:hover td { background: var(--bg-surface-hover); }
 .thermal-col-amt { width: 52px; text-align: right; font-weight: 700; }
 
 .thermal-qr-box {
-  text-align: center; margin: 12px auto 6px; padding-top: 8px; border-top: 1px dashed #000;
+  text-align: center; margin: 10px auto 5px; padding-top: 6px; border-top: 1px dashed #000;
 }
+.thermal-qr-box svg,
 .thermal-qr-box img {
-  width: 110px; height: 110px; image-rendering: pixelated; margin: 0 auto 4px; display: block;
+  width: 120px; height: 120px; image-rendering: pixelated; margin: 0 auto 4px; display: block;
+}
+.thermal-qr-box svg {
+  background: #fff;
+}
+.thermal-qr-box svg rect {
+  fill: #fff;
+}
+.thermal-qr-box svg path {
+  fill: #000;
 }
 .thermal-qr-caption {
   font-size: 10px; font-weight: 700; text-transform: uppercase;
@@ -1041,9 +1051,67 @@ table.admin-table tr:hover td { background: var(--bg-surface-hover); }
     text-shadow: none !important;
     box-shadow: none !important;
   }
+  #rcptQrBox,
+  .thermal-qr-box {
+    display: block !important;
+    text-align: center !important;
+    margin: 8px auto 4px !important;
+    padding-top: 6px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  #rcptQrContainer,
+  .thermal-qr-box > div {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto 3px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  #rcptQrBox svg,
+  .thermal-qr-box svg {
+    display: block !important;
+    width: 120px !important;
+    height: 120px !important;
+    margin: 0 auto !important;
+    background: #fff !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  #rcptQrBox svg rect,
+  .thermal-qr-box svg rect {
+    fill: #fff !important;
+  }
+  #rcptQrBox svg path,
+  .thermal-qr-box svg path {
+    fill: #000 !important;
+  }
+  #rcptQrImg,
   .thermal-qr-box img {
-    width: 100px !important;
-    height: 100px !important;
+    display: block !important;
+    width: 120px !important;
+    height: 120px !important;
+    margin: 0 auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    image-rendering: pixelated !important;
+    image-rendering: -moz-crisp-edges !important;
+    image-rendering: crisp-edges !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    visibility: visible !important;
+  }
+  .thermal-qr-caption {
+    display: block !important;
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.2px !important;
+    margin-top: 2px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
 
