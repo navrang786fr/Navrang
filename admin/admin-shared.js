@@ -132,7 +132,8 @@
       icon: 'dishes',
       items: [
         { key: 'dishes', label: 'Dishes & Rates', href: 'dishes.html', icon: 'dishes' },
-        { key: 'categories', label: 'Categories', href: 'categories.html', icon: 'categories' }
+        { key: 'categories', label: 'Categories', href: 'categories.html', icon: 'categories' },
+        { key: 'waiters', label: 'Waiter / Server Master', href: 'waiters.html', icon: 'user' }
       ]
     },
     {
@@ -165,8 +166,7 @@
       items: [
         { key: 'sc-orders', label: 'Online Orders', href: '../order.html', icon: 'orders', external: true },
         { key: 'sc-menu-en', label: 'Live Menu (EN)', href: '../navrang-menu.html', icon: 'menu', external: true },
-        { key: 'sc-menu-te', label: 'Live Menu (TE)', href: '../navrang-menu-te.html', icon: 'menu', external: true },
-        { key: 'waiters', label: 'Waiter / Server Master', href: 'waiters.html', icon: 'user' }
+        { key: 'sc-menu-te', label: 'Live Menu (TE)', href: '../navrang-menu-te.html', icon: 'menu', external: true }
       ]
     }
   ];
