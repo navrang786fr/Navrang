@@ -112,18 +112,15 @@
       icon: 'home'
     },
     {
-      type: 'direct',
-      key: 'billing',
-      label: 'Counter Billing',
-      href: 'billing.html',
-      icon: 'billing'
-    },
-    {
-      type: 'direct',
-      key: 'collections',
-      label: 'Daily Collections',
-      href: 'daily-collections.html',
-      icon: 'cash'
+      type: 'group',
+      id: 'pos-group',
+      label: 'POS',
+      icon: 'billing',
+      items: [
+        { key: 'billing', label: 'Counter Billing', href: 'billing.html', icon: 'billing' },
+        { key: 'collections', label: 'Daily Collections', href: 'daily-collections.html', icon: 'cash' },
+        { key: 'pos-audit', label: 'POS Audit Report', href: 'pos-audit.html', icon: 'audit' }
+      ]
     },
     {
       type: 'group',
@@ -252,6 +249,9 @@
             '</a>' +
             '<a href="daily-collections.html" class="admin-popup-link">' +
               icon('cash', 14) + '<span>Daily Collections &amp; Cash Match</span>' +
+            '</a>' +
+            '<a href="pos-audit.html" class="admin-popup-link">' +
+              icon('audit', 14) + '<span>POS &amp; Billing Audit Report</span>' +
             '</a>' +
             '<a href="change-password.html" class="admin-popup-link">' +
               icon('lock', 14) + '<span>Change Password</span>' +

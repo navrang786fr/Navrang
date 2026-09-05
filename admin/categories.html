@@ -10,20 +10,122 @@
 <style>
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   @media (max-width:560px){ .form-grid{grid-template-columns:1fr;} }
-  .form-actions{display:flex;gap:10px;align-items:center;margin-top:6px;}
+  .form-actions{display:flex;gap:10px;align-items:center;margin-top:12px;}
+  .admin-field-wide{grid-column:1/-1;}
+
+  /* --- Upload Zone (matching Dish Master admin/dishes.html) --- */
+  .upload-zone{
+    border:2px dashed var(--rule);border-radius:var(--radius-lg);
+    background:var(--bg-surface-soft);cursor:pointer;position:relative;
+    padding:20px 16px;transition:border-color .15s ease,background .15s ease;
+    display:block;margin-top:4px;
+  }
+  .upload-zone:hover,.upload-zone.dragover{border-color:var(--maroon);background:rgba(14,77,38,.04);}
+  .upload-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
+  .upload-zone-empty{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:var(--maroon);}
+  .upload-zone-empty svg{width:28px;height:28px;color:var(--turmeric);}
+  .upload-zone-text{font-size:13px;font-weight:600;color:var(--ink);}
+  .upload-zone-text strong{color:var(--maroon);}
+  .upload-zone-sub{font-size:11.5px;color:var(--ink-muted);}
+  .upload-zone-filled{display:flex;align-items:center;gap:14px;width:100%;text-align:left;}
+  .upload-preview-img{width:68px;height:68px;object-fit:cover;border-radius:10px;border:1.5px solid var(--rule);flex:0 0 auto;background:var(--bg-surface-soft);box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .upload-filled-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .upload-filename{font-size:13px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .upload-hint{font-size:11.5px;color:var(--leaf);font-weight:600;line-height:1.4;}
+  .upload-remove-btn{
+    flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:none;
+    background:var(--bg-surface-soft);color:var(--nonveg);font-size:13px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:background .15s ease,color .15s ease;
+  }
+  .upload-remove-btn:hover{background:var(--nonveg);color:#fff;}
+  .upload-zone.processing{pointer-events:none;opacity:.75;}
+  .upload-spinner{
+    width:16px;height:16px;border-radius:50%;flex:0 0 auto;
+    border:2px solid var(--rule);border-top-color:var(--maroon);
+    animation:upload-spin .7s linear infinite;display:inline-block;vertical-align:middle;
+  }
+  @keyframes upload-spin{to{transform:rotate(360deg);}}
+
+  /* --- Category Cards Preview Grid --- */
+  .section-header-row{
+    display:flex;justify-content:space-between;align-items:center;margin:32px 0 14px;
+    flex-wrap:wrap;gap:10px;
+  }
+  .section-header-row h2{margin:0;}
+  .cat-count-badge{
+    font-size:12px;font-weight:700;background:rgba(14,77,38,.1);color:var(--maroon);
+    padding:4px 12px;border-radius:999px;border:1px solid rgba(14,77,38,.2);
+  }
+  .cat-cards-grid{
+    display:grid;grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));gap:16px;
+    margin-bottom:32px;
+  }
+  .cat-card{
+    background:var(--bg-surface);border:1px solid var(--rule);border-radius:14px;
+    overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .2s ease,box-shadow .2s ease;
+    display:flex;flex-direction:column;position:relative;
+  }
+  .cat-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.09);}
+  .cat-card-media{position:relative;height:120px;background:var(--bg-surface-soft);overflow:hidden;}
+  .cat-card-img{
+    width:100%;height:100%;object-fit:cover;cursor:pointer;
+    transition:transform .3s ease;display:block;
+  }
+  .cat-card:hover .cat-card-img{transform:scale(1.05);}
+  .cat-card-fallback{
+    width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:linear-gradient(135deg, #06180D 0%, #0E4D26 100%);color:rgba(255,255,255,.8);gap:4px;
+  }
+  .cat-card-fallback svg{width:28px;height:28px;}
+  .cat-card-badge{
+    position:absolute;top:10px;left:10px;background:rgba(255,255,255,.94);backdrop-filter:blur(4px);
+    width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    color:var(--maroon);box-shadow:0 2px 8px rgba(0,0,0,.15);border:1px solid rgba(255,255,255,.8);
+  }
+  .cat-card-badge svg{width:20px;height:20px;}
+  .cat-card-count{
+    position:absolute;bottom:10px;right:10px;background:rgba(6,24,13,.82);color:#fff;
+    font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;backdrop-filter:blur(4px);
+    border:1px solid rgba(255,255,255,.2);letter-spacing:0.3px;
+  }
+  .cat-card-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:5px;}
+  .cat-card-title-en{font-size:15px;font-weight:800;color:var(--ink);line-height:1.2;}
+  .cat-card-title-te{font-size:13px;color:var(--ink-muted);font-weight:600;}
+  .cat-card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:10px;border-top:1px solid var(--rule);}
+  .cat-card-short-pill{font-size:11px;background:var(--bg-surface-soft);color:var(--ink);padding:3px 8px;border-radius:6px;font-weight:600;}
+  .cat-card-edit-btn{font-size:11.5px;font-weight:700;color:var(--maroon);background:none;border:none;cursor:pointer;padding:0;}
+  .cat-card-edit-btn:hover{text-decoration:underline;}
+
+  /* --- Table & Row Upload Styles --- */
   .cat-table td{vertical-align:middle;}
-  .cat-icon-preview{width:28px;height:28px;color:var(--maroon);flex:0 0 auto;}
+  .cat-icon-preview{width:28px;height:28px;color:var(--maroon);flex:0 0 auto;display:flex;align-items:center;justify-content:center;}
   .cat-icon-preview svg{width:100%;height:100%;}
   .cat-id{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-muted);white-space:nowrap;}
   .cat-input{width:100%;min-width:120px;border:1.5px solid var(--rule);border-radius:var(--radius-md);padding:8px 10px;font-size:13px;background:var(--bg-surface);outline:none;font-family:inherit;transition:all .15s ease;}
   .cat-input:focus{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(14,77,38,.12);}
   .cat-img-cell{display:flex;align-items:center;gap:10px;}
-  .cat-thumb{width:38px;height:38px;border-radius:8px;object-fit:cover;border:1px solid var(--rule);background:var(--bg-surface-soft);flex:0 0 38px;}
-  .cat-thumb-empty{width:38px;height:38px;border-radius:8px;border:1.5px dashed var(--rule);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);font-size:10px;background:var(--bg-surface-soft);flex:0 0 38px;}
-  .cat-img-input{min-width:140px;}
+  .cat-thumb{
+    width:42px;height:42px;border-radius:8px;object-fit:cover;border:1.5px solid var(--rule);
+    background:var(--bg-surface-soft);flex:0 0 42px;cursor:pointer;transition:transform .15s ease;
+  }
+  .cat-thumb:hover{transform:scale(1.1);border-color:var(--maroon);}
+  .cat-thumb-empty{
+    width:42px;height:42px;border-radius:8px;border:1.5px dashed var(--rule);
+    display:flex;align-items:center;justify-content:center;color:var(--ink-muted);
+    font-size:10px;font-weight:600;background:var(--bg-surface-soft);flex:0 0 42px;text-align:center;
+  }
+  .cat-img-actions{display:flex;flex-direction:column;gap:5px;}
+  .cat-row-upload-btn{
+    display:inline-flex;align-items:center;gap:5px;padding:4px 8px;font-size:11px;font-weight:700;
+    color:var(--maroon);background:rgba(14,77,38,.07);border-radius:6px;cursor:pointer;
+    border:1px solid rgba(14,77,38,.2);transition:all .15s ease;width:fit-content;white-space:nowrap;
+  }
+  .cat-row-upload-btn:hover{background:var(--maroon);color:#fff;}
+  .cat-img-input{font-size:11px;padding:4px 6px;max-width:140px;color:var(--ink-muted);}
   .cat-row-status{font-size:11.5px;font-weight:600;white-space:nowrap;}
   .cat-row-status.success{color:var(--leaf);}
   .cat-row-status.error{color:var(--nonveg);}
+  .cat-row-status.pending{color:var(--turmeric);}
   .cat-save-btn{
     background:var(--emerald-gradient);color:#fff;border:none;border-radius:8px;
     padding:8px 16px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;
@@ -34,6 +136,24 @@
   .cat-save-btn:disabled{opacity:.5;cursor:not-allowed;}
   .cat-hint{font-size:13px;color:var(--ink-muted);margin:0 0 16px;}
   .auto-te-hint{font-size:11.5px;color:var(--ink-muted);margin:4px 0 0;min-height:14px;}
+
+  /* --- Image Lightbox --- */
+  .img-lightbox{
+    position:fixed;inset:0;z-index:90;background:rgba(6,24,13,.85);
+    display:flex;align-items:center;justify-content:center;padding:24px;
+    opacity:0;pointer-events:none;transition:opacity .2s ease;
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  }
+  .img-lightbox.show{opacity:1;pointer-events:auto;}
+  .img-lightbox-card{position:relative;max-width:min(90vw,480px);width:100%;background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.5);padding:16px;}
+  .img-lightbox-card img{display:block;width:100%;max-height:68vh;object-fit:contain;border-radius:12px;}
+  .img-lightbox-caption{margin:12px 0 0;text-align:center;font-weight:700;color:var(--ink);font-size:14px;}
+  .img-lightbox-close{
+    position:absolute;top:-14px;right:-14px;width:34px;height:34px;border-radius:50%;
+    background:var(--maroon-deep);color:#fff;border:2px solid #fff;
+    display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.35);
+  }
 </style>
 </head>
 <body>
@@ -60,28 +180,45 @@
         <div class="form-grid">
           <div class="admin-field">
             <label for="cNewTitle">Title (English)</label>
-            <input type="text" id="cNewTitle" required maxlength="60">
+            <input type="text" id="cNewTitle" required maxlength="60" placeholder="e.g. Tandoori Starters">
           </div>
           <div class="admin-field">
             <label for="cNewTitleTe">Title (Telugu)</label>
-            <input type="text" id="cNewTitleTe" required maxlength="60">
+            <input type="text" id="cNewTitleTe" required maxlength="60" placeholder="e.g. తందూరి స్టార్టర్స్">
             <p class="auto-te-hint" id="cNewTitleTeHint"></p>
           </div>
           <div class="admin-field">
             <label for="cNewShort">Short label (English, optional)</label>
-            <input type="text" id="cNewShort" maxlength="30">
+            <input type="text" id="cNewShort" maxlength="30" placeholder="e.g. Tandoori">
           </div>
           <div class="admin-field">
             <label for="cNewShortTe">Short label (Telugu, optional)</label>
-            <input type="text" id="cNewShortTe" maxlength="30">
+            <input type="text" id="cNewShortTe" maxlength="30" placeholder="e.g. తందూరి">
             <p class="auto-te-hint" id="cNewShortTeHint"></p>
           </div>
-          <div class="admin-field" style="grid-column:1/-1;">
-            <label for="cNewImage">Image URL / Path (optional, e.g. images/starters.jpg)</label>
-            <div style="display:flex;gap:10px;align-items:center;">
-              <input type="text" id="cNewImage" placeholder="images/category-image.jpg" style="flex:1;">
-              <img id="cNewImagePreview" src="" alt="Preview" style="display:none;width:38px;height:38px;border-radius:6px;object-fit:cover;border:1px solid var(--rule);background:var(--paper-soft);">
-            </div>
+
+          <!-- Dish Master style Upload Zone -->
+          <div class="admin-field admin-field-wide">
+            <label for="cNewImageFile">Category Image (Upload or Drag &amp; Drop)</label>
+            <label class="upload-zone" id="uploadZone" for="cNewImageFile">
+              <input type="file" id="cNewImageFile" accept="image/*" class="upload-input">
+              <input type="hidden" id="cNewImageDataUrl" value="">
+
+              <div class="upload-zone-empty" id="uploadEmpty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+                <span class="upload-zone-text"><strong>Click to upload photo</strong> or drag and drop</span>
+                <span class="upload-zone-sub">JPG, PNG, WebP up to 8MB — automatically converted and optimized</span>
+              </div>
+
+              <div class="upload-zone-filled" id="uploadFilled" style="display:none;">
+                <img id="imagePreview" class="upload-preview-img" alt="Preview">
+                <div class="upload-filled-info">
+                  <span class="upload-filename" id="uploadFileName"></span>
+                  <span class="upload-hint" id="imageHint"></span>
+                </div>
+                <button type="button" class="upload-remove-btn" id="removeImageBtn" aria-label="Remove photo" title="Remove photo">✕</button>
+              </div>
+            </label>
           </div>
         </div>
         <div class="form-actions">
@@ -91,13 +228,33 @@
       </form>
     </div>
 
+    <!-- Live Category Cards Preview Grid -->
+    <div class="section-header-row">
+      <h2>Live Category Cards Preview</h2>
+      <span class="cat-count-badge" id="catCountBadge">Loading categories…</span>
+    </div>
+    <p class="cat-hint">Visual card presentation showing uploaded cover photos, category badge icons, Telugu/English titles, and live dish counts.</p>
+    <div class="cat-cards-grid" id="catCardsGrid">
+      <div class="admin-loading">Loading preview cards…</div>
+    </div>
+
+    <!-- Edit Categories Table -->
     <h2>Edit Categories</h2>
-    <p class="cat-hint">Category names shown on the order page and printed menus. Ids are permanent once created (dishes are filed under them), so a category can't be renamed or removed here — only its title/labels.</p>
+    <p class="cat-hint">Category names shown on the order page and printed menus. Click <strong>📷 Upload</strong> on any row to upload or change its photo directly, or edit titles and click <strong>Save</strong>.</p>
     <div class="admin-table-wrap" id="listWrap">
       <div class="admin-loading">Loading categories…</div>
     </div>
   </div>
     </main>
+  </div>
+</div>
+
+<!-- Image Lightbox Modal -->
+<div class="img-lightbox" id="imgLightbox">
+  <div class="img-lightbox-card">
+    <button type="button" class="img-lightbox-close" id="imgLightboxClose" aria-label="Close">✕</button>
+    <img id="imgLightboxImg" src="" alt="Full size preview">
+    <p class="img-lightbox-caption" id="imgLightboxCaption"></p>
   </div>
 </div>
 
@@ -107,29 +264,234 @@
   if (!AdminShared.requireAuthOrRedirect()) return;
   AdminShared.renderNav('categories');
   var esc = AdminShared.esc;
+
   var listWrap = document.getElementById('listWrap');
+  var catCardsGrid = document.getElementById('catCardsGrid');
+  var catCountBadge = document.getElementById('catCountBadge');
+
+  // Lightbox elements
+  var imgLightbox = document.getElementById('imgLightbox');
+  var imgLightboxImg = document.getElementById('imgLightboxImg');
+  var imgLightboxCaption = document.getElementById('imgLightboxCaption');
+  var imgLightboxClose = document.getElementById('imgLightboxClose');
+
+  function openLightbox(src, caption){
+    if (!src) return;
+    imgLightboxImg.src = src;
+    imgLightboxCaption.textContent = caption || 'Category Image';
+    imgLightbox.classList.add('show');
+  }
+  function closeLightbox(){
+    imgLightbox.classList.remove('show');
+    imgLightboxImg.src = '';
+  }
+  imgLightboxClose.addEventListener('click', closeLightbox);
+  imgLightbox.addEventListener('click', function(e){
+    if (e.target === imgLightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // Resolve category image URLs: data URLs / absolute URLs stay as-is; relative paths get '../' prefixed
+  function getCategoryImageUrl(url){
+    if (!url) return '';
+    var trimmed = String(url).trim();
+    if (!trimmed) return '';
+    if (/^(data:|https?:|\/\/|\/)/i.test(trimmed)) return trimmed;
+    return '../' + trimmed.replace(/^\.\//, '');
+  }
 
   function iconSvg(paths){
     return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
   }
 
+  /* --- Image resize and data URL helpers (matching dish master) --- */
+  function resizeImageToDataUrl(file, maxDim, quality){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function(){
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth;
+        var h = img.naturalHeight;
+        var scale = Math.min(1, maxDim / Math.max(w, h));
+        var targetW = Math.round(w * scale);
+        var targetH = Math.round(h * scale);
+
+        var canvas = document.createElement('canvas');
+        canvas.width = targetW;
+        canvas.height = targetH;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, targetW, targetH);
+        resolve(canvas.toDataURL('image/jpeg', quality || 0.85));
+      };
+      img.onerror = function(){
+        URL.revokeObjectURL(url);
+        reject(new Error('Could not process image file'));
+      };
+      img.src = url;
+    });
+  }
+
+  /* --- Upload Zone logic in New Category form --- */
+  var uploadZone = document.getElementById('uploadZone');
+  var cNewImageFile = document.getElementById('cNewImageFile');
+  var cNewImageDataUrl = document.getElementById('cNewImageDataUrl');
+  var uploadEmpty = document.getElementById('uploadEmpty');
+  var uploadFilled = document.getElementById('uploadFilled');
+  var imagePreview = document.getElementById('imagePreview');
+  var uploadFileName = document.getElementById('uploadFileName');
+  var imageHint = document.getElementById('imageHint');
+  var removeImageBtn = document.getElementById('removeImageBtn');
+
+  function showEmptyUpload(){
+    uploadEmpty.style.display = '';
+    uploadFilled.style.display = 'none';
+    imagePreview.src = '';
+    cNewImageDataUrl.value = '';
+    cNewImageFile.value = '';
+    imageHint.textContent = '';
+    uploadZone.classList.remove('processing');
+  }
+
+  function showFilledUpload(previewSrc, fileName, hintText){
+    imagePreview.src = previewSrc;
+    uploadFileName.textContent = fileName;
+    imageHint.textContent = hintText || 'Ready to use on category page';
+    uploadEmpty.style.display = 'none';
+    uploadFilled.style.display = '';
+    uploadZone.classList.remove('processing');
+  }
+
+  function handleCategoryFile(file){
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024){
+      alert('Image file is too large (maximum 8MB).');
+      return;
+    }
+    uploadZone.classList.add('processing');
+    uploadFileName.innerHTML = '<span class="upload-spinner"></span> Processing photo…';
+    imageHint.textContent = '';
+    uploadEmpty.style.display = 'none';
+    uploadFilled.style.display = '';
+
+    resizeImageToDataUrl(file, 640, 0.85).then(function(dataUrl){
+      cNewImageDataUrl.value = dataUrl;
+      showFilledUpload(dataUrl, file.name, 'Optimized image ready for category');
+    }).catch(function(err){
+      alert('Error reading image: ' + (err.message || err));
+      showEmptyUpload();
+    });
+  }
+
+  cNewImageFile.addEventListener('change', function(){
+    handleCategoryFile(cNewImageFile.files[0]);
+  });
+
+  uploadZone.addEventListener('dragover', function(e){
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+  });
+  uploadZone.addEventListener('dragleave', function(){
+    uploadZone.classList.remove('dragover');
+  });
+  uploadZone.addEventListener('drop', function(e){
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    var file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) handleCategoryFile(file);
+  });
+
+  removeImageBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    showEmptyUpload();
+  });
+
+  /* --- Render Live Category Cards Grid --- */
+  function renderCards(categories, dishCounts){
+    if (!catCardsGrid) return;
+    if (!categories || !categories.length){
+      catCardsGrid.innerHTML = '<div class="admin-empty" style="grid-column:1/-1;">No categories found.</div>';
+      return;
+    }
+    catCountBadge.textContent = categories.length + ' Categories';
+
+    catCardsGrid.innerHTML = categories.map(function(c){
+      var resolvedImg = getCategoryImageUrl(c.image);
+      var count = dishCounts && dishCounts[c.id] != null ? dishCounts[c.id] : null;
+      var countText = count != null ? count + (count === 1 ? ' dish' : ' dishes') : 'Active category';
+
+      var mediaHtml = resolvedImg
+        ? '<img class="cat-card-img" src="' + esc(resolvedImg) + '" alt="' + esc(c.title) + '" data-full="' + esc(resolvedImg) + '" data-caption="' + esc(c.title + ' (' + c.titleTe + ')') + '" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'flex\';">' +
+          '<div class="cat-card-fallback" style="display:none;"><span class="cat-icon-preview">' + iconSvg(c.icon || '') + '</span><span>' + esc(c.title) + '</span></div>'
+        : '<div class="cat-card-fallback"><span class="cat-icon-preview" style="color:#fff;">' + iconSvg(c.icon || '') + '</span><span style="font-size:12px;font-weight:700;">No photo uploaded</span></div>';
+
+      return '<div class="cat-card" id="card-' + esc(c.id) + '">' +
+        '<div class="cat-card-media">' +
+          mediaHtml +
+          '<div class="cat-card-badge" title="' + esc(c.title) + '">' + iconSvg(c.icon || '') + '</div>' +
+          '<div class="cat-card-count">' + esc(countText) + '</div>' +
+        '</div>' +
+        '<div class="cat-card-body">' +
+          '<div class="cat-card-title-en">' + esc(c.title) + '</div>' +
+          '<div class="cat-card-title-te">' + esc(c.titleTe) + '</div>' +
+          '<div class="cat-card-foot">' +
+            '<span class="cat-card-short-pill">' + esc(c.short || c.title) + '</span>' +
+            '<button type="button" class="cat-card-edit-btn" data-target-row="' + esc(c.id) + '">Edit in table ↓</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    // Wire up lightbox click on cards
+    Array.prototype.forEach.call(catCardsGrid.querySelectorAll('.cat-card-img'), function(img){
+      img.addEventListener('click', function(){
+        openLightbox(img.dataset.full, img.dataset.caption);
+      });
+    });
+
+    // Wire up "Edit in table" shortcut button
+    Array.prototype.forEach.call(catCardsGrid.querySelectorAll('.cat-card-edit-btn'), function(btn){
+      btn.addEventListener('click', function(){
+        var row = document.querySelector('tr[data-id="' + btn.dataset.targetRow + '"]');
+        if (row){
+          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          row.style.transition = 'background-color 0.5s ease';
+          row.style.backgroundColor = 'rgba(14,77,38,0.12)';
+          setTimeout(function(){ row.style.backgroundColor = ''; }, 1500);
+        }
+      });
+    });
+  }
+
+  /* --- Render Edit Table with Row-Level Photo Upload --- */
   function renderList(categories){
-    listWrap.innerHTML = '<table class="admin-table cat-table"><thead><tr><th></th><th>ID</th><th>Image</th><th>Title (EN)</th><th>Title (TE)</th><th>Short (EN)</th><th>Short (TE)</th><th></th><th></th></tr></thead><tbody>' +
+    listWrap.innerHTML = '<table class="admin-table cat-table"><thead><tr><th></th><th>ID</th><th>Category Photo</th><th>Title (EN)</th><th>Title (TE)</th><th>Short (EN)</th><th>Short (TE)</th><th></th><th></th></tr></thead><tbody>' +
       categories.map(function(c){
+        var resolvedImg = getCategoryImageUrl(c.image);
         return '<tr data-id="' + esc(c.id) + '">' +
           '<td><span class="cat-icon-preview">' + iconSvg(c.icon || '') + '</span></td>' +
           '<td><span class="cat-id">' + esc(c.id) + '</span></td>' +
           '<td>' +
             '<div class="cat-img-cell">' +
-              '<img class="cat-thumb" src="' + esc(c.image || '') + '" alt="" style="' + (c.image ? '' : 'display:none;') + '" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'flex\';">' +
-              '<div class="cat-thumb-empty" style="' + (c.image ? 'display:none;' : '') + '">No img</div>' +
-              '<input class="cat-input cat-img-input" data-field="image" placeholder="images/..." value="' + esc(c.image || '') + '">' +
+              '<img class="cat-thumb" src="' + esc(resolvedImg) + '" alt="' + esc(c.title) + '" style="' + (resolvedImg ? '' : 'display:none;') + '" data-full="' + esc(resolvedImg) + '" data-caption="' + esc(c.title) + '" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'flex\';">' +
+              '<div class="cat-thumb-empty" style="' + (resolvedImg ? 'display:none;' : '') + '">No photo</div>' +
+              '<div class="cat-img-actions">' +
+                '<label class="cat-row-upload-btn" title="Upload new photo for this category">' +
+                  '<input type="file" accept="image/*" class="cat-row-file-input" style="display:none;">' +
+                  '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
+                  '<span>📷 Upload</span>' +
+                '</label>' +
+                '<input class="cat-input cat-img-input" data-field="image" placeholder="images/..." value="' + esc(c.image || '') + '" title="Image URL or uploaded data URL">' +
+              '</div>' +
             '</div>' +
           '</td>' +
           '<td><input class="cat-input" data-field="title" value="' + esc(c.title) + '"></td>' +
           '<td><input class="cat-input" data-field="titleTe" value="' + esc(c.titleTe) + '"></td>' +
-          '<td><input class="cat-input" data-field="short" value="' + esc(c.short) + '"></td>' +
-          '<td><input class="cat-input" data-field="shortTe" value="' + esc(c.shortTe) + '"></td>' +
+          '<td><input class="cat-input" data-field="short" value="' + esc(c.short || c.title) + '"></td>' +
+          '<td><input class="cat-input" data-field="shortTe" value="' + esc(c.shortTe || c.titleTe) + '"></td>' +
           '<td><button type="button" class="cat-save-btn">Save</button></td>' +
           '<td><span class="cat-row-status"></span></td>' +
           '</tr>';
@@ -142,12 +504,55 @@
       var imgInput = row.querySelector('.cat-img-input');
       var thumb = row.querySelector('.cat-thumb');
       var empty = row.querySelector('.cat-thumb-empty');
+      var fileInput = row.querySelector('.cat-row-file-input');
+
+      // Click thumbnail to zoom in lightbox
+      if (thumb){
+        thumb.addEventListener('click', function(){
+          if (thumb.src && thumb.style.display !== 'none'){
+            openLightbox(thumb.src, row.querySelector('input[data-field="title"]').value);
+          }
+        });
+      }
+
+      // Handle row-level image upload
+      if (fileInput){
+        fileInput.addEventListener('change', function(){
+          var file = fileInput.files && fileInput.files[0];
+          if (!file) return;
+          status.textContent = 'Optimizing photo…';
+          status.className = 'cat-row-status pending';
+          resizeImageToDataUrl(file, 640, 0.85).then(function(dataUrl){
+            imgInput.value = dataUrl;
+            thumb.src = dataUrl;
+            thumb.style.display = 'inline-block';
+            empty.style.display = 'none';
+            status.textContent = 'Photo ready! Click Save to apply.';
+            status.className = 'cat-row-status success';
+
+            // Also update the card preview in real time
+            var card = document.getElementById('card-' + id);
+            if (card){
+              var cardImg = card.querySelector('.cat-card-img');
+              var cardFb = card.querySelector('.cat-card-fallback');
+              if (cardImg){
+                cardImg.src = dataUrl;
+                cardImg.style.display = 'block';
+                if (cardFb) cardFb.style.display = 'none';
+              }
+            }
+          }).catch(function(err){
+            status.textContent = err.message || 'Failed to read image';
+            status.className = 'cat-row-status error';
+          });
+        });
+      }
 
       if (imgInput && thumb && empty){
         imgInput.addEventListener('input', function(){
           var val = imgInput.value.trim();
           if (val){
-            thumb.src = val;
+            thumb.src = getCategoryImageUrl(val);
             thumb.style.display = 'inline-block';
             empty.style.display = 'none';
           } else {
@@ -175,8 +580,10 @@
           .then(function(resp){ return resp.json().then(function(data){ return { ok: resp.ok, data: data }; }); })
           .then(function(result){
             if (!result.ok) throw new Error(result.data.error || 'Save failed');
-            status.textContent = 'Saved.';
+            status.textContent = 'Saved successfully.';
             status.className = 'cat-row-status success';
+            // Reload categories to sync cards preview
+            setTimeout(loadCategories, 800);
           })
           .catch(function(err){
             status.textContent = err.message || 'Something went wrong.';
@@ -216,7 +623,6 @@
     return out.join(' ');
   }
 
-  /* Fallback for words not seen in any existing category: machine-translate via MyMemory's free API. */
   function fetchMachineTranslation(textEn){
     var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(textEn) + '&langpair=en|te';
     return fetch(url).then(function(resp){ return resp.json(); }).then(function(data){
@@ -269,34 +675,34 @@
   wireAutoTranslate(document.getElementById('cNewTitle'), document.getElementById('cNewTitleTe'), document.getElementById('cNewTitleTeHint'));
   wireAutoTranslate(document.getElementById('cNewShort'), document.getElementById('cNewShortTe'), document.getElementById('cNewShortTeHint'));
 
-  var newImgInput = document.getElementById('cNewImage');
-  var newImgPrev = document.getElementById('cNewImagePreview');
-  if (newImgInput && newImgPrev){
-    newImgInput.addEventListener('input', function(){
-      var val = newImgInput.value.trim();
-      if (val){
-        newImgPrev.src = val;
-        newImgPrev.style.display = 'block';
-      } else {
-        newImgPrev.src = '';
-        newImgPrev.style.display = 'none';
-      }
-    });
-    newImgPrev.addEventListener('error', function(){
-      newImgPrev.style.display = 'none';
-    });
-  }
-
   function loadCategories(){
-    return AdminShared.apiFetch('/api/categories').then(function(resp){
-      return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
-    }).then(function(result){
-      if (!result.ok) throw new Error(result.data.error || 'Failed to load categories');
-      var categories = Array.isArray(result.data) ? result.data : (result.data.categories || []);
+    return Promise.all([
+      AdminShared.apiFetch('/api/categories').then(function(resp){
+        return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+      }),
+      AdminShared.apiFetch('/api/dishes').then(function(resp){
+        return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+      }).catch(function(){ return null; })
+    ]).then(function(results){
+      var catResult = results[0];
+      var dishResult = results[1];
+      if (!catResult.ok) throw new Error(catResult.data.error || 'Failed to load categories');
+      var categories = Array.isArray(catResult.data) ? catResult.data : (catResult.data.categories || []);
+
+      var dishCounts = {};
+      if (dishResult && dishResult.ok && dishResult.data && dishResult.data.menu){
+        var menu = dishResult.data.menu;
+        Object.keys(menu).forEach(function(catId){
+          dishCounts[catId] = Array.isArray(menu[catId]) ? menu[catId].length : 0;
+        });
+      }
+
       buildTeDictionary(categories);
+      renderCards(categories, dishCounts);
       renderList(categories);
     }).catch(function(err){
       listWrap.innerHTML = '<div class="admin-empty">' + esc(err.message || 'Failed to load categories.') + '</div>';
+      catCardsGrid.innerHTML = '<div class="admin-empty" style="grid-column:1/-1;">' + esc(err.message || 'Failed to load category cards.') + '</div>';
     });
   }
 
@@ -305,13 +711,14 @@
   var createStatus = document.getElementById('createStatus');
   createForm.addEventListener('submit', function(e){
     e.preventDefault();
+    var imgVal = cNewImageDataUrl.value.trim();
     var payload = {
       action: 'create',
       title: document.getElementById('cNewTitle').value.trim(),
       titleTe: document.getElementById('cNewTitleTe').value.trim(),
       short: document.getElementById('cNewShort').value.trim(),
       shortTe: document.getElementById('cNewShortTe').value.trim(),
-      image: document.getElementById('cNewImage').value.trim()
+      image: imgVal
     };
     createBtn.disabled = true;
     createStatus.textContent = '';
@@ -321,8 +728,8 @@
       .then(function(result){
         if (!result.ok) throw new Error(result.data.error || 'Create failed');
         createForm.reset();
-        if (newImgPrev) newImgPrev.style.display = 'none';
-        createStatus.textContent = 'Category "' + result.data.category.title + '" created.';
+        showEmptyUpload();
+        createStatus.textContent = 'Category "' + result.data.category.title + '" created with photo.';
         createStatus.className = 'admin-status success';
         return loadCategories();
       })
