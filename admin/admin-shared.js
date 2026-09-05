@@ -88,6 +88,7 @@
     lock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>',
     logout: '<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
     chevron: '<polyline points="9 18 15 12 9 6"/>',
+    chevronDown: '<polyline points="6 9 12 15 18 9"/>',
     user: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
     storefront: '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
     billing: '<path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
@@ -321,16 +322,16 @@
       } else if (g.type === 'group') {
         var hasActiveChild = g.items.some(function (it) { return it.key === activeKey; });
         html += '<div class="admin-topnav-dropdown" data-group-id="' + g.id + '">' +
-          '<button type="button" class="admin-topnav-btn' + (hasActiveChild ? ' has-active' : '') + '">' +
+          '<button type="button" class="admin-topnav-btn' + (hasActiveChild ? ' has-active' : '') + '" aria-haspopup="true" aria-expanded="false">' +
             icon(g.icon, 15) + '<span>' + esc(g.label) + '</span>' +
-            '<span class="admin-topnav-chevron">' + icon('chevron', 12) + '</span>' +
+            '<span class="admin-topnav-chevron">' + icon('chevronDown', 12) + '</span>' +
           '</button>' +
-          '<div class="admin-topnav-menu">';
+          '<div class="admin-topnav-menu" role="menu">';
 
         g.items.forEach(function (sub) {
           var isSubAct = sub.key === activeKey;
           var targetAttr = sub.external ? ' target="_blank" rel="noopener"' : '';
-          html += '<a class="admin-topnav-sublink' + (isSubAct ? ' active' : '') + '" href="' + sub.href + '"' + targetAttr + '>' +
+          html += '<a class="admin-topnav-sublink' + (isSubAct ? ' active' : '') + '" href="' + sub.href + '"' + targetAttr + ' role="menuitem">' +
             icon(sub.icon, 13) + '<span>' + esc(sub.label) + '</span>' +
             (sub.external ? '<span class="sub-ext">' + icon('external', 10) + '</span>' : '') +
           '</a>';
@@ -351,14 +352,46 @@
         btn.addEventListener('click', function (e) {
           e.stopPropagation();
           var wasOpen = dd.classList.contains('open');
-          Array.prototype.forEach.call(dropdowns, function (other) { other.classList.remove('open'); });
-          if (!wasOpen) dd.classList.add('open');
+          Array.prototype.forEach.call(dropdowns, function (other) {
+            other.classList.remove('open');
+            var otherBtn = other.querySelector('.admin-topnav-btn');
+            if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+          });
+          if (!wasOpen) {
+            dd.classList.add('open');
+            btn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      }
+
+      // Close dropdown when a sublink is clicked
+      var sublinks = dd.querySelectorAll('.admin-topnav-sublink');
+      Array.prototype.forEach.call(sublinks, function (sl) {
+        sl.addEventListener('click', function () {
+          dd.classList.remove('open');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!topNav.contains(e.target)) {
+        Array.prototype.forEach.call(dropdowns, function (dd) {
+          dd.classList.remove('open');
+          var b = dd.querySelector('.admin-topnav-btn');
+          if (b) b.setAttribute('aria-expanded', 'false');
         });
       }
     });
 
-    document.addEventListener('click', function () {
-      Array.prototype.forEach.call(dropdowns, function (dd) { dd.classList.remove('open'); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        Array.prototype.forEach.call(dropdowns, function (dd) {
+          dd.classList.remove('open');
+          var b = dd.querySelector('.admin-topnav-btn');
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+      }
     });
   }
 
