@@ -78,6 +78,258 @@
     background: #fff; border-radius: 16px; box-shadow: var(--shadow-xl); border: 1px solid var(--rule);
     max-width: 460px; width: 100%; padding: 22px; position: relative;
   }
+
+  /* Quick Item Add Station (On Top of Display Page) */
+  .pos-quick-add-card {
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  .pos-quick-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .pos-quick-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748B;
+    background: #F1F5F9;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .pos-shortcut-hint {
+    font-size: 11px;
+    font-weight: 600;
+    color: #0E4D26;
+    background: #DCFCE7;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid #86EFAC;
+  }
+  .pos-quick-inputs-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .pos-quick-input-name {
+    flex: 1 1 220px;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 9px 12px;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.15s ease;
+    background: #FFFFFF;
+  }
+  .pos-quick-input-name:focus {
+    border-color: #0E4D26;
+    box-shadow: 0 0 0 3px rgba(14, 77, 38, 0.12);
+  }
+  .pos-quick-qty-stepper {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #FFFFFF;
+    height: 38px;
+  }
+  .pos-quick-qty-btn {
+    width: 32px;
+    height: 38px;
+    background: #F8FAFC;
+    border: none;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    color: #0F172A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.12s;
+  }
+  .pos-quick-qty-btn:hover { background: #E2E8F0; }
+  .pos-quick-qty-input {
+    width: 42px;
+    height: 38px;
+    border: none;
+    text-align: center;
+    font-size: 13.5px;
+    font-weight: 800;
+    outline: none;
+    color: #0E4D26;
+    background: transparent;
+  }
+  .pos-quick-price-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .pos-quick-price-wrap span {
+    position: absolute;
+    left: 8px;
+    font-weight: 700;
+    color: #64748B;
+    font-size: 13px;
+    pointer-events: none;
+  }
+  .pos-quick-price-input {
+    width: 86px;
+    height: 38px;
+    padding-left: 20px;
+    padding-right: 6px;
+    font-size: 13.5px;
+    font-weight: 700;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
+    outline: none;
+    color: #0F172A;
+    background: #FFFFFF;
+    transition: all 0.15s ease;
+  }
+  .pos-quick-price-input:focus {
+    border-color: #0E4D26;
+    box-shadow: 0 0 0 3px rgba(14, 77, 38, 0.12);
+  }
+  .pos-quick-add-btn {
+    height: 38px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #15803D 0%, #0E4D26 100%);
+    border: 1px solid #14532D;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(14, 77, 38, 0.25);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .pos-quick-add-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(14, 77, 38, 0.35);
+  }
+  .pos-quick-add-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Instant Rush Hot Chips */
+  .rush-chips-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+    border-top: 1px dashed #E2E8F0;
+    margin-top: 10px;
+  }
+  .rush-chip {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 14px;
+    background: #F8FAFC;
+    border: 1px solid #CBD5E1;
+    color: #1E293B;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+  }
+  .rush-chip:hover {
+    background: #F0FDF4;
+    border-color: #16A34A;
+    color: #15803D;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(22, 163, 74, 0.15);
+  }
+
+  /* Order Park / Hold Buttons */
+  .pos-hold-btn {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1.2px solid #F59E0B;
+    background: #FFFBEB;
+    color: #B45309;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.12s ease;
+  }
+  .pos-hold-btn:hover {
+    background: #FEF3C7;
+    border-color: #D97706;
+  }
+  .pos-hold-badge {
+    background: #D97706;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  /* Toast Notification */
+  .pos-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #0E4D26;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: all 0.2s ease;
+  }
+  .pos-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Sticky Mini-Cart Bar for smaller screens */
+  .pos-mini-cart-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #0E4D26;
+    color: #FFFFFF;
+    padding: 10px 16px;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 999;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.25);
+  }
+  @media (max-width: 880px) {
+    .pos-mini-cart-bar.active { display: flex; }
+  }
 </style>
 </head>
 <body>
@@ -220,6 +472,63 @@
                     <!-- Populated dynamically from Waiters Master -->
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <!-- ⚡ Quick Item Add Station (On Top of Display Page) -->
+            <div class="pos-quick-add-card">
+              <div class="pos-quick-header">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <span style="font-size:16px;">⚡</span>
+                  <strong style="font-size:13.5px;color:var(--maroon-deep);letter-spacing:0.2px;">Quick Item Add &amp; Rush Punch</strong>
+                  <span class="pos-quick-tag">Menu Dishes &amp; Custom Items</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <button type="button" class="pos-hold-btn" id="btnHoldOrder" title="Park current order to attend next customer in queue">
+                    <span>⏸</span> <span>Hold Order</span> <span class="pos-hold-badge" id="badgeHeldCount" style="display:none;">0</span>
+                  </button>
+                  <button type="button" class="pos-hold-btn" id="btnViewHeldOrders" style="display:none;background:#EFF6FF;border-color:#3B82F6;color:#1D4ED8;" title="View parked held orders">
+                    <span>▶</span> <span>Held (<strong id="btnViewHeldCount">0</strong>)</span>
+                  </button>
+                  <span class="pos-shortcut-hint" title="Press Enter to add item"><strong>[Enter]</strong> Add</span>
+                </div>
+              </div>
+
+              <!-- Quick Add Input Controls Row -->
+              <div class="pos-quick-inputs-row">
+                <div style="flex:1 1 240px;position:relative;">
+                  <input type="text" id="quickItemName" list="dishesDatalist" placeholder="🔍 Type Dish # (e.g. 16), Name, or Custom Item..." autocomplete="off" class="pos-quick-input-name">
+                  <datalist id="dishesDatalist"></datalist>
+                </div>
+                <div class="pos-quick-qty-stepper" title="Quantity">
+                  <button type="button" class="pos-quick-qty-btn" id="btnQuickQtyMinus" title="Decrease Qty">-</button>
+                  <input type="number" id="quickItemQty" value="1" min="1" max="99" class="pos-quick-qty-input" title="Quantity">
+                  <button type="button" class="pos-quick-qty-btn" id="btnQuickQtyPlus" title="Increase Qty">+</button>
+                </div>
+                <div class="pos-quick-price-wrap" title="Item Price (₹)">
+                  <span>₹</span>
+                  <input type="number" id="quickItemPrice" placeholder="Rate" min="0" class="pos-quick-price-input">
+                </div>
+                <button type="button" id="btnQuickAddItem" class="pos-quick-add-btn">
+                  <span>➕ Add to Bill</span>
+                </button>
+              </div>
+
+              <!-- Instant Rush Hot Chips (1-Click Punch) -->
+              <div class="rush-chips-container">
+                <span style="font-size:11px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.5px;display:inline-flex;align-items:center;gap:4px;">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Quick Tap:
+                </span>
+                <button type="button" class="rush-chip" onclick="quickPunchCustom('Water Bottle', 20, true)">💧 Water ₹20</button>
+                <button type="button" class="rush-chip" onclick="quickPunchCustom('Parcel Box / Packaging', 10, true)">🥡 Parcel ₹10</button>
+                <button type="button" class="rush-chip" onclick="quickPunchCustom('Extra Roti', 20, true)">🫓 Extra Roti ₹20</button>
+                <button type="button" class="rush-chip" onclick="quickPunchCustom('Extra Gravy', 30, true)">🍛 Extra Gravy ₹30</button>
+                <button type="button" class="rush-chip" onclick="quickPunchCustom('Cool Drinks / Soda', 20, true)">🥤 Drink ₹20</button>
+                <button type="button" class="rush-chip" onclick="quickPunchDish(1)">🍗 Spl Biryani ₹240</button>
+                <button type="button" class="rush-chip" onclick="quickPunchDish(33)">🧀 Paneer Butter ₹200</button>
+                <button type="button" class="rush-chip" onclick="quickPunchDish(17)">🍗 Chili Chicken ₹260</button>
+                <button type="button" class="rush-chip" onclick="quickPunchCustom('Curd Rice', 80, true)">🍚 Curd Rice ₹80</button>
               </div>
             </div>
 
@@ -539,6 +848,49 @@
   </div>
 </div>
 
+<!-- ==========================================================================
+     Held / Parked Orders Modal (Rush Load Management)
+     ========================================================================== -->
+<div class="receipt-modal-backdrop" id="heldOrdersModal">
+  <div class="settings-modal-card" style="max-width:540px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div>
+        <h3 style="margin:0;font-size:16px;color:var(--maroon-deep);">⏸ Parked / Held Orders</h3>
+        <p style="margin:2px 0 0;font-size:12px;color:var(--ink-muted);">Resume any customer order placed on hold during peak queues.</p>
+      </div>
+      <button type="button" onclick="closeHeldOrdersModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-muted);">✕</button>
+    </div>
+    <div id="heldOrdersList" style="max-height:360px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;">
+      <!-- Populated dynamically -->
+    </div>
+    <div style="display:flex;justify-content:flex-end;">
+      <button type="button" class="admin-btn admin-btn-secondary" onclick="closeHeldOrdersModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sticky Mini-Cart Bar for Mobile / Smaller Screens -->
+<div class="pos-mini-cart-bar" id="posMiniCartBar">
+  <div>
+    <span style="font-size:13px;font-weight:700;">🛒 <span id="miniCartCount">0</span> items</span>
+    <span style="margin:0 6px;opacity:0.6;">|</span>
+    <span style="font-size:15px;font-weight:800;color:#FDE047;" id="miniCartTotal">₹0.00</span>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button type="button" class="admin-btn admin-btn-secondary" onclick="switchToCartTab()" style="padding:6px 12px;font-size:12px;background:#FFF;color:#0E4D26;border:none;font-weight:700;">
+      🧾 View Bill
+    </button>
+    <button type="button" class="admin-btn" onclick="punchAndPrintBill()" style="padding:6px 14px;font-size:12px;background:#16A34A;color:#FFF;border:1px solid #86EFAC;font-weight:700;">
+      🖨️ Punch &amp; Print
+    </button>
+  </div>
+</div>
+
+<!-- Floating Action Feedback Toast -->
+<div class="pos-toast" id="posToast">
+  <span id="posToastText">✓ Item added to bill</span>
+</div>
+
 <script src="admin-shared.js"></script>
 <script src="../menu-data.js"></script>
 <script>
@@ -814,7 +1166,24 @@
     document.getElementById('calcRoundOff').textContent = (calc.roundOff >= 0 ? '+' : '') + '₹' + calc.roundOff.toFixed(2);
     document.getElementById('calcGrandTotal').textContent = '₹' + calc.grandTotal.toFixed(2);
     document.getElementById('calcAmountWords').textContent = calc.words;
+
+    // Sync Mini-Cart Bar for mobile / smaller screens
+    var miniCart = document.getElementById('posMiniCartBar');
+    var miniCount = document.getElementById('miniCartCount');
+    var miniTotal = document.getElementById('miniCartTotal');
+    if (miniCount) miniCount.textContent = totalCount;
+    if (miniTotal) miniTotal.textContent = '₹' + calc.grandTotal.toFixed(2);
+    if (miniCart) {
+      if (totalCount > 0) miniCart.classList.add('active');
+      else miniCart.classList.remove('active');
+    }
   }
+
+  window.switchToCartTab = function () {
+    var tabBtnBill = document.getElementById('tabBtnBill');
+    if (tabBtnBill) tabBtnBill.click();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Tax Mode Toggle
   window.setGstMode = function (mode) {
@@ -990,12 +1359,15 @@
   }
 
   // Open & Close Receipt Modal
-  window.openReceiptModal = function () {
+  function openReceiptModal() {
     document.getElementById('receiptModal').classList.add('open');
-  };
-  window.closeReceiptModal = function () {
+  }
+  window.openReceiptModal = openReceiptModal;
+
+  function closeReceiptModal() {
     document.getElementById('receiptModal').classList.remove('open');
-  };
+  }
+  window.closeReceiptModal = closeReceiptModal;
 
   // Trigger Print to Wi-Fi / Thermal POS Printer
   window.triggerPrint = function () {
@@ -1061,7 +1433,7 @@
   }
 
   // Settings Modal Handlers
-  window.openSettingsModal = function () {
+  function openSettingsModal() {
     var s = getSettings();
     document.getElementById('cfgRestName').value = s.restName || '';
     document.getElementById('cfgRestTagline').value = s.tagline || '';
@@ -1071,11 +1443,13 @@
     document.getElementById('cfgGstin').value = s.gstin || '';
     document.getElementById('cfgFssai').value = s.fssai || '';
     document.getElementById('settingsModal').classList.add('open');
-  };
+  }
+  window.openSettingsModal = openSettingsModal;
 
-  window.closeSettingsModal = function () {
+  function closeSettingsModal() {
     document.getElementById('settingsModal').classList.remove('open');
-  };
+  }
+  window.closeSettingsModal = closeSettingsModal;
 
   // Render Register Table & Summary KPIs
   function renderRegisterTable(filterQuery) {
@@ -1319,8 +1693,336 @@
     alert('Bill header settings updated successfully!');
   });
 
+  // Toast notification
+  var toastTimer = null;
+  function showToast(msg) {
+    var toast = document.getElementById('posToast');
+    var txt = document.getElementById('posToastText');
+    if (!toast || !txt) return;
+    txt.textContent = msg;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toast.classList.remove('show');
+    }, 2200);
+  }
+
+  // Populate Datalist with all dishes for Quick Add Autocomplete
+  function populateDishesDatalist() {
+    var dl = document.getElementById('dishesDatalist');
+    if (!dl) return;
+    var html = '';
+    allDishes.forEach(function (d) {
+      var label = '#' + d.id + ' ' + d.name + (d.nameTe ? ' (' + d.nameTe + ')' : '') + ' - ₹' + d.price;
+      html += '<option value="' + AdminShared.esc(d.name) + '" label="' + AdminShared.esc(label) + '">';
+    });
+    dl.innerHTML = html;
+  }
+
+  // Quick Add Item Station Logic (On Top of Display Page)
+  var qNameInput = document.getElementById('quickItemName');
+  var qQtyInput = document.getElementById('quickItemQty');
+  var qPriceInput = document.getElementById('quickItemPrice');
+  var btnQuickAdd = document.getElementById('btnQuickAddItem');
+  var btnQtyMinus = document.getElementById('btnQuickQtyMinus');
+  var btnQtyPlus = document.getElementById('btnQuickQtyPlus');
+
+  if (btnQtyMinus && qQtyInput) {
+    btnQtyMinus.addEventListener('click', function () {
+      var v = parseInt(qQtyInput.value, 10) || 1;
+      qQtyInput.value = Math.max(1, v - 1);
+    });
+  }
+  if (btnQtyPlus && qQtyInput) {
+    btnQtyPlus.addEventListener('click', function () {
+      var v = parseInt(qQtyInput.value, 10) || 1;
+      qQtyInput.value = v + 1;
+    });
+  }
+
+  function findDishByQuery(query) {
+    if (!query) return null;
+    var q = query.trim().toLowerCase();
+    var cleanId = q.replace(/^#/, '');
+    var byId = allDishes.find(function (d) { return String(d.id) === cleanId; });
+    if (byId) return byId;
+    var byExactName = allDishes.find(function (d) { return d.name.toLowerCase() === q; });
+    if (byExactName) return byExactName;
+    var byPrefix = allDishes.filter(function (d) { return d.name.toLowerCase().indexOf(q) !== -1; });
+    if (byPrefix.length === 1) return byPrefix[0];
+    return null;
+  }
+
+  if (qNameInput && qPriceInput) {
+    qNameInput.addEventListener('input', function () {
+      var d = findDishByQuery(this.value);
+      if (d) {
+        qPriceInput.value = d.price;
+      }
+    });
+
+    qNameInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var val = this.value.trim();
+        if (!val) return;
+        var d = findDishByQuery(val);
+        if (d && !qPriceInput.value) {
+          qPriceInput.value = d.price;
+        }
+        if (!qPriceInput.value) {
+          qPriceInput.focus();
+        } else {
+          handleQuickAdd();
+        }
+      }
+    });
+
+    qPriceInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleQuickAdd();
+      }
+    });
+  }
+
+  function handleQuickAdd() {
+    var rawName = qNameInput.value.trim();
+    if (!rawName) {
+      qNameInput.focus();
+      showToast('⚠️ Type dish #, name, or custom item');
+      return;
+    }
+
+    var qty = Math.max(1, parseInt(qQtyInput.value, 10) || 1);
+    var dish = findDishByQuery(rawName);
+    var price = Number(qPriceInput.value);
+
+    if (dish) {
+      var finalPrice = (!isNaN(price) && price > 0) ? price : dish.price;
+      var existing = cart.find(function (it) { return it.id === dish.id; });
+      if (existing) {
+        existing.qty += qty;
+        if (!isNaN(price) && price > 0) existing.price = price;
+      } else {
+        cart.push({
+          id: dish.id,
+          name: dish.name,
+          nameTe: dish.nameTe || '',
+          price: finalPrice,
+          qty: qty,
+          veg: dish.veg,
+          isCustom: false
+        });
+      }
+      showToast('✓ Added ' + dish.name + ' (x' + qty + ')');
+    } else {
+      // Custom off-menu item
+      if (isNaN(price) || price <= 0) {
+        qPriceInput.focus();
+        showToast('⚠️ Enter rate for "' + rawName + '"');
+        return;
+      }
+      cart.push({
+        id: 'cust_' + Date.now(),
+        name: rawName,
+        nameTe: '',
+        price: price,
+        qty: qty,
+        veg: true,
+        isCustom: true
+      });
+      showToast('✓ Added ' + rawName + ' (x' + qty + ') - ₹' + (price * qty));
+    }
+
+    qNameInput.value = '';
+    qQtyInput.value = '1';
+    qPriceInput.value = '';
+    renderCart();
+    qNameInput.focus();
+  }
+
+  if (btnQuickAdd) {
+    btnQuickAdd.addEventListener('click', handleQuickAdd);
+  }
+
+  // 1-Click Rush Hot Chips
+  window.quickPunchCustom = function (name, price, isVeg) {
+    var existing = cart.find(function (it) { return it.name === name; });
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({
+        id: 'cust_' + name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+        name: name,
+        nameTe: '',
+        price: price,
+        qty: 1,
+        veg: isVeg,
+        isCustom: true
+      });
+    }
+    renderCart();
+    showToast('✓ Added ' + name + ' (₹' + price + ')');
+  };
+
+  window.quickPunchDish = function (dishId) {
+    var dish = allDishes.find(function (d) { return d.id === dishId; });
+    if (!dish) return;
+    addToCart(dish.id);
+    showToast('✓ Added ' + dish.name + ' (₹' + dish.price + ')');
+  };
+
+  // Park / Hold Order Queue Management
+  var STORAGE_HELD = 'navrang_pos_held_orders';
+  function getHeldOrders() {
+    try {
+      var s = localStorage.getItem(STORAGE_HELD);
+      return s ? JSON.parse(s) : [];
+    } catch (e) { return []; }
+  }
+
+  function saveHeldOrders(list) {
+    localStorage.setItem(STORAGE_HELD, JSON.stringify(list));
+    updateHeldBadge();
+  }
+
+  function updateHeldBadge() {
+    var held = getHeldOrders();
+    var badge = document.getElementById('badgeHeldCount');
+    var btnView = document.getElementById('btnViewHeldOrders');
+    var viewCount = document.getElementById('btnViewHeldCount');
+    if (badge) {
+      badge.textContent = held.length;
+      badge.style.display = held.length > 0 ? 'inline-block' : 'none';
+    }
+    if (btnView && viewCount) {
+      viewCount.textContent = held.length;
+      btnView.style.display = held.length > 0 ? 'inline-flex' : 'none';
+    }
+  }
+
+  function holdCurrentOrder() {
+    if (!cart.length) {
+      showToast('⚠️ No items in current order to hold.');
+      return;
+    }
+    var calc = calculateBill();
+    var table = document.getElementById('tableSelect').value;
+    var waiter = document.getElementById('waiterInput').value.trim() || 'Staff';
+    var now = new Date();
+    var heldList = getHeldOrders();
+    heldList.unshift({
+      id: 'held_' + Date.now(),
+      time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      table: table,
+      waiter: waiter,
+      orderType: activeOrderType,
+      cart: JSON.parse(JSON.stringify(cart)),
+      total: calc.grandTotal,
+      itemsCount: cart.reduce(function (s, it) { return s + it.qty; }, 0)
+    });
+    saveHeldOrders(heldList);
+    showToast('⏸ Order for ' + table + ' parked. Ready for next customer.');
+    resetActiveOrder(true);
+  }
+
+  function openHeldOrdersModal() {
+    var held = getHeldOrders();
+    var listEl = document.getElementById('heldOrdersList');
+    if (!held.length) {
+      listEl.innerHTML = '<div class="admin-empty" style="padding:24px;">No parked orders currently on hold.</div>';
+    } else {
+      var html = '';
+      held.forEach(function (h) {
+        var itemsSummary = h.cart.map(function (it) { return it.qty + 'x ' + it.name; }).join(', ');
+        html += '<div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">' +
+          '<div style="flex:1 1 200px;">' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<strong style="color:var(--maroon-deep);font-size:14px;">' + AdminShared.esc(h.table) + '</strong>' +
+              '<span class="admin-badge active" style="font-size:10px;">' + AdminShared.esc(h.orderType) + '</span>' +
+              '<span style="font-size:11px;color:#64748B;">' + AdminShared.esc(h.time) + ' (' + AdminShared.esc(h.waiter) + ')</span>' +
+            '</div>' +
+            '<div style="font-size:12px;color:#334155;margin-top:4px;line-height:1.3;">' + AdminShared.esc(itemsSummary) + '</div>' +
+            '<div style="font-size:13px;font-weight:800;color:var(--maroon-deep);margin-top:4px;">Total: ₹' + (h.total || 0) + ' (' + h.itemsCount + ' items)</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;">' +
+            '<button type="button" class="admin-btn" onclick="resumeHeldOrder(\'' + h.id + '\')" style="padding:6px 12px;font-size:12px;font-weight:700;">▶ Resume</button>' +
+            '<button type="button" class="admin-btn admin-btn-secondary" onclick="discardHeldOrder(\'' + h.id + '\')" style="padding:6px 10px;font-size:12px;color:#DC2626;">✕ Discard</button>' +
+          '</div>' +
+        '</div>';
+      });
+      listEl.innerHTML = html;
+    }
+    document.getElementById('heldOrdersModal').classList.add('open');
+  }
+  window.openHeldOrdersModal = openHeldOrdersModal;
+
+  function closeHeldOrdersModal() {
+    document.getElementById('heldOrdersModal').classList.remove('open');
+  }
+  window.closeHeldOrdersModal = closeHeldOrdersModal;
+
+  function resumeHeldOrder(holdId) {
+    var held = getHeldOrders();
+    var idx = held.findIndex(function (h) { return h.id === holdId; });
+    if (idx === -1) return;
+    var order = held[idx];
+    if (cart.length > 0 && !confirm('Active bill has items. Overwrite with resumed order?')) {
+      return;
+    }
+    cart = JSON.parse(JSON.stringify(order.cart));
+    activeOrderType = order.orderType || 'Dine-In';
+    document.getElementById('tableSelect').value = order.table || 'Table 4';
+    document.getElementById('waiterInput').value = order.waiter || 'Raju';
+    held.splice(idx, 1);
+    saveHeldOrders(held);
+    closeHeldOrdersModal();
+    updateBillMetaBadges();
+    renderCart();
+    showToast('▶ Resumed order for ' + order.table);
+  }
+  window.resumeHeldOrder = resumeHeldOrder;
+
+  function discardHeldOrder(holdId) {
+    if (!confirm('Discard this held order?')) return;
+    var held = getHeldOrders().filter(function (h) { return h.id !== holdId; });
+    saveHeldOrders(held);
+    openHeldOrdersModal();
+    showToast('Discarded held order.');
+  }
+  window.discardHeldOrder = discardHeldOrder;
+
+  var btnHoldOrder = document.getElementById('btnHoldOrder');
+  if (btnHoldOrder) btnHoldOrder.addEventListener('click', holdCurrentOrder);
+  var btnViewHeldOrders = document.getElementById('btnViewHeldOrders');
+  if (btnViewHeldOrders) btnViewHeldOrders.addEventListener('click', openHeldOrdersModal);
+
+  // Global Keyboard Shortcuts
+  window.addEventListener('keydown', function (e) {
+    // Ctrl+Enter or Cmd+Enter: Punch and Print Bill
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      punchAndPrintBill();
+      return;
+    }
+    // '/' key when not typing in an input: focus quick item search
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT' && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      if (qNameInput) qNameInput.focus();
+    }
+    // Escape closes modals
+    if (e.key === 'Escape') {
+      closeReceiptModal();
+      closeSettingsModal();
+      closeHeldOrdersModal();
+    }
+  });
+
   // Initial Load
   document.getElementById('previewBillNo').textContent = generateNextBillNo();
+  populateDishesDatalist();
+  updateHeldBadge();
   initWaiterChips();
   updateBillMetaBadges();
   renderDishes('', 'all');

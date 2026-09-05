@@ -707,7 +707,10 @@ table.admin-table tr:hover td { background: var(--bg-surface-hover); }
 .pos-workspace {
   display: grid; grid-template-columns: 1.32fr 1fr; gap: 16px; align-items: flex-start;
 }
-@media (max-width: 1024px) {
+@media (min-width: 881px) and (max-width: 1100px) {
+  .pos-workspace { grid-template-columns: 1.18fr 1fr; gap: 12px; }
+}
+@media (max-width: 880px) {
   .pos-tabs-mobile { display: flex; }
   .pos-workspace { display: block; }
   .pos-col-menu { display: block; }
