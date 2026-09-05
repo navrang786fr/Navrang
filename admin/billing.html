@@ -330,6 +330,87 @@
   @media (max-width: 880px) {
     .pos-mini-cart-bar.active { display: flex; }
   }
+
+  /* Thermal Receipt Print Optimization (Strict Single Slip) */
+  @media print {
+    @page {
+      size: 80mm auto;
+      margin: 0;
+    }
+    html, body {
+      background: #fff !important;
+      color: #000 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 80mm !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+    body > * {
+      display: none !important;
+    }
+    body > #receiptModal,
+    body > #reprintModal {
+      display: block !important;
+      position: static !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      width: 80mm !important;
+      max-width: 80mm !important;
+      overflow: visible !important;
+    }
+    .receipt-modal-card {
+      display: block !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    .receipt-modal-card > div:first-child,
+    .receipt-modal-actions,
+    .receipt-modal-backdrop button {
+      display: none !important;
+    }
+    #thermalPrintContainer {
+      display: block !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+    }
+    .thermal-receipt {
+      display: block !important;
+      width: 76mm !important;
+      max-width: 76mm !important;
+      margin: 0 auto !important;
+      padding: 2mm 1mm 4mm !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      font-size: 11px !important;
+      color: #000 !important;
+      background: #fff !important;
+      page-break-before: avoid !important;
+      page-break-after: avoid !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    .thermal-receipt * {
+      color: #000 !important;
+      background: transparent !important;
+      text-shadow: none !important;
+      box-shadow: none !important;
+    }
+    .thermal-qr-box img {
+      width: 100px !important;
+      height: 100px !important;
+    }
+  }
 </style>
 </head>
 <body>

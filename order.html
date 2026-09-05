@@ -1389,6 +1389,57 @@
     line-height:1.35;
     font-family:'Karla','Noto Sans Telugu',sans-serif;
   }
+
+  /* ---------- Clean Print Styles (Prevents 3-page overflow & prints split bill cleanly) ---------- */
+  @media print {
+    @page {
+      size: auto;
+      margin: 10mm;
+    }
+    body {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .app-header, .search-wrap, .category-nav, .cart-bar, .bottom-bar,
+    .fab-stack, .fab-trigger, .cart-drawer, .dish-dialog, .surprise-dialog,
+    .toast, .splash-screen, .lightbox-close, .split-toast,
+    button, .split-presets, .people-pills, .stepper-btn, .split-actions, .sheet-handle {
+      display: none !important;
+    }
+    .split-dialog.show {
+      display: block !important;
+      position: static !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 auto !important;
+      width: 100% !important;
+      max-width: 450px !important;
+      box-shadow: none !important;
+    }
+    .split-dialog.show .split-card {
+      border: 1.5px solid #000 !important;
+      box-shadow: none !important;
+      background: #fff !important;
+      color: #000 !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      padding: 16px !important;
+      border-radius: 8px !important;
+      max-height: none !important;
+      transform: none !important;
+    }
+    body:has(.split-dialog.show) > *:not(#splitDialog) {
+      display: none !important;
+    }
+    .split-result-card {
+      background: #f8f9fa !important;
+      color: #000 !important;
+      border: 1px solid #ccc !important;
+    }
+    .split-result-amount {
+      color: #000 !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -1763,21 +1814,6 @@
         </button>
       </div>
       <p class="split-toast" id="splitToast"></p>
-
-      <!-- Menu QR English Section (Camera-Scannable) -->
-      <div class="split-qr-card" id="splitQrCard">
-        <div class="split-qr-badge-wrap">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          <span class="split-qr-badge" id="splitQrBadge">English Menu QR</span>
-        </div>
-        <div class="split-qr-frame">
-          <img src="images/qr-cards/qr_en.png" alt="Scan to view Navrang English Menu" class="split-qr-img" id="splitQrImg" width="148" height="148" loading="eager">
-        </div>
-        <div class="split-qr-info">
-          <div class="split-qr-text" id="splitQrText">Scan with phone camera to view live menu & order</div>
-          <div class="split-qr-sub" id="splitQrSub">Point camera at the QR code above</div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
