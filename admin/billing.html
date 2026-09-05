@@ -36,10 +36,75 @@
     font-weight: 700; margin-top: 4px;
   }
 
+  /* Compact Order Meta & Table Selector Bar */
+  .pos-meta-card {
+    padding: 8px 12px !important;
+    margin-bottom: 8px !important;
+  }
+  .pos-meta-bar {
+    display: grid;
+    grid-template-columns: auto 150px 1fr;
+    gap: 12px;
+    align-items: start;
+    margin-bottom: 0 !important;
+  }
+  @media (max-width: 900px) {
+    .pos-meta-bar {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+  .pos-meta-label {
+    display: block;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--maroon);
+    margin-bottom: 2px !important;
+  }
+  .pos-meta-select,
+  .pos-meta-input {
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 4px 10px !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+    border: 1.3px solid var(--rule) !important;
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--bg-surface);
+    color: var(--ink);
+  }
+  .pos-waiter-compact-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .pos-waiter-compact-row input {
+    width: 110px;
+    flex: 0 0 110px;
+  }
+  .pos-waiter-chips-inline {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+  }
   .type-pill {
-    padding: 6px 14px; border-radius: 20px; border: 1.2px solid var(--rule);
-    background: var(--bg-surface); font-size: 12px; font-weight: 700; color: var(--ink);
-    cursor: pointer; transition: all 0.12s ease;
+    padding: 4px 12px;
+    border-radius: 16px;
+    border: 1.2px solid var(--rule);
+    background: var(--bg-surface);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.12s ease;
+    height: 32px;
+    box-sizing: border-box;
   }
   .type-pill:hover { background: var(--bg-surface-soft); border-color: #CBD5E1; }
   .type-pill.active {
@@ -48,11 +113,59 @@
   }
 
   .waiter-chip {
-    font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 12px;
-    border: 1px solid var(--rule); background: var(--bg-surface-soft); color: var(--ink);
-    cursor: pointer; transition: all 0.1s ease;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    border: 1px solid var(--rule);
+    background: var(--bg-surface-soft);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.1s ease;
+    white-space: nowrap;
   }
   .waiter-chip:hover { border-color: var(--maroon); color: var(--maroon); }
+
+  /* Fixed-Height Dish Grid & Cards (Fixes vertical stretching during search/filter) */
+  .pos-dish-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+    grid-auto-rows: 92px !important;
+    align-content: start !important;
+    gap: 8px !important;
+    max-height: calc(100vh - 210px) !important;
+    min-height: 260px !important;
+    overflow-y: auto !important;
+    padding: 4px !important;
+  }
+  .pos-dish-card {
+    background: var(--bg-surface) !important;
+    border: 1.2px solid var(--rule) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 7px 9px !important;
+    text-align: left !important;
+    cursor: pointer !important;
+    transition: all 0.12s ease !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 92px !important;
+    max-height: 92px !important;
+    box-sizing: border-box !important;
+    box-shadow: var(--shadow-xs) !important;
+    user-select: none !important;
+    overflow: hidden !important;
+  }
+  .pos-dish-card:hover {
+    transform: translateY(-2px) !important;
+    border-color: var(--maroon) !important;
+    box-shadow: var(--shadow-sm) !important;
+  }
+  .pos-dish-card:active {
+    transform: scale(0.97) !important;
+    background: var(--bg-surface-soft) !important;
+  }
 
   .tax-toggle-btn {
     border: 1px solid var(--rule); background: var(--bg-surface-soft); font-size: 11.5px;
@@ -356,54 +469,54 @@
           <div class="pos-col-menu tab-visible">
             
             <!-- Order Meta & Table Selector -->
-            <div class="admin-card" style="margin-bottom:14px;padding:14px;">
+            <div class="admin-card pos-meta-card">
               <div class="pos-meta-bar">
                 <div class="admin-field" style="margin-bottom:0;">
-                  <label>Order Type</label>
-                  <div style="display:flex;gap:4px;margin-top:2px;">
+                  <label class="pos-meta-label">Order Type</label>
+                  <div style="display:flex;gap:4px;">
                     <button type="button" class="type-pill active" data-type="Dine-In">Dine-In</button>
                     <button type="button" class="type-pill" data-type="Takeaway">Parcel</button>
                     <button type="button" class="type-pill" data-type="Delivery">Delivery</button>
                   </div>
                 </div>
                 <div class="admin-field" style="margin-bottom:0;">
-                  <label for="tableSelect">Table Number</label>
-                  <div style="display:flex;gap:6px;">
-                    <select id="tableSelect" style="font-weight:700;">
-                      <option value="Table 1">Table 1</option>
-                      <option value="Table 2">Table 2</option>
-                      <option value="Table 3">Table 3</option>
-                      <option value="Table 4" selected>Table 4</option>
-                      <option value="Table 5">Table 5</option>
-                      <option value="Table 6">Table 6</option>
-                      <option value="Table 7">Table 7</option>
-                      <option value="Table 8">Table 8</option>
-                      <option value="Table 9">Table 9</option>
-                      <option value="Table 10">Table 10</option>
-                      <option value="Table 11">Table 11</option>
-                      <option value="Table 12">Table 12</option>
-                      <option value="Parcel">Parcel / Counter</option>
-                      <option value="VIP Cabin">VIP Cabin</option>
-                    </select>
-                  </div>
+                  <label class="pos-meta-label" for="tableSelect">Table Number</label>
+                  <select id="tableSelect" class="pos-meta-select" style="font-weight:700;">
+                    <option value="Table 1">Table 1</option>
+                    <option value="Table 2">Table 2</option>
+                    <option value="Table 3">Table 3</option>
+                    <option value="Table 4" selected>Table 4</option>
+                    <option value="Table 5">Table 5</option>
+                    <option value="Table 6">Table 6</option>
+                    <option value="Table 7">Table 7</option>
+                    <option value="Table 8">Table 8</option>
+                    <option value="Table 9">Table 9</option>
+                    <option value="Table 10">Table 10</option>
+                    <option value="Table 11">Table 11</option>
+                    <option value="Table 12">Table 12</option>
+                    <option value="Parcel">Parcel / Counter</option>
+                    <option value="VIP Cabin">VIP Cabin</option>
+                  </select>
                 </div>
                 <div class="admin-field" style="margin-bottom:0;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-                    <label for="waiterInput" style="margin:0;">Waiter / Server</label>
-                    <a href="waiters.html" style="font-size:11px;font-weight:700;color:var(--maroon);text-decoration:none;" title="Manage Staff Directory">⚙ Waiter Master</a>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+                    <label class="pos-meta-label" for="waiterInput" style="margin:0;">Waiter / Server</label>
+                    <a href="waiters.html" style="font-size:10.5px;font-weight:700;color:var(--maroon);text-decoration:none;" title="Manage Staff Directory">⚙ Waiter Master</a>
                   </div>
-                  <input type="text" id="waiterInput" placeholder="Waiter name" value="Raju" style="font-weight:600;">
-                  <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;" id="waiterChips">
-                    <!-- Populated dynamically from Waiters Master -->
+                  <div class="pos-waiter-compact-row">
+                    <input type="text" id="waiterInput" class="pos-meta-input" placeholder="Waiter name" value="Raju" style="font-weight:600;">
+                    <div class="pos-waiter-chips-inline" id="waiterChips">
+                      <!-- Populated dynamically from Waiters Master -->
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Fast Search & Category Filters -->
-            <div class="admin-card" style="padding:14px;">
-              <div style="position:relative;margin-bottom:12px;">
-                <input type="text" id="dishSearchInput" placeholder="🔍 Type Dish # (e.g. 16) or Name (e.g. Biryani, Paneer, Chicken)… [Press Enter to Add]" style="font-size:14px;padding:10px 14px;border:1.5px solid var(--rule);border-radius:10px;width:100%;outline:none;" autofocus>
+            <div class="admin-card" style="padding:10px 12px;">
+              <div style="position:relative;margin-bottom:8px;">
+                <input type="text" id="dishSearchInput" placeholder="🔍 Type Dish # (e.g. 16) or Name (e.g. Biryani, Paneer, Chicken)… [Press Enter to Add]" style="font-size:13.5px;padding:8px 12px;border:1.5px solid var(--rule);border-radius:8px;width:100%;outline:none;" autofocus>
               </div>
 
               <!-- Category Pills -->
