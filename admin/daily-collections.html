@@ -480,6 +480,16 @@
         <span>Payment Mode:</span>
         <strong id="rcptPayMode">CASH</strong>
       </div>
+      <div id="rcptCashTenderRow" style="display:none;border-top:1px dashed #000;margin-top:4px;padding-top:4px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;">
+          <span>Customer Paid:</span>
+          <strong id="rcptPaidByCustomer">₹0.00</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;">
+          <span>Return Amount:</span>
+          <strong id="rcptReturnedToCustomer">₹0.00</strong>
+        </div>
+      </div>
       <div style="text-align:center;margin-top:10px;font-size:10px;">
         Thank You! Visit Again.
       </div>
@@ -815,6 +825,18 @@
     document.getElementById('rcptGst').textContent = '₹' + (Number(bill.gstAmount) || 0).toFixed(2);
     document.getElementById('rcptGrandTotal').textContent = '₹' + (Number(bill.grandTotal) || 0).toFixed(2);
     document.getElementById('rcptPayMode').textContent = (bill.paymentMode || 'CASH').toUpperCase();
+
+    // Cash tender details on reprint receipt
+    var cashTenderRow = document.getElementById('rcptCashTenderRow');
+    if ((bill.paymentMode || '').toLowerCase() === 'cash' && bill.customerPaid !== undefined && bill.customerPaid !== null) {
+      if (cashTenderRow) {
+        cashTenderRow.style.display = 'block';
+        document.getElementById('rcptPaidByCustomer').textContent = '₹' + Number(bill.customerPaid).toFixed(2);
+        document.getElementById('rcptReturnedToCustomer').textContent = '₹' + Number(bill.returnAmount || 0).toFixed(2);
+      }
+    } else {
+      if (cashTenderRow) cashTenderRow.style.display = 'none';
+    }
 
     // Show delete option in modal only for authenticated administrator
     var btnModalDel = document.getElementById('btnRcptDeleteModal');

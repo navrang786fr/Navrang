@@ -1122,6 +1122,14 @@ table.admin-table tr:hover td { background: var(--bg-surface-hover); }
     break-inside: avoid !important;
     visibility: visible !important;
   }
+  #rcptQrBox.qr-hidden,
+  .thermal-qr-box.qr-hidden {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
   .thermal-qr-caption {
     display: block !important;
     font-size: 9.5px !important;
@@ -1134,3 +1142,31 @@ table.admin-table tr:hover td { background: var(--bg-surface-hover); }
   }
 }
 
+/* Cash Tender Quick Suggestion Chips */
+.cash-chip-btn {
+  background: #fff;
+  border: 1.5px solid var(--rule);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  font-family: inherit;
+}
+.cash-chip-btn:hover {
+  border-color: var(--maroon);
+  color: var(--maroon-deep);
+  background: var(--cream-soft);
+  transform: translateY(-1px);
+}
+.cash-chip-btn:active {
+  transform: translateY(0);
+}
+
+#rcptQrBox.qr-hidden,
+.thermal-qr-box.qr-hidden {
+  display: none !important;
+}

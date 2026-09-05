@@ -404,6 +404,14 @@
       break-inside: avoid !important;
       visibility: visible !important;
     }
+    #rcptQrBox.qr-hidden,
+    .thermal-qr-box.qr-hidden {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
     .thermal-qr-caption {
       display: block !important;
       font-size: 9.5px !important;
@@ -711,6 +719,30 @@
                 </div>
               </div>
 
+              <!-- Cash Tender & Return Calculator (Active only when Cash is selected) -->
+              <div id="cashTenderSection" style="margin-top:10px;background:var(--cream);border:1.5px solid var(--rule);border-radius:8px;padding:10px 12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                  <label for="cashReceivedInput" style="font-size:11px;font-weight:700;color:var(--maroon-deep);text-transform:uppercase;letter-spacing:0.5px;margin:0;">
+                    💵 Cash Received from Customer
+                  </label>
+                  <span id="cashTenderStatus" style="font-size:11px;font-weight:700;color:var(--ink-muted);">Exact / Cash</span>
+                </div>
+                
+                <div style="position:relative;margin-bottom:6px;">
+                  <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-weight:800;color:var(--maroon-deep);font-size:15px;">₹</span>
+                  <input type="number" id="cashReceivedInput" min="0" step="any" placeholder="Enter amount received (e.g. 500)" style="width:100%;padding:7px 10px 7px 24px;font-size:15px;font-weight:800;color:var(--maroon-deep);border:1.5px solid var(--rule);border-radius:6px;outline:none;background:#fff;box-sizing:border-box;">
+                </div>
+
+                <!-- Quick Tender Chips (Exact, Next 50/100, 500, 1000, 2000) -->
+                <div id="cashQuickChips" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;"></div>
+
+                <!-- Return Change Display Box -->
+                <div id="cashReturnBox" style="background:#fff;border:1.5px dashed var(--leaf);border-radius:6px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;transition:all 0.2s ease;">
+                  <span style="font-size:12px;font-weight:700;color:var(--ink);">Return to Customer:</span>
+                  <strong id="cashReturnDisplay" style="font-size:16px;font-weight:800;color:var(--leaf);font-family:'IBM Plex Mono',monospace;">₹0.00</strong>
+                </div>
+              </div>
+
               <!-- Actions -->
               <div class="pos-actions">
                 <button type="button" class="pos-punch-btn" id="btnPunchAndPrint">
@@ -822,6 +854,18 @@
         </div>
         <div style="font-size:11px;text-align:center;font-weight:700;margin-bottom:6px;">
           Paid via: <span id="rcptPaymentMode">Cash</span>
+        </div>
+
+        <!-- Cash Tender / Return Summary on Receipt -->
+        <div id="rcptCashTenderSummary" style="display:none;font-size:11px;margin:5px 0 6px;border-top:1px dashed #333;border-bottom:1px dashed #333;padding:4px 0;">
+          <div class="thermal-row" style="margin-bottom:2px;">
+            <span>Customer Paid:</span>
+            <strong id="rcptCustomerPaid">₹0.00</strong>
+          </div>
+          <div class="thermal-row">
+            <span>Return Amount:</span>
+            <strong id="rcptReturnAmount">₹0.00</strong>
+          </div>
         </div>
 
         <!-- Dynamic UPI Payment QR Code -->
@@ -1257,7 +1301,106 @@
       if (totalCount > 0) miniCart.classList.add('active');
       else miniCart.classList.remove('active');
     }
+
+    // Update cash tender and change calculation
+    updateCashTenderUI();
   }
+
+  // Cash Tender & Return Change Calculator
+  function updateCashTenderUI() {
+    var section = document.getElementById('cashTenderSection');
+    if (!section) return;
+
+    if (activePaymentMode !== 'Cash') {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'block';
+
+    var calc = calculateBill();
+    var grandTotal = calc.grandTotal;
+    var cashInput = document.getElementById('cashReceivedInput');
+    var val = cashInput ? parseFloat(cashInput.value) : NaN;
+
+    var statusEl = document.getElementById('cashTenderStatus');
+    var returnDisplay = document.getElementById('cashReturnDisplay');
+    var returnBox = document.getElementById('cashReturnBox');
+
+    renderCashQuickChips(grandTotal);
+
+    if (isNaN(val) || val <= 0) {
+      if (statusEl) statusEl.textContent = 'Exact / Cash';
+      if (returnDisplay) returnDisplay.textContent = '₹0.00';
+      if (returnDisplay) returnDisplay.style.color = 'var(--leaf)';
+      if (returnBox) {
+        returnBox.style.borderColor = 'var(--leaf)';
+        returnBox.style.background = '#fff';
+      }
+      return;
+    }
+
+    var diff = val - grandTotal;
+    if (diff >= 0) {
+      if (statusEl) statusEl.textContent = '✓ Paid in Full';
+      if (returnDisplay) returnDisplay.textContent = '₹' + diff.toFixed(2);
+      if (returnDisplay) returnDisplay.style.color = 'var(--leaf)';
+      if (returnBox) {
+        returnBox.style.borderColor = 'var(--leaf)';
+        returnBox.style.background = '#f4fbf5';
+      }
+    } else {
+      var shortAmt = Math.abs(diff);
+      if (statusEl) statusEl.textContent = '⚠️ Short / Due';
+      if (returnDisplay) returnDisplay.textContent = 'Due: ₹' + shortAmt.toFixed(2);
+      if (returnDisplay) returnDisplay.style.color = '#c53030';
+      if (returnBox) {
+        returnBox.style.borderColor = '#e53e3e';
+        returnBox.style.background = '#fff5f5';
+      }
+    }
+  }
+
+  function renderCashQuickChips(grandTotal) {
+    var container = document.getElementById('cashQuickChips');
+    if (!container) return;
+
+    if (grandTotal <= 0) {
+      container.innerHTML = '';
+      return;
+    }
+
+    var chips = [];
+    chips.push({ label: 'Exact (₹' + grandTotal.toFixed(0) + ')', value: grandTotal });
+
+    var next50 = Math.ceil(grandTotal / 50) * 50;
+    if (next50 > grandTotal && chips.every(function (c) { return c.value !== next50; })) {
+      chips.push({ label: '₹' + next50, value: next50 });
+    }
+    var next100 = Math.ceil(grandTotal / 100) * 100;
+    if (next100 > grandTotal && chips.every(function (c) { return c.value !== next100; })) {
+      chips.push({ label: '₹' + next100, value: next100 });
+    }
+
+    [500, 1000, 2000].forEach(function (denom) {
+      if (denom >= grandTotal && chips.every(function (c) { return c.value !== denom; })) {
+        chips.push({ label: '₹' + denom, value: denom });
+      }
+    });
+
+    var html = '';
+    chips.slice(0, 4).forEach(function (c) {
+      html += '<button type="button" class="cash-chip-btn" onclick="setCashTender(' + c.value + ')">' + c.label + '</button>';
+    });
+    container.innerHTML = html;
+  }
+
+  window.setCashTender = function (amount) {
+    var cashInput = document.getElementById('cashReceivedInput');
+    if (cashInput) {
+      cashInput.value = amount;
+      updateCashTenderUI();
+    }
+  };
 
   window.switchToCartTab = function () {
     var tabBtnBill = document.getElementById('tabBtnBill');
@@ -1330,6 +1473,12 @@
     var waiter = document.getElementById('waiterInput').value.trim() || 'Staff';
     var settings = getSettings();
 
+    var cashInput = document.getElementById('cashReceivedInput');
+    var rawCash = cashInput ? parseFloat(cashInput.value) : NaN;
+    var isCash = activePaymentMode === 'Cash';
+    var customerPaid = (isCash && !isNaN(rawCash) && rawCash > 0) ? rawCash : (isCash ? calc.grandTotal : null);
+    var returnAmount = (isCash && customerPaid > calc.grandTotal) ? (customerPaid - calc.grandTotal) : 0;
+
     return {
       billNo: billNo,
       timestamp: now.toISOString(),
@@ -1339,6 +1488,8 @@
       waiter: waiter,
       orderType: activeOrderType,
       paymentMode: activePaymentMode,
+      customerPaid: customerPaid,
+      returnAmount: returnAmount,
       items: cart.map(function (it) {
         return { name: it.name, qty: it.qty, price: it.price, total: it.price * it.qty };
       }),
@@ -1428,48 +1579,76 @@
     document.getElementById('rcptWords').textContent = bill.amountWords;
     document.getElementById('rcptPaymentMode').textContent = bill.paymentMode;
 
-    // Generate Dynamic UPI QR Code (Instant, 100% Offline & Reliable)
-    var upiString = 'upi://pay?pa=' + encodeURIComponent(s.upiId || 'navrang@upi') +
-      '&pn=' + encodeURIComponent(s.restName || 'Navrang Restaurant') +
-      '&am=' + encodeURIComponent(bill.grandTotal.toFixed(2)) +
-      '&cu=INR&tn=' + encodeURIComponent('Bill ' + bill.billNo);
+    // Cash Tender / Return Summary on Receipt
+    var cashSummaryEl = document.getElementById('rcptCashTenderSummary');
+    var custPaidEl = document.getElementById('rcptCustomerPaid');
+    var retAmtEl = document.getElementById('rcptReturnAmount');
+    var isCashMode = (bill.paymentMode === 'Cash');
+    var isUpiMode = (bill.paymentMode === 'UPI' || bill.paymentMode === 'UPI / QR');
 
-    var qrContainer = document.getElementById('rcptQrContainer');
-    var qrImg = document.getElementById('rcptQrImg');
+    if (isCashMode && bill.customerPaid !== undefined && bill.customerPaid !== null) {
+      if (cashSummaryEl) cashSummaryEl.style.display = 'block';
+      if (custPaidEl) custPaidEl.textContent = '₹' + Number(bill.customerPaid).toFixed(2);
+      if (retAmtEl) retAmtEl.textContent = '₹' + Number(bill.returnAmount || 0).toFixed(2);
+    } else {
+      if (cashSummaryEl) cashSummaryEl.style.display = 'none';
+    }
 
-    try {
-      if (typeof qrcode === 'function') {
-        var qr = qrcode(0, 'M');
-        qr.addData(upiString);
-        qr.make();
-        // Generate crisp vector SVG for perfect thermal and laser printing
-        var svgHtml = qr.createSvgTag({ cellSize: 3, margin: 2, scalable: true });
-        if (qrContainer) {
-          qrContainer.innerHTML = svgHtml;
-          var svgEl = qrContainer.querySelector('svg');
-          if (svgEl) {
-            svgEl.setAttribute('width', '120');
-            svgEl.setAttribute('height', '120');
-            svgEl.style.width = '120px';
-            svgEl.style.height = '120px';
-            svgEl.style.display = 'block';
-            svgEl.style.margin = '0 auto';
-          }
-        }
-        if (qrImg) {
-          qrImg.src = qr.createDataURL(4, 2);
-          qrImg.style.display = 'none';
-        }
-      } else {
-        throw new Error('qrcode library not loaded');
+    // Dynamic UPI Payment QR Code
+    // Rule: Hide QR code if payment method is UPI/QR, but show it on Cash bills
+    var qrBox = document.getElementById('rcptQrBox');
+    if (isUpiMode) {
+      if (qrBox) {
+        qrBox.style.display = 'none';
+        qrBox.classList.add('qr-hidden');
       }
-    } catch (qrErr) {
-      console.warn('Local QR generation failed, falling back to remote URL:', qrErr);
-      if (qrContainer) {
-        qrContainer.innerHTML = '<img id="rcptQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString) + '" alt="Scan &amp; Pay UPI QR" style="width:120px;height:120px;margin:0 auto;display:block;">';
-      } else if (qrImg) {
-        qrImg.style.display = 'block';
-        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString);
+    } else {
+      if (qrBox) {
+        qrBox.style.display = 'block';
+        qrBox.classList.remove('qr-hidden');
+      }
+      var upiString = 'upi://pay?pa=' + encodeURIComponent(s.upiId || 'navrang@upi') +
+        '&pn=' + encodeURIComponent(s.restName || 'Navrang Restaurant') +
+        '&am=' + encodeURIComponent(bill.grandTotal.toFixed(2)) +
+        '&cu=INR&tn=' + encodeURIComponent('Bill ' + bill.billNo);
+
+      var qrContainer = document.getElementById('rcptQrContainer');
+      var qrImg = document.getElementById('rcptQrImg');
+
+      try {
+        if (typeof qrcode === 'function') {
+          var qr = qrcode(0, 'M');
+          qr.addData(upiString);
+          qr.make();
+          // Generate crisp vector SVG for perfect thermal and laser printing
+          var svgHtml = qr.createSvgTag({ cellSize: 3, margin: 2, scalable: true });
+          if (qrContainer) {
+            qrContainer.innerHTML = svgHtml;
+            var svgEl = qrContainer.querySelector('svg');
+            if (svgEl) {
+              svgEl.setAttribute('width', '120');
+              svgEl.setAttribute('height', '120');
+              svgEl.style.width = '120px';
+              svgEl.style.height = '120px';
+              svgEl.style.display = 'block';
+              svgEl.style.margin = '0 auto';
+            }
+          }
+          if (qrImg) {
+            qrImg.src = qr.createDataURL(4, 2);
+            qrImg.style.display = 'none';
+          }
+        } else {
+          throw new Error('qrcode library not loaded');
+        }
+      } catch (qrErr) {
+        console.warn('Local QR generation failed, falling back to remote URL:', qrErr);
+        if (qrContainer) {
+          qrContainer.innerHTML = '<img id="rcptQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString) + '" alt="Scan &amp; Pay UPI QR" style="width:120px;height:120px;margin:0 auto;display:block;">';
+        } else if (qrImg) {
+          qrImg.style.display = 'block';
+          qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString);
+        }
       }
     }
 
@@ -1553,6 +1732,8 @@
     document.getElementById('parcelChargeInput').value = '0';
     document.getElementById('discountInput').value = '0';
     document.getElementById('dishSearchInput').value = '';
+    var cashInp = document.getElementById('cashReceivedInput');
+    if (cashInp) cashInp.value = '';
     document.getElementById('previewBillNo').textContent = generateNextBillNo();
     renderCart();
     renderDishes('', currentCategoryFilter);
@@ -1815,8 +1996,15 @@
       Array.prototype.forEach.call(payButtons, function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
       activePaymentMode = btn.getAttribute('data-mode');
+      updateCashTenderUI();
     });
   });
+
+  // Cash Tender Input Listener
+  var cashReceivedEl = document.getElementById('cashReceivedInput');
+  if (cashReceivedEl) {
+    cashReceivedEl.addEventListener('input', updateCashTenderUI);
+  }
 
   // Mobile Tabs
   var tabBtnMenu = document.getElementById('tabBtnMenu');
