@@ -90,7 +90,9 @@
     chevron: '<polyline points="9 18 15 12 9 6"/>',
     user: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
     storefront: '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
-    billing: '<path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/><path d="M8 8h8M8 12h8M8 16h5"/>'
+    billing: '<path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+    cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>',
+    shortcuts: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>'
   };
 
   function icon(name, size) {
@@ -99,7 +101,7 @@
     return '<svg viewBox="0 0 24 24" width="' + (size || 15) + '" height="' + (size || 15) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
   }
 
-  // Submenu items structure
+  // Top Nav and Submenu items structure
   var NAV_GROUPS = [
     {
       type: 'direct',
@@ -114,6 +116,13 @@
       label: 'Counter Billing',
       href: 'billing.html',
       icon: 'billing'
+    },
+    {
+      type: 'direct',
+      key: 'collections',
+      label: 'Daily Collections',
+      href: 'daily-collections.html',
+      icon: 'cash'
     },
     {
       type: 'group',
@@ -146,13 +155,20 @@
         { key: 'access', label: 'Access Log', href: 'access-log.html', icon: 'access' },
         { key: 'password', label: 'Change Password', href: 'change-password.html', icon: 'lock' }
       ]
+    },
+    {
+      type: 'group',
+      id: 'shortcuts',
+      label: 'Shortcuts',
+      icon: 'shortcuts',
+      items: [
+        { key: 'sc-orders', label: 'Online Orders', href: '../order.html', icon: 'orders', external: true },
+        { key: 'sc-menu-en', label: 'Live Menu (EN)', href: '../navrang-menu.html', icon: 'menu', external: true },
+        { key: 'sc-menu-te', label: 'Live Menu (TE)', href: '../navrang-menu-te.html', icon: 'menu', external: true },
+        { key: 'sc-ratings', label: 'Customer Ratings', href: 'ratings.html', icon: 'ratings' },
+        { key: 'sc-qr', label: 'Table Standee QR', href: 'qr-scans.html', icon: 'qr' }
+      ]
     }
-  ];
-
-  var SHORTCUTS = [
-    { label: 'Online Orders', href: '../order.html', icon: 'orders' },
-    { label: 'Live Menu (EN)', href: '../navrang-menu.html', icon: 'menu' },
-    { label: 'Live Menu (TE)', href: '../navrang-menu-te.html', icon: 'menu' }
   ];
 
   function getOpenGroups() {
@@ -210,35 +226,146 @@
     var username = getUsername();
     var userInitial = (username.charAt(0) || 'A').toUpperCase();
 
+    // User Avatar + Popup Menu Container (Live Menu removed, Logout moved inside popup)
     actions.innerHTML =
-      '<a href="../navrang-menu.html" target="_blank" rel="noopener" class="admin-header-link" title="Open Live Customer Menu">' +
-        icon('menu', 13) +
-        '<span>Live Menu</span>' +
-        icon('external', 10) +
-      '</a>' +
-      '<div class="admin-header-user">' +
-        '<div class="admin-user-avatar">' + esc(userInitial) + '</div>' +
-        '<div class="admin-user-meta">' +
-          '<span class="admin-user-name">' + esc(username) + '</span>' +
-          '<span class="admin-user-status">Online</span>' +
+      '<div class="admin-header-user-wrap" id="adminUserWrap">' +
+        '<button type="button" class="admin-header-user-btn" id="adminUserBtn" aria-haspopup="true" aria-expanded="false" title="Click for Admin Menu">' +
+          '<div class="admin-user-avatar">' + esc(userInitial) + '</div>' +
+          '<div class="admin-user-meta">' +
+            '<span class="admin-user-name">' + esc(username) + '</span>' +
+            '<span class="admin-user-status">Online</span>' +
+          '</div>' +
+          '<span class="admin-user-arrow">&#9662;</span>' +
+        '</button>' +
+        '<div class="admin-user-popup" id="adminUserPopup">' +
+          '<div class="admin-popup-header">' +
+            '<div class="admin-popup-avatar">' + esc(userInitial) + '</div>' +
+            '<div class="admin-popup-userinfo">' +
+              '<div class="admin-popup-name">' + esc(username) + '</div>' +
+              '<div class="admin-popup-role">Store Manager &amp; Cashier</div>' +
+              '<div class="admin-popup-status"><span class="dot"></span> Online Session</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="admin-popup-links">' +
+            '<a href="billing.html" class="admin-popup-link">' +
+              icon('billing', 14) + '<span>Counter Billing</span>' +
+            '</a>' +
+            '<a href="daily-collections.html" class="admin-popup-link">' +
+              icon('cash', 14) + '<span>Daily Collections &amp; Cash Match</span>' +
+            '</a>' +
+            '<a href="change-password.html" class="admin-popup-link">' +
+              icon('lock', 14) + '<span>Change Password</span>' +
+            '</a>' +
+          '</div>' +
+          '<div class="admin-popup-divider"></div>' +
+          '<button type="button" class="admin-popup-logout-btn" id="adminPopupLogoutBtn" title="Sign out of Admin">' +
+            icon('logout', 14) +
+            '<span>Sign Out / Logout</span>' +
+          '</button>' +
         '</div>' +
-      '</div>' +
-      '<button type="button" class="admin-header-logout" id="adminHeaderLogoutBtn" title="Sign out of Admin">' +
-        icon('logout', 14) +
-        '<span>Logout</span>' +
-      '</button>';
+      '</div>';
 
     header.appendChild(actions);
 
-    var logoutBtn = document.getElementById('adminHeaderLogoutBtn');
+    // Setup Admin User Popup Menu Handlers
+    var userWrap = document.getElementById('adminUserWrap');
+    var userBtn = document.getElementById('adminUserBtn');
+    var logoutBtn = document.getElementById('adminPopupLogoutBtn');
+
+    if (userBtn && userWrap) {
+      userBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = userWrap.classList.toggle('open');
+        userBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!userWrap.contains(e.target)) {
+          userWrap.classList.remove('open');
+          userBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          userWrap.classList.remove('open');
+          userBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
     if (logoutBtn) {
       logoutBtn.addEventListener('click', logout);
     }
   }
 
+  // Render Horizontal Top Navigation Bar
+  function renderTopNav(activeKey) {
+    var header = document.querySelector('.admin-header-bar');
+    if (!header) return;
+
+    var topNav = document.getElementById('adminTopNav');
+    if (!topNav) {
+      topNav = document.createElement('nav');
+      topNav.className = 'admin-topnav-bar';
+      topNav.id = 'adminTopNav';
+      header.parentNode.insertBefore(topNav, header.nextSibling);
+    }
+
+    var html = '<div class="admin-topnav-container">';
+    NAV_GROUPS.forEach(function (g) {
+      if (g.type === 'direct') {
+        var isAct = g.key === activeKey;
+        html += '<a class="admin-topnav-link' + (isAct ? ' active' : '') + '" href="' + g.href + '">' +
+          icon(g.icon, 15) + '<span>' + esc(g.label) + '</span></a>';
+      } else if (g.type === 'group') {
+        var hasActiveChild = g.items.some(function (it) { return it.key === activeKey; });
+        html += '<div class="admin-topnav-dropdown" data-group-id="' + g.id + '">' +
+          '<button type="button" class="admin-topnav-btn' + (hasActiveChild ? ' has-active' : '') + '">' +
+            icon(g.icon, 15) + '<span>' + esc(g.label) + '</span>' +
+            '<span class="admin-topnav-chevron">' + icon('chevron', 12) + '</span>' +
+          '</button>' +
+          '<div class="admin-topnav-menu">';
+
+        g.items.forEach(function (sub) {
+          var isSubAct = sub.key === activeKey;
+          var targetAttr = sub.external ? ' target="_blank" rel="noopener"' : '';
+          html += '<a class="admin-topnav-sublink' + (isSubAct ? ' active' : '') + '" href="' + sub.href + '"' + targetAttr + '>' +
+            icon(sub.icon, 13) + '<span>' + esc(sub.label) + '</span>' +
+            (sub.external ? '<span class="sub-ext">' + icon('external', 10) + '</span>' : '') +
+          '</a>';
+        });
+
+        html += '</div></div>';
+      }
+    });
+    html += '</div>';
+
+    topNav.innerHTML = html;
+
+    // Dropdown interaction for top nav (click / keyboard toggle)
+    var dropdowns = topNav.querySelectorAll('.admin-topnav-dropdown');
+    Array.prototype.forEach.call(dropdowns, function (dd) {
+      var btn = dd.querySelector('.admin-topnav-btn');
+      if (btn) {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var wasOpen = dd.classList.contains('open');
+          Array.prototype.forEach.call(dropdowns, function (other) { other.classList.remove('open'); });
+          if (!wasOpen) dd.classList.add('open');
+        });
+      }
+    });
+
+    document.addEventListener('click', function () {
+      Array.prototype.forEach.call(dropdowns, function (dd) { dd.classList.remove('open'); });
+    });
+  }
+
   function renderNav(activeKey) {
     initTailwind();
     renderHeaderActions();
+    renderTopNav(activeKey);
 
     var nav = document.getElementById('adminNav');
     if (!nav) return;
@@ -278,25 +405,21 @@
 
         g.items.forEach(function (sub) {
           var isSubAct = sub.key === activeKey;
-          html += '<a class="admin-nav-sublink' + (isSubAct ? ' active' : '') + '" href="' + sub.href + '">' +
-            icon(sub.icon, 13) + '<span>' + esc(sub.label) + '</span></a>';
+          var targetAttr = sub.external ? ' target="_blank" rel="noopener"' : '';
+          html += '<a class="admin-nav-sublink' + (isSubAct ? ' active' : '') + '" href="' + sub.href + '"' + targetAttr + '>' +
+            icon(sub.icon, 13) + '<span>' + esc(sub.label) + '</span>' +
+            (sub.external ? '<span style="margin-left:auto;">' + icon('external', 10) + '</span>' : '') +
+          '</a>';
         });
 
         html += '</div></div></div>';
       }
     });
 
-    // Shortcuts Section
-    html += '<div class="admin-nav-section">Shortcuts</div>';
-    SHORTCUTS.forEach(function (sc) {
-      html += '<a class="admin-nav-link admin-nav-external" href="' + sc.href + '" target="_blank" rel="noopener">' +
-        icon(sc.icon) + '<span>' + esc(sc.label) + '</span>' + icon('external', 11) + '</a>';
-    });
-
     // Footer with version & live status
     html += '<div class="admin-sidebar-footer">' +
       '<div class="admin-sidebar-status"><span class="dot"></span><span>System Online</span></div>' +
-      '<div class="admin-sidebar-version">Navrang Admin v26.08</div>' +
+      '<div class="admin-sidebar-version">Navrang Admin v26.09</div>' +
     '</div>';
 
     nav.innerHTML = html;

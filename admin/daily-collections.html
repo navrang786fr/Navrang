@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Daily Collections & Cash Reconcile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06180D">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .dc-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
+  }
+  .dc-toolbar h2 { margin: 0; }
+  .dc-actions {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  }
+
+  .dc-kpis {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px;
+  }
+  @media (max-width: 1024px) {
+    .dc-kpis { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .dc-kpis { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .dc-kpi-card {
+    background: var(--bg-surface); border: 1px solid var(--rule); border-radius: var(--radius-md);
+    padding: 12px 10px; text-align: center; box-shadow: var(--shadow-xs);
+  }
+  .dc-kpi-card .val {
+    font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 700; color: var(--maroon-deep);
+  }
+  .dc-kpi-card .lbl {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--ink-muted);
+    font-weight: 700; margin-top: 3px;
+  }
+  .dc-kpi-card.cash-kpi { border-color: rgba(22, 163, 74, 0.4); background: rgba(22, 163, 74, 0.03); }
+  .dc-kpi-card.cash-kpi .val { color: var(--leaf); }
+  .dc-kpi-card.upi-kpi { border-color: rgba(37, 99, 235, 0.4); background: rgba(37, 99, 235, 0.03); }
+  .dc-kpi-card.upi-kpi .val { color: var(--info); }
+
+  /* Reconcile Section */
+  .reconcile-grid {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-bottom: 24px;
+  }
+  @media (max-width: 900px) {
+    .reconcile-grid { grid-template-columns: 1fr; }
+  }
+
+  .denom-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  .denom-table td {
+    padding: 6px 8px; border-bottom: 1px solid var(--rule); vertical-align: middle;
+  }
+  .denom-table tr:last-child td { border-bottom: none; }
+  .denom-input {
+    width: 70px; padding: 4px 8px; font-size: 13px; font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace; border: 1px solid var(--rule);
+    border-radius: 6px; text-align: center;
+  }
+  .denom-subtotal {
+    font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--maroon-deep);
+    text-align: right; min-width: 70px;
+  }
+
+  /* Matching Status Card */
+  .match-status-card {
+    border-radius: var(--radius-lg); padding: 18px; border: 1.5px solid var(--rule);
+    background: var(--bg-surface); display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .match-row {
+    display: flex; justify-content: space-between; align-items: center; padding: 6px 0;
+    border-bottom: 1px dashed var(--rule); font-size: 13px;
+  }
+  .match-row:last-child { border-bottom: none; }
+  .match-val {
+    font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
+  }
+
+  .variance-badge {
+    padding: 10px 14px; border-radius: 10px; text-align: center; margin: 12px 0;
+    font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .variance-badge.matched {
+    background: var(--leaf-soft); color: var(--leaf); border: 1.5px solid rgba(22, 163, 74, 0.3);
+  }
+  .variance-badge.surplus {
+    background: rgba(196, 139, 30, 0.14); color: #B45309; border: 1.5px solid rgba(196, 139, 30, 0.4);
+  }
+  .variance-badge.shortage {
+    background: var(--nonveg-soft); color: var(--nonveg); border: 1.5px solid rgba(220, 38, 38, 0.3);
+  }
+
+  /* Date preset pills */
+  .date-pills {
+    display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+  }
+  .date-pill {
+    padding: 5px 12px; border-radius: 16px; border: 1.2px solid var(--rule);
+    background: var(--bg-surface); font-size: 11.5px; font-weight: 700; color: var(--ink-muted);
+    cursor: pointer; transition: all 0.12s ease;
+  }
+  .date-pill:hover { background: var(--bg-surface-soft); color: var(--ink); }
+  .date-pill.active {
+    background: var(--emerald-gradient); color: #fff; border-color: var(--maroon-deep);
+  }
+
+  /* Printable Slip Styles */
+  .receipt-modal {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(6, 24, 13, 0.65); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; padding: 16px;
+  }
+  .receipt-modal.open { display: flex; }
+  .receipt-modal-card {
+    background: #fff; border-radius: 16px; box-shadow: var(--shadow-xl);
+    max-width: 420px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 20px;
+    display: flex; flex-direction: column; position: relative;
+  }
+  .thermal-slip {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.35;
+    background: #fff; color: #000; padding: 12px 10px; border: 1px dashed #CBD5E1;
+    border-radius: 8px; margin: 10px 0 16px;
+  }
+
+  @media print {
+    body * { visibility: hidden !important; }
+    #printableSlip, #printableSlip * { visibility: visible !important; }
+    #printableSlip {
+      position: absolute !important; left: 0 !important; top: 0 !important;
+      width: 78mm !important; margin: 0 !important; padding: 4mm !important;
+      border: none !important; font-size: 11px !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-header-bar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <img src="../navrang_logo.png" alt="Navrang">
+    <h1>Daily Collections</h1>
+  </div>
+
+  <div class="admin-body">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="admin-sidebar" id="adminSidebar">
+      <nav class="admin-nav" id="adminNav"></nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-panel" style="max-width:1560px;padding:14px 18px 40px;">
+        
+        <!-- Toolbar -->
+        <div class="dc-toolbar">
+          <div>
+            <h2>Daily Collections &amp; Cash Reconciliation</h2>
+            <p style="margin:2px 0 0;font-size:12.5px;color:var(--ink-muted);">
+              Audit all punched bills, calculate physical cash in drawer, and verify expected vs. actual drawer collections.
+            </p>
+          </div>
+          <div class="dc-actions">
+            <a href="billing.html" class="admin-btn" style="font-size:12.5px;padding:8px 14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>+ Punch New Bill</span>
+            </a>
+            <button type="button" class="admin-btn admin-btn-secondary" id="btnPrintZReport" style="font-size:12.5px;padding:8px 14px;display:inline-flex;align-items:center;gap:6px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span>Print Day Z-Report</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Date Filter Bar -->
+        <div class="admin-card" style="padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div style="font-size:12px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.6px;">Select Date:</div>
+            <input type="date" id="collectionDate" style="padding:6px 10px;border:1px solid var(--rule);border-radius:8px;font-weight:700;font-size:13px;">
+            <div class="date-pills" id="datePills">
+              <button type="button" class="date-pill active" data-range="today">Today</button>
+              <button type="button" class="date-pill" data-range="yesterday">Yesterday</button>
+              <button type="button" class="date-pill" data-range="7days">Past 7 Days</button>
+              <button type="button" class="date-pill" data-range="all">All Time</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11.5px;color:var(--ink-muted);">Current Shift:</span>
+            <span class="admin-badge active">Main Register (Active)</span>
+          </div>
+        </div>
+
+        <!-- Collection Summary KPIs -->
+        <div class="dc-kpis">
+          <div class="dc-kpi-card">
+            <div class="val" id="kpiBillsCount">0</div>
+            <div class="lbl">Total Bills</div>
+          </div>
+          <div class="dc-kpi-card">
+            <div class="val" id="kpiGrossSales">₹0.00</div>
+            <div class="lbl">Total Sales</div>
+          </div>
+          <div class="dc-kpi-card cash-kpi">
+            <div class="val" id="kpiCashSales">₹0.00</div>
+            <div class="lbl">💵 Cash Collection</div>
+          </div>
+          <div class="dc-kpi-card upi-kpi">
+            <div class="val" id="kpiUpiSales">₹0.00</div>
+            <div class="lbl">📱 UPI / QR Payments</div>
+          </div>
+          <div class="dc-kpi-card">
+            <div class="val" id="kpiCardSales">₹0.00</div>
+            <div class="lbl">💳 Card Sales</div>
+          </div>
+          <div class="dc-kpi-card">
+            <div class="val" id="kpiDueSales">₹0.00</div>
+            <div class="lbl">⏳ Due / Credit</div>
+          </div>
+        </div>
+
+        <!-- Physical Cash Drawer Matching Tool -->
+        <div class="reconcile-grid">
+          
+          <!-- Left Box: Denomination Counter -->
+          <div class="admin-card" style="padding:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div>
+                <h3 style="margin:0;font-size:15px;color:var(--maroon-deep);">💵 Physical Cash in Drawer</h3>
+                <div style="font-size:11.5px;color:var(--ink-muted);">Enter counted note counts to calculate physical drawer cash:</div>
+              </div>
+              <button type="button" class="admin-btn admin-btn-secondary" id="btnClearDenom" style="font-size:11px;padding:4px 8px;">Reset Count</button>
+            </div>
+
+            <table class="denom-table">
+              <thead>
+                <tr style="color:var(--ink-muted);font-size:11px;font-weight:700;">
+                  <th>Note Denomination</th>
+                  <th style="text-align:center;">Count</th>
+                  <th style="text-align:right;">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>₹500 Note</strong></td>
+                  <td style="text-align:center;"><input type="number" min="0" class="denom-input" data-denom="500" placeholder="0"></td>
+                  <td class="denom-subtotal" id="denomSub500">₹0</td>
+                </tr>
+                <tr>
+                  <td><strong>₹200 Note</strong></td>
+                  <td style="text-align:center;"><input type="number" min="0" class="denom-input" data-denom="200" placeholder="0"></td>
+                  <td class="denom-subtotal" id="denomSub200">₹0</td>
+                </tr>
+                <tr>
+                  <td><strong>₹100 Note</strong></td>
+                  <td style="text-align:center;"><input type="number" min="0" class="denom-input" data-denom="100" placeholder="0"></td>
+                  <td class="denom-subtotal" id="denomSub100">₹0</td>
+                </tr>
+                <tr>
+                  <td><strong>₹50 Note</strong></td>
+                  <td style="text-align:center;"><input type="number" min="0" class="denom-input" data-denom="50" placeholder="0"></td>
+                  <td class="denom-subtotal" id="denomSub50">₹0</td>
+                </tr>
+                <tr>
+                  <td><strong>₹20 Note</strong></td>
+                  <td style="text-align:center;"><input type="number" min="0" class="denom-input" data-denom="20" placeholder="0"></td>
+                  <td class="denom-subtotal" id="denomSub20">₹0</td>
+                </tr>
+                <tr>
+                  <td><strong>₹10 Note</strong></td>
+                  <td style="text-align:center;"><input type="number" min="0" class="denom-input" data-denom="10" placeholder="0"></td>
+                  <td class="denom-subtotal" id="denomSub10">₹0</td>
+                </tr>
+                <tr>
+                  <td><strong>Coins &amp; Loose Cash</strong></td>
+                  <td style="text-align:center;"><input type="number" min="0" class="denom-input" data-denom="1" placeholder="0"></td>
+                  <td class="denom-subtotal" id="denomSub1">₹0</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr style="border-top:1.5px solid var(--rule);">
+                  <td colspan="2" style="font-weight:800;font-size:13.5px;color:var(--maroon-deep);">Total Counted Physical Cash:</td>
+                  <td style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:800;color:var(--maroon);" id="denomGrandTotal">₹0.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Right Box: Reconciliation Analysis -->
+          <div class="match-status-card">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <h3 style="margin:0;font-size:15px;color:var(--maroon-deep);">⚖️ Drawer vs. Bill Matching</h3>
+                <span class="admin-badge" id="badgeMatchStatus">Checking…</span>
+              </div>
+
+              <div class="match-row">
+                <span>Expected Cash (from Punched Bills):</span>
+                <span class="match-val" id="reconExpectedCash">₹0.00</span>
+              </div>
+              <div class="match-row">
+                <span>Physical Cash Counted in Drawer:</span>
+                <span class="match-val" id="reconPhysicalCash" style="color:var(--maroon);">₹0.00</span>
+              </div>
+              <div class="match-row" style="border-top:1.5px solid var(--rule);margin-top:4px;">
+                <span style="font-weight:800;color:var(--ink);">Difference / Variance:</span>
+                <span class="match-val" id="reconVariance" style="font-size:18px;">₹0.00</span>
+              </div>
+
+              <!-- Live Banner -->
+              <div class="variance-badge matched" id="varianceBanner">
+                <span>✅ Cash matches recorded bill total perfectly.</span>
+              </div>
+
+              <div style="margin-top:12px;">
+                <label style="font-size:11.5px;font-weight:700;color:var(--ink-muted);display:block;margin-bottom:4px;">Shift / Cashier Settlement Remarks:</label>
+                <input type="text" id="reconcileNotes" placeholder="e.g. Shift 1 closed by cash cashier, float was ₹500" style="width:100%;padding:7px 10px;border:1px solid var(--rule);border-radius:8px;font-size:12px;">
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:16px;">
+              <button type="button" class="admin-btn" id="btnSaveRecon" style="flex:1;font-size:12.5px;padding:9px 14px;">
+                💾 Save Cash Reconcile Record
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Punched Bills Audit Table -->
+        <div class="admin-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+            <div>
+              <h3 style="margin:0;font-size:16px;color:var(--maroon-deep);">Punched Bills History</h3>
+              <div style="font-size:11.5px;color:var(--ink-muted);">All customer bills punched in the system for the selected date:</div>
+            </div>
+            
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <!-- Payment filter pills -->
+              <div style="display:flex;gap:4px;">
+                <button type="button" class="date-pill active pay-filter-pill" data-pay="all">All Modes</button>
+                <button type="button" class="date-pill pay-filter-pill" data-pay="Cash">Cash Only</button>
+                <button type="button" class="date-pill pay-filter-pill" data-pay="UPI">UPI / QR Only</button>
+                <button type="button" class="date-pill pay-filter-pill" data-pay="Card">Card Only</button>
+              </div>
+              <input type="text" id="searchBills" placeholder="🔍 Search bill #, waiter, table…" style="padding:6px 10px;border:1px solid var(--rule);border-radius:8px;font-size:12px;min-width:210px;">
+            </div>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="billsTable">
+              <thead>
+                <tr>
+                  <th>Bill No</th>
+                  <th>Time</th>
+                  <th>Order Type &amp; Table</th>
+                  <th>Server / Waiter</th>
+                  <th>Items Ordered</th>
+                  <th>Payment Mode</th>
+                  <th style="text-align:right;">Subtotal</th>
+                  <th style="text-align:right;">GST / Tax</th>
+                  <th style="text-align:right;">Grand Total</th>
+                  <th style="text-align:center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="billsTableBody">
+                <tr><td colspan="10" class="admin-empty">Loading punched bills…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Receipt Modal for Reprinting -->
+<div class="receipt-modal" id="receiptModal">
+  <div class="receipt-modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <h3 style="margin:0;font-size:15px;color:var(--maroon-deep);">Punched Customer Bill</h3>
+      <button type="button" onclick="closeReceiptModal()" style="border:none;background:transparent;font-size:22px;cursor:pointer;color:var(--ink-muted);">&times;</button>
+    </div>
+
+    <!-- Thermal Print Slip -->
+    <div class="thermal-slip" id="printableSlip">
+      <div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:6px;margin-bottom:6px;">
+        <div style="font-size:14px;font-weight:800;" id="rcptRestName">NAVRANG RESTAURANT</div>
+        <div style="font-size:10px;" id="rcptRestTagline">Authentic Flavors &amp; Fine Dining</div>
+        <div style="font-size:10px;" id="rcptRestAddress">Dhone, Andhra Pradesh</div>
+        <div style="font-size:10px;" id="rcptRestPhone">Ph: +91 98765 43210</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
+        <span>BILL: <strong id="rcptBillNo">NAV-000</strong></span>
+        <span id="rcptDate">--/--/----</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px;border-bottom:1px dashed #000;padding-bottom:4px;">
+        <span>TABLE: <strong id="rcptTable">Table 1</strong> (<span id="rcptType">Dine-In</span>)</span>
+        <span id="rcptWaiter">Staff</span>
+      </div>
+      <div id="rcptItemsList" style="margin-bottom:6px;border-bottom:1px dashed #000;padding-bottom:6px;"></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;">
+        <span>Subtotal:</span>
+        <span id="rcptSubtotal">₹0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;" id="rcptGstRow">
+        <span>GST:</span>
+        <span id="rcptGst">₹0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;border-top:1px solid #000;padding-top:4px;margin-top:4px;">
+        <span>GRAND TOTAL:</span>
+        <span id="rcptGrandTotal">₹0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;">
+        <span>Payment Mode:</span>
+        <strong id="rcptPayMode">CASH</strong>
+      </div>
+      <div style="text-align:center;margin-top:10px;font-size:10px;">
+        Thank You! Visit Again.
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button type="button" class="admin-btn" onclick="window.print()" style="flex:1;">
+        🖨️ Print to Thermal Printer
+      </button>
+      <button type="button" class="admin-btn admin-btn-secondary" onclick="closeReceiptModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function () {
+  AdminShared.requireAuthOrRedirect();
+  AdminShared.renderNav('collections');
+
+  var STORAGE_BILLS = 'navrang_pos_bills';
+  var STORAGE_RECON = 'navrang_pos_reconciliations';
+
+  var collectionDateInput = document.getElementById('collectionDate');
+  var datePills = document.getElementById('datePills');
+  var billsTableBody = document.getElementById('billsTableBody');
+  var searchInput = document.getElementById('searchBills');
+
+  var allBills = [];
+  var currentPayFilter = 'all';
+
+  function toIsoDate(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  // Set today by default
+  var todayStr = toIsoDate(new Date());
+  collectionDateInput.value = todayStr;
+
+  function loadBills() {
+    try {
+      var raw = localStorage.getItem(STORAGE_BILLS);
+      allBills = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      allBills = [];
+    }
+    renderAll();
+  }
+
+  // Filter bills by selected date
+  function getFilteredBills() {
+    var selectedDate = collectionDateInput.value;
+    var query = (searchInput.value || '').toLowerCase().trim();
+
+    return allBills.filter(function (b) {
+      // Date filter
+      if (selectedDate) {
+        var bDate = '';
+        if (b.timestamp) {
+          bDate = toIsoDate(new Date(b.timestamp));
+        } else if (b.dateStr) {
+          bDate = b.dateStr;
+        }
+        if (bDate && bDate !== selectedDate) return false;
+      }
+
+      // Payment filter
+      if (currentPayFilter !== 'all') {
+        var p = (b.paymentMode || 'Cash').toLowerCase();
+        if (p.indexOf(currentPayFilter.toLowerCase()) === -1) return false;
+      }
+
+      // Text Search
+      if (query) {
+        var num = (b.billNo || '').toLowerCase();
+        var table = (b.table || '').toLowerCase();
+        var waiter = (b.waiter || '').toLowerCase();
+        if (num.indexOf(query) === -1 && table.indexOf(query) === -1 && waiter.indexOf(query) === -1) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }
+
+  function renderAll() {
+    var bills = getFilteredBills();
+
+    var totalBills = bills.length;
+    var grossSales = 0;
+    var cashSales = 0;
+    var upiSales = 0;
+    var cardSales = 0;
+    var dueSales = 0;
+
+    bills.forEach(function (b) {
+      var total = Number(b.grandTotal) || 0;
+      grossSales += total;
+      var mode = (b.paymentMode || 'Cash').toLowerCase();
+      if (mode.indexOf('cash') !== -1) cashSales += total;
+      else if (mode.indexOf('upi') !== -1 || mode.indexOf('qr') !== -1) upiSales += total;
+      else if (mode.indexOf('card') !== -1) cardSales += total;
+      else if (mode.indexOf('due') !== -1) dueSales += total;
+      else cashSales += total;
+    });
+
+    // Update KPI cards
+    document.getElementById('kpiBillsCount').textContent = totalBills;
+    document.getElementById('kpiGrossSales').textContent = '₹' + grossSales.toFixed(2);
+    document.getElementById('kpiCashSales').textContent = '₹' + cashSales.toFixed(2);
+    document.getElementById('kpiUpiSales').textContent = '₹' + upiSales.toFixed(2);
+    document.getElementById('kpiCardSales').textContent = '₹' + cardSales.toFixed(2);
+    document.getElementById('kpiDueSales').textContent = '₹' + dueSales.toFixed(2);
+
+    // Update reconciliation expected cash
+    document.getElementById('reconExpectedCash').textContent = '₹' + cashSales.toFixed(2);
+    updateReconciliation(cashSales);
+
+    // Render Table
+    if (!bills.length) {
+      billsTableBody.innerHTML = '<tr><td colspan="10" class="admin-empty">No bills punched for ' + AdminShared.esc(collectionDateInput.value || 'this date') + '.</td></tr>';
+      return;
+    }
+
+    var html = '';
+    bills.forEach(function (b, idx) {
+      var modeBadge = 'active';
+      var m = (b.paymentMode || 'Cash').toLowerCase();
+      if (m.indexOf('upi') !== -1) modeBadge = 'info';
+      else if (m.indexOf('card') !== -1) modeBadge = 'secondary';
+      else if (m.indexOf('due') !== -1) modeBadge = 'inactive';
+
+      var itemsDesc = '';
+      if (Array.isArray(b.items)) {
+        itemsDesc = b.items.map(function (it) { return it.name + ' x' + it.qty; }).join(', ');
+      }
+
+      html += '<tr>' +
+        '<td><strong>' + AdminShared.esc(b.billNo || '#') + '</strong></td>' +
+        '<td>' + AdminShared.esc(b.timeStr || '') + '</td>' +
+        '<td>' + AdminShared.esc(b.table || '') + ' <span style="font-size:10.5px;color:var(--ink-muted);">(' + AdminShared.esc(b.orderType || 'Dine-In') + ')</span></td>' +
+        '<td>' + AdminShared.esc(b.waiter || 'Staff') + '</td>' +
+        '<td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + AdminShared.esc(itemsDesc) + '">' +
+          AdminShared.esc(itemsDesc || 'Dishes') +
+        '</td>' +
+        '<td><span class="admin-badge ' + modeBadge + '">' + AdminShared.esc(b.paymentMode || 'Cash') + '</span></td>' +
+        '<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;">₹' + (Number(b.subtotal) || 0).toFixed(2) + '</td>' +
+        '<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;">₹' + (Number(b.gstAmount) || 0).toFixed(2) + '</td>' +
+        '<td style="text-align:right;font-family:\'IBM Plex Mono\',monospace;font-weight:800;color:var(--maroon-deep);">₹' + (Number(b.grandTotal) || 0).toFixed(2) + '</td>' +
+        '<td style="text-align:center;">' +
+          '<button type="button" class="admin-btn admin-btn-secondary" style="padding:4px 8px;font-size:11px;" onclick="viewReceiptSlip(' + idx + ')">Receipt</button>' +
+        '</td>' +
+      '</tr>';
+    });
+
+    billsTableBody.innerHTML = html;
+  }
+
+  // Denomination Calculations
+  var denomInputs = document.querySelectorAll('.denom-input');
+  function calcPhysicalCash() {
+    var total = 0;
+    Array.prototype.forEach.call(denomInputs, function (input) {
+      var denom = Number(input.dataset.denom) || 0;
+      var count = Math.max(0, parseInt(input.value, 10) || 0);
+      var sub = denom * count;
+      total += sub;
+      var subEl = document.getElementById('denomSub' + denom);
+      if (subEl) subEl.textContent = '₹' + sub.toLocaleString('en-IN');
+    });
+
+    document.getElementById('denomGrandTotal').textContent = '₹' + total.toFixed(2);
+    document.getElementById('reconPhysicalCash').textContent = '₹' + total.toFixed(2);
+
+    var expectedCash = parseFloat((document.getElementById('reconExpectedCash').textContent || '0').replace('₹', '')) || 0;
+    updateReconciliation(expectedCash, total);
+  }
+
+  Array.prototype.forEach.call(denomInputs, function (inp) {
+    inp.addEventListener('input', calcPhysicalCash);
+  });
+
+  document.getElementById('btnClearDenom').addEventListener('click', function () {
+    Array.prototype.forEach.call(denomInputs, function (inp) { inp.value = ''; });
+    calcPhysicalCash();
+  });
+
+  // Reconciliation Variance Checker
+  function updateReconciliation(expected, physical) {
+    if (physical === undefined) {
+      physical = parseFloat((document.getElementById('denomGrandTotal').textContent || '0').replace('₹', '')) || 0;
+    }
+
+    var diff = physical - expected;
+    var varianceEl = document.getElementById('reconVariance');
+    var banner = document.getElementById('varianceBanner');
+    var statusBadge = document.getElementById('badgeMatchStatus');
+
+    if (Math.abs(diff) < 0.01) {
+      varianceEl.textContent = '₹0.00';
+      varianceEl.style.color = 'var(--leaf)';
+      banner.className = 'variance-badge matched';
+      banner.innerHTML = '<span>✅ Cash Matches! Physical drawer cash matches total system bills perfectly.</span>';
+      statusBadge.className = 'admin-badge active';
+      statusBadge.textContent = 'Matched';
+    } else if (diff > 0) {
+      varianceEl.textContent = '+₹' + diff.toFixed(2);
+      varianceEl.style.color = '#B45309';
+      banner.className = 'variance-badge surplus';
+      banner.innerHTML = '<span>🟢 Cash Surplus of +₹' + diff.toFixed(2) + '! Drawer has more cash than punched bills.</span>';
+      statusBadge.className = 'admin-badge';
+      statusBadge.style.background = 'rgba(196,139,30,0.15)';
+      statusBadge.style.color = '#B45309';
+      statusBadge.textContent = 'Cash Surplus';
+    } else {
+      var shortage = Math.abs(diff);
+      varianceEl.textContent = '-₹' + shortage.toFixed(2);
+      varianceEl.style.color = 'var(--nonveg)';
+      banner.className = 'variance-badge shortage';
+      banner.innerHTML = '<span>🔴 Cash Shortage of -₹' + shortage.toFixed(2) + '! Drawer cash is less than recorded bills.</span>';
+      statusBadge.className = 'admin-badge inactive';
+      statusBadge.textContent = 'Shortage Warning';
+    }
+  }
+
+  // Save Reconciliation record
+  document.getElementById('btnSaveRecon').addEventListener('click', function () {
+    var date = collectionDateInput.value;
+    var expected = parseFloat((document.getElementById('reconExpectedCash').textContent || '0').replace('₹', '')) || 0;
+    var physical = parseFloat((document.getElementById('reconPhysicalCash').textContent || '0').replace('₹', '')) || 0;
+    var diff = physical - expected;
+    var notes = document.getElementById('reconcileNotes').value.trim();
+
+    var record = {
+      date: date,
+      timestamp: new Date().toISOString(),
+      expected: expected,
+      physical: physical,
+      variance: diff,
+      notes: notes,
+      closedBy: AdminShared.getUsername()
+    };
+
+    try {
+      var savedStr = localStorage.getItem(STORAGE_RECON);
+      var records = savedStr ? JSON.parse(savedStr) : [];
+      records.unshift(record);
+      localStorage.setItem(STORAGE_RECON, JSON.stringify(records));
+      alert('Daily cash settlement record for ' + date + ' saved successfully!');
+    } catch (e) {
+      alert('Error saving settlement record.');
+    }
+  });
+
+  // Date controls
+  collectionDateInput.addEventListener('change', function () {
+    Array.prototype.forEach.call(datePills.querySelectorAll('.date-pill'), function (b) { b.classList.remove('active'); });
+    renderAll();
+  });
+
+  Array.prototype.forEach.call(datePills.querySelectorAll('.date-pill'), function (b) {
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call(datePills.querySelectorAll('.date-pill'), function (p) { p.classList.remove('active'); });
+      b.classList.add('active');
+      var range = b.dataset.range;
+      var now = new Date();
+      if (range === 'today') {
+        collectionDateInput.value = toIsoDate(now);
+      } else if (range === 'yesterday') {
+        var y = new Date(now);
+        y.setDate(y.getDate() - 1);
+        collectionDateInput.value = toIsoDate(y);
+      } else if (range === 'all') {
+        collectionDateInput.value = '';
+      }
+      renderAll();
+    });
+  });
+
+  // Payment filter pills
+  var payPills = document.querySelectorAll('.pay-filter-pill');
+  Array.prototype.forEach.call(payPills, function (btn) {
+    btn.addEventListener('click', function () {
+      Array.prototype.forEach.call(payPills, function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentPayFilter = btn.dataset.pay;
+      renderAll();
+    });
+  });
+
+  searchInput.addEventListener('input', renderAll);
+
+  // View Receipt Slip Handler
+  window.viewReceiptSlip = function (idx) {
+    var bills = getFilteredBills();
+    var bill = bills[idx];
+    if (!bill) return;
+
+    var s = bill.settings || {};
+    document.getElementById('rcptRestName').textContent = s.restName || 'NAVRANG RESTAURANT';
+    document.getElementById('rcptRestTagline').textContent = s.tagline || 'Authentic Flavors & Fine Dining';
+    document.getElementById('rcptRestAddress').textContent = s.address || 'Dhone, Andhra Pradesh';
+    document.getElementById('rcptRestPhone').textContent = 'Ph: ' + (s.phone || '');
+
+    document.getElementById('rcptBillNo').textContent = bill.billNo || '#';
+    document.getElementById('rcptDate').textContent = (bill.dateStr || '') + ' ' + (bill.timeStr || '');
+    document.getElementById('rcptTable').textContent = bill.table || 'Table';
+    document.getElementById('rcptType').textContent = bill.orderType || 'Dine-In';
+    document.getElementById('rcptWaiter').textContent = 'Server: ' + (bill.waiter || 'Staff');
+
+    var itemsHtml = '';
+    if (Array.isArray(bill.items)) {
+      bill.items.forEach(function (it) {
+        itemsHtml += '<div style="display:flex;justify-content:space-between;margin:2px 0;">' +
+          '<span>' + AdminShared.esc(it.name) + ' x' + it.qty + '</span>' +
+          '<span>₹' + (Number(it.total) || 0).toFixed(2) + '</span>' +
+        '</div>';
+      });
+    }
+    document.getElementById('rcptItemsList').innerHTML = itemsHtml;
+    document.getElementById('rcptSubtotal').textContent = '₹' + (Number(bill.subtotal) || 0).toFixed(2);
+    document.getElementById('rcptGst').textContent = '₹' + (Number(bill.gstAmount) || 0).toFixed(2);
+    document.getElementById('rcptGrandTotal').textContent = '₹' + (Number(bill.grandTotal) || 0).toFixed(2);
+    document.getElementById('rcptPayMode').textContent = (bill.paymentMode || 'CASH').toUpperCase();
+
+    document.getElementById('receiptModal').classList.add('open');
+  };
+
+  window.closeReceiptModal = function () {
+    document.getElementById('receiptModal').classList.remove('open');
+  };
+
+  // Day Z-Report Print Handler
+  document.getElementById('btnPrintZReport').addEventListener('click', function () {
+    var date = collectionDateInput.value || 'All Time';
+    var bills = getFilteredBills();
+    var gross = document.getElementById('kpiGrossSales').textContent;
+    var cash = document.getElementById('kpiCashSales').textContent;
+    var upi = document.getElementById('kpiUpiSales').textContent;
+    var card = document.getElementById('kpiCardSales').textContent;
+    var phys = document.getElementById('denomGrandTotal').textContent;
+    var variance = document.getElementById('reconVariance').textContent;
+
+    // Fill printable slip with Z-Report info
+    document.getElementById('rcptRestName').textContent = 'NAVRANG RESTAURANT';
+    document.getElementById('rcptRestTagline').textContent = 'DAY-END REGISTER SETTLEMENT (Z-REPORT)';
+    document.getElementById('rcptRestAddress').textContent = 'Date: ' + date;
+    document.getElementById('rcptRestPhone').textContent = 'Audited by: ' + AdminShared.getUsername();
+
+    document.getElementById('rcptBillNo').textContent = 'Z-REP-' + date.replace(/-/g, '');
+    document.getElementById('rcptDate').textContent = new Date().toLocaleTimeString();
+    document.getElementById('rcptTable').textContent = 'TOTAL BILLS: ' + bills.length;
+    document.getElementById('rcptType').textContent = 'SETTLED';
+    document.getElementById('rcptWaiter').textContent = 'DRAWER RECON';
+
+    var zReportHtml =
+      '<div style="margin:6px 0;border-bottom:1px dashed #000;padding-bottom:6px;">' +
+        '<div style="display:flex;justify-content:space-between;"><span>GROSS SALES:</span><strong>' + gross + '</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>CASH SALES:</span><strong>' + cash + '</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>UPI / DIGITAL:</span><strong>' + upi + '</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>CARD SALES:</span><strong>' + card + '</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;margin-top:4px;border-top:1px dashed #000;padding-top:4px;"><span>COUNTED CASH:</span><strong>' + phys + '</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>VARIANCE:</span><strong>' + variance + '</strong></div>' +
+      '</div>';
+
+    document.getElementById('rcptItemsList').innerHTML = zReportHtml;
+    document.getElementById('rcptSubtotal').textContent = gross;
+    document.getElementById('rcptGst').textContent = '₹0.00';
+    document.getElementById('rcptGrandTotal').textContent = gross;
+    document.getElementById('rcptPayMode').textContent = 'Z-REPORT';
+
+    document.getElementById('receiptModal').classList.add('open');
+    setTimeout(function () { window.print(); }, 300);
+  });
+
+  // Initial load
+  loadBills();
+})();
+</script>
+
+</body>
+</html>
