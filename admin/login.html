@@ -65,37 +65,6 @@
     color: #92400E;
     border: 1px solid rgba(245,158,11,0.35);
   }
-  .quick-terminal-helper {
-    margin-top: 14px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: var(--bg-surface-soft);
-    border: 1px dashed var(--rule);
-    font-size: 11.5px;
-    color: var(--ink-muted);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-  }
-  .quick-fill-btn {
-    background: #fff;
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    padding: 4px 9px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--maroon);
-    cursor: pointer;
-    transition: all .15s ease;
-    white-space: nowrap;
-    font-family: inherit;
-  }
-  .quick-fill-btn:hover {
-    background: var(--maroon);
-    color: #fff;
-    border-color: var(--maroon);
-  }
 </style>
 </head>
 <body>
@@ -139,12 +108,6 @@
         Open Counter Billing
       </button>
       <p class="admin-status" id="loginStatus"></p>
-
-      <!-- Quick helper for Counter Staff -->
-      <div class="quick-terminal-helper" id="counterHelper">
-        <span>Quick fill counter terminal credentials:</span>
-        <button type="button" class="quick-fill-btn" id="btnQuickCounter">⚡ Fill Credentials</button>
-      </div>
     </form>
   </div>
 </div>
@@ -175,10 +138,31 @@
   var usernameInput = document.getElementById('username');
   var passwordInput = document.getElementById('password');
   var loginBtn = document.getElementById('loginBtn');
-  var counterHelper = document.getElementById('counterHelper');
-  var btnQuickCounter = document.getElementById('btnQuickCounter');
   var form = document.getElementById('loginForm');
   var status = document.getElementById('loginStatus');
+
+  function getActiveCashierConfig() {
+    var storedPin = (localStorage.getItem('navrang_cashier_pin') || '').trim();
+    var storedId = (localStorage.getItem('navrang_cashier_id') || 'counter').trim().toLowerCase();
+    return {
+      pin: storedPin || '1234',
+      isCustom: Boolean(storedPin),
+      cashierId: storedId || 'counter'
+    };
+  }
+
+  function verifyCounterLocal(u, p) {
+    var uLow = (u || '').trim().toLowerCase();
+    var cfg = getActiveCashierConfig();
+    var validUser = (uLow === cfg.cashierId || uLow === 'counter' || uLow === 'cashier');
+    var validPin = false;
+    if (cfg.isCustom) {
+      validPin = (p === cfg.pin);
+    } else {
+      validPin = (p === '1234' || p === 'counter' || p === 'counter123' || p === 'navrang123');
+    }
+    return validUser && validPin;
+  }
 
   function setRoleMode(role){
     activeRole = role;
@@ -194,12 +178,12 @@
       loginSubtitle.textContent = 'Fast thermal billing login for counter staff';
       labelUsername.textContent = 'Cashier ID / Terminal User';
       labelPassword.textContent = 'Cashier PIN / Password';
-      usernameInput.placeholder = 'e.g. counter';
-      usernameInput.value = 'counter';
+      var cfg = getActiveCashierConfig();
+      usernameInput.placeholder = 'e.g. ' + cfg.cashierId;
+      usernameInput.value = cfg.cashierId;
       passwordInput.placeholder = 'Enter PIN or password (e.g. 1234)';
       passwordInput.value = '';
       loginBtn.textContent = 'Open Counter Billing';
-      counterHelper.style.display = 'flex';
       passwordInput.focus();
     } else {
       tabAdmin.classList.add('active');
@@ -215,21 +199,12 @@
       passwordInput.placeholder = 'Enter admin password';
       passwordInput.value = '';
       loginBtn.textContent = 'Sign In to Admin Portal';
-      counterHelper.style.display = 'none';
       usernameInput.focus();
     }
   }
 
   tabCounter.addEventListener('click', function(){ setRoleMode('counter'); });
   tabAdmin.addEventListener('click', function(){ setRoleMode('admin'); });
-
-  if (btnQuickCounter){
-    btnQuickCounter.addEventListener('click', function(){
-      usernameInput.value = 'counter';
-      passwordInput.value = '1234';
-      passwordInput.focus();
-    });
-  }
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
@@ -251,16 +226,14 @@
       return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
     }).then(function(result){
       if (!result.ok) {
-        // Fallback for Counter staff terminal if server user is not yet seeded into github users.json
-        if (activeRole === 'counter' && (username.toLowerCase() === 'counter' || username.toLowerCase() === 'cashier')) {
-          if (password === 'counter' || password === '1234' || password === 'counter123' || password === 'navrang123') {
-            var mockToken = 'pos_counter_token_' + Date.now();
-            AdminShared.setSession(mockToken, username, 'counter');
-            window.location.href = 'billing.html';
-            return;
-          }
+        // Check dynamic Cashier PIN fallback if server rejected or counter user isn't in users.json yet
+        if (activeRole === 'counter' && verifyCounterLocal(username, password)) {
+          var mockToken = 'pos_counter_token_' + Date.now();
+          AdminShared.setSession(mockToken, username, 'counter');
+          window.location.href = 'billing.html';
+          return;
         }
-        throw new Error(result.data.error || 'Invalid credentials');
+        throw new Error(result.data.error || (activeRole === 'counter' ? 'Invalid Cashier ID or PIN' : 'Invalid credentials'));
       }
 
       var userRole = result.data.role || (activeRole === 'counter' ? 'counter' : 'admin');
@@ -273,15 +246,13 @@
       }
     }).catch(function(err){
       // Check offline / local fallback for counter terminal
-      if (activeRole === 'counter' && (username.toLowerCase() === 'counter' || username.toLowerCase() === 'cashier')) {
-        if (password === 'counter' || password === '1234' || password === 'counter123' || password === 'navrang123') {
-          var mockToken = 'pos_counter_token_' + Date.now();
-          AdminShared.setSession(mockToken, username, 'counter');
-          window.location.href = 'billing.html';
-          return;
-        }
+      if (activeRole === 'counter' && verifyCounterLocal(username, password)) {
+        var mockToken = 'pos_counter_token_' + Date.now();
+        AdminShared.setSession(mockToken, username, 'counter');
+        window.location.href = 'billing.html';
+        return;
       }
-      status.textContent = err.message || 'Invalid username or password';
+      status.textContent = (activeRole === 'counter') ? 'Invalid Cashier ID or PIN. Please enter the correct PIN from store admin.' : (err.message || 'Invalid username or password');
       status.className = 'admin-status error';
       loginBtn.disabled = false;
       loginBtn.textContent = activeRole === 'counter' ? 'Open Counter Billing' : 'Sign In to Admin Portal';

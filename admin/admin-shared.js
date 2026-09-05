@@ -178,7 +178,7 @@
       items: [
         { key: 'audit', label: 'Audit Log', href: 'audit-log.html', icon: 'audit' },
         { key: 'access', label: 'Access Log', href: 'access-log.html', icon: 'access' },
-        { key: 'password', label: 'Change Password', href: 'change-password.html', icon: 'lock' }
+        { key: 'password', label: 'Passwords & Cashier PIN', href: 'change-password.html', icon: 'lock' }
       ]
     },
     {
@@ -285,7 +285,7 @@
           icon('audit', 14) + '<span>POS &amp; Billing Audit Report</span>' +
         '</a>' +
         '<a href="change-password.html" class="admin-popup-link">' +
-          icon('lock', 14) + '<span>Change Password</span>' +
+          icon('lock', 14) + '<span>Passwords &amp; Cashier PIN</span>' +
         '</a>';
     }
 

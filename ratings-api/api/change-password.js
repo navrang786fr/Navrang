@@ -43,6 +43,79 @@ module.exports = async function handler(req, res) {
   }
   body = body || {};
 
+  // Support Admin updating Cashier PIN
+  if (body.action === 'change-cashier-pin' || body.targetRole === 'counter' || body.cashierPin) {
+    if (auth.role && auth.role !== 'admin') {
+      res.status(403).json({ error: 'Only administrators can update cashier PIN' });
+      return;
+    }
+    const newPin = String(body.cashierPin || body.newPassword || '').trim();
+    const cashierUsername = String(body.cashierUsername || 'counter').trim().toLowerCase() || 'counter';
+    if (!newPin || newPin.length < 4) {
+      res.status(400).json({ error: 'Cashier PIN must be at least 4 characters' });
+      return;
+    }
+    if (newPin.length > 100) {
+      res.status(400).json({ error: 'Cashier PIN is too long' });
+      return;
+    }
+
+    let users;
+    try {
+      users = await readJsonArray(adminRepo, 'users.json', adminToken);
+    } catch (e) {
+      res.status(502).json({ error: 'Could not reach admin data store' });
+      return;
+    }
+
+    const newSalt = crypto.randomBytes(16).toString('hex');
+    const newHash = hashPassword(newPin, newSalt);
+
+    try {
+      await writeJsonArrayWithRetry(adminRepo, 'users.json', adminToken, function (arr) {
+        let u = arr.find(function (x) { return (x.username || '').toLowerCase() === cashierUsername; });
+        if (!u) {
+          u = { username: cashierUsername, role: 'counter' };
+          arr.push(u);
+        }
+        u.role = 'counter';
+        u.salt = newSalt;
+        u.hash = newHash;
+        u.updatedAt = new Date().toISOString();
+      }, `Update cashier PIN for ${cashierUsername}`);
+    } catch (e) {
+      res.status(500).json({ error: 'Failed to update cashier PIN in store' });
+      return;
+    }
+
+    try {
+      const info = getRequestInfo(req);
+      await writeJsonArrayWithRetry(adminRepo, 'audit-log.json', adminToken, function (arr) {
+        arr.push({
+          action: 'change-cashier-pin',
+          username: auth.sub,
+          dishName: 'Cashier Terminal (' + cashierUsername + ')',
+          categoryId: 'security',
+          changes: {
+            cashierPin: { from: '••••', to: '•••• (updated)' }
+          },
+          timestamp: new Date().toISOString(),
+          ip: info.ip,
+          country: info.country,
+          region: info.region,
+          city: info.city,
+          device: info.device,
+          userAgent: info.userAgent
+        });
+      }, `Audit: change-cashier-pin by ${auth.sub}`);
+    } catch (e) {
+      // Non-blocking: audit logging failure does not invalidate the update
+    }
+
+    res.status(200).json({ ok: true, message: 'Cashier PIN updated successfully', cashierUsername: cashierUsername });
+    return;
+  }
+
   const currentPassword = String(body.currentPassword || '');
   const newPassword = String(body.newPassword || '');
 
