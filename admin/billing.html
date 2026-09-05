@@ -840,9 +840,12 @@
     </div>
 
     <!-- Modal Footer Actions -->
-    <div class="receipt-modal-actions" style="display:flex;gap:8px;margin-top:16px;">
+    <div class="receipt-modal-actions" style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
       <button type="button" class="admin-btn" style="flex:1;" onclick="triggerPrint()">
         🖨️ Print Receipt (Wi-Fi / POS)
+      </button>
+      <button type="button" class="admin-btn admin-btn-danger" id="btnBillingDeleteModal" style="display:none;" onclick="deleteCurrentBillingModalBill()">
+        🗑️ Delete Bill
       </button>
       <button type="button" class="admin-btn admin-btn-secondary" onclick="closeReceiptModal()">
         Close
@@ -1469,6 +1472,13 @@
         qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString);
       }
     }
+
+    // Set active modal bill and toggle Delete button visibility for Admin
+    window.currentBillingModalBillNo = bill.billNo || null;
+    var btnDel = document.getElementById('btnBillingDeleteModal');
+    if (btnDel) {
+      btnDel.style.display = AdminShared.isAdmin() ? 'inline-flex' : 'none';
+    }
   }
 
   // Open & Close Receipt Modal
@@ -1478,6 +1488,9 @@
   window.openReceiptModal = openReceiptModal;
 
   function closeReceiptModal() {
+    window.currentBillingModalBillNo = null;
+    var btnDel = document.getElementById('btnBillingDeleteModal');
+    if (btnDel) btnDel.style.display = 'none';
     document.getElementById('receiptModal').classList.remove('open');
   }
   window.closeReceiptModal = closeReceiptModal;
@@ -1614,9 +1627,12 @@
         '<td><strong style="font-family:\'IBM Plex Mono\',monospace;color:var(--maroon-deep);">₹' + (b.grandTotal || 0) + '</strong></td>' +
         '<td><span class="admin-badge active" style="font-size:10px;">' + AdminShared.esc(b.paymentMode) + '</span></td>' +
         '<td>' +
-          '<button type="button" class="reprint-btn" onclick="reprintBill(\'' + b.billNo + '\')">' +
-            '🖨️ Reprint' +
-          '</button>' +
+          '<div style="display:inline-flex;gap:4px;align-items:center;">' +
+            '<button type="button" class="reprint-btn" onclick="reprintBill(\'' + b.billNo + '\')">' +
+              '🖨️ Reprint' +
+            '</button>' +
+            (AdminShared.isAdmin() ? '<button type="button" class="admin-btn admin-btn-danger" style="padding:4px 8px;font-size:11px;min-height:28px;" onclick="deleteBillFromRegister(\'' + b.billNo + '\')">🗑️ Delete</button>' : '') +
+          '</div>' +
         '</td>' +
       '</tr>';
     });
@@ -1634,6 +1650,60 @@
     }
     populateThermalSlip(found);
     openReceiptModal();
+  };
+
+  // Delete Bill from Register (Admin only)
+  window.deleteBillFromRegister = function (billNo) {
+    if (!AdminShared.isAdmin()) {
+      alert('Access Denied: Only administrators have permission to delete billing records.');
+      return;
+    }
+
+    try {
+      var bills = getStoredBills();
+      var found = bills.find(function (b) { return b.billNo === billNo; });
+      if (!found) {
+        alert('Bill #' + billNo + ' was not found in register records.');
+        return;
+      }
+
+      var grandTotalFormatted = '₹' + (Number(found.grandTotal) || 0).toFixed(2);
+      var itemsCount = Array.isArray(found.items) ? found.items.length : 0;
+      var msg = '⚠️ PERMANENT BILL DELETION\n\n' +
+                'Are you sure you want to delete this bill from the system?\n' +
+                '─────────────────────────────\n' +
+                '• Bill Number: ' + found.billNo + '\n' +
+                '• Total Amount: ' + grandTotalFormatted + '\n' +
+                '• Payment Mode: ' + (found.paymentMode || 'Cash') + '\n' +
+                '• Date & Time: ' + (found.dateStr || '') + ' ' + (found.timeStr || '') + '\n' +
+                '• Table: ' + (found.table || 'Table') + ' (' + (found.orderType || 'Dine-In') + ')\n' +
+                '• Server: ' + (found.waiter || 'Staff') + '\n' +
+                '• Items Count: ' + itemsCount + '\n' +
+                '─────────────────────────────\n' +
+                'Deleting this bill will deduct ' + grandTotalFormatted + ' from Today\'s Register and Daily Collections.\n\n' +
+                'Confirm permanent deletion?';
+
+      if (!confirm(msg)) return;
+
+      var updated = bills.filter(function (b) { return b.billNo !== billNo; });
+      saveStoredBills(updated);
+
+      if (window.currentBillingModalBillNo === billNo) {
+        closeReceiptModal();
+      }
+
+      renderRegisterTable();
+      alert('✓ Bill #' + billNo + ' (' + grandTotalFormatted + ') deleted successfully.');
+    } catch (e) {
+      console.error('Delete error:', e);
+      alert('Error deleting bill: ' + (e.message || e));
+    }
+  };
+
+  window.deleteCurrentBillingModalBill = function () {
+    if (window.currentBillingModalBillNo) {
+      window.deleteBillFromRegister(window.currentBillingModalBillNo);
+    }
   };
 
   // Event Listeners Setup

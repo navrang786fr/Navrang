@@ -601,6 +601,21 @@ a { color: inherit; }
 .admin-btn-secondary:hover {
   background: rgba(14, 77, 38, 0.05);
 }
+.admin-btn-danger {
+  background: var(--bg-surface);
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  box-shadow: var(--shadow-xs);
+}
+.admin-btn-danger:hover {
+  background: #DC2626;
+  color: #FFFFFF;
+  border-color: #DC2626;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+}
+.admin-btn-danger:active {
+  transform: scale(0.96);
+}
 
 /* Modernized Tables */
 .admin-table-wrap {

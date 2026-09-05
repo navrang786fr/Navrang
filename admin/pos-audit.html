@@ -384,10 +384,11 @@
                   <th>Tender</th>
                   <th style="text-align:right;">Grand Total</th>
                   <th style="text-align:center;">Audit Status</th>
+                  <th style="text-align:center;">Action</th>
                 </tr>
               </thead>
               <tbody id="auditTableBody">
-                <tr><td colspan="7" class="admin-empty">Loading audited register entries…</td></tr>
+                <tr><td colspan="8" class="admin-empty">Loading audited register entries…</td></tr>
               </tbody>
             </table>
           </div>
@@ -474,11 +475,39 @@
         '<td><span class="admin-badge active" style="font-size:10px;">' + AdminShared.esc(b.paymentMode) + '</span></td>' +
         '<td style="text-align:right;font-weight:800;font-family:\'IBM Plex Mono\',monospace;color:var(--maroon-deep);">₹' + (b.grandTotal || 0).toFixed(2) + '</td>' +
         '<td style="text-align:center;"><span class="audit-status-pill ' + (isValid ? 'pass' : 'info') + '">' + (isValid ? '✓ VERIFIED' : 'REVIEW') + '</span></td>' +
+        '<td style="text-align:center;">' +
+          (AdminShared.isAdmin() ? '<button type="button" class="admin-btn admin-btn-danger" style="padding:3px 8px;font-size:11px;min-height:26px;" onclick="deleteBillFromAudit(\'' + AdminShared.esc(b.billNo) + '\')">🗑️ Delete</button>' : '-') +
+        '</td>' +
       '</tr>';
     });
     tbody.innerHTML = html;
   }
   window.refreshAuditData = refreshAuditData;
+
+  window.deleteBillFromAudit = function (billNo) {
+    if (!AdminShared.isAdmin()) {
+      alert('Access Denied: Only administrators can delete billing records.');
+      return;
+    }
+    var bills = getStoredBills();
+    var target = bills.find(function (b) { return b.billNo === billNo; });
+    if (!target) {
+      alert('Bill #' + billNo + ' was not found.');
+      return;
+    }
+
+    var grandTotalFormatted = '₹' + (Number(target.grandTotal) || 0).toFixed(2);
+    var msg = '⚠️ PERMANENT BILL DELETION (AUDIT CONSOLE)\n\n' +
+              'Permanently delete Bill #' + billNo + ' (' + grandTotalFormatted + ')?\n' +
+              'This will remove it from all audit ledgers and sales reports.';
+
+    if (!confirm(msg)) return;
+
+    var updated = bills.filter(function (b) { return b.billNo !== billNo; });
+    localStorage.setItem(STORAGE_BILLS, JSON.stringify(updated));
+    refreshAuditData();
+    alert('✓ Bill #' + billNo + ' deleted successfully.');
+  };
 
   window.exportAuditReport = function () {
     var bills = getStoredBills();
