@@ -44,6 +44,7 @@
     sessionStorage.removeItem('navrang_waiter_name');
     sessionStorage.removeItem('navrang_waiter_code');
     sessionStorage.removeItem('navrang_waiter_tables');
+    sessionStorage.removeItem('navrang_waiter_table_drafts');
   }
   function requireAuthOrRedirect(requiredRole) {
     if (!getToken()) {

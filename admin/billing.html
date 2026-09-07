@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Navrang Admin — Counter Billing & POS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#06180D">
 <link rel="icon" href="../navrang_logo.png">
 <link rel="stylesheet" href="admin-style.css">
@@ -21,12 +21,49 @@
 </script>
 <style>
   .pos-toolbar {
-    display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 8px 14px;
+    box-shadow: var(--shadow-xs);
   }
-  .pos-toolbar h2 { margin: 0; }
+  .pos-toolbar-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+  }
+  .pos-meta-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pos-type-pills {
+    display: flex;
+    gap: 4px;
+  }
   .pos-toolbar-actions {
-    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  #btnToggleWaiterBills.has-pending {
+    background: #FEF2F2 !important;
+    border-color: #EF4444 !important;
+    color: #991B1B !important;
+    animation: waiterPulse 1.6s infinite alternate;
+  }
+  @keyframes waiterPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    100% { transform: scale(1.02); box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); }
   }
 
   .pos-register-kpis {
@@ -326,6 +363,11 @@
      - Payment & Cash tender sections
      - Waiter submitted queue
      ========================================================================== */
+  html.role-waiter .pos-toolbar,
+  html.role-waiter .pos-meta-card,
+  html.role-waiter #btnResetOrder,
+  html.role-waiter #btnSaveOrderKot,
+  html.role-waiter #btnToggleWaiterBills,
   html.role-waiter #btnHoldOrder,
   html.role-waiter #btnViewHeldOrders,
   html.role-waiter #linkDailyCollections,
@@ -339,6 +381,11 @@
   html.role-waiter #paymentAndTenderSection,
   html.role-waiter #cashTenderSection,
   html.role-waiter #cashierBillingAdjustments,
+  body.role-waiter .pos-toolbar,
+  body.role-waiter .pos-meta-card,
+  body.role-waiter #btnResetOrder,
+  body.role-waiter #btnSaveOrderKot,
+  body.role-waiter #btnToggleWaiterBills,
   body.role-waiter #btnHoldOrder,
   body.role-waiter #btnViewHeldOrders,
   body.role-waiter #linkDailyCollections,
@@ -357,18 +404,39 @@
     pointer-events: none !important;
   }
 
-  /* Waiter Action Buttons fill the action bar */
+  /* Waiter Action Buttons fill the action bar with single prominent touch target */
   html.role-waiter .pos-actions,
   body.role-waiter .pos-actions {
-    display: grid !important;
-    grid-template-columns: 1.6fr 1fr !important;
-    gap: 8px !important;
+    display: block !important;
+    margin-top: 14px !important;
+    padding: 6px 0 20px 0 !important;
+    position: relative !important;
+    z-index: 10 !important;
   }
   html.role-waiter #btnSubmitToCounter,
+  body.role-waiter #btnSubmitToCounter {
+    display: flex !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    min-height: 48px !important;
+    height: 48px !important;
+    font-size: 14.5px !important;
+    font-weight: 800 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.35) !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
   html.role-waiter #btnSaveOrderKot,
+  body.role-waiter #btnSaveOrderKot {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
   html.role-waiter #btnMobileSubmitCounter,
-  body.role-waiter #btnSubmitToCounter,
-  body.role-waiter #btnSaveOrderKot,
   body.role-waiter #btnMobileSubmitCounter {
     display: inline-flex !important;
     visibility: visible !important;
@@ -452,6 +520,16 @@
   }
   @media (max-width: 880px) {
     .pos-mini-cart-bar.active { display: flex; }
+    /* Generous bottom clearance: prevents fixed mini-bar or mobile viewports from covering action buttons */
+    .pos-col-bill {
+      padding-bottom: 120px !important;
+    }
+    .pos-col-menu {
+      padding-bottom: 96px !important;
+    }
+    .pos-bill-card {
+      padding-bottom: 30px !important;
+    }
   }
 
   /* Thermal Receipt Print Optimization (Strict Single Slip) */
@@ -626,49 +704,366 @@
       70% { transform: scale(1.04); box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
     }
-    .waiter-table-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      border: 1.5px solid #E2E8F0;
+    /* Waiter Table Switcher & Order Type Top Bar (Floor staff optimized) */
+    .waiter-table-bar-container {
       background: #FFFFFF;
-      color: #1E293B;
+      border: 1.5px solid #86EFAC;
+      border-radius: 12px;
+      padding: 12px 14px 10px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(14, 77, 38, 0.08);
+    }
+    .waiter-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1.5px dashed #E2E8F0;
+    }
+    .waiter-user-info {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .waiter-active-badge {
+      font-size: 11.5px;
+      background: #0E4D26;
+      color: #FFFFFF;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .waiter-order-type-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .waiter-order-type-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #0E4D26;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .waiter-order-type-group {
+      display: inline-flex;
+      gap: 4px;
+      background: #F1F5F9;
+      padding: 3px;
+      border-radius: 9px;
+      border: 1.2px solid #E2E8F0;
+    }
+    .waiter-order-type-group .type-pill {
+      height: 32px !important;
+      min-height: 32px !important;
+      padding: 0 12px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      border-radius: 7px !important;
+      border: none !important;
+      background: transparent !important;
+      color: #475569 !important;
+      cursor: pointer !important;
+      transition: all 0.15s ease !important;
+    }
+    .waiter-order-type-group .type-pill:hover {
+      background: #E2E8F0 !important;
+      color: #0E4D26 !important;
+    }
+    .waiter-order-type-group .type-pill.active {
+      background: #0E4D26 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 2px 6px rgba(14, 77, 38, 0.25) !important;
+    }
+    .waiter-table-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .waiter-status-legend {
+      font-size: 11px;
+      color: #64748B;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .waiter-table-pills-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 8px 2px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+    .waiter-table-pills-row::-webkit-scrollbar {
+      height: 5px;
+    }
+    .waiter-table-pills-row::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+    .waiter-table-card {
+      flex: 0 0 auto;
+      min-width: 108px;
+      padding: 8px 12px;
+      border-radius: 9px;
+      border: 1.5px solid #CBD5E1;
+      background: #FFFFFF;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      text-align: left;
       transition: all 0.15s ease;
       user-select: none;
     }
-    .waiter-table-pill:hover {
+    .waiter-table-card:hover {
       border-color: #0E4D26;
       background: #F0FDF4;
     }
-    .waiter-table-pill.active {
-      border-color: #0E4D26;
-      background: #0E4D26;
-      color: #FFFFFF;
+    .waiter-table-card.active-table {
+      background: #0E4D26 !important;
+      border-color: #0E4D26 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 12px rgba(14, 77, 38, 0.3) !important;
     }
-    .waiter-table-pill.has-order {
-      border-color: #F59E0B;
+    .waiter-table-card.active-table strong,
+    .waiter-table-card.active-table div,
+    .waiter-table-card.active-table span {
+      color: #FFFFFF !important;
+    }
+    .waiter-table-card.has-draft {
       background: #FFFBEB;
-      color: #92400E;
+      border-color: #F59E0B;
     }
-    .waiter-table-pill.has-submitted {
-      border-color: #DC2626;
+    .waiter-table-card.has-submitted {
       background: #FEF2F2;
-      color: #991B1B;
+      border-color: #EF4444;
     }
-    /* Waiter Role: Completely hide Payment Method, Cash Tender, and Billing Adjustments (GST, Parcel, Discount, Round Off) */
+    /* Waiter Role: Completely hide Toolbar, Metadata Panel, New Order, Save/KOT, Payment Method, Cash Tender, and Billing Adjustments */
+    html.role-waiter .pos-toolbar,
+    body.role-waiter .pos-toolbar,
+    html.role-waiter .pos-meta-card,
+    body.role-waiter .pos-meta-card,
+    html.role-waiter #btnResetOrder,
+    body.role-waiter #btnResetOrder,
+    html.role-waiter #btnSaveOrderKot,
+    body.role-waiter #btnSaveOrderKot,
     body.role-waiter #paymentAndTenderSection,
     body.role-waiter #cashTenderSection,
     body.role-waiter #cashierBillingAdjustments,
     body.role-waiter .waiter-hide-pay,
     body.role-waiter .waiter-hide-adjustments {
       display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
     }
-</style>
+
+    /* ==========================================================================
+       Mobile App Experience & Auto-Zoom Prevention
+       ========================================================================== */
+    html, body {
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      overscroll-behavior-y: none;
+    }
+    @media (max-width: 880px) {
+      html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        position: relative;
+      }
+      .admin-shell, .admin-body, .admin-main, .admin-panel,
+      .pos-workspace, .pos-col-menu, .pos-col-bill {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+      }
+      .admin-panel {
+        padding: 8px 8px 30px !important;
+      }
+      /* CRITICAL: Force font-size >= 16px on all mobile inputs to completely disable iOS Safari & Chrome auto-zoom */
+      input, select, textarea,
+      input[type="text"], input[type="search"], input[type="number"], input[type="tel"], input[type="password"],
+      .pos-meta-select, .pos-meta-input, #dishSearchInput, .pos-dish-search-input {
+        font-size: 16px !important;
+      }
+    }
+
+    /* Native Mobile App Style Search Bar */
+    .pos-search-wrapper {
+      position: relative;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .pos-dish-search-input {
+      width: 100% !important;
+      font-size: 16px !important; /* CRITICAL: 16px prevents mobile auto-zoom */
+      min-height: 44px;
+      height: 44px;
+      padding: 0 38px 0 38px !important;
+      border: 1.5px solid #CBD5E1 !important;
+      border-radius: 10px !important;
+      outline: none !important;
+      background: #FFFFFF !important;
+      color: #1E293B !important;
+      box-sizing: border-box !important;
+      -webkit-appearance: none;
+      appearance: none;
+      touch-action: manipulation;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .pos-dish-search-input:focus {
+      border-color: #0E4D26 !important;
+      box-shadow: 0 0 0 3px rgba(14, 77, 38, 0.15) !important;
+    }
+    .pos-dish-search-input::-webkit-search-cancel-button,
+    .pos-dish-search-input::-webkit-search-decoration {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .pos-search-clear-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #F1F5F9;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #64748B;
+      cursor: pointer;
+      z-index: 2;
+      padding: 0;
+      line-height: 1;
+    }
+    .pos-search-clear-btn:active {
+      background: #E2E8F0;
+      color: #0F172A;
+    }
+
+    /* In-Card Stepper & In-Cart Dish Styling */
+    .pos-dish-card.is-in-cart {
+      border-color: #0E4D26 !important;
+      background: #F0FDF4 !important;
+      box-shadow: 0 2px 8px rgba(14, 77, 38, 0.18) !important;
+    }
+    .pos-dish-qty-badge {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #FFFFFF;
+      background: #0E4D26;
+      padding: 1px 6px;
+      border-radius: 10px;
+      line-height: 1.3;
+      letter-spacing: 0.2px;
+    }
+    .pos-dish-remove-btn {
+      background: #FEE2E2;
+      color: #DC2626;
+      border: 1px solid #FCA5A5;
+      border-radius: 4px;
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      transition: all 0.1s ease;
+      touch-action: manipulation;
+    }
+    .pos-dish-remove-btn:active {
+      background: #DC2626;
+      color: #FFFFFF;
+      transform: scale(0.92);
+    }
+    .pos-dish-card-stepper {
+      display: inline-flex;
+      align-items: center;
+      background: #0E4D26;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+      touch-action: manipulation;
+    }
+    .pos-dish-card-btn {
+      width: 26px;
+      height: 24px;
+      border: none;
+      background: #0E4D26;
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      touch-action: manipulation;
+      transition: background 0.1s ease;
+      user-select: none;
+    }
+    .pos-dish-card-btn:active {
+      background: #062311;
+    }
+    .pos-dish-card-btn.minus.is-delete {
+      background: #DC2626;
+      font-size: 11px;
+    }
+    .pos-dish-card-btn.minus.is-delete:active {
+      background: #991B1B;
+    }
+    .pos-dish-card-qty {
+      min-width: 20px;
+      padding: 0 3px;
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 24px;
+      user-select: none;
+    }
+    .pos-dish-add-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #0E4D26;
+      background: #E8F5E9;
+      padding: 3px 8px;
+      border-radius: 5px;
+      letter-spacing: 0.3px;
+      border: 1px solid #C8E6C9;
+      transition: all 0.12s ease;
+    }
+    .pos-dish-card:hover .pos-dish-add-label {
+      background: #0E4D26;
+      color: #FFFFFF;
+      border-color: #0E4D26;
+    }
+  </style>
 </head>
 <body>
 
@@ -691,15 +1086,68 @@
     <main class="admin-main">
       <div class="admin-panel" style="max-width:1560px;padding:14px 18px 40px;">
         
-        <!-- Toolbar -->
-        <div class="pos-toolbar">
-          <div>
-            <h2>Counter Billing &amp; Thermal POS</h2>
-            <p style="margin:2px 0 0;font-size:12.5px;color:var(--ink-muted);">
-              Punch verbal waiter orders, generate bills with unique IDs, and print on 80mm Wi-Fi/POS printers.
-            </p>
+        <!-- Toolbar with Compact Order Meta & POS Actions -->
+        <div class="pos-toolbar" id="posMainToolbar">
+          <!-- Left/Center: Compact Order Meta Controls (Moved here to maximize menu item space) -->
+          <div class="pos-toolbar-meta" id="posToolbarMeta">
+            <!-- Hidden notice banner holder to preserve JS compatibility -->
+            <div id="waiterNoticeBanner" style="display:none;"></div>
+
+            <!-- Order Type -->
+            <div class="pos-meta-field">
+              <span class="pos-meta-label">Order Type</span>
+              <div class="pos-type-pills">
+                <button type="button" class="type-pill active" data-type="Dine-In">Dine-In</button>
+                <button type="button" class="type-pill" data-type="Takeaway">Parcel</button>
+                <button type="button" class="type-pill" data-type="Delivery">Delivery</button>
+              </div>
+            </div>
+
+            <!-- Table Number -->
+            <div class="pos-meta-field">
+              <label class="pos-meta-label" for="tableSelect">Table Number</label>
+              <select id="tableSelect" class="pos-meta-select" style="font-weight:700;">
+                <option value="Table 1">Table 1</option>
+                <option value="Table 2">Table 2</option>
+                <option value="Table 3">Table 3</option>
+                <option value="Table 4" selected>Table 4</option>
+                <option value="Table 5">Table 5</option>
+                <option value="Table 6">Table 6</option>
+                <option value="Table 7">Table 7</option>
+                <option value="Table 8">Table 8</option>
+                <option value="Table 9">Table 9</option>
+                <option value="Table 10">Table 10</option>
+                <option value="Table 11">Table 11</option>
+                <option value="Table 12">Table 12</option>
+                <option value="Parcel">Parcel / Counter</option>
+                <option value="VIP Cabin">VIP Cabin</option>
+              </select>
+            </div>
+
+            <!-- Waiter / Server -->
+            <div class="pos-meta-field">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                <label class="pos-meta-label" for="waiterInput" style="margin:0;">Waiter / Server</label>
+                <a href="waiters.html" id="linkWaiterMaster" style="font-size:10.5px;font-weight:700;color:var(--maroon);text-decoration:none;" title="Manage Staff Directory">⚙ Waiter Master</a>
+              </div>
+              <div class="pos-waiter-compact-row">
+                <input type="text" id="waiterInput" class="pos-meta-input" placeholder="Waiter name" value="Raju" style="font-weight:600;">
+                <div class="pos-waiter-chips-inline" id="waiterChips">
+                  <!-- Populated dynamically from Waiters Master -->
+                </div>
+              </div>
+            </div>
           </div>
+
+          <!-- Right: Toolbar Action Controls -->
           <div class="pos-toolbar-actions">
+            <!-- 🛎️ Waiter Submitted Bills Quick View Toggle (Beside Hold Order Button) -->
+            <button type="button" class="pos-hold-btn" id="btnToggleWaiterBills" title="View waiter submitted bills queue">
+              <span>🛎️</span>
+              <span>Waiter Bills</span>
+              <span class="pos-hold-badge" id="badgeWaiterQueueToolbar" style="display:none;background:#DC2626;color:#FFF;">0</span>
+            </button>
+
             <!-- ⏸ Park / Hold Order Queue Controls -->
             <button type="button" class="pos-hold-btn" id="btnHoldOrder" title="Park current active order to attend next customer (Alt+H)">
               <span>⏸</span>
@@ -710,13 +1158,6 @@
               <span>▶</span>
               <span>Held Orders (<strong id="btnViewHeldCount">0</strong>)</span>
             </button>
-
-            <!-- Cashier Session Indicator -->
-            <div class="cashier-terminal-pill" id="cashierPill" style="display:none;background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.35);color:#92400E;height:32px;padding:0 10px;border-radius:7px;font-size:11.5px;font-weight:700;align-items:center;gap:6px;box-sizing:border-box;">
-              <span>👤</span>
-              <span id="cashierPillName">Cashier</span>
-              <span style="font-size:9.5px;background:#92400E;color:#fff;padding:2px 5px;border-radius:4px;margin-left:2px;letter-spacing:0.3px;line-height:1;">POS TERMINAL</span>
-            </div>
 
             <a href="daily-collections.html" id="linkDailyCollections" class="admin-btn admin-btn-secondary" style="height:32px;padding:0 12px;font-size:11.5px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;border-radius:7px;box-sizing:border-box;white-space:nowrap;">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg>
@@ -736,12 +1177,12 @@
         </div>
 
         <!-- Real-Time Waiter Submitted Bills Queue (For Counter Cashier & Admin) -->
-        <div id="waiterQueueSection" style="display:none;margin-bottom:20px;background:#FFFDF5;border:1.5px solid #F59E0B;border-radius:12px;padding:14px 16px;box-shadow:0 4px 14px rgba(245,158,11,0.12);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <div id="waiterQueueSection" style="display:none;margin-bottom:16px;background:#FFFDF5;border:1.5px solid #F59E0B;border-radius:12px;padding:12px 16px;box-shadow:0 4px 14px rgba(245,158,11,0.12);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
             <div style="display:flex;align-items:center;gap:10px;">
               <span style="font-size:20px;">🛎️</span>
               <div>
-                <h3 style="margin:0;font-size:15.5px;color:#92400E;display:flex;align-items:center;gap:8px;">
+                <h3 style="margin:0;font-size:14.5px;color:#92400E;display:flex;align-items:center;gap:8px;">
                   Waiter Submitted Bills
                   <span class="pos-badge-pulse" id="waiterQueueCountBadge" style="background:#DC2626;color:#FFF;font-weight:800;font-size:11px;padding:2px 9px;border-radius:999px;">0 Pending</span>
                 </h3>
@@ -757,6 +1198,7 @@
               <button type="button" class="admin-btn admin-btn-secondary" id="btnRefreshQueue" onclick="if(window.PosSync)PosSync.fetchOrders();" style="height:32px;padding:0 12px;font-size:11.5px;border-radius:7px;background:#FFF;display:inline-flex;align-items:center;gap:5px;box-sizing:border-box;white-space:nowrap;" title="Refresh orders list">
                 <span>🔄</span> <span>Sync Now</span>
               </button>
+              <button type="button" class="admin-btn admin-btn-secondary" id="btnCloseWaiterQueue" style="height:32px;padding:0 10px;font-size:13px;border-radius:7px;background:#FFF;color:#78350F;" title="Hide waiter queue">✕</button>
             </div>
           </div>
           <div id="waiterQueueList" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:12px;">
@@ -801,6 +1243,42 @@
           </div>
         </div>
 
+        <!-- Waiter Assigned Tables Quick Bar (Top of Screen for Floor Waiter) -->
+        <div id="waiterAssignedTablesSection" class="waiter-table-bar-container" style="display:none;">
+          <!-- Top Line: Waiter Profile, Active Table, and Dine-In Badge -->
+          <div class="waiter-top-row">
+            <div class="waiter-user-info">
+              <span style="font-size:16px;">🧑‍🍳</span>
+              <span style="font-size:12px;color:#64748B;font-weight:600;">Server:</span>
+              <strong id="waiterBarName" style="font-size:13.5px;color:#0E4D26;">Waiter</strong>
+              <span id="waiterActiveTableBadge" class="waiter-active-badge">Table 1 (Active)</span>
+              <span class="waiter-dinein-badge" style="display:inline-flex;align-items:center;gap:4px;background:#0E4D26;color:#FFFFFF;padding:3px 10px;border-radius:12px;font-size:11.5px;font-weight:800;letter-spacing:0.2px;">
+                🍽️ Dine-In
+              </span>
+              <button type="button" id="waiterClearActiveBtn" onclick="clearCurrentTableDraft()" style="display:none;align-items:center;gap:3px;background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;line-height:1.2;" title="Clear items from active table">
+                🗑️ Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Second Row: Table Switcher Label & Status Guide -->
+          <div class="waiter-table-bar-header">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <strong style="font-size:12.5px;color:#1E293B;">🪑 Tap Table to Take Order:</strong>
+            </div>
+            <div class="waiter-status-legend">
+              <span><span style="color:#16A34A;font-weight:bold;">●</span> Available</span>
+              <span><span style="color:#D97706;font-weight:bold;">●</span> In Progress</span>
+              <span><span style="color:#DC2626;font-weight:bold;">●</span> Bill Sent</span>
+            </div>
+          </div>
+
+          <!-- Third Row: Visual Table Cards -->
+          <div id="waiterTablePills" class="waiter-table-pills-row">
+            <!-- Dynamically rendered table status cards -->
+          </div>
+        </div>
+
         <!-- Mobile View Tabs -->
         <div class="pos-tabs-mobile">
           <button type="button" class="pos-tab-btn active" id="tabBtnMenu">
@@ -816,72 +1294,15 @@
           
           <!-- Column 1: Order Punching & Menu Catalog -->
           <div class="pos-col-menu tab-visible">
-            
-            <!-- Waiter Assigned Tables Quick Bar (Visible only for Waiter) -->
-            <div id="waiterAssignedTablesSection" style="display:none;margin-bottom:12px;background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:10px 14px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px;">
-                <span style="font-size:12px;font-weight:700;color:#166534;">⭐ Your Assigned Tables:</span>
-                <span style="font-size:11px;color:#15803D;">Tap table to switch or review active order</span>
-              </div>
-              <div id="waiterTablePills" style="display:flex;gap:6px;flex-wrap:wrap;">
-                <!-- Dynamically rendered table status pills -->
-              </div>
-            </div>
 
-            <!-- Order Meta & Table Selector -->
-            <div class="admin-card pos-meta-card">
-              <!-- Waiter Session Notice Banner -->
-              <div id="waiterNoticeBanner" style="display:none;background:#F0FDF4;border:1px solid #BBF7D0;color:#15803D;padding:6px 10px;border-radius:6px;font-size:11.5px;font-weight:700;margin-bottom:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-                <span>🧑‍🍳 Logged in as: <strong id="waiterNoticeName">Server</strong></span>
-                <span>🍽️ Assigned Tables: <span id="waiterNoticeTables" style="color:#0E4D26;">All Tables</span></span>
-              </div>
-              <div class="pos-meta-bar">
-                <div class="admin-field" style="margin-bottom:0;">
-                  <label class="pos-meta-label">Order Type</label>
-                  <div style="display:flex;gap:4px;">
-                    <button type="button" class="type-pill active" data-type="Dine-In">Dine-In</button>
-                    <button type="button" class="type-pill" data-type="Takeaway">Parcel</button>
-                    <button type="button" class="type-pill" data-type="Delivery">Delivery</button>
-                  </div>
-                </div>
-                <div class="admin-field" style="margin-bottom:0;">
-                  <label class="pos-meta-label" for="tableSelect">Table Number</label>
-                  <select id="tableSelect" class="pos-meta-select" style="font-weight:700;">
-                    <option value="Table 1">Table 1</option>
-                    <option value="Table 2">Table 2</option>
-                    <option value="Table 3">Table 3</option>
-                    <option value="Table 4" selected>Table 4</option>
-                    <option value="Table 5">Table 5</option>
-                    <option value="Table 6">Table 6</option>
-                    <option value="Table 7">Table 7</option>
-                    <option value="Table 8">Table 8</option>
-                    <option value="Table 9">Table 9</option>
-                    <option value="Table 10">Table 10</option>
-                    <option value="Table 11">Table 11</option>
-                    <option value="Table 12">Table 12</option>
-                    <option value="Parcel">Parcel / Counter</option>
-                    <option value="VIP Cabin">VIP Cabin</option>
-                  </select>
-                </div>
-                <div class="admin-field" style="margin-bottom:0;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-                    <label class="pos-meta-label" for="waiterInput" style="margin:0;">Waiter / Server</label>
-                    <a href="waiters.html" id="linkWaiterMaster" style="font-size:10.5px;font-weight:700;color:var(--maroon);text-decoration:none;" title="Manage Staff Directory">⚙ Waiter Master</a>
-                  </div>
-                  <div class="pos-waiter-compact-row">
-                    <input type="text" id="waiterInput" class="pos-meta-input" placeholder="Waiter name" value="Raju" style="font-weight:600;">
-                    <div class="pos-waiter-chips-inline" id="waiterChips">
-                      <!-- Populated dynamically from Waiters Master -->
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <!-- Fast Search & Category Filters (Positioned at top to give maximum space to dish catalog) -->
 
             <!-- Fast Search & Category Filters -->
             <div class="admin-card" style="padding:10px 12px;">
-              <div style="position:relative;margin-bottom:8px;">
-                <input type="text" id="dishSearchInput" placeholder="🔍 Type Dish # (e.g. 16) or Name (e.g. Biryani, Paneer, Chicken)… [Press Enter to Add]" style="font-size:13.5px;padding:8px 12px;border:1.5px solid var(--rule);border-radius:8px;width:100%;outline:none;" autofocus>
+              <div class="pos-search-wrapper">
+                <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:#64748B;pointer-events:none;z-index:2;">🔍</span>
+                <input type="search" id="dishSearchInput" class="pos-dish-search-input" placeholder="Search dish name or # (e.g. Biryani, 16)…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="search">
+                <button type="button" id="btnClearDishSearch" class="pos-search-clear-btn" title="Clear search">✕</button>
               </div>
 
               <!-- Category Pills -->
@@ -920,7 +1341,10 @@
                   <div style="font-size:11px;color:var(--ink-muted);margin-top:4px;" id="billDateTime">–</div>
                 </div>
                 <div style="text-align:right;">
-                  <div style="font-weight:700;font-size:13px;color:var(--maroon-deep);" id="badgeTable">Table 4</div>
+                  <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;">
+                    <div style="font-weight:700;font-size:13px;color:var(--maroon-deep);" id="badgeTable">Table 4</div>
+                    <button type="button" class="admin-btn admin-btn-secondary" id="btnResetTableItems" onclick="clearCurrentTableDraft()" style="display:none;height:24px;padding:0 7px;font-size:10.5px;color:#DC2626;border-color:#FCA5A5;line-height:1;border-radius:5px;" title="Clear in-progress items for this table">Clear</button>
+                  </div>
                   <div style="font-size:11px;color:var(--ink-muted);" id="badgeWaiter">Server: Raju</div>
                 </div>
               </div>
@@ -1339,8 +1763,6 @@
   if (window.AdminShared) {
     var isCounterStaff = AdminShared.isCounter();
     var isWaiterStaff = AdminShared.isWaiter && AdminShared.isWaiter();
-    var cashierPill = document.getElementById('cashierPill');
-    var cashierPillName = document.getElementById('cashierPillName');
     var linkDailyCollections = document.getElementById('linkDailyCollections');
     var btnOpenSettings = document.getElementById('btnOpenSettings');
     var linkWaiterMaster = document.getElementById('linkWaiterMaster');
@@ -1353,15 +1775,9 @@
       var allocatedTables = [];
       try { if (rawTables) allocatedTables = JSON.parse(rawTables); } catch (e) {}
 
-      // Header Pill
-      if (cashierPill) {
-        cashierPill.style.display = 'inline-flex';
-        cashierPill.style.background = 'rgba(14, 77, 38, 0.12)';
-        cashierPill.style.borderColor = 'rgba(14, 77, 38, 0.35)';
-        cashierPill.style.color = '#0E4D26';
-        cashierPill.innerHTML = '<span>🧑‍🍳</span><span>' + AdminShared.esc(waiterName) + '</span>' +
-          '<span style="font-size:10px;background:#0E4D26;color:#fff;padding:2px 6px;border-radius:4px;margin-left:2px;letter-spacing:0.3px;">WAITER</span>';
-      }
+      // Populate Waiter Name in Top Header Bar
+      var waiterBarName = document.getElementById('waiterBarName');
+      if (waiterBarName) waiterBarName.textContent = waiterName;
 
       // Hide counter & admin toolbar controls from waiter
       var btnHoldOrder = document.getElementById('btnHoldOrder');
@@ -1375,6 +1791,8 @@
       if (linkDailyCollections) linkDailyCollections.style.display = 'none';
       if (btnOpenSettings) btnOpenSettings.style.display = 'none';
       if (linkWaiterMaster) linkWaiterMaster.style.display = 'none';
+      var btnResetOrder = document.getElementById('btnResetOrder');
+      if (btnResetOrder) btnResetOrder.style.display = 'none';
 
       // Show Notice Banner
       var banner = document.getElementById('waiterNoticeBanner');
@@ -1398,21 +1816,21 @@
       var waiterChips = document.getElementById('waiterChips');
       if (waiterChips) waiterChips.style.display = 'none';
 
-      // Populate Table Selector: Waiter is strictly restricted to assigned tables ONLY
+      // Populate Table Selector: Waiter sees their assigned tables, or all 12 tables if unrestricted
       var tableSelect = document.getElementById('tableSelect');
+      var effectiveTables = (allocatedTables && allocatedTables.length > 0) ? allocatedTables : getAllocatedWaiterTables();
       if (tableSelect) {
-        if (allocatedTables.length > 0) {
-          var optHtml = '';
-          optHtml += '<optgroup label="⭐ Your Assigned Tables">';
-          allocatedTables.forEach(function (tbl, idx) {
-            optHtml += '<option value="' + AdminShared.esc(tbl) + '"' + (idx === 0 ? ' selected' : '') + '>' + AdminShared.esc(tbl) + ' (Assigned)</option>';
-          });
-          optHtml += '</optgroup>';
-          tableSelect.innerHTML = optHtml;
-        } else {
-          tableSelect.innerHTML = '<option value="Table 1">Table 1 (Assigned)</option><option value="Table 2">Table 2 (Assigned)</option>';
-        }
+        var optHtml = '';
+        optHtml += '<optgroup label="⭐ Tables">';
+        effectiveTables.forEach(function (tbl, idx) {
+          optHtml += '<option value="' + AdminShared.esc(tbl) + '"' + (idx === 0 ? ' selected' : '') + '>' + AdminShared.esc(tbl) + '</option>';
+        });
+        optHtml += '</optgroup>';
+        tableSelect.innerHTML = optHtml;
       }
+
+      var btnResetTableItems = document.getElementById('btnResetTableItems');
+      if (btnResetTableItems) btnResetTableItems.style.display = 'inline-flex';
 
       // Role UI Enforcement: Waiter (Take orders & submit bill ONLY)
       // 1. Remove Punch & Print and Receipt Preview buttons from Waiter view
@@ -1423,17 +1841,35 @@
       var btnMobilePunch = document.getElementById('btnMobilePunch');
       if (btnMobilePunch) btnMobilePunch.style.display = 'none';
 
-      // 2. Show Waiter Submit Bill & Save KOT actions
+      // 2. Show Waiter Submit Bill action (Save / KOT removed per request)
       var btnSubmitToCounter = document.getElementById('btnSubmitToCounter');
-      if (btnSubmitToCounter) btnSubmitToCounter.style.display = 'inline-flex';
+      if (btnSubmitToCounter) btnSubmitToCounter.style.display = 'flex';
       var btnSaveOrderKot = document.getElementById('btnSaveOrderKot');
-      if (btnSaveOrderKot) btnSaveOrderKot.style.display = 'inline-flex';
+      if (btnSaveOrderKot) btnSaveOrderKot.style.display = 'none';
       var btnMobileSubmitCounter = document.getElementById('btnMobileSubmitCounter');
       if (btnMobileSubmitCounter) btnMobileSubmitCounter.style.display = 'inline-flex';
 
+      // Lock Order Type strictly to Dine-In for waiter floor ordering
+      activeOrderType = 'Dine-In';
+      if (typeof syncOrderTypeUI === 'function') {
+        syncOrderTypeUI('Dine-In');
+      }
+
       // 3. Show Waiter Assigned Tables Quick Bar
       var waiterAssignedTablesSection = document.getElementById('waiterAssignedTablesSection');
-      if (waiterAssignedTablesSection) waiterAssignedTablesSection.style.display = 'block';
+      if (waiterAssignedTablesSection) {
+        waiterAssignedTablesSection.style.display = 'block';
+        var initTbl = tableSelect ? tableSelect.value : '';
+        if (initTbl) {
+          var drafts = getTableDrafts();
+          var initDraft = drafts[initTbl];
+          if (initDraft && Array.isArray(initDraft.cart) && initDraft.cart.length > 0 && (!cart || cart.length === 0)) {
+            cart = JSON.parse(JSON.stringify(initDraft.cart));
+            renderCart();
+          }
+        }
+        renderWaiterAssignedTables(window.PosSync ? PosSync.getPendingBills() : [], effectiveTables);
+      }
 
       // 4. Hide Counter Submitted Bills Queue from Waiter
       var waiterQueueSection = document.getElementById('waiterQueueSection');
@@ -1457,19 +1893,18 @@
       var cashierAdjustments = document.getElementById('cashierBillingAdjustments');
       if (cashierAdjustments) cashierAdjustments.style.display = 'block';
       if (isCounterStaff) {
-        if (cashierPill) {
-          cashierPill.style.display = 'inline-flex';
-          if (cashierPillName) cashierPillName.textContent = AdminShared.getUsername() || 'Cashier';
-        }
         if (linkDailyCollections) linkDailyCollections.style.display = 'none';
         if (btnOpenSettings) btnOpenSettings.style.display = 'none';
       }
 
-      // Show Counter Submitted Bills Queue and hide Waiter tables bar
-      var waiterQueueSection = document.getElementById('waiterQueueSection');
-      if (waiterQueueSection) waiterQueueSection.style.display = 'block';
+      // Hide Waiter tables bar from Counter / Admin
       var waiterAssignedTablesSection = document.getElementById('waiterAssignedTablesSection');
       if (waiterAssignedTablesSection) waiterAssignedTablesSection.style.display = 'none';
+
+      // Waiter queue visibility will be determined by pending bills count in renderCounterQueue()
+      if (window.PosSync) {
+        renderCounterQueue(PosSync.getPendingBills());
+      }
 
       // Chime Sound Alert Toggle Setup
       var btnToggleChime = document.getElementById('btnToggleChimeMute');
@@ -1613,6 +2048,13 @@
   function renderDishes(query, category) {
     var grid = document.getElementById('posDishGrid');
     if (!grid) return;
+    var prevScroll = grid.scrollTop;
+
+    if (category === undefined) category = currentCategoryFilter;
+    if (query === undefined) {
+      var sInp = document.getElementById('dishSearchInput');
+      query = sInp ? sInp.value : '';
+    }
 
     var filtered = allDishes.filter(function (d) {
       if (category && category !== 'all' && d.category !== category) return false;
@@ -1631,26 +2073,91 @@
       return;
     }
 
+    // Build fast lookup map for items in cart
+    var cartMap = {};
+    cart.forEach(function (it) {
+      if (!it.isCustom && it.id) {
+        cartMap[it.id] = (cartMap[it.id] || 0) + it.qty;
+      }
+    });
+
     var html = '';
     filtered.forEach(function (d) {
-      html += '<div class="pos-dish-card" onclick="addToCart(' + d.id + ')">' +
+      var inCartQty = cartMap[d.id] || 0;
+      var inCartClass = inCartQty > 0 ? ' is-in-cart' : '';
+
+      html += '<div class="pos-dish-card' + inCartClass + '" onclick="onDishCardClick(' + d.id + ')">' +
         '<div>' +
           '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-            '<span class="pos-dish-id">#' + d.id + '</span>' +
-            '<span class="pos-dish-dot ' + (d.veg ? 'veg' : 'nonveg') + '"></span>' +
+            '<div style="display:flex;align-items:center;gap:4px;">' +
+              '<span class="pos-dish-id">#' + d.id + '</span>' +
+              (inCartQty > 0 ? ('<span class="pos-dish-qty-badge">' + inCartQty + ' in cart</span>') : '') +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<span class="pos-dish-dot ' + (d.veg ? 'veg' : 'nonveg') + '"></span>' +
+              (inCartQty > 0 ? ('<button type="button" class="pos-dish-remove-btn" onclick="removeDishFromCart(' + d.id + ', event)" title="Remove from order">✕</button>') : '') +
+            '</div>' +
           '</div>' +
           '<div class="pos-dish-name">' + AdminShared.esc(d.name) + '</div>' +
           '<div class="pos-dish-te">' + AdminShared.esc(d.nameTe || '') + '</div>' +
         '</div>' +
         '<div class="pos-dish-footer">' +
           '<span class="pos-dish-price">₹' + d.price + '</span>' +
-          '<span style="font-size:11px;font-weight:700;color:var(--maroon);">+ ADD</span>' +
+          (inCartQty > 0 ? (
+            '<div class="pos-dish-card-stepper" onclick="event.stopPropagation();">' +
+              '<button type="button" class="pos-dish-card-btn minus' + (inCartQty === 1 ? ' is-delete' : '') + '" onclick="changeDishQty(' + d.id + ', -1, event)" title="' + (inCartQty === 1 ? 'Remove item' : 'Decrease qty') + '">' +
+                (inCartQty === 1 ? '🗑️' : '−') +
+              '</button>' +
+              '<span class="pos-dish-card-qty">' + inCartQty + '</span>' +
+              '<button type="button" class="pos-dish-card-btn plus" onclick="changeDishQty(' + d.id + ', 1, event)" title="Increase qty">+</button>' +
+            '</div>'
+          ) : (
+            '<span class="pos-dish-add-label">+ ADD</span>'
+          )) +
         '</div>' +
       '</div>';
     });
 
     grid.innerHTML = html;
+    if (prevScroll) {
+      grid.scrollTop = prevScroll;
+    }
   }
+
+  // Card click: clicking card body adds 1 to cart
+  window.onDishCardClick = function (dishId) {
+    addToCart(dishId);
+  };
+
+  // Stepper buttons directly on dish card
+  window.changeDishQty = function (dishId, delta, event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    var idx = cart.findIndex(function (it) { return it.id === dishId; });
+    if (idx === -1) {
+      if (delta > 0) addToCart(dishId);
+      return;
+    }
+    cart[idx].qty += delta;
+    if (cart[idx].qty <= 0) {
+      cart.splice(idx, 1);
+    }
+    renderCart();
+  };
+
+  window.removeDishFromCart = function (dishId, event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    var idx = cart.findIndex(function (it) { return it.id === dishId; });
+    if (idx !== -1) {
+      cart.splice(idx, 1);
+      renderCart();
+    }
+  };
 
   // Cart Operations
   window.addToCart = function (dishId) {
@@ -1777,18 +2284,25 @@
     document.getElementById('calcAmountWords').textContent = calc.words;
 
     // Sync Mini-Cart Bar for mobile / smaller screens
-    var miniCart = document.getElementById('posMiniCartBar');
     var miniCount = document.getElementById('miniCartCount');
     var miniTotal = document.getElementById('miniCartTotal');
     if (miniCount) miniCount.textContent = totalCount;
     if (miniTotal) miniTotal.textContent = '₹' + calc.grandTotal.toFixed(2);
-    if (miniCart) {
-      if (totalCount > 0) miniCart.classList.add('active');
-      else miniCart.classList.remove('active');
+    syncMiniCartVisibility();
+
+    // Auto-save current table draft and refresh table pills when in waiter mode
+    if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter()) {
+      saveCurrentTableDraft();
+      renderWaiterAssignedTables(window.PosSync ? PosSync.getPendingBills() : [], getAllocatedWaiterTables());
     }
 
     // Update cash tender and change calculation
     updateCashTenderUI();
+
+    // Live update in-cart indicators and quantity steppers on dish cards
+    var sInp = document.getElementById('dishSearchInput');
+    var q = sInp ? sInp.value : '';
+    renderDishes(q, currentCategoryFilter);
   }
 
   // Cash Tender & Return Change Calculator
@@ -1896,6 +2410,24 @@
     }
   };
 
+  function syncMiniCartVisibility() {
+    var miniCart = document.getElementById('posMiniCartBar');
+    if (!miniCart) return;
+    var tabBtnBill = document.getElementById('tabBtnBill');
+    var isBillTabActive = tabBtnBill && tabBtnBill.classList.contains('active');
+    var isMobile = window.innerWidth <= 880;
+    var totalCount = cart.reduce(function (sum, it) { return sum + it.qty; }, 0);
+
+    // CRITICAL FIX: Hide floating mini-cart bar when user is ALREADY on the Active Bill tab!
+    // This completely prevents the bar from covering the "Submit Bill to Counter" and "Save / KOT" buttons.
+    if (isMobile && !isBillTabActive && totalCount > 0) {
+      miniCart.classList.add('active');
+    } else {
+      miniCart.classList.remove('active');
+    }
+  }
+  window.syncMiniCartVisibility = syncMiniCartVisibility;
+
   window.switchToCartTab = function () {
     var tabBtnBill = document.getElementById('tabBtnBill');
     if (tabBtnBill) tabBtnBill.click();
@@ -1964,7 +2496,13 @@
     var waiter = document.getElementById('waiterInput').value.trim() || 'Staff';
     document.getElementById('badgeTable').textContent = table;
     document.getElementById('badgeWaiter').textContent = 'Server: ' + waiter;
-    document.getElementById('badgeOrderType').textContent = activeOrderType;
+    var displayType = (activeOrderType === 'Takeaway') ? 'Parcel' : activeOrderType;
+    document.getElementById('badgeOrderType').textContent = displayType;
+
+    var activeBadge = document.getElementById('waiterActiveTableBadge');
+    if (activeBadge && table) {
+      activeBadge.textContent = table + ' (Active)';
+    }
 
     var now = new Date();
     document.getElementById('billDateTime').textContent = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -2253,9 +2791,17 @@
     document.getElementById('parcelChargeInput').value = '0';
     document.getElementById('discountInput').value = '0';
     document.getElementById('dishSearchInput').value = '';
+    var btnClear = document.getElementById('btnClearDishSearch');
+    if (btnClear) btnClear.style.display = 'none';
     var cashInp = document.getElementById('cashReceivedInput');
     if (cashInp) cashInp.value = '';
     document.getElementById('previewBillNo').textContent = generateNextBillNo();
+    if (typeof syncOrderTypeUI === 'function') {
+      syncOrderTypeUI('Dine-In');
+    } else {
+      activeOrderType = 'Dine-In';
+      updateBillMetaBadges();
+    }
     renderCart();
     renderDishes('', currentCategoryFilter);
   }
@@ -2346,13 +2892,18 @@
       PosSync.submitOrder(payload, function (err, saved) {
         closeSubmitCounterModal();
         showToast('✓ Bill for ' + table + ' submitted to Counter Cashier!');
+        // Clear this table's draft since it has been submitted to cashier
+        var drafts = getTableDrafts();
+        delete drafts[table];
+        saveTableDrafts(drafts);
         resetActiveOrder(true);
+        renderWaiterAssignedTables(PosSync.getPendingBills(), getAllocatedWaiterTables());
         var tabBtnMenu = document.getElementById('tabBtnMenu');
         if (tabBtnMenu) tabBtnMenu.click();
       });
     } else {
       closeSubmitCounterModal();
-      alert('Sync service not ready. Please try again.');
+      showModalAlert('Sync service not ready. Please try again.', 'Connection Notice', 'warning');
     }
   }
   window.confirmSubmitBillToCounter = confirmSubmitBillToCounter;
@@ -2360,7 +2911,7 @@
   // Waiter: Save In-Progress Order / KOT
   function saveOrderKot() {
     if (!cart.length) {
-      alert('Please add at least one dish before saving order to kitchen / KOT!');
+      showModalAlert('Please add at least one dish before saving order to kitchen / KOT!', 'Empty Order', 'warning');
       return;
     }
     var calc = calculateBill();
@@ -2381,11 +2932,16 @@
       status: 'active'
     };
 
+    saveCurrentTableDraft();
+
     if (window.PosSync) {
       PosSync.submitOrder(payload, function () {
         showToast('🛎️ Order for ' + table + ' saved to Kitchen / KOT.');
-        resetActiveOrder(true);
+        renderWaiterAssignedTables(PosSync.getPendingBills(), getAllocatedWaiterTables());
       });
+    } else {
+      showToast('🛎️ Order for ' + table + ' saved locally.');
+      renderWaiterAssignedTables([], getAllocatedWaiterTables());
     }
   }
   window.saveOrderKot = saveOrderKot;
@@ -2394,12 +2950,16 @@
   function renderCounterQueue(orders) {
     var queueList = document.getElementById('waiterQueueList');
     var badge = document.getElementById('waiterQueueCountBadge');
+    var toolbarBadge = document.getElementById('badgeWaiterQueueToolbar');
+    var toolbarBtn = document.getElementById('btnToggleWaiterBills');
+    var waiterQueueSection = document.getElementById('waiterQueueSection');
     if (!queueList || !badge) return;
 
     var list = (orders || []).filter(function (o) {
       return o.status === 'submitted_to_counter';
     });
 
+    // Update section count badge
     badge.textContent = list.length + ' Pending';
     if (list.length > 0) {
       badge.style.background = '#DC2626';
@@ -2407,6 +2967,28 @@
     } else {
       badge.style.background = '#94A3B8';
       badge.classList.remove('pos-badge-pulse');
+    }
+
+    // Update toolbar button badge & pulsing highlight beside Hold Order
+    if (toolbarBadge) {
+      toolbarBadge.textContent = list.length;
+      toolbarBadge.style.display = list.length > 0 ? 'inline-flex' : 'none';
+    }
+    if (toolbarBtn) {
+      if (list.length > 0) {
+        toolbarBtn.classList.add('has-pending');
+      } else {
+        toolbarBtn.classList.remove('has-pending');
+      }
+    }
+
+    // Automatically show queue section when orders are received; auto-hide when 0 unless manually opened
+    if (waiterQueueSection) {
+      if (list.length > 0) {
+        waiterQueueSection.style.display = 'block';
+      } else if (!waiterQueueSection.dataset.manualOpen) {
+        waiterQueueSection.style.display = 'none';
+      }
     }
 
     if (list.length === 0) {
@@ -2563,50 +3145,155 @@
   }
   window.dismissWaiterBill = dismissWaiterBill;
 
-  // Waiter: Visual Table Status Pills Bar
+  // ==========================================================================
+  // WAITER PARALLEL MULTI-TABLE ORDER DRAFTS SYSTEM
+  // Seamless floor order taking: switching tables auto-saves drafts without wiping items.
+  // ==========================================================================
+  var TABLE_DRAFTS_KEY = 'navrang_waiter_table_drafts';
+
+  function getTableDrafts() {
+    try {
+      var raw = sessionStorage.getItem(TABLE_DRAFTS_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveTableDrafts(drafts) {
+    try {
+      sessionStorage.setItem(TABLE_DRAFTS_KEY, JSON.stringify(drafts));
+    } catch (e) {}
+  }
+
+  function saveCurrentTableDraft(tableName) {
+    var tableSelect = document.getElementById('tableSelect');
+    var currentTable = tableName || (tableSelect ? tableSelect.value : '');
+    if (!currentTable) return;
+
+    var drafts = getTableDrafts();
+    if (Array.isArray(cart) && cart.length > 0) {
+      drafts[currentTable] = {
+        cart: JSON.parse(JSON.stringify(cart)),
+        orderType: activeOrderType || 'Dine-In',
+        updatedAt: Date.now()
+      };
+    } else {
+      delete drafts[currentTable];
+    }
+    saveTableDrafts(drafts);
+  }
+
+  function getAllocatedWaiterTables() {
+    var rawTables = sessionStorage.getItem('navrang_waiter_tables');
+    var allocated = [];
+    try { if (rawTables) allocated = JSON.parse(rawTables); } catch (e) {}
+    if (!Array.isArray(allocated) || allocated.length === 0) {
+      allocated = ['Table 1', 'Table 2', 'Table 3', 'Table 4', 'Table 5', 'Table 6', 'Table 7', 'Table 8', 'Table 9', 'Table 10', 'Table 11', 'Table 12'];
+    }
+    return allocated;
+  }
+
+  // Clear current table draft (Explicit action via "Clear" button in bill header)
+  function clearCurrentTableDraft() {
+    var tableSelect = document.getElementById('tableSelect');
+    if (!tableSelect) return;
+    var currentTable = tableSelect.value;
+    if (!cart.length) {
+      showToast('No items to clear for ' + currentTable);
+      return;
+    }
+
+    showModalConfirm('Clear all items for ' + currentTable + '?', {
+      title: 'Clear ' + currentTable + ' Order',
+      confirmText: 'Clear Items',
+      cancelText: 'Keep Items',
+      isDanger: true,
+      onConfirm: function () {
+        var drafts = getTableDrafts();
+        delete drafts[currentTable];
+        saveTableDrafts(drafts);
+        cart = [];
+        renderCart();
+        renderWaiterAssignedTables(window.PosSync ? PosSync.getPendingBills() : [], getAllocatedWaiterTables());
+        showToast('Cleared items for ' + currentTable);
+      }
+    });
+  }
+  window.clearCurrentTableDraft = clearCurrentTableDraft;
+
+  // Waiter: Visual Table Status Cards Bar
   function renderWaiterAssignedTables(orders, allocatedTables) {
     var container = document.getElementById('waiterTablePills');
-    if (!container || !Array.isArray(allocatedTables) || allocatedTables.length === 0) return;
+    if (!container) return;
+
+    if (!Array.isArray(allocatedTables) || allocatedTables.length === 0) {
+      allocatedTables = getAllocatedWaiterTables();
+    }
 
     var currentTable = document.getElementById('tableSelect') ? document.getElementById('tableSelect').value : '';
+    var drafts = getTableDrafts();
+
+    // Update active table badge & clear button in header
+    var activeBadge = document.getElementById('waiterActiveTableBadge');
+    if (activeBadge && currentTable) {
+      activeBadge.textContent = currentTable + ' (Active)';
+    }
+    var clearBtn = document.getElementById('waiterClearActiveBtn');
+    if (clearBtn) {
+      clearBtn.style.display = (Array.isArray(cart) && cart.length > 0) ? 'inline-flex' : 'none';
+      clearBtn.title = 'Clear items for ' + currentTable;
+    }
 
     var html = '';
     allocatedTables.forEach(function (tbl) {
+      var isSelected = (tbl === currentTable);
+      var draft = drafts[tbl];
       var tblOrder = (orders || []).find(function (o) {
         return o.table === tbl && (o.status === 'submitted_to_counter' || o.status === 'active');
       });
 
-      var isSelected = (tbl === currentTable);
       var badgeIcon = '🟢';
       var statusText = 'Available';
-      var bgStyle = '#FFFFFF';
-      var borderStyle = isSelected ? '#16A34A' : '#CBD5E1';
-      var textColor = '#1E293B';
+      var cardClass = 'is-empty';
+      var subColor = '#64748B';
 
-      if (tblOrder) {
-        if (tblOrder.status === 'submitted_to_counter') {
-          badgeIcon = '🔴';
-          statusText = 'Bill Sent (₹' + Number(tblOrder.total || 0).toFixed(0) + ')';
-          bgStyle = '#FEF2F2';
-          borderStyle = isSelected ? '#DC2626' : '#FCA5A5';
-          textColor = '#991B1B';
-        } else if (tblOrder.status === 'active') {
-          var itCount = (tblOrder.items || []).reduce(function (s, it) { return s + it.qty; }, 0);
-          badgeIcon = '🟡';
-          statusText = 'In-Progress (' + itCount + ')';
-          bgStyle = '#FFFBEB';
-          borderStyle = isSelected ? '#D97706' : '#FDE68A';
-          textColor = '#92400E';
-        }
+      // If this table is currently active in memory, reflect the live cart
+      var tableCart = isSelected ? cart : (draft && draft.cart ? draft.cart : []);
+      var hasItems = Array.isArray(tableCart) && tableCart.length > 0;
+
+      if (tblOrder && tblOrder.status === 'submitted_to_counter') {
+        badgeIcon = '🔴';
+        statusText = 'Bill Sent (₹' + Number(tblOrder.total || 0).toFixed(0) + ')';
+        cardClass = 'has-submitted';
+        subColor = '#991B1B';
+      } else if (hasItems) {
+        var itCount = tableCart.reduce(function (s, it) { return s + it.qty; }, 0);
+        var itTotal = tableCart.reduce(function (s, it) { return s + (it.qty * it.price); }, 0);
+        badgeIcon = '🟡';
+        statusText = itCount + ' items • ₹' + Math.round(itTotal);
+        cardClass = 'has-draft';
+        subColor = '#92400E';
+      } else if (tblOrder && tblOrder.status === 'active') {
+        var itCount = (tblOrder.items || []).reduce(function (s, it) { return s + it.qty; }, 0);
+        badgeIcon = '🟡';
+        statusText = itCount + ' items • ₹' + Number(tblOrder.total || 0).toFixed(0);
+        cardClass = 'has-draft';
+        subColor = '#92400E';
       }
 
-      var selectedRing = isSelected ? 'box-shadow:0 0 0 2px ' + borderStyle + ';' : '';
+      if (isSelected) {
+        cardClass += ' active-table';
+      }
 
-      html += '<button type="button" class="waiter-table-pill" onclick="selectWaiterTable(\'' + AdminShared.esc(tbl) + '\')" ' +
-        'style="background:' + bgStyle + ';border:1.5px solid ' + borderStyle + ';color:' + textColor + ';' + selectedRing + '">' +
-        '<span>' + badgeIcon + '</span>' +
-        '<strong>' + AdminShared.esc(tbl) + '</strong>' +
-        '<span style="font-size:10px;opacity:0.85;">' + statusText + '</span>' +
+      html += '<button type="button" class="waiter-table-card ' + cardClass + '" onclick="selectWaiterTable(\'' + AdminShared.esc(tbl) + '\')">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
+          '<strong style="font-size:13px;font-weight:800;">' + AdminShared.esc(tbl) + '</strong>' +
+          '<span style="font-size:11px;">' + badgeIcon + '</span>' +
+        '</div>' +
+        '<span style="font-size:10px;font-weight:600;' + (isSelected ? 'color:#D1FAE5;' : ('color:' + subColor + ';')) + '">' +
+          (isSelected ? ('▶ ACTIVE' + (hasItems ? ' (' + itCount + ')' : '')) : statusText) +
+        '</span>' +
       '</button>';
     });
 
@@ -2614,55 +3301,81 @@
   }
   window.renderWaiterAssignedTables = renderWaiterAssignedTables;
 
-  function doSelectWaiterTable(tbl) {
+  function selectWaiterTable(targetTable) {
     var tableSelect = document.getElementById('tableSelect');
     if (!tableSelect) return;
-    tableSelect.value = tbl;
+    var currentTable = tableSelect.value;
+    if (currentTable === targetTable) return;
+
+    // 1. Auto-save current table's cart to its own draft BEFORE changing table
+    if (currentTable) {
+      saveCurrentTableDraft(currentTable);
+    }
+
+    // 2. Fetch target table's draft and pending sync orders
+    var drafts = getTableDrafts();
+    var targetDraft = drafts[targetTable];
+    var pendingOrders = (window.PosSync && typeof PosSync.getPendingBills === 'function') ? PosSync.getPendingBills() : [];
+    var syncOrder = pendingOrders.find(function (o) {
+      return o.table === targetTable && (o.status === 'submitted_to_counter' || o.status === 'active');
+    });
+    var isWaiter = document.body.classList.contains('role-waiter') || (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter());
+
+    // 3. Set new table in select & header
+    tableSelect.value = targetTable;
     updateBillMetaBadges();
 
-    if (window.PosSync) {
-      var tblOrder = PosSync.getTableOrder(tbl);
-      if (tblOrder && Array.isArray(tblOrder.items) && tblOrder.items.length > 0) {
-        cart = JSON.parse(JSON.stringify(tblOrder.items));
-        activeOrderType = tblOrder.orderType || 'Dine-In';
-        renderCart();
-        showToast('Loaded ' + tbl + ' in-progress order.');
+    // 4. Load target table's draft or active sync order, or cleanly empty cart
+    if (targetDraft && Array.isArray(targetDraft.cart) && targetDraft.cart.length > 0) {
+      cart = JSON.parse(JSON.stringify(targetDraft.cart));
+      var orderTypeToSet = isWaiter ? 'Dine-In' : (targetDraft.orderType || 'Dine-In');
+      if (typeof syncOrderTypeUI === 'function') {
+        syncOrderTypeUI(orderTypeToSet);
       } else {
-        resetActiveOrder(true);
-        showToast('Selected ' + tbl + '. Ready to take order.');
+        activeOrderType = orderTypeToSet;
       }
-      var rawTables = sessionStorage.getItem('navrang_waiter_tables');
-      var allocated = [];
-      try { if (rawTables) allocated = JSON.parse(rawTables); } catch (e) {}
-      renderWaiterAssignedTables(PosSync.getPendingBills(), allocated);
-    }
-  }
+      renderCart();
+      showToast('Switched to ' + targetTable + ' (' + cart.length + ' items)');
+    } else if (syncOrder && Array.isArray(syncOrder.items) && syncOrder.items.length > 0 && syncOrder.status === 'active') {
+      cart = JSON.parse(JSON.stringify(syncOrder.items));
+      var orderTypeToSet = isWaiter ? 'Dine-In' : (syncOrder.orderType || 'Dine-In');
+      if (typeof syncOrderTypeUI === 'function') {
+        syncOrderTypeUI(orderTypeToSet);
+      } else {
+        activeOrderType = orderTypeToSet;
+      }
+      renderCart();
+      showToast('Loaded ' + targetTable + ' order');
+    } else if (syncOrder && syncOrder.status === 'submitted_to_counter') {
+      cart = [];
+      if (typeof syncOrderTypeUI === 'function') {
+        syncOrderTypeUI('Dine-In');
+      } else {
+        activeOrderType = 'Dine-In';
+      }
+      renderCart();
+      showToast(targetTable + ': Bill already sent to counter (₹' + Number(syncOrder.total || 0).toFixed(0) + ')');
+    } else {
+      // Empty table: GUARANTEED clean empty cart
+      cart = [];
+      if (typeof syncOrderTypeUI === 'function') {
+        syncOrderTypeUI('Dine-In');
+      } else {
+        activeOrderType = 'Dine-In';
+      }
+      renderCart();
+      showToast('Switched to ' + targetTable);
 
-  function selectWaiterTable(tbl) {
-    var tableSelect = document.getElementById('tableSelect');
-    if (!tableSelect) return;
-    if (tableSelect.value === tbl) return;
-
-    if (cart.length > 0) {
-      showModalConfirm('Switching table to ' + tbl + '. Clear current items?', {
-        title: 'Switch Table',
-        confirmText: 'Switch & Clear',
-        cancelText: 'Cancel',
-        isDanger: true,
-        onConfirm: function () {
-          doSelectWaiterTable(tbl);
-        }
-      });
-      return;
+      // If switched to an empty table on mobile, auto-switch to "Punch Dishes" tab
+      var tabBtnMenu = document.getElementById('tabBtnMenu');
+      if (tabBtnMenu && !tabBtnMenu.classList.contains('active')) {
+        tabBtnMenu.click();
+      }
     }
-    doSelectWaiterTable(tbl);
+
+    renderWaiterAssignedTables(pendingOrders, getAllocatedWaiterTables());
   }
   window.selectWaiterTable = selectWaiterTable;
-
-  window.switchToCartTab = function () {
-    var tabBtnBill = document.getElementById('tabBtnBill');
-    if (tabBtnBill) tabBtnBill.click();
-  };
 
   // Settings Modal Handlers
   function openSettingsModal() {
@@ -2885,34 +3598,53 @@
 
   // Search input live filtering + Enter to add
   var searchInput = document.getElementById('dishSearchInput');
-  searchInput.addEventListener('input', function () {
-    renderDishes(this.value, currentCategoryFilter);
-  });
+  var btnClearDishSearch = document.getElementById('btnClearDishSearch');
 
-  searchInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      var q = this.value.trim().toLowerCase();
-      if (!q) return;
-
-      var exactMatch = allDishes.find(function (d) {
-        return String(d.id) === q || d.name.toLowerCase() === q;
-      });
-
-      if (!exactMatch) {
-        var partials = allDishes.filter(function (d) {
-          return String(d.id).startsWith(q) || d.name.toLowerCase().indexOf(q) !== -1;
-        });
-        if (partials.length === 1) exactMatch = partials[0];
-      }
-
-      if (exactMatch) {
-        addToCart(exactMatch.id);
-        this.value = '';
+  if (btnClearDishSearch) {
+    btnClearDishSearch.addEventListener('click', function () {
+      if (searchInput) {
+        searchInput.value = '';
+        btnClearDishSearch.style.display = 'none';
         renderDishes('', currentCategoryFilter);
+        searchInput.focus();
       }
-    }
-  });
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function () {
+      if (btnClearDishSearch) {
+        btnClearDishSearch.style.display = this.value ? 'inline-flex' : 'none';
+      }
+      renderDishes(this.value, currentCategoryFilter);
+    });
+
+    searchInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var q = this.value.trim().toLowerCase();
+        if (!q) return;
+
+        var exactMatch = allDishes.find(function (d) {
+          return String(d.id) === q || d.name.toLowerCase() === q;
+        });
+
+        if (!exactMatch) {
+          var partials = allDishes.filter(function (d) {
+            return String(d.id).startsWith(q) || d.name.toLowerCase().indexOf(q) !== -1;
+          });
+          if (partials.length === 1) exactMatch = partials[0];
+        }
+
+        if (exactMatch) {
+          addToCart(exactMatch.id);
+          this.value = '';
+          if (btnClearDishSearch) btnClearDishSearch.style.display = 'none';
+          renderDishes('', currentCategoryFilter);
+        }
+      }
+    });
+  }
 
   // Category Pills
   var catPills = document.querySelectorAll('.pos-cat-pill');
@@ -2925,17 +3657,31 @@
     });
   });
 
+  // Helper to sync Order Type across all pill groups
+  function syncOrderTypeUI(orderType) {
+    activeOrderType = orderType || 'Dine-In';
+    var allTypePills = document.querySelectorAll('.type-pill');
+    Array.prototype.forEach.call(allTypePills, function (b) {
+      if (b.getAttribute('data-type') === activeOrderType) {
+        b.classList.add('active');
+      } else {
+        b.classList.remove('active');
+      }
+    });
+    var parcelInp = document.getElementById('parcelChargeInput');
+    if (parcelInp) {
+      parcelInp.value = (activeOrderType === 'Takeaway') ? '10' : '0';
+    }
+    updateBillMetaBadges();
+  }
+  window.syncOrderTypeUI = syncOrderTypeUI;
+
   // Order Type Pills
   var typePills = document.querySelectorAll('.type-pill');
   Array.prototype.forEach.call(typePills, function (btn) {
     btn.addEventListener('click', function () {
-      Array.prototype.forEach.call(typePills, function (b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      activeOrderType = btn.getAttribute('data-type');
-      if (activeOrderType === 'Takeaway') {
-        document.getElementById('parcelChargeInput').value = '10';
-      }
-      updateBillMetaBadges();
+      var selectedType = btn.getAttribute('data-type');
+      syncOrderTypeUI(selectedType);
       renderCart();
     });
   });
@@ -2970,6 +3716,7 @@
     colMenu.classList.remove('tab-hidden');
     colBill.classList.remove('tab-visible');
     colBill.classList.add('tab-hidden');
+    syncMiniCartVisibility();
   });
 
   tabBtnBill.addEventListener('click', function () {
@@ -2979,7 +3726,10 @@
     colBill.classList.remove('tab-hidden');
     colMenu.classList.remove('tab-visible');
     colMenu.classList.add('tab-hidden');
+    syncMiniCartVisibility();
   });
+
+  window.addEventListener('resize', syncMiniCartVisibility);
 
   // Register view toggle
   var btnToggleRegister = document.getElementById('btnToggleRegister');
@@ -3182,6 +3932,35 @@
   if (btnHoldOrder) btnHoldOrder.addEventListener('click', holdCurrentOrder);
   var btnViewHeldOrders = document.getElementById('btnViewHeldOrders');
   if (btnViewHeldOrders) btnViewHeldOrders.addEventListener('click', openHeldOrdersModal);
+
+  // Toggle Waiter Submitted Bills Queue view
+  var btnToggleWaiterBills = document.getElementById('btnToggleWaiterBills');
+  var btnCloseWaiterQueue = document.getElementById('btnCloseWaiterQueue');
+  var queueSectionEl = document.getElementById('waiterQueueSection');
+
+  if (btnToggleWaiterBills) {
+    btnToggleWaiterBills.addEventListener('click', function () {
+      if (!queueSectionEl) return;
+      var isHidden = queueSectionEl.style.display === 'none' || getComputedStyle(queueSectionEl).display === 'none';
+      if (isHidden) {
+        queueSectionEl.style.display = 'block';
+        queueSectionEl.dataset.manualOpen = 'true';
+        queueSectionEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        queueSectionEl.style.display = 'none';
+        delete queueSectionEl.dataset.manualOpen;
+      }
+    });
+  }
+
+  if (btnCloseWaiterQueue) {
+    btnCloseWaiterQueue.addEventListener('click', function () {
+      if (queueSectionEl) {
+        queueSectionEl.style.display = 'none';
+        delete queueSectionEl.dataset.manualOpen;
+      }
+    });
+  }
 
   // Global Keyboard Shortcuts
   window.addEventListener('keydown', function (e) {

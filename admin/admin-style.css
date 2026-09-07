@@ -1170,3 +1170,22 @@ table.admin-table tr:hover td { background: var(--bg-surface-hover); }
 .thermal-qr-box.qr-hidden {
   display: none !important;
 }
+
+/* ==========================================================================
+   Mobile App-Like Experience & Auto-Zoom Prevention
+   ========================================================================== */
+html, body {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media screen and (max-width: 880px) {
+  /* CRITICAL: Force font-size >= 16px on all mobile inputs to completely prevent iOS Safari & Android Chrome auto-zoom */
+  input, select, textarea,
+  input[type="text"], input[type="search"], input[type="number"], input[type="password"], input[type="tel"],
+  .admin-field input, .admin-field select, .admin-field textarea,
+  .pos-meta-select, .pos-meta-input, .pos-custom-row input {
+    font-size: 16px !important;
+  }
+}
