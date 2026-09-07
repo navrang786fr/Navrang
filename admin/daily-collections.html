@@ -873,21 +873,27 @@
                 'Deleting this bill will deduct ' + grandTotalFormatted + ' from Gross Sales, Daily Collections, and Drawer Cash reconciliation.\n\n' +
                 'Confirm permanent deletion?';
 
-      if (!confirm(msg)) return;
+      showModalConfirm(msg, {
+        title: 'Delete Bill Record',
+        confirmText: 'Delete Permanently',
+        cancelText: 'Cancel',
+        isDanger: true,
+        onConfirm: function () {
+          // Filter out target bill
+          var updated = bills.filter(function (b) { return b.billNo !== billNo; });
+          localStorage.setItem(STORAGE_BILLS, JSON.stringify(updated));
 
-      // Filter out target bill
-      var updated = bills.filter(function (b) { return b.billNo !== billNo; });
-      localStorage.setItem(STORAGE_BILLS, JSON.stringify(updated));
+          // Close modal if deleting the currently previewed bill
+          if (window.currentModalBillNo === billNo) {
+            window.closeReceiptModal();
+          }
 
-      // Close modal if deleting the currently previewed bill
-      if (window.currentModalBillNo === billNo) {
-        window.closeReceiptModal();
-      }
+          // Reload and re-calculate all collections & tables
+          loadBills();
 
-      // Reload and re-calculate all collections & tables
-      loadBills();
-
-      alert('✓ Bill #' + billNo + ' (' + grandTotalFormatted + ') deleted successfully. Collections register updated.');
+          showModalAlert('✓ Bill #' + billNo + ' (' + grandTotalFormatted + ') deleted successfully. Collections register updated.', 'Bill Deleted', 'success');
+        }
+      });
     } catch (err) {
       console.error('Error deleting bill:', err);
       alert('An error occurred while deleting the bill: ' + (err.message || err));

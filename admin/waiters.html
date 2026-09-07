@@ -786,9 +786,16 @@
       waUrl = 'https://api.whatsapp.com/send?phone=' + waPhone + '&text=' + encodeURIComponent(text);
     }
 
-    if (confirm('Staff Login Pass copied to clipboard!\n\nOpen WhatsApp to send pass to ' + w.name + '?')) {
-      window.open(waUrl, '_blank');
-    }
+    showModalConfirm('Staff Login Pass copied to clipboard!\n\nOpen WhatsApp to send pass to ' + w.name + '?', {
+      title: 'Send Pass via WhatsApp',
+      confirmText: 'Open WhatsApp',
+      cancelText: 'Cancel',
+      icon: '💬',
+      type: 'info',
+      onConfirm: function () {
+        window.open(waUrl, '_blank');
+      }
+    });
   };
 
   // Modal & Table Allocation Picker Controls
@@ -943,11 +950,17 @@
     var waiters = getWaiters();
     var target = waiters.find(function (w) { return w.id === id; });
     if (!target) return;
-    if (!confirm('Are you sure you want to remove server "' + target.name + '" (' + target.code + ')?')) return;
-
-    waiters = waiters.filter(function (w) { return w.id !== id; });
-    saveWaiters(waiters);
-    renderWaiters();
+    showModalConfirm('Are you sure you want to remove server "' + target.name + '" (' + target.code + ')?', {
+      title: 'Remove Server',
+      confirmText: 'Remove',
+      cancelText: 'Cancel',
+      isDanger: true,
+      onConfirm: function () {
+        waiters = waiters.filter(function (w) { return w.id !== id; });
+        saveWaiters(waiters);
+        renderWaiters();
+      }
+    });
   };
 
   // Search & Filter Listeners

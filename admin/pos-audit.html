@@ -501,12 +501,18 @@
               'Permanently delete Bill #' + billNo + ' (' + grandTotalFormatted + ')?\n' +
               'This will remove it from all audit ledgers and sales reports.';
 
-    if (!confirm(msg)) return;
-
-    var updated = bills.filter(function (b) { return b.billNo !== billNo; });
-    localStorage.setItem(STORAGE_BILLS, JSON.stringify(updated));
-    refreshAuditData();
-    alert('✓ Bill #' + billNo + ' deleted successfully.');
+    showModalConfirm(msg, {
+      title: 'Delete Bill from Audit',
+      confirmText: 'Delete Permanently',
+      cancelText: 'Cancel',
+      isDanger: true,
+      onConfirm: function () {
+        var updated = bills.filter(function (b) { return b.billNo !== billNo; });
+        localStorage.setItem(STORAGE_BILLS, JSON.stringify(updated));
+        refreshAuditData();
+        showModalAlert('✓ Bill #' + billNo + ' deleted successfully.', 'Deleted', 'success');
+      }
+    });
   };
 
   window.exportAuditReport = function () {

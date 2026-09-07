@@ -1,6 +1,15 @@
 // Shared session/auth/nav helpers for every admin/*.html page.
 (function (window) {
-  var API_BASE = 'https://ratings-api-pink.vercel.app';
+  var isLocal = (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.indexOf('192.168.') === 0 ||
+    window.location.hostname.indexOf('10.') === 0 ||
+    window.location.hostname.indexOf('172.') === 0 ||
+    window.location.port === '3000' ||
+    !window.location.hostname
+  );
+  var API_BASE = isLocal ? '' : 'https://ratings-api-pink.vercel.app';
   var TOKEN_KEY = 'navrang_admin_token';
   var USER_KEY = 'navrang_admin_user';
   var OPEN_GROUPS_KEY = 'navrang_admin_open_groups';
@@ -291,11 +300,17 @@
       popupLinks =
         '<a href="billing.html" class="admin-popup-link active">' +
           icon('billing', 14) + '<span>Table Ordering (POS)</span>' +
+        '</a>' +
+        '<a href="login.html?switch=1&role=admin" class="admin-popup-link">' +
+          icon('lock', 14) + '<span>Switch to Admin Portal</span>' +
         '</a>';
     } else if (isCounter()) {
       popupLinks =
         '<a href="billing.html" class="admin-popup-link active">' +
           icon('billing', 14) + '<span>Counter Billing (POS)</span>' +
+        '</a>' +
+        '<a href="login.html?switch=1&role=admin" class="admin-popup-link">' +
+          icon('lock', 14) + '<span>Switch to Admin Portal</span>' +
         '</a>';
     } else {
       popupLinks =
@@ -620,6 +635,235 @@
     renderHeaderActions();
   }
 
+  /* ====================================================================
+     PROFESSIONAL CENTERED MODAL DIALOG SYSTEM (Alerts & Confirms)
+     Replaces native browser alert() and confirm() with centered UI cards
+     ==================================================================== */
+  var activeDialogResolver = null;
+  var dialogBackdrop = null;
+
+  function ensureDialogStyles() {
+    if (document.getElementById('posDialogStyles')) return;
+    var style = document.createElement('style');
+    style.id = 'posDialogStyles';
+    style.textContent = [
+      '.pos-dialog-backdrop {',
+      '  position: fixed; inset: 0; background: rgba(6, 24, 13, 0.65);',
+      '  backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);',
+      '  z-index: 999999; display: flex; align-items: center; justify-content: center;',
+      '  padding: 16px; opacity: 0; pointer-events: none; transition: opacity 0.16s ease;',
+      '}',
+      '.pos-dialog-backdrop.open { opacity: 1; pointer-events: auto; }',
+      '.pos-dialog-card {',
+      '  background: #FFFFFF; border-radius: 18px;',
+      '  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.28), 0 4px 16px rgba(0, 0, 0, 0.1);',
+      '  max-width: 410px; width: 100%; padding: 24px 22px 20px; text-align: center;',
+      '  border: 1px solid rgba(14, 77, 38, 0.15); transform: scale(0.92) translateY(8px);',
+      '  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); box-sizing: border-box;',
+      '}',
+      '.pos-dialog-backdrop.open .pos-dialog-card { transform: scale(1) translateY(0); }',
+      '.pos-dialog-icon-circle {',
+      '  width: 50px; height: 50px; border-radius: 50%;',
+      '  display: flex; align-items: center; justify-content: center;',
+      '  margin: 0 auto 12px; font-size: 24px;',
+      '}',
+      '.pos-dialog-icon-warning { background: #FEF3C7; color: #D97706; border: 1.5px solid #FDE68A; }',
+      '.pos-dialog-icon-danger  { background: #FEE2E2; color: #DC2626; border: 1.5px solid #FECACA; }',
+      '.pos-dialog-icon-info    { background: #EFF6FF; color: #2563EB; border: 1.5px solid #BFDBFE; }',
+      '.pos-dialog-icon-success { background: #DCFCE7; color: #16A34A; border: 1.5px solid #BBF7D0; }',
+      '.pos-dialog-title {',
+      '  font-size: 16px; font-weight: 800; color: #06180D; margin: 0 0 8px; line-height: 1.3;',
+      '}',
+      '.pos-dialog-message {',
+      '  font-size: 13px; color: #475569; line-height: 1.5; margin: 0 0 20px; word-break: break-word; white-space: pre-line;',
+      '}',
+      '.pos-dialog-actions {',
+      '  display: flex; gap: 10px; justify-content: center;',
+      '}',
+      '.pos-dialog-btn {',
+      '  flex: 1; height: 36px; padding: 0 16px; font-size: 12.5px; font-weight: 700;',
+      '  border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center;',
+      '  justify-content: center; transition: all 0.15s ease; font-family: inherit; box-sizing: border-box;',
+      '}',
+      '.pos-dialog-btn-cancel {',
+      '  border: 1.5px solid #CBD5E1; background: #F8FAFC; color: #475569;',
+      '}',
+      '.pos-dialog-btn-cancel:hover { background: #F1F5F9; border-color: #94A3B8; color: #1E293B; }',
+      '.pos-dialog-btn-confirm {',
+      '  border: none; background: #0E4D26; color: #FFFFFF; box-shadow: 0 2px 6px rgba(14, 77, 38, 0.3);',
+      '}',
+      '.pos-dialog-btn-confirm:hover { background: #093419; box-shadow: 0 4px 10px rgba(14, 77, 38, 0.38); }',
+      '.pos-dialog-btn-danger {',
+      '  border: none; background: #DC2626; color: #FFFFFF; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3);',
+      '}',
+      '.pos-dialog-btn-danger:hover { background: #B91C1C; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.38); }'
+    ].join('\n');
+    document.head.appendChild(style);
+  }
+
+  function ensureDialogDOM() {
+    ensureDialogStyles();
+    dialogBackdrop = document.getElementById('posDialogBackdrop');
+    if (dialogBackdrop) return;
+
+    dialogBackdrop = document.createElement('div');
+    dialogBackdrop.className = 'pos-dialog-backdrop';
+    dialogBackdrop.id = 'posDialogBackdrop';
+    dialogBackdrop.innerHTML = [
+      '<div class="pos-dialog-card" id="posDialogCard" role="dialog" aria-modal="true">',
+      '  <div class="pos-dialog-icon-circle pos-dialog-icon-warning" id="posDialogIconWrap">',
+      '    <span id="posDialogIcon">⚠️</span>',
+      '  </div>',
+      '  <h3 class="pos-dialog-title" id="posDialogTitle">Confirmation</h3>',
+      '  <p class="pos-dialog-message" id="posDialogMessage">Are you sure you want to proceed?</p>',
+      '  <div class="pos-dialog-actions" id="posDialogActions">',
+      '    <button type="button" class="pos-dialog-btn pos-dialog-btn-cancel" id="posDialogCancelBtn">Cancel</button>',
+      '    <button type="button" class="pos-dialog-btn pos-dialog-btn-confirm" id="posDialogConfirmBtn">Confirm</button>',
+      '  </div>',
+      '</div>'
+    ].join('\n');
+
+    document.body.appendChild(dialogBackdrop);
+
+    var cancelBtn = document.getElementById('posDialogCancelBtn');
+    var confirmBtn = document.getElementById('posDialogConfirmBtn');
+
+    function closeDialog(result) {
+      if (!dialogBackdrop) return;
+      dialogBackdrop.classList.remove('open');
+      if (activeDialogResolver) {
+        var resolve = activeDialogResolver;
+        activeDialogResolver = null;
+        resolve(result);
+      }
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', function () { closeDialog(false); });
+    }
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', function () { closeDialog(true); });
+    }
+
+    dialogBackdrop.addEventListener('click', function (e) {
+      if (e.target === dialogBackdrop) {
+        var isAlert = cancelBtn && cancelBtn.style.display === 'none';
+        closeDialog(isAlert ? true : false);
+      }
+    });
+
+    window.addEventListener('keydown', function (e) {
+      if (!dialogBackdrop || !dialogBackdrop.classList.contains('open')) return;
+      if (e.key === 'Escape') {
+        var isAlert = cancelBtn && cancelBtn.style.display === 'none';
+        closeDialog(isAlert ? true : false);
+      }
+    });
+  }
+
+  function showModalConfirm(message, options) {
+    options = options || {};
+    if (typeof options === 'string') options = { title: options };
+    ensureDialogDOM();
+
+    var title = options.title || 'Confirmation Required';
+    var confirmText = options.confirmText || 'Confirm';
+    var cancelText = options.cancelText || 'Cancel';
+    var isDanger = Boolean(options.isDanger);
+    var icon = options.icon || (isDanger ? '⚠️' : '❓');
+    var iconType = options.type || (isDanger ? 'danger' : 'warning');
+
+    var titleEl = document.getElementById('posDialogTitle');
+    var msgEl = document.getElementById('posDialogMessage');
+    var iconEl = document.getElementById('posDialogIcon');
+    var iconWrap = document.getElementById('posDialogIconWrap');
+    var cancelBtn = document.getElementById('posDialogCancelBtn');
+    var confirmBtn = document.getElementById('posDialogConfirmBtn');
+
+    if (titleEl) titleEl.textContent = title;
+    if (msgEl) msgEl.textContent = message;
+    if (iconEl) iconEl.textContent = icon;
+    if (iconWrap) {
+      iconWrap.className = 'pos-dialog-icon-circle pos-dialog-icon-' + iconType;
+    }
+
+    if (cancelBtn) {
+      cancelBtn.style.display = 'inline-flex';
+      cancelBtn.textContent = cancelText;
+    }
+    if (confirmBtn) {
+      confirmBtn.textContent = confirmText;
+      confirmBtn.className = 'pos-dialog-btn ' + (isDanger ? 'pos-dialog-btn-danger' : 'pos-dialog-btn-confirm');
+      confirmBtn.style.maxWidth = '';
+    }
+
+    dialogBackdrop.classList.add('open');
+    if (confirmBtn) confirmBtn.focus();
+
+    return new Promise(function (resolve) {
+      activeDialogResolver = function (result) {
+        if (result && typeof options.onConfirm === 'function') {
+          options.onConfirm();
+        } else if (!result && typeof options.onCancel === 'function') {
+          options.onCancel();
+        }
+        resolve(result);
+      };
+    });
+  }
+
+  function showModalAlert(message, title, type) {
+    ensureDialogDOM();
+
+    var alertTitle = title || 'Notice';
+    var iconType = type || (alertTitle.toLowerCase().indexOf('error') !== -1 || alertTitle.toLowerCase().indexOf('denied') !== -1 ? 'danger' : (alertTitle.toLowerCase().indexOf('success') !== -1 ? 'success' : 'info'));
+    var icon = iconType === 'danger' ? '❌' : (iconType === 'success' ? '✓' : 'ℹ️');
+
+    var titleEl = document.getElementById('posDialogTitle');
+    var msgEl = document.getElementById('posDialogMessage');
+    var iconEl = document.getElementById('posDialogIcon');
+    var iconWrap = document.getElementById('posDialogIconWrap');
+    var cancelBtn = document.getElementById('posDialogCancelBtn');
+    var confirmBtn = document.getElementById('posDialogConfirmBtn');
+
+    if (titleEl) titleEl.textContent = alertTitle;
+    if (msgEl) msgEl.textContent = message;
+    if (iconEl) iconEl.textContent = icon;
+    if (iconWrap) {
+      iconWrap.className = 'pos-dialog-icon-circle pos-dialog-icon-' + iconType;
+    }
+
+    if (cancelBtn) {
+      cancelBtn.style.display = 'none';
+    }
+    if (confirmBtn) {
+      confirmBtn.textContent = 'OK, Got It';
+      confirmBtn.className = 'pos-dialog-btn pos-dialog-btn-confirm';
+      confirmBtn.style.maxWidth = '160px';
+    }
+
+    dialogBackdrop.classList.add('open');
+    if (confirmBtn) confirmBtn.focus();
+
+    return new Promise(function (resolve) {
+      activeDialogResolver = function () {
+        resolve(true);
+      };
+    });
+  }
+
+  // Override window.alert globally across the app
+  window.alert = function (message) {
+    showModalAlert(message);
+  };
+  window.confirm = function (message) {
+    console.warn('Native synchronous confirm() called. Use showModalConfirm instead:', message);
+    showModalAlert(message, 'Confirmation Required');
+    return false;
+  };
+  window.showModalAlert = showModalAlert;
+  window.showModalConfirm = showModalConfirm;
+
   window.AdminShared = {
     getToken: getToken,
     getUsername: getUsername,
@@ -635,6 +879,8 @@
     renderNav: renderNav,
     esc: esc,
     icon: icon,
-    API_BASE: API_BASE
+    API_BASE: API_BASE,
+    showModalAlert: showModalAlert,
+    showModalConfirm: showModalConfirm
   };
 })(window);

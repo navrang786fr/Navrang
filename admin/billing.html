@@ -7,6 +7,18 @@
 <meta name="theme-color" content="#06180D">
 <link rel="icon" href="../navrang_logo.png">
 <link rel="stylesheet" href="admin-style.css">
+<script>
+  (function () {
+    try {
+      var r = sessionStorage.getItem('navrang_admin_role');
+      var wid = sessionStorage.getItem('navrang_waiter_id');
+      var u = (sessionStorage.getItem('navrang_admin_user') || '').toLowerCase();
+      if (r === 'waiter' || wid || (!r && (u.indexOf('waiter') !== -1 || u.indexOf('w-') === 0))) {
+        document.documentElement.classList.add('role-waiter');
+      }
+    } catch (e) {}
+  })();
+</script>
 <style>
   .pos-toolbar {
     display: flex; justify-content: space-between; align-items: center;
@@ -194,19 +206,24 @@
 
   /* Order Park / Hold Buttons (Top Toolbar) */
   .pos-hold-btn {
-    font-size: 12.5px;
+    font-size: 11.5px;
     font-weight: 700;
-    padding: 8px 14px;
-    border-radius: 8px;
+    height: 32px;
+    min-height: 32px;
+    padding: 0 12px;
+    border-radius: 7px;
     border: 1.2px solid #F59E0B;
     background: #FFFBEB;
     color: #B45309;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     transition: all 0.12s ease;
     white-space: nowrap;
+    box-sizing: border-box;
+    line-height: 1;
   }
   .pos-hold-btn:hover {
     background: #FEF3C7;
@@ -225,11 +242,171 @@
   .pos-hold-badge {
     background: #D97706;
     color: #FFFFFF;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 800;
-    padding: 1px 7px;
+    padding: 1px 6px;
     border-radius: 10px;
-    line-height: 1.3;
+    line-height: 1.2;
+  }
+
+  /* Compact, Uniform Button Sizing Across Entire POS App */
+  .pos-toolbar .admin-btn,
+  .pos-toolbar a.admin-btn,
+  .pos-toolbar .pos-hold-btn,
+  .pos-toolbar .cashier-terminal-pill {
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 12px;
+    font-size: 11.5px;
+    font-weight: 700;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    line-height: 1;
+  }
+  .pos-toolbar #btnOpenSettings {
+    padding: 0 10px;
+  }
+  .pos-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  #waiterQueueSection .admin-btn {
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 12px;
+    font-size: 11.5px;
+    font-weight: 700;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    line-height: 1;
+  }
+  .pos-actions {
+    display: grid !important;
+    grid-template-columns: 2fr 1fr !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+  .pos-actions .pos-punch-btn,
+  .pos-actions .admin-btn {
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-sizing: border-box;
+    line-height: 1;
+  }
+
+  /* ==========================================================================
+     Strict Waiter Terminal Interface (Orders & Table Service Only)
+     Completely removes:
+     - Hold Order & Held Orders buttons
+     - Daily Collections & Cash Match button
+     - Today's Bills register button & section
+     - Bill settings cog
+     - Punch & Print Bill button & functionality
+     - Preview Bill button
+     - Payment & Cash tender sections
+     - Waiter submitted queue
+     ========================================================================== */
+  html.role-waiter #btnHoldOrder,
+  html.role-waiter #btnViewHeldOrders,
+  html.role-waiter #linkDailyCollections,
+  html.role-waiter #btnToggleRegister,
+  html.role-waiter #btnOpenSettings,
+  html.role-waiter #btnPunchAndPrint,
+  html.role-waiter #btnPreviewBill,
+  html.role-waiter #btnMobilePunch,
+  html.role-waiter #registerSection,
+  html.role-waiter #waiterQueueSection,
+  html.role-waiter #paymentAndTenderSection,
+  html.role-waiter #cashTenderSection,
+  html.role-waiter #cashierBillingAdjustments,
+  body.role-waiter #btnHoldOrder,
+  body.role-waiter #btnViewHeldOrders,
+  body.role-waiter #linkDailyCollections,
+  body.role-waiter #btnToggleRegister,
+  body.role-waiter #btnOpenSettings,
+  body.role-waiter #btnPunchAndPrint,
+  body.role-waiter #btnPreviewBill,
+  body.role-waiter #btnMobilePunch,
+  body.role-waiter #registerSection,
+  body.role-waiter #waiterQueueSection,
+  body.role-waiter #paymentAndTenderSection,
+  body.role-waiter #cashTenderSection,
+  body.role-waiter #cashierBillingAdjustments {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Waiter Action Buttons fill the action bar */
+  html.role-waiter .pos-actions,
+  body.role-waiter .pos-actions {
+    display: grid !important;
+    grid-template-columns: 1.6fr 1fr !important;
+    gap: 8px !important;
+  }
+  html.role-waiter #btnSubmitToCounter,
+  html.role-waiter #btnSaveOrderKot,
+  html.role-waiter #btnMobileSubmitCounter,
+  body.role-waiter #btnSubmitToCounter,
+  body.role-waiter #btnSaveOrderKot,
+  body.role-waiter #btnMobileSubmitCounter {
+    display: inline-flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+  .receipt-modal-actions .admin-btn,
+  .settings-modal-card .admin-btn,
+  #submitCounterModal .admin-btn,
+  #heldOrdersModal .admin-btn {
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 14px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    border-radius: 7px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+  .type-pill,
+  .pos-cat-pill {
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 10px !important;
+    font-size: 11.5px !important;
+    border-radius: 7px !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .tax-toggle-btn {
+    height: 28px !important;
+    min-height: 28px !important;
+    padding: 0 8px !important;
+    font-size: 11px !important;
+    border-radius: 6px !important;
   }
 
   /* Toast Notification */
@@ -423,6 +600,74 @@
       break-inside: avoid !important;
     }
   }
+
+  /* Waiter Submitted Bills Queue & Table Map Styles */
+  .waiter-queue-card {
+      background: #FFFFFF;
+      border: 1.5px solid #F59E0B;
+      border-radius: 10px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .waiter-queue-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18);
+    }
+    .pos-badge-pulse {
+      animation: pos-pulse-anim 1.8s infinite;
+    }
+    @keyframes pos-pulse-anim {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+      70% { transform: scale(1.04); box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
+    .waiter-table-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid #E2E8F0;
+      background: #FFFFFF;
+      color: #1E293B;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .waiter-table-pill:hover {
+      border-color: #0E4D26;
+      background: #F0FDF4;
+    }
+    .waiter-table-pill.active {
+      border-color: #0E4D26;
+      background: #0E4D26;
+      color: #FFFFFF;
+    }
+    .waiter-table-pill.has-order {
+      border-color: #F59E0B;
+      background: #FFFBEB;
+      color: #92400E;
+    }
+    .waiter-table-pill.has-submitted {
+      border-color: #DC2626;
+      background: #FEF2F2;
+      color: #991B1B;
+    }
+    /* Waiter Role: Completely hide Payment Method, Cash Tender, and Billing Adjustments (GST, Parcel, Discount, Round Off) */
+    body.role-waiter #paymentAndTenderSection,
+    body.role-waiter #cashTenderSection,
+    body.role-waiter #cashierBillingAdjustments,
+    body.role-waiter .waiter-hide-pay,
+    body.role-waiter .waiter-hide-adjustments {
+      display: none !important;
+    }
 </style>
 </head>
 <body>
@@ -466,31 +711,58 @@
               <span>Held Orders (<strong id="btnViewHeldCount">0</strong>)</span>
             </button>
 
-            <!-- Cashier Session Indicator & Quick Shift Handover -->
-            <div class="cashier-terminal-pill" id="cashierPill" style="display:none;background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.35);color:#92400E;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;align-items:center;gap:6px;">
+            <!-- Cashier Session Indicator -->
+            <div class="cashier-terminal-pill" id="cashierPill" style="display:none;background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.35);color:#92400E;height:32px;padding:0 10px;border-radius:7px;font-size:11.5px;font-weight:700;align-items:center;gap:6px;box-sizing:border-box;">
               <span>👤</span>
               <span id="cashierPillName">Cashier</span>
-              <span style="font-size:10px;background:#92400E;color:#fff;padding:2px 6px;border-radius:4px;margin-left:2px;letter-spacing:0.3px;">POS TERMINAL</span>
+              <span style="font-size:9.5px;background:#92400E;color:#fff;padding:2px 5px;border-radius:4px;margin-left:2px;letter-spacing:0.3px;line-height:1;">POS TERMINAL</span>
             </div>
-            <button type="button" class="admin-btn admin-btn-secondary" id="btnEndShift" style="display:none;font-size:12px;padding:8px 12px;color:var(--nonveg);border-color:rgba(197,48,48,0.3);" title="End cashier shift and logout">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-              <span>End Shift</span>
-            </button>
 
-            <a href="daily-collections.html" id="linkDailyCollections" class="admin-btn admin-btn-secondary" style="font-size:12.5px;padding:8px 14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg>
+            <a href="daily-collections.html" id="linkDailyCollections" class="admin-btn admin-btn-secondary" style="height:32px;padding:0 12px;font-size:11.5px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;border-radius:7px;box-sizing:border-box;white-space:nowrap;">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg>
               <span>Daily Collections &amp; Cash Match</span>
             </a>
-            <button type="button" class="admin-btn admin-btn-secondary" id="btnToggleRegister" style="font-size:12.5px;padding:8px 14px;">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <button type="button" class="admin-btn admin-btn-secondary" id="btnToggleRegister" style="height:32px;padding:0 12px;font-size:11.5px;display:inline-flex;align-items:center;gap:6px;border-radius:7px;box-sizing:border-box;white-space:nowrap;">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
               <span>Today's Bills (<strong id="badgeTodayCount">0</strong>)</span>
             </button>
-            <button type="button" class="admin-btn admin-btn-secondary" id="btnOpenSettings" title="Configure restaurant info on bill" style="font-size:12.5px;padding:8px 12px;">
+            <button type="button" class="admin-btn admin-btn-secondary" id="btnOpenSettings" title="Configure restaurant info on bill" style="height:32px;padding:0 10px;font-size:11.5px;display:inline-flex;align-items:center;border-radius:7px;box-sizing:border-box;">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
             </button>
-            <button type="button" class="admin-btn" id="btnResetOrder" style="font-size:12.5px;padding:8px 14px;">
+            <button type="button" class="admin-btn" id="btnResetOrder" style="height:32px;padding:0 12px;font-size:11.5px;display:inline-flex;align-items:center;border-radius:7px;box-sizing:border-box;white-space:nowrap;">
               + New Order
             </button>
+          </div>
+        </div>
+
+        <!-- Real-Time Waiter Submitted Bills Queue (For Counter Cashier & Admin) -->
+        <div id="waiterQueueSection" style="display:none;margin-bottom:20px;background:#FFFDF5;border:1.5px solid #F59E0B;border-radius:12px;padding:14px 16px;box-shadow:0 4px 14px rgba(245,158,11,0.12);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:20px;">🛎️</span>
+              <div>
+                <h3 style="margin:0;font-size:15.5px;color:#92400E;display:flex;align-items:center;gap:8px;">
+                  Waiter Submitted Bills
+                  <span class="pos-badge-pulse" id="waiterQueueCountBadge" style="background:#DC2626;color:#FFF;font-weight:800;font-size:11px;padding:2px 9px;border-radius:999px;">0 Pending</span>
+                </h3>
+                <p style="margin:2px 0 0;font-size:11.5px;color:#B45309;">
+                  Live bills sent by floor waiters. Click <strong>"Collect &amp; Bill"</strong> to load into register and punch thermal receipt.
+                </p>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button type="button" class="admin-btn admin-btn-secondary" id="btnToggleChimeMute" style="height:32px;padding:0 12px;font-size:11.5px;border-radius:7px;background:#FFF;display:inline-flex;align-items:center;gap:5px;box-sizing:border-box;white-space:nowrap;" title="Toggle audio alert chime">
+                <span id="chimeIcon">🔔</span> <span id="chimeStatusText">Sound Alerts ON</span>
+              </button>
+              <button type="button" class="admin-btn admin-btn-secondary" id="btnRefreshQueue" onclick="if(window.PosSync)PosSync.fetchOrders();" style="height:32px;padding:0 12px;font-size:11.5px;border-radius:7px;background:#FFF;display:inline-flex;align-items:center;gap:5px;box-sizing:border-box;white-space:nowrap;" title="Refresh orders list">
+                <span>🔄</span> <span>Sync Now</span>
+              </button>
+            </div>
+          </div>
+          <div id="waiterQueueList" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:12px;">
+            <div class="admin-empty" style="padding:14px;grid-column:1/-1;background:rgba(255,255,255,0.7);border-radius:8px;border:1px dashed #FCD34D;color:#92400E;font-size:12px;">
+              No waiter bills awaiting collection right now. New submissions will chime and appear here automatically.
+            </div>
           </div>
         </div>
 
@@ -545,6 +817,17 @@
           <!-- Column 1: Order Punching & Menu Catalog -->
           <div class="pos-col-menu tab-visible">
             
+            <!-- Waiter Assigned Tables Quick Bar (Visible only for Waiter) -->
+            <div id="waiterAssignedTablesSection" style="display:none;margin-bottom:12px;background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:10px 14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px;">
+                <span style="font-size:12px;font-weight:700;color:#166534;">⭐ Your Assigned Tables:</span>
+                <span style="font-size:11px;color:#15803D;">Tap table to switch or review active order</span>
+              </div>
+              <div id="waiterTablePills" style="display:flex;gap:6px;flex-wrap:wrap;">
+                <!-- Dynamically rendered table status pills -->
+              </div>
+            </div>
+
             <!-- Order Meta & Table Selector -->
             <div class="admin-card pos-meta-card">
               <!-- Waiter Session Notice Banner -->
@@ -665,42 +948,45 @@
                   <span class="pos-calc-val" id="calcSubtotal">₹0.00</span>
                 </div>
                 
-                <!-- Tax / GST Toggle -->
-                <div class="pos-calc-row">
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <strong>GST Option:</strong>
-                    <button type="button" class="tax-toggle-btn active" id="btnGstNone" onclick="setGstMode('none')">No Tax</button>
-                    <button type="button" class="tax-toggle-btn" id="btnGst5" onclick="setGstMode('5')">5% GST</button>
+                <!-- Cashier Billing Adjustments: GST, Parcel, Discount, Round Off (Hidden for Waiters) -->
+                <div id="cashierBillingAdjustments" class="waiter-hide-adjustments">
+                  <!-- Tax / GST Toggle -->
+                  <div class="pos-calc-row">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <strong>GST Option:</strong>
+                      <button type="button" class="tax-toggle-btn active" id="btnGstNone" onclick="setGstMode('none')">No Tax</button>
+                      <button type="button" class="tax-toggle-btn" id="btnGst5" onclick="setGstMode('5')">5% GST</button>
+                    </div>
+                    <span class="pos-calc-val" id="calcGstAmount">₹0.00</span>
                   </div>
-                  <span class="pos-calc-val" id="calcGstAmount">₹0.00</span>
-                </div>
-                <div class="pos-calc-row" id="gstBreakdownRow" style="display:none;font-size:11px;padding-left:10px;">
-                  <span>CGST (2.5%) + SGST (2.5%)</span>
-                  <span id="calcGstBreakdown">₹0.00 + ₹0.00</span>
-                </div>
-
-                <!-- Parcel / Container Charge -->
-                <div class="pos-calc-row">
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <span>Parcel Charge</span>
-                    <input type="number" id="parcelChargeInput" value="0" style="width:55px;padding:2px 5px;font-size:11.5px;border:1px solid var(--rule);border-radius:4px;min-height:24px;">
+                  <div class="pos-calc-row" id="gstBreakdownRow" style="display:none;font-size:11px;padding-left:10px;">
+                    <span>CGST (2.5%) + SGST (2.5%)</span>
+                    <span id="calcGstBreakdown">₹0.00 + ₹0.00</span>
                   </div>
-                  <span class="pos-calc-val" id="calcParcel">₹0.00</span>
-                </div>
 
-                <!-- Discount -->
-                <div class="pos-calc-row">
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <span>Discount (₹)</span>
-                    <input type="number" id="discountInput" value="0" style="width:55px;padding:2px 5px;font-size:11.5px;border:1px solid var(--rule);border-radius:4px;min-height:24px;">
+                  <!-- Parcel / Container Charge -->
+                  <div class="pos-calc-row">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span>Parcel Charge</span>
+                      <input type="number" id="parcelChargeInput" value="0" style="width:55px;padding:2px 5px;font-size:11.5px;border:1px solid var(--rule);border-radius:4px;min-height:24px;">
+                    </div>
+                    <span class="pos-calc-val" id="calcParcel">₹0.00</span>
                   </div>
-                  <span class="pos-calc-val" id="calcDiscount" style="color:var(--leaf);">-₹0.00</span>
-                </div>
 
-                <!-- Round Off -->
-                <div class="pos-calc-row" style="font-size:11.5px;">
-                  <span>Round Off</span>
-                  <span class="pos-calc-val" id="calcRoundOff">₹0.00</span>
+                  <!-- Discount -->
+                  <div class="pos-calc-row">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span>Discount (₹)</span>
+                      <input type="number" id="discountInput" value="0" style="width:55px;padding:2px 5px;font-size:11.5px;border:1px solid var(--rule);border-radius:4px;min-height:24px;">
+                    </div>
+                    <span class="pos-calc-val" id="calcDiscount" style="color:var(--leaf);">-₹0.00</span>
+                  </div>
+
+                  <!-- Round Off -->
+                  <div class="pos-calc-row" style="font-size:11.5px;">
+                    <span>Round Off</span>
+                    <span class="pos-calc-val" id="calcRoundOff">₹0.00</span>
+                  </div>
                 </div>
 
                 <!-- Grand Total -->
@@ -713,47 +999,60 @@
                 <div class="amount-words-text" id="calcAmountWords">Zero Rupees Only</div>
               </div>
 
-              <!-- Payment Mode -->
-              <div style="margin-top:10px;">
-                <label style="display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--ink-muted);margin-bottom:6px;">Payment Method</label>
-                <div class="pos-pay-modes">
-                  <button type="button" class="pos-pay-btn active" data-mode="Cash">💵 Cash</button>
-                  <button type="button" class="pos-pay-btn" data-mode="UPI">📱 UPI / QR</button>
-                </div>
-              </div>
-
-              <!-- Cash Tender & Return Calculator (Active only when Cash is selected) -->
-              <div id="cashTenderSection" style="margin-top:10px;background:var(--cream);border:1.5px solid var(--rule);border-radius:8px;padding:10px 12px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                  <label for="cashReceivedInput" style="font-size:11px;font-weight:700;color:var(--maroon-deep);text-transform:uppercase;letter-spacing:0.5px;margin:0;">
-                    💵 Cash Received from Customer
-                  </label>
-                  <span id="cashTenderStatus" style="font-size:11px;font-weight:700;color:var(--ink-muted);">Exact / Cash</span>
-                </div>
-                
-                <div style="position:relative;margin-bottom:6px;">
-                  <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-weight:800;color:var(--maroon-deep);font-size:15px;">₹</span>
-                  <input type="number" id="cashReceivedInput" min="0" step="any" placeholder="Enter amount received (e.g. 500)" style="width:100%;padding:7px 10px 7px 24px;font-size:15px;font-weight:800;color:var(--maroon-deep);border:1.5px solid var(--rule);border-radius:6px;outline:none;background:#fff;box-sizing:border-box;">
+              <!-- Payment Method & Cash Tender Section (Cashier / Admin only - Hidden for Waiters) -->
+              <div id="paymentAndTenderSection" class="waiter-hide-pay">
+                <!-- Payment Mode -->
+                <div style="margin-top:10px;">
+                  <label style="display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--ink-muted);margin-bottom:6px;">Payment Method</label>
+                  <div class="pos-pay-modes">
+                    <button type="button" class="pos-pay-btn active" data-mode="Cash">💵 Cash</button>
+                    <button type="button" class="pos-pay-btn" data-mode="UPI">📱 UPI / QR</button>
+                  </div>
                 </div>
 
-                <!-- Quick Tender Chips (Exact, Next 50/100, 500, 1000, 2000) -->
-                <div id="cashQuickChips" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;"></div>
+                <!-- Cash Tender & Return Calculator (Active only when Cash is selected) -->
+                <div id="cashTenderSection" style="margin-top:10px;background:var(--cream);border:1.5px solid var(--rule);border-radius:8px;padding:10px 12px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <label for="cashReceivedInput" style="font-size:11px;font-weight:700;color:var(--maroon-deep);text-transform:uppercase;letter-spacing:0.5px;margin:0;">
+                      💵 Cash Received from Customer
+                    </label>
+                    <span id="cashTenderStatus" style="font-size:11px;font-weight:700;color:var(--ink-muted);">Exact / Cash</span>
+                  </div>
+                  
+                  <div style="position:relative;margin-bottom:6px;">
+                    <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-weight:800;color:var(--maroon-deep);font-size:15px;">₹</span>
+                    <input type="number" id="cashReceivedInput" min="0" step="any" placeholder="Enter amount received (e.g. 500)" style="width:100%;padding:7px 10px 7px 24px;font-size:15px;font-weight:800;color:var(--maroon-deep);border:1.5px solid var(--rule);border-radius:6px;outline:none;background:#fff;box-sizing:border-box;">
+                  </div>
 
-                <!-- Return Change Display Box -->
-                <div id="cashReturnBox" style="background:#fff;border:1.5px dashed var(--leaf);border-radius:6px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;transition:all 0.2s ease;">
-                  <span style="font-size:12px;font-weight:700;color:var(--ink);">Return to Customer:</span>
-                  <strong id="cashReturnDisplay" style="font-size:16px;font-weight:800;color:var(--leaf);font-family:'IBM Plex Mono',monospace;">₹0.00</strong>
+                  <!-- Quick Tender Chips (Exact, Next 50/100, 500, 1000, 2000) -->
+                  <div id="cashQuickChips" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;"></div>
+
+                  <!-- Return Change Display Box -->
+                  <div id="cashReturnBox" style="background:#fff;border:1.5px dashed var(--leaf);border-radius:6px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;transition:all 0.2s ease;">
+                    <span style="font-size:12px;font-weight:700;color:var(--ink);">Return to Customer:</span>
+                    <strong id="cashReturnDisplay" style="font-size:16px;font-weight:800;color:var(--leaf);font-family:'IBM Plex Mono',monospace;">₹0.00</strong>
+                  </div>
                 </div>
               </div>
 
               <!-- Actions -->
               <div class="pos-actions">
+                <!-- Counter Cashier & Admin Billing Action -->
                 <button type="button" class="pos-punch-btn" id="btnPunchAndPrint">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                   <span>Punch &amp; Print Bill</span>
                 </button>
-                <button type="button" class="admin-btn admin-btn-secondary" id="btnPreviewBill" style="padding:10px;font-size:12.5px;">
+                <button type="button" class="admin-btn admin-btn-secondary" id="btnPreviewBill" style="height:36px;padding:0 12px;font-size:12px;">
                   Preview
+                </button>
+
+                <!-- Waiter-Only Actions: Submit Bill to Counter & Save KOT -->
+                <button type="button" class="pos-punch-btn" id="btnSubmitToCounter" style="display:none;background:linear-gradient(135deg, #D97706, #B45309);border-color:#FDE68A;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  <span>Submit Bill to Counter</span>
+                </button>
+                <button type="button" class="admin-btn admin-btn-secondary" id="btnSaveOrderKot" style="display:none;height:36px;padding:0 12px;font-size:12px;color:#0E4D26;border-color:rgba(14,77,38,0.4);" title="Save in-progress items and send to kitchen">
+                  <span>🛎️ Save / KOT</span>
                 </button>
               </div>
 
@@ -968,6 +1267,40 @@
   </div>
 </div>
 
+<!-- ==========================================================================
+     Modal: Waiter Submit Bill to Counter Confirmation
+     ========================================================================== -->
+<div class="receipt-modal-backdrop" id="submitCounterModal">
+  <div class="receipt-modal-card" style="max-width:380px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="margin:0;font-size:16px;color:#0E4D26;display:flex;align-items:center;gap:6px;">
+        <span>📤</span> Submit Bill to Counter
+      </h3>
+      <button type="button" onclick="closeSubmitCounterModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-muted);">✕</button>
+    </div>
+    <div style="background:#FFFDF5;border:1px solid #FDE68A;border-radius:8px;padding:12px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:4px;">
+        <span style="color:#0E4D26;">Table: <strong id="modalSubmitTable">Table 1</strong></span>
+        <span style="color:#92400E;">Waiter: <strong id="modalSubmitWaiter">Raju</strong></span>
+      </div>
+      <div style="font-size:11.5px;color:#64748B;">Ready to send to cashier for printing thermal slip and payment collection.</div>
+    </div>
+    <div style="max-height:160px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:6px;padding:8px;margin-bottom:12px;background:#F8FAFC;" id="modalSubmitItemsList">
+      <!-- Items preview -->
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#F0FDF4;border-radius:6px;margin-bottom:14px;">
+      <span style="font-size:13px;font-weight:700;color:#166534;">Estimated Total:</span>
+      <span style="font-size:16px;font-weight:800;color:#0E4D26;font-family:'IBM Plex Mono',monospace;" id="modalSubmitTotal">₹0.00</span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button type="button" class="admin-btn admin-btn-secondary" onclick="closeSubmitCounterModal()" style="flex:1;padding:10px;">Cancel</button>
+      <button type="button" class="admin-btn" onclick="confirmSubmitBillToCounter()" style="flex:1.6;padding:10px;background:#D97706;color:#FFF;border:none;font-weight:700;">
+        ✓ Send to Cashier
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Sticky Mini-Cart Bar for Mobile / Smaller Screens -->
 <div class="pos-mini-cart-bar" id="posMiniCartBar">
   <div>
@@ -979,8 +1312,11 @@
     <button type="button" class="admin-btn admin-btn-secondary" onclick="switchToCartTab()" style="padding:6px 12px;font-size:12px;background:#FFF;color:#0E4D26;border:none;font-weight:700;">
       🧾 View Bill
     </button>
-    <button type="button" class="admin-btn" onclick="punchAndPrintBill()" style="padding:6px 14px;font-size:12px;background:#16A34A;color:#FFF;border:1px solid #86EFAC;font-weight:700;">
+    <button type="button" class="admin-btn" id="btnMobilePunch" onclick="punchAndPrintBill()" style="padding:6px 14px;font-size:12px;background:#16A34A;color:#FFF;border:1px solid #86EFAC;font-weight:700;">
       🖨️ Punch &amp; Print
+    </button>
+    <button type="button" class="admin-btn" id="btnMobileSubmitCounter" onclick="submitBillToCounter()" style="display:none;padding:6px 14px;font-size:12px;background:#D97706;color:#FFF;border:1px solid #FDE68A;font-weight:700;">
+      📤 Submit Bill
     </button>
   </div>
 </div>
@@ -992,6 +1328,7 @@
 
 <script src="qrcode.min.js"></script>
 <script src="admin-shared.js"></script>
+<script src="pos-sync.js"></script>
 <script src="../menu-data.js"></script>
 <script>
 (function () {
@@ -1004,12 +1341,13 @@
     var isWaiterStaff = AdminShared.isWaiter && AdminShared.isWaiter();
     var cashierPill = document.getElementById('cashierPill');
     var cashierPillName = document.getElementById('cashierPillName');
-    var btnEndShift = document.getElementById('btnEndShift');
     var linkDailyCollections = document.getElementById('linkDailyCollections');
     var btnOpenSettings = document.getElementById('btnOpenSettings');
     var linkWaiterMaster = document.getElementById('linkWaiterMaster');
 
     if (isWaiterStaff) {
+      document.documentElement.classList.add('role-waiter');
+      document.body.classList.add('role-waiter');
       var waiterName = sessionStorage.getItem('navrang_waiter_name') || AdminShared.getUsername() || 'Waiter';
       var rawTables = sessionStorage.getItem('navrang_waiter_tables');
       var allocatedTables = [];
@@ -1025,18 +1363,15 @@
           '<span style="font-size:10px;background:#0E4D26;color:#fff;padding:2px 6px;border-radius:4px;margin-left:2px;letter-spacing:0.3px;">WAITER</span>';
       }
 
-      // Logout / Sign Out Button
-      if (btnEndShift) {
-        btnEndShift.style.display = 'inline-flex';
-        btnEndShift.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg><span>Sign Out</span>';
-        btnEndShift.addEventListener('click', function () {
-          if (confirm('Sign out of Waiter Table Ordering?')) {
-            AdminShared.logout();
-          }
-        });
-      }
-
-      // Hide admin-only features
+      // Hide counter & admin toolbar controls from waiter
+      var btnHoldOrder = document.getElementById('btnHoldOrder');
+      if (btnHoldOrder) btnHoldOrder.style.display = 'none';
+      var btnViewHeldOrders = document.getElementById('btnViewHeldOrders');
+      if (btnViewHeldOrders) btnViewHeldOrders.style.display = 'none';
+      var btnToggleRegister = document.getElementById('btnToggleRegister');
+      if (btnToggleRegister) btnToggleRegister.style.display = 'none';
+      var registerSection = document.getElementById('registerSection');
+      if (registerSection) registerSection.style.display = 'none';
       if (linkDailyCollections) linkDailyCollections.style.display = 'none';
       if (btnOpenSettings) btnOpenSettings.style.display = 'none';
       if (linkWaiterMaster) linkWaiterMaster.style.display = 'none';
@@ -1063,47 +1398,99 @@
       var waiterChips = document.getElementById('waiterChips');
       if (waiterChips) waiterChips.style.display = 'none';
 
-      // Populate Table Selector prioritizing allocated tables
+      // Populate Table Selector: Waiter is strictly restricted to assigned tables ONLY
       var tableSelect = document.getElementById('tableSelect');
-      if (tableSelect && allocatedTables.length > 0) {
-        var allTablesList = [
-          'Table 1', 'Table 2', 'Table 3', 'Table 4',
-          'Table 5', 'Table 6', 'Table 7', 'Table 8',
-          'Table 9', 'Table 10', 'Table 11', 'Table 12',
-          'VIP Cabin', 'Parcel / Counter'
-        ];
-        var optHtml = '';
-        optHtml += '<optgroup label="⭐ Your Assigned Tables">';
-        allocatedTables.forEach(function (tbl, idx) {
-          optHtml += '<option value="' + AdminShared.esc(tbl) + '"' + (idx === 0 ? ' selected' : '') + '>' + AdminShared.esc(tbl) + ' (Assigned)</option>';
-        });
-        optHtml += '</optgroup>';
-
-        var otherTables = allTablesList.filter(function (t) { return allocatedTables.indexOf(t) === -1; });
-        if (otherTables.length > 0) {
-          optHtml += '<optgroup label="Other Restaurant Tables">';
-          otherTables.forEach(function (tbl) {
-            optHtml += '<option value="' + AdminShared.esc(tbl) + '">' + AdminShared.esc(tbl) + '</option>';
+      if (tableSelect) {
+        if (allocatedTables.length > 0) {
+          var optHtml = '';
+          optHtml += '<optgroup label="⭐ Your Assigned Tables">';
+          allocatedTables.forEach(function (tbl, idx) {
+            optHtml += '<option value="' + AdminShared.esc(tbl) + '"' + (idx === 0 ? ' selected' : '') + '>' + AdminShared.esc(tbl) + ' (Assigned)</option>';
           });
           optHtml += '</optgroup>';
+          tableSelect.innerHTML = optHtml;
+        } else {
+          tableSelect.innerHTML = '<option value="Table 1">Table 1 (Assigned)</option><option value="Table 2">Table 2 (Assigned)</option>';
         }
-        tableSelect.innerHTML = optHtml;
       }
-    } else if (isCounterStaff) {
-      if (cashierPill) {
-        cashierPill.style.display = 'inline-flex';
-        if (cashierPillName) cashierPillName.textContent = AdminShared.getUsername() || 'Cashier';
+
+      // Role UI Enforcement: Waiter (Take orders & submit bill ONLY)
+      // 1. Remove Punch & Print and Receipt Preview buttons from Waiter view
+      var btnPunchAndPrint = document.getElementById('btnPunchAndPrint');
+      if (btnPunchAndPrint) btnPunchAndPrint.style.display = 'none';
+      var btnPreviewBill = document.getElementById('btnPreviewBill');
+      if (btnPreviewBill) btnPreviewBill.style.display = 'none';
+      var btnMobilePunch = document.getElementById('btnMobilePunch');
+      if (btnMobilePunch) btnMobilePunch.style.display = 'none';
+
+      // 2. Show Waiter Submit Bill & Save KOT actions
+      var btnSubmitToCounter = document.getElementById('btnSubmitToCounter');
+      if (btnSubmitToCounter) btnSubmitToCounter.style.display = 'inline-flex';
+      var btnSaveOrderKot = document.getElementById('btnSaveOrderKot');
+      if (btnSaveOrderKot) btnSaveOrderKot.style.display = 'inline-flex';
+      var btnMobileSubmitCounter = document.getElementById('btnMobileSubmitCounter');
+      if (btnMobileSubmitCounter) btnMobileSubmitCounter.style.display = 'inline-flex';
+
+      // 3. Show Waiter Assigned Tables Quick Bar
+      var waiterAssignedTablesSection = document.getElementById('waiterAssignedTablesSection');
+      if (waiterAssignedTablesSection) waiterAssignedTablesSection.style.display = 'block';
+
+      // 4. Hide Counter Submitted Bills Queue from Waiter
+      var waiterQueueSection = document.getElementById('waiterQueueSection');
+      if (waiterQueueSection) waiterQueueSection.style.display = 'none';
+
+      // 5. Hide Payment Method & Cash Tender & Billing Adjustments (waiters do not collect money or adjust taxes/discounts)
+      document.body.classList.add('role-waiter');
+      var paymentAndTenderSection = document.getElementById('paymentAndTenderSection');
+      if (paymentAndTenderSection) paymentAndTenderSection.style.display = 'none';
+      var cashTenderSection = document.getElementById('cashTenderSection');
+      if (cashTenderSection) cashTenderSection.style.display = 'none';
+      var cashierAdjustments = document.getElementById('cashierBillingAdjustments');
+      if (cashierAdjustments) cashierAdjustments.style.display = 'none';
+
+    } else {
+      // Counter Staff & Admin view
+      document.documentElement.classList.remove('role-waiter');
+      document.body.classList.remove('role-waiter');
+      var paymentAndTenderSection = document.getElementById('paymentAndTenderSection');
+      if (paymentAndTenderSection) paymentAndTenderSection.style.display = 'block';
+      var cashierAdjustments = document.getElementById('cashierBillingAdjustments');
+      if (cashierAdjustments) cashierAdjustments.style.display = 'block';
+      if (isCounterStaff) {
+        if (cashierPill) {
+          cashierPill.style.display = 'inline-flex';
+          if (cashierPillName) cashierPillName.textContent = AdminShared.getUsername() || 'Cashier';
+        }
+        if (linkDailyCollections) linkDailyCollections.style.display = 'none';
+        if (btnOpenSettings) btnOpenSettings.style.display = 'none';
       }
-      if (btnEndShift) {
-        btnEndShift.style.display = 'inline-flex';
-        btnEndShift.addEventListener('click', function () {
-          if (confirm('End your cashier shift and sign out of POS?')) {
-            AdminShared.logout();
-          }
+
+      // Show Counter Submitted Bills Queue and hide Waiter tables bar
+      var waiterQueueSection = document.getElementById('waiterQueueSection');
+      if (waiterQueueSection) waiterQueueSection.style.display = 'block';
+      var waiterAssignedTablesSection = document.getElementById('waiterAssignedTablesSection');
+      if (waiterAssignedTablesSection) waiterAssignedTablesSection.style.display = 'none';
+
+      // Chime Sound Alert Toggle Setup
+      var btnToggleChime = document.getElementById('btnToggleChimeMute');
+      if (btnToggleChime && window.PosSync) {
+        updateChimeBtnUI();
+        btnToggleChime.addEventListener('click', function () {
+          var muted = PosSync.isMuted();
+          PosSync.setMuted(!muted);
+          updateChimeBtnUI();
+          if (muted) PosSync.playChime();
         });
       }
-      if (linkDailyCollections) linkDailyCollections.style.display = 'none';
-      if (btnOpenSettings) btnOpenSettings.style.display = 'none';
+    }
+
+    function updateChimeBtnUI() {
+      var icon = document.getElementById('chimeIcon');
+      var txt = document.getElementById('chimeStatusText');
+      if (!icon || !txt || !window.PosSync) return;
+      var muted = PosSync.isMuted();
+      icon.textContent = muted ? '🔕' : '🔔';
+      txt.textContent = muted ? 'Sound Alerts OFF' : 'Sound Alerts ON';
     }
   }
 
@@ -1130,6 +1517,8 @@
   var activeOrderType = 'Dine-In';
   var activeGstMode = 'none'; // 'none' or '5'
   var activePaymentMode = 'Cash';
+  var activeSubmittedOrderId = null;
+  window.activeSubmittedOrderId = null;
 
   // Load Settings
   function getSettings() {
@@ -1302,16 +1691,26 @@
   // Calculations
   function calculateBill() {
     var subtotal = cart.reduce(function (sum, it) { return sum + (it.price * it.qty); }, 0);
-    var parcelCharge = Math.max(0, Number(document.getElementById('parcelChargeInput').value) || 0);
-    var discount = Math.max(0, Number(document.getElementById('discountInput').value) || 0);
+    var isWaiter = window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter();
 
+    var parcelCharge = 0;
+    var discount = 0;
     var gstAmount = 0;
     var cgst = 0;
     var sgst = 0;
-    if (activeGstMode === '5') {
-      cgst = Math.round((subtotal * 0.025) * 100) / 100;
-      sgst = Math.round((subtotal * 0.025) * 100) / 100;
-      gstAmount = cgst + sgst;
+
+    if (!isWaiter) {
+      var parcelInp = document.getElementById('parcelChargeInput');
+      if (parcelInp) parcelCharge = Math.max(0, Number(parcelInp.value) || 0);
+
+      var discInp = document.getElementById('discountInput');
+      if (discInp) discount = Math.max(0, Number(discInp.value) || 0);
+
+      if (activeGstMode === '5') {
+        cgst = Math.round((subtotal * 0.025) * 100) / 100;
+        sgst = Math.round((subtotal * 0.025) * 100) / 100;
+        gstAmount = cgst + sgst;
+      }
     }
 
     var rawTotal = Math.max(0, subtotal + gstAmount + parcelCharge - discount);
@@ -1327,6 +1726,7 @@
       discount: discount,
       roundOff: roundOff,
       grandTotal: grandTotal,
+      grandTotalFormatted: '₹' + grandTotal.toFixed(2),
       words: numberToIndianWords(grandTotal)
     };
   }
@@ -1393,6 +1793,15 @@
 
   // Cash Tender & Return Change Calculator
   function updateCashTenderUI() {
+    // If logged in as floor waiter, never show payment mode or cash tender box
+    if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter()) {
+      var paySec = document.getElementById('paymentAndTenderSection');
+      if (paySec) paySec.style.display = 'none';
+      var ctSec = document.getElementById('cashTenderSection');
+      if (ctSec) ctSec.style.display = 'none';
+      return;
+    }
+
     var section = document.getElementById('cashTenderSection');
     if (!section) return;
 
@@ -1692,14 +2101,9 @@
     }
 
     // Dynamic UPI Payment QR Code
-    // Rule: Hide QR code if payment method is UPI/QR, but show it on Cash bills
+    // Rule: Show QR code for UPI/QR payment method; Hide QR code for Cash payment method
     var qrBox = document.getElementById('rcptQrBox');
     if (isUpiMode) {
-      if (qrBox) {
-        qrBox.style.display = 'none';
-        qrBox.classList.add('qr-hidden');
-      }
-    } else {
       if (qrBox) {
         qrBox.style.display = 'block';
         qrBox.classList.remove('qr-hidden');
@@ -1747,6 +2151,14 @@
           qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(upiString);
         }
       }
+    } else {
+      // Payment method is Cash or Card - Hide QR code
+      if (qrBox) {
+        qrBox.style.display = 'none';
+        qrBox.classList.add('qr-hidden');
+      }
+      var qrContainer = document.getElementById('rcptQrContainer');
+      if (qrContainer) qrContainer.innerHTML = '';
     }
 
     // Set active modal bill and toggle Delete button visibility for Admin
@@ -1790,8 +2202,12 @@
     }
   };
 
-  // Punch and Print Bill (Main Action)
+  // Punch and Print Bill (Main Action - Counter Cashier & Admin)
   function punchAndPrintBill() {
+    if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter()) {
+      showModalAlert('Waiters cannot punch and print bills directly. Please use "Submit Bill to Counter" to send this order to the cashier terminal.', 'Waiter Terminal Restriction', 'warning');
+      return;
+    }
     if (!cart.length) {
       alert('Please add at least one dish before generating the bill!');
       return;
@@ -1803,6 +2219,16 @@
     var bills = getStoredBills();
     bills.unshift(bill);
     saveStoredBills(bills);
+
+    // If this bill originated from a waiter submitted order, complete it in PosSync
+    if (window.activeSubmittedOrderId && window.PosSync) {
+      PosSync.completeOrder(window.activeSubmittedOrderId, {
+        billNo: bill.billNo,
+        paymentMode: bill.paymentMode,
+        cashier: (window.AdminShared ? AdminShared.getUsername() : 'Cashier')
+      });
+      window.activeSubmittedOrderId = null;
+    }
 
     // Populate and open print modal
     populateThermalSlip(bill);
@@ -1819,11 +2245,9 @@
   }
 
   // Reset Order
-  function resetActiveOrder(silent) {
-    if (!silent && cart.length > 0 && !confirm('Are you sure you want to clear current items?')) {
-      return;
-    }
+  function doResetActiveOrder() {
     cart = [];
+    window.activeSubmittedOrderId = null;
     document.getElementById('customItemName').value = '';
     document.getElementById('customItemPrice').value = '';
     document.getElementById('parcelChargeInput').value = '0';
@@ -1835,6 +2259,410 @@
     renderCart();
     renderDishes('', currentCategoryFilter);
   }
+
+  function resetActiveOrder(silent) {
+    if (!silent && cart.length > 0) {
+      showModalConfirm('Are you sure you want to clear current items?', {
+        title: 'Clear Active Order',
+        confirmText: 'Clear Items',
+        cancelText: 'Keep Items',
+        isDanger: true,
+        onConfirm: doResetActiveOrder
+      });
+      return;
+    }
+    doResetActiveOrder();
+  }
+
+  // ==========================================================================
+  // Waiter Actions & Counter Queue Handlers
+  // ==========================================================================
+
+  // Waiter: Open Submit Bill Modal
+  function submitBillToCounter() {
+    if (!cart.length) {
+      alert('Please add at least one dish before submitting bill to counter!');
+      return;
+    }
+    var calc = calculateBill();
+    var table = document.getElementById('tableSelect').value;
+    var waiter = document.getElementById('waiterInput').value.trim() || 'Staff';
+
+    var tblEl = document.getElementById('modalSubmitTable');
+    if (tblEl) tblEl.textContent = table;
+    var wtrEl = document.getElementById('modalSubmitWaiter');
+    if (wtrEl) wtrEl.textContent = waiter;
+    var totEl = document.getElementById('modalSubmitTotal');
+    if (totEl) totEl.textContent = calc.grandTotalFormatted;
+
+    var listEl = document.getElementById('modalSubmitItemsList');
+    if (listEl) {
+      var html = '';
+      cart.forEach(function (it) {
+        html += '<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px dashed #E2E8F0;">' +
+          '<span>' + it.qty + 'x ' + AdminShared.esc(it.name) + '</span>' +
+          '<strong>₹' + (it.qty * it.price).toFixed(2) + '</strong>' +
+        '</div>';
+      });
+      listEl.innerHTML = html;
+    }
+
+    var modal = document.getElementById('submitCounterModal');
+    if (modal) modal.classList.add('open');
+  }
+  window.submitBillToCounter = submitBillToCounter;
+
+  function closeSubmitCounterModal() {
+    var modal = document.getElementById('submitCounterModal');
+    if (modal) modal.classList.remove('open');
+  }
+  window.closeSubmitCounterModal = closeSubmitCounterModal;
+
+  // Waiter: Confirm Submit to Cashier
+  function confirmSubmitBillToCounter() {
+    if (!cart.length) {
+      closeSubmitCounterModal();
+      return;
+    }
+    var calc = calculateBill();
+    var table = document.getElementById('tableSelect').value;
+    var waiter = document.getElementById('waiterInput').value.trim() || 'Staff';
+
+    var payload = {
+      table: table,
+      waiter: waiter,
+      orderType: activeOrderType,
+      items: JSON.parse(JSON.stringify(cart)),
+      subtotal: calc.subtotal,
+      discount: calc.discount,
+      parcelCharge: calc.parcelCharge,
+      gstAmount: calc.gstAmount,
+      roundOff: calc.roundOff,
+      total: calc.grandTotal,
+      status: 'submitted_to_counter'
+    };
+
+    if (window.PosSync) {
+      PosSync.submitOrder(payload, function (err, saved) {
+        closeSubmitCounterModal();
+        showToast('✓ Bill for ' + table + ' submitted to Counter Cashier!');
+        resetActiveOrder(true);
+        var tabBtnMenu = document.getElementById('tabBtnMenu');
+        if (tabBtnMenu) tabBtnMenu.click();
+      });
+    } else {
+      closeSubmitCounterModal();
+      alert('Sync service not ready. Please try again.');
+    }
+  }
+  window.confirmSubmitBillToCounter = confirmSubmitBillToCounter;
+
+  // Waiter: Save In-Progress Order / KOT
+  function saveOrderKot() {
+    if (!cart.length) {
+      alert('Please add at least one dish before saving order to kitchen / KOT!');
+      return;
+    }
+    var calc = calculateBill();
+    var table = document.getElementById('tableSelect').value;
+    var waiter = document.getElementById('waiterInput').value.trim() || 'Staff';
+
+    var payload = {
+      table: table,
+      waiter: waiter,
+      orderType: activeOrderType,
+      items: JSON.parse(JSON.stringify(cart)),
+      subtotal: calc.subtotal,
+      discount: calc.discount,
+      parcelCharge: calc.parcelCharge,
+      gstAmount: calc.gstAmount,
+      roundOff: calc.roundOff,
+      total: calc.grandTotal,
+      status: 'active'
+    };
+
+    if (window.PosSync) {
+      PosSync.submitOrder(payload, function () {
+        showToast('🛎️ Order for ' + table + ' saved to Kitchen / KOT.');
+        resetActiveOrder(true);
+      });
+    }
+  }
+  window.saveOrderKot = saveOrderKot;
+
+  // Cashier / Admin: Render Submitted Bills Queue
+  function renderCounterQueue(orders) {
+    var queueList = document.getElementById('waiterQueueList');
+    var badge = document.getElementById('waiterQueueCountBadge');
+    if (!queueList || !badge) return;
+
+    var list = (orders || []).filter(function (o) {
+      return o.status === 'submitted_to_counter';
+    });
+
+    badge.textContent = list.length + ' Pending';
+    if (list.length > 0) {
+      badge.style.background = '#DC2626';
+      badge.classList.add('pos-badge-pulse');
+    } else {
+      badge.style.background = '#94A3B8';
+      badge.classList.remove('pos-badge-pulse');
+    }
+
+    if (list.length === 0) {
+      queueList.innerHTML = '<div class="admin-empty" style="padding:14px;grid-column:1/-1;background:rgba(255,255,255,0.7);border-radius:8px;border:1px dashed #FCD34D;color:#92400E;font-size:12px;">' +
+        'No waiter bills awaiting collection right now. New submissions will chime and appear here automatically.' +
+      '</div>';
+      return;
+    }
+
+    var html = '';
+    list.forEach(function (o) {
+      var timeAgo = 'Just now';
+      if (o.submittedAt) {
+        var diffSec = Math.floor((Date.now() - new Date(o.submittedAt).getTime()) / 1000);
+        if (diffSec >= 60) {
+          timeAgo = Math.floor(diffSec / 60) + ' min ago';
+        } else if (diffSec > 5) {
+          timeAgo = diffSec + 's ago';
+        }
+      }
+
+      var itemsList = o.items || [];
+      var itemsSummary = itemsList.map(function (it) {
+        return it.qty + 'x ' + (it.name || 'Item');
+      }).join(', ');
+      if (itemsSummary.length > 60) itemsSummary = itemsSummary.substring(0, 58) + '…';
+
+      var totalAmt = Number(o.total || 0).toFixed(2);
+
+      html += '<div class="waiter-queue-card" style="background:#FFF;border:1.5px solid #F59E0B;border-radius:10px;padding:12px;box-shadow:0 2px 6px rgba(217,119,6,0.1);display:flex;flex-direction:column;justify-content:space-between;gap:8px;">' +
+        '<div>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+            '<span style="font-size:15px;font-weight:800;color:#0E4D26;">' + AdminShared.esc(o.table) + '</span>' +
+            '<span style="font-size:10px;font-weight:700;background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;text-transform:uppercase;">' + AdminShared.esc(o.orderType || 'Dine-In') + '</span>' +
+          '</div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:11.5px;color:#64748B;margin-top:2px;">' +
+            '<span>Server: <strong style="color:#0E4D26;">' + AdminShared.esc(o.waiter || 'Staff') + '</strong></span>' +
+            '<span>⏱️ ' + AdminShared.esc(timeAgo) + '</span>' +
+          '</div>' +
+          '<div style="font-size:12px;color:#334155;margin-top:6px;line-height:1.35;min-height:28px;">' +
+            AdminShared.esc(itemsSummary) +
+          '</div>' +
+          '<div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;border-top:1px dashed #E2E8F0;padding-top:6px;">' +
+            '<span style="font-size:12px;font-weight:600;color:#64748B;">Amount Due:</span>' +
+            '<strong style="font-size:16px;color:#991B1B;font-family:\'IBM Plex Mono\',monospace;">₹' + totalAmt + '</strong>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;margin-top:4px;">' +
+          '<button type="button" class="admin-btn" onclick="loadSubmittedBillIntoCounter(\'' + AdminShared.esc(o.id) + '\')" style="flex:1;padding:7px 10px;font-size:12px;font-weight:700;background:#16A34A;color:#FFF;border:none;">' +
+            '🧾 Collect &amp; Bill' +
+          '</button>' +
+          '<button type="button" class="admin-btn admin-btn-secondary" onclick="dismissWaiterBill(\'' + AdminShared.esc(o.id) + '\')" style="padding:7px 9px;font-size:11px;color:#DC2626;" title="Cancel / Dismiss bill">' +
+            '✕' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    });
+
+    queueList.innerHTML = html;
+  }
+  window.renderCounterQueue = renderCounterQueue;
+
+  // Cashier: Load Submitted Bill into Active POS Register
+  function loadSubmittedBillIntoCounter(orderId) {
+    if (!window.PosSync) return;
+    var bills = PosSync.getPendingBills();
+    var order = bills.find(function (b) { return b.id === orderId; });
+    if (!order) {
+      showModalAlert('Order not found or already settled.', 'Order Not Found', 'warning');
+      return;
+    }
+
+    function doLoad() {
+      // Load items into cart
+      cart = JSON.parse(JSON.stringify(order.items || []));
+      activeOrderType = order.orderType || 'Dine-In';
+
+      var tableSelect = document.getElementById('tableSelect');
+      if (tableSelect) {
+        var exists = false;
+        for (var i = 0; i < tableSelect.options.length; i++) {
+          if (tableSelect.options[i].value === order.table) {
+            exists = true;
+            break;
+          }
+        }
+        if (!exists) {
+          var opt = document.createElement('option');
+          opt.value = order.table;
+          opt.textContent = order.table;
+          tableSelect.appendChild(opt);
+        }
+        tableSelect.value = order.table;
+      }
+
+      var waiterInput = document.getElementById('waiterInput');
+      if (waiterInput) waiterInput.value = order.waiter || 'Staff';
+
+      var discInput = document.getElementById('discountInput');
+      if (discInput) discInput.value = order.discount || 0;
+
+      var parcelInput = document.getElementById('parcelChargeInput');
+      if (parcelInput) parcelInput.value = order.parcelCharge || 0;
+
+      // Track active submitted order ID for settlement
+      window.activeSubmittedOrderId = order.id;
+
+      // Sync UI components
+      updateBillMetaBadges();
+      renderCart();
+
+      var typePills = document.querySelectorAll('.type-pill');
+      Array.prototype.forEach.call(typePills, function (btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-type') === activeOrderType);
+      });
+
+      showToast('✓ Loaded ' + order.table + ' bill (Server: ' + order.waiter + '). Ready for payment collection.');
+
+      var tabBtnBill = document.getElementById('tabBtnBill');
+      if (tabBtnBill) tabBtnBill.click();
+
+      var colBill = document.querySelector('.pos-col-bill');
+      if (colBill) colBill.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    if (cart.length > 0) {
+      showModalConfirm('Active register has unbilled items. Replace register with ' + order.table + ' bill?', {
+        title: 'Replace Register Items',
+        confirmText: 'Replace Items',
+        cancelText: 'Cancel',
+        isDanger: true,
+        onConfirm: doLoad
+      });
+      return;
+    }
+    doLoad();
+  }
+  window.loadSubmittedBillIntoCounter = loadSubmittedBillIntoCounter;
+
+  function dismissWaiterBill(orderId) {
+    showModalConfirm('Are you sure you want to dismiss this waiter submitted bill?', {
+      title: 'Dismiss Waiter Bill',
+      confirmText: 'Dismiss Bill',
+      cancelText: 'Keep Bill',
+      isDanger: true,
+      onConfirm: function () {
+        if (window.PosSync) {
+          PosSync.deleteOrder(orderId, function () {
+            showToast('Bill dismissed from queue.');
+          });
+        }
+      }
+    });
+  }
+  window.dismissWaiterBill = dismissWaiterBill;
+
+  // Waiter: Visual Table Status Pills Bar
+  function renderWaiterAssignedTables(orders, allocatedTables) {
+    var container = document.getElementById('waiterTablePills');
+    if (!container || !Array.isArray(allocatedTables) || allocatedTables.length === 0) return;
+
+    var currentTable = document.getElementById('tableSelect') ? document.getElementById('tableSelect').value : '';
+
+    var html = '';
+    allocatedTables.forEach(function (tbl) {
+      var tblOrder = (orders || []).find(function (o) {
+        return o.table === tbl && (o.status === 'submitted_to_counter' || o.status === 'active');
+      });
+
+      var isSelected = (tbl === currentTable);
+      var badgeIcon = '🟢';
+      var statusText = 'Available';
+      var bgStyle = '#FFFFFF';
+      var borderStyle = isSelected ? '#16A34A' : '#CBD5E1';
+      var textColor = '#1E293B';
+
+      if (tblOrder) {
+        if (tblOrder.status === 'submitted_to_counter') {
+          badgeIcon = '🔴';
+          statusText = 'Bill Sent (₹' + Number(tblOrder.total || 0).toFixed(0) + ')';
+          bgStyle = '#FEF2F2';
+          borderStyle = isSelected ? '#DC2626' : '#FCA5A5';
+          textColor = '#991B1B';
+        } else if (tblOrder.status === 'active') {
+          var itCount = (tblOrder.items || []).reduce(function (s, it) { return s + it.qty; }, 0);
+          badgeIcon = '🟡';
+          statusText = 'In-Progress (' + itCount + ')';
+          bgStyle = '#FFFBEB';
+          borderStyle = isSelected ? '#D97706' : '#FDE68A';
+          textColor = '#92400E';
+        }
+      }
+
+      var selectedRing = isSelected ? 'box-shadow:0 0 0 2px ' + borderStyle + ';' : '';
+
+      html += '<button type="button" class="waiter-table-pill" onclick="selectWaiterTable(\'' + AdminShared.esc(tbl) + '\')" ' +
+        'style="background:' + bgStyle + ';border:1.5px solid ' + borderStyle + ';color:' + textColor + ';' + selectedRing + '">' +
+        '<span>' + badgeIcon + '</span>' +
+        '<strong>' + AdminShared.esc(tbl) + '</strong>' +
+        '<span style="font-size:10px;opacity:0.85;">' + statusText + '</span>' +
+      '</button>';
+    });
+
+    container.innerHTML = html;
+  }
+  window.renderWaiterAssignedTables = renderWaiterAssignedTables;
+
+  function doSelectWaiterTable(tbl) {
+    var tableSelect = document.getElementById('tableSelect');
+    if (!tableSelect) return;
+    tableSelect.value = tbl;
+    updateBillMetaBadges();
+
+    if (window.PosSync) {
+      var tblOrder = PosSync.getTableOrder(tbl);
+      if (tblOrder && Array.isArray(tblOrder.items) && tblOrder.items.length > 0) {
+        cart = JSON.parse(JSON.stringify(tblOrder.items));
+        activeOrderType = tblOrder.orderType || 'Dine-In';
+        renderCart();
+        showToast('Loaded ' + tbl + ' in-progress order.');
+      } else {
+        resetActiveOrder(true);
+        showToast('Selected ' + tbl + '. Ready to take order.');
+      }
+      var rawTables = sessionStorage.getItem('navrang_waiter_tables');
+      var allocated = [];
+      try { if (rawTables) allocated = JSON.parse(rawTables); } catch (e) {}
+      renderWaiterAssignedTables(PosSync.getPendingBills(), allocated);
+    }
+  }
+
+  function selectWaiterTable(tbl) {
+    var tableSelect = document.getElementById('tableSelect');
+    if (!tableSelect) return;
+    if (tableSelect.value === tbl) return;
+
+    if (cart.length > 0) {
+      showModalConfirm('Switching table to ' + tbl + '. Clear current items?', {
+        title: 'Switch Table',
+        confirmText: 'Switch & Clear',
+        cancelText: 'Cancel',
+        isDanger: true,
+        onConfirm: function () {
+          doSelectWaiterTable(tbl);
+        }
+      });
+      return;
+    }
+    doSelectWaiterTable(tbl);
+  }
+  window.selectWaiterTable = selectWaiterTable;
+
+  window.switchToCartTab = function () {
+    var tabBtnBill = document.getElementById('tabBtnBill');
+    if (tabBtnBill) tabBtnBill.click();
+  };
 
   // Settings Modal Handlers
   function openSettingsModal() {
@@ -1961,17 +2789,23 @@
                 'Deleting this bill will deduct ' + grandTotalFormatted + ' from Today\'s Register and Daily Collections.\n\n' +
                 'Confirm permanent deletion?';
 
-      if (!confirm(msg)) return;
+      showModalConfirm(msg, {
+        title: 'Delete Bill #' + billNo,
+        confirmText: 'Delete Permanently',
+        cancelText: 'Cancel',
+        isDanger: true,
+        onConfirm: function () {
+          var updated = bills.filter(function (b) { return b.billNo !== billNo; });
+          saveStoredBills(updated);
 
-      var updated = bills.filter(function (b) { return b.billNo !== billNo; });
-      saveStoredBills(updated);
+          if (window.currentBillingModalBillNo === billNo) {
+            closeReceiptModal();
+          }
 
-      if (window.currentBillingModalBillNo === billNo) {
-        closeReceiptModal();
-      }
-
-      renderRegisterTable();
-      alert('✓ Bill #' + billNo + ' (' + grandTotalFormatted + ') deleted successfully.');
+          renderRegisterTable();
+          showModalAlert('✓ Bill #' + billNo + ' (' + grandTotalFormatted + ') deleted successfully.', 'Bill Deleted', 'success');
+        }
+      });
     } catch (e) {
       console.error('Delete error:', e);
       alert('Error deleting bill: ' + (e.message || e));
@@ -1987,7 +2821,19 @@
   // Event Listeners Setup
   document.getElementById('btnPunchAndPrint').addEventListener('click', punchAndPrintBill);
 
+  var btnSubmitToCounter = document.getElementById('btnSubmitToCounter');
+  if (btnSubmitToCounter) btnSubmitToCounter.addEventListener('click', submitBillToCounter);
+
+  var btnSaveOrderKot = document.getElementById('btnSaveOrderKot');
+  if (btnSaveOrderKot) btnSaveOrderKot.addEventListener('click', saveOrderKot);
+
+  var btnMobileSubmitCounter = document.getElementById('btnMobileSubmitCounter');
+  if (btnMobileSubmitCounter) btnMobileSubmitCounter.addEventListener('click', submitBillToCounter);
+
   document.getElementById('btnPreviewBill').addEventListener('click', function () {
+    if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter()) {
+      return;
+    }
     if (!cart.length) {
       alert('Please add items first to preview the bill slip.');
       return;
@@ -2026,7 +2872,15 @@
   // Calculation inputs live update
   document.getElementById('parcelChargeInput').addEventListener('input', renderCart);
   document.getElementById('discountInput').addEventListener('input', renderCart);
-  document.getElementById('tableSelect').addEventListener('change', updateBillMetaBadges);
+  document.getElementById('tableSelect').addEventListener('change', function () {
+    updateBillMetaBadges();
+    if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter() && window.PosSync) {
+      var rawTables = sessionStorage.getItem('navrang_waiter_tables');
+      var allocated = [];
+      try { if (rawTables) allocated = JSON.parse(rawTables); } catch (e) {}
+      renderWaiterAssignedTables(PosSync.getPendingBills(), allocated);
+    }
+  });
   document.getElementById('waiterInput').addEventListener('input', updateBillMetaBadges);
 
   // Search input live filtering + Enter to add
@@ -2190,6 +3044,15 @@
   }
 
   function updateHeldBadge() {
+    if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter()) {
+      var badge = document.getElementById('badgeHeldCount');
+      var btnView = document.getElementById('btnViewHeldOrders');
+      var btnHold = document.getElementById('btnHoldOrder');
+      if (badge) badge.style.display = 'none';
+      if (btnView) btnView.style.display = 'none';
+      if (btnHold) btnHold.style.display = 'none';
+      return;
+    }
     var held = getHeldOrders();
     var badge = document.getElementById('badgeHeldCount');
     var btnView = document.getElementById('btnViewHeldOrders');
@@ -2205,6 +3068,7 @@
   }
 
   function holdCurrentOrder() {
+    if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter()) return;
     if (!cart.length) {
       showToast('⚠️ No items in current order to hold.');
       return;
@@ -2270,28 +3134,47 @@
     var idx = held.findIndex(function (h) { return h.id === holdId; });
     if (idx === -1) return;
     var order = held[idx];
-    if (cart.length > 0 && !confirm('Active bill has items. Overwrite with resumed order?')) {
+
+    function doResume() {
+      cart = JSON.parse(JSON.stringify(order.cart));
+      activeOrderType = order.orderType || 'Dine-In';
+      document.getElementById('tableSelect').value = order.table || 'Table 4';
+      document.getElementById('waiterInput').value = order.waiter || 'Raju';
+      held.splice(idx, 1);
+      saveHeldOrders(held);
+      closeHeldOrdersModal();
+      updateBillMetaBadges();
+      renderCart();
+      showToast('▶ Resumed order for ' + order.table);
+    }
+
+    if (cart.length > 0) {
+      showModalConfirm('Active bill has items. Overwrite with resumed order?', {
+        title: 'Resume Held Order',
+        confirmText: 'Overwrite & Resume',
+        cancelText: 'Cancel',
+        isDanger: true,
+        onConfirm: doResume
+      });
       return;
     }
-    cart = JSON.parse(JSON.stringify(order.cart));
-    activeOrderType = order.orderType || 'Dine-In';
-    document.getElementById('tableSelect').value = order.table || 'Table 4';
-    document.getElementById('waiterInput').value = order.waiter || 'Raju';
-    held.splice(idx, 1);
-    saveHeldOrders(held);
-    closeHeldOrdersModal();
-    updateBillMetaBadges();
-    renderCart();
-    showToast('▶ Resumed order for ' + order.table);
+    doResume();
   }
   window.resumeHeldOrder = resumeHeldOrder;
 
   function discardHeldOrder(holdId) {
-    if (!confirm('Discard this held order?')) return;
-    var held = getHeldOrders().filter(function (h) { return h.id !== holdId; });
-    saveHeldOrders(held);
-    openHeldOrdersModal();
-    showToast('Discarded held order.');
+    showModalConfirm('Are you sure you want to discard this held order?', {
+      title: 'Discard Held Order',
+      confirmText: 'Discard',
+      cancelText: 'Keep',
+      isDanger: true,
+      onConfirm: function () {
+        var held = getHeldOrders().filter(function (h) { return h.id !== holdId; });
+        saveHeldOrders(held);
+        openHeldOrdersModal();
+        showToast('Discarded held order.');
+      }
+    });
   }
   window.discardHeldOrder = discardHeldOrder;
 
@@ -2302,10 +3185,14 @@
 
   // Global Keyboard Shortcuts
   window.addEventListener('keydown', function (e) {
-    // Ctrl+Enter or Cmd+Enter: Punch and Print Bill
+    // Ctrl+Enter or Cmd+Enter: Waiter submits bill to counter; Cashier punches & prints
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
-      punchAndPrintBill();
+      if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter()) {
+        submitBillToCounter();
+      } else {
+        punchAndPrintBill();
+      }
       return;
     }
     // '/' key when not typing in an input: focus dish search
@@ -2324,6 +3211,7 @@
       closeReceiptModal();
       closeSettingsModal();
       closeHeldOrdersModal();
+      closeSubmitCounterModal();
     }
   });
 
@@ -2335,6 +3223,20 @@
   renderDishes('', 'all');
   renderCart();
   renderRegisterTable();
+
+  // Real-time table order sync subscription
+  if (window.PosSync) {
+    PosSync.onOrders(function (orders) {
+      if (window.AdminShared && AdminShared.isWaiter && AdminShared.isWaiter()) {
+        var rawTables = sessionStorage.getItem('navrang_waiter_tables');
+        var allocated = [];
+        try { if (rawTables) allocated = JSON.parse(rawTables); } catch (e) {}
+        renderWaiterAssignedTables(orders, allocated);
+      } else {
+        renderCounterQueue(orders);
+      }
+    });
+  }
 })();
 </script>
 </body>

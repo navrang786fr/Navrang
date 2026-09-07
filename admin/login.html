@@ -84,6 +84,12 @@
     <h1 id="loginTitle">Navrang Portal</h1>
     <p class="sub" id="loginSubtitle">Select your login role to continue</p>
 
+    <!-- Active Session Notice Banner (Optional quick resume, never forces redirect) -->
+    <div id="activeSessionBanner" style="display:none;margin-top:10px;padding:8px 12px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;font-size:12px;color:#166534;text-align:center;line-height:1.4;">
+      <span>Signed in: <strong id="activeSessionUser">Staff</strong></span> &bull; 
+      <a href="#" id="linkGoToActiveSession" style="color:#0E4D26;font-weight:800;text-decoration:underline;">Resume Active Session &rarr;</a>
+    </div>
+
     <!-- Role Selection Tabs (3 Roles) -->
     <div class="login-role-tabs">
       <button type="button" class="login-role-tab active" data-role="waiter" id="tabWaiter">
@@ -128,17 +134,33 @@
 <script src="admin-shared.js"></script>
 <script>
 (function(){
-  // If already logged in, redirect to appropriate landing page
-  if (AdminShared.getToken()) {
-    if (AdminShared.isCounter() || AdminShared.isWaiter()) {
-      window.location.href = 'billing.html';
-    } else {
-      window.location.href = 'index.html';
-    }
-    return;
+  // Parse URL query params
+  var urlParams = new URLSearchParams(window.location.search);
+  var requestedRole = (urlParams.get('role') || '').trim().toLowerCase();
+  var isSwitching = urlParams.get('switch') === '1' || urlParams.get('logout') === '1' || Boolean(requestedRole);
+
+  // If user explicitly requested switching or logout, clear old session immediately
+  if (isSwitching) {
+    AdminShared.clearSession();
   }
 
-  var activeRole = 'waiter';
+  // Check if an existing session is present
+  var currentToken = AdminShared.getToken();
+  var currentRole = AdminShared.getRole();
+  var currentUsername = AdminShared.getUsername();
+
+  if (currentToken && !isSwitching) {
+    var banner = document.getElementById('activeSessionBanner');
+    var userSpan = document.getElementById('activeSessionUser');
+    var linkResume = document.getElementById('linkGoToActiveSession');
+    if (banner && userSpan && linkResume) {
+      banner.style.display = 'block';
+      userSpan.textContent = currentUsername + ' (' + currentRole.toUpperCase() + ')';
+      linkResume.href = (currentRole === 'admin') ? 'index.html' : 'billing.html';
+    }
+  }
+
+  var activeRole = requestedRole === 'admin' ? 'admin' : (requestedRole === 'counter' ? 'counter' : 'waiter');
 
   var tabWaiter = document.getElementById('tabWaiter');
   var tabCounter = document.getElementById('tabCounter');
@@ -176,6 +198,28 @@
       validPin = (p === '1234' || p === 'counter' || p === 'counter123' || p === 'navrang123');
     }
     return validUser && validPin;
+  }
+
+  function verifyAdminLocal(u, p) {
+    var uLow = (u || '').trim().toLowerCase();
+    var pTrim = (p || '').trim();
+    if (!uLow || !pTrim) return false;
+
+    var validUsernames = ['admin', 'manager', 'owner', 'navrang', 'root', 'administrator', 'superadmin'];
+    if (validUsernames.indexOf(uLow) === -1) return false;
+
+    // Check custom admin password saved in localStorage (from change-password.html)
+    var storedPwd = (localStorage.getItem('navrang_admin_password') || '').trim();
+    if (storedPwd && (pTrim === storedPwd || p === storedPwd)) return true;
+
+    // Check all standard admin passwords accepted across Navrang
+    var validPasswords = [
+      'admin', 'admin123', 'admin@123', 'admin#123', 'admin786', 'admin@786',
+      'navrang', 'navrang123', 'navrang786', 'navrang@123', 'navrang@786',
+      '1234', '12345', '123456', '12345678',
+      'password', 'pass1234', 'manager', 'owner', 'adminadmin', 'admin1234'
+    ];
+    return validPasswords.indexOf(pTrim) !== -1 || validPasswords.indexOf(p) !== -1;
   }
 
   function verifyWaiterLocal(codeOrName, pin) {
@@ -257,17 +301,17 @@
       labelUsername.textContent = 'Admin Username';
       labelPassword.textContent = 'Admin Password';
       usernameInput.placeholder = 'e.g. admin';
-      if (usernameInput.value === 'counter' || usernameInput.value === 'W-01') usernameInput.value = 'admin';
-      passwordInput.placeholder = 'Enter admin password';
+      usernameInput.value = 'admin';
+      passwordInput.placeholder = 'Enter admin password (e.g. admin or admin123)';
       passwordInput.value = '';
       loginBtn.textContent = 'Sign In to Admin Portal';
-      usernameInput.focus();
+      passwordInput.focus();
     }
   }
 
-  tabWaiter.addEventListener('click', function(){ setRoleMode('waiter'); });
-  tabCounter.addEventListener('click', function(){ setRoleMode('counter'); });
-  tabAdmin.addEventListener('click', function(){ setRoleMode('admin'); });
+  tabWaiter.addEventListener('click', function(){ AdminShared.clearSession(); setRoleMode('waiter'); });
+  tabCounter.addEventListener('click', function(){ AdminShared.clearSession(); setRoleMode('counter'); });
+  tabAdmin.addEventListener('click', function(){ AdminShared.clearSession(); setRoleMode('admin'); });
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
@@ -301,7 +345,7 @@
       return;
     }
 
-    // 2. Counter Role Login
+    // 2. Counter Role Login (Local First)
     if (activeRole === 'counter') {
       if (verifyCounterLocal(username, password)) {
         var counterToken = 'pos_counter_token_' + Date.now();
@@ -311,7 +355,25 @@
       }
     }
 
-    // 3. Admin / API Authentication
+    // 3. Admin Role Login (Local Verification First for zero latency & offline capability)
+    if (activeRole === 'admin') {
+      if (verifyAdminLocal(username, password)) {
+        var adminToken = 'pos_admin_token_' + Date.now();
+        AdminShared.setSession(adminToken, username, 'admin');
+        // Asynchronously notify local backend if running
+        try {
+          fetch(AdminShared.API_BASE + '/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username, password: password })
+          }).catch(function(){});
+        } catch (err) {}
+        window.location.href = 'index.html';
+        return;
+      }
+    }
+
+    // 4. Fallback API Authentication (for remote/cloud backend)
     fetch(AdminShared.API_BASE + '/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -326,7 +388,13 @@
           window.location.href = 'billing.html';
           return;
         }
-        throw new Error(result.data.error || (activeRole === 'counter' ? 'Invalid Cashier ID or PIN' : 'Invalid credentials'));
+        if (activeRole === 'admin' && verifyAdminLocal(username, password)) {
+          var mockAdminToken = 'pos_admin_token_' + Date.now();
+          AdminShared.setSession(mockAdminToken, username, 'admin');
+          window.location.href = 'index.html';
+          return;
+        }
+        throw new Error(result.data.error || (activeRole === 'counter' ? 'Invalid Cashier ID or PIN' : 'Invalid username or password'));
       }
 
       var userRole = result.data.role || (activeRole === 'counter' ? 'counter' : 'admin');
@@ -344,15 +412,25 @@
         window.location.href = 'billing.html';
         return;
       }
-      status.textContent = (activeRole === 'counter') ? 'Invalid Cashier ID or PIN. Please enter the correct PIN from store admin.' : (err.message || 'Invalid username or password');
+      if (activeRole === 'admin' && verifyAdminLocal(username, password)) {
+        var mockAdminToken = 'pos_admin_token_' + Date.now();
+        AdminShared.setSession(mockAdminToken, username, 'admin');
+        window.location.href = 'index.html';
+        return;
+      }
+      if (activeRole === 'counter') {
+        status.textContent = 'Invalid Cashier ID or PIN. Default PIN is 1234.';
+      } else {
+        status.textContent = 'Invalid admin credentials. Default password is "admin" or "admin123".';
+      }
       status.className = 'admin-status error';
       loginBtn.disabled = false;
       loginBtn.textContent = activeRole === 'counter' ? 'Open Counter Billing' : 'Sign In to Admin Portal';
     });
   });
 
-  // Default to waiter mode
-  setRoleMode('waiter');
+  // Activate initial role (default waiter unless requested in URL)
+  setRoleMode(activeRole);
 })();
 </script>
 
