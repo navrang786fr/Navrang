@@ -63,10 +63,10 @@
       instagramLabel: 'Instagram',
       heroOfferBadge: 'Instagram Exclusive',
       heroOfferTitle: 'Get 5% OFF on Total Bill!',
-      heroOfferDesc: 'Follow @navrang786fr on Instagram & show your screen to your waiter or cashier during billing.',
+      heroOfferDesc: 'Follow @navrang786fr on Instagram & show your screen during billing to claim 5% OFF!',
       heroOfferFollowText: 'Follow @navrang786fr',
       heroOfferDetailsText: 'Offer Details',
-      heroOfferTip: 'Show your Instagram follow screen to your waiter or cashier during billing to claim 5% OFF!',
+      heroOfferTip: 'Follow @navrang786fr on Instagram & show your screen during billing to claim 5% OFF!',
       offersLabel: 'Special Offers',
       offersTitle: 'Special Offers & Deals',
       offersSub: 'Exclusive Dining Perks',
@@ -92,10 +92,16 @@
       gameTouchHint: 'Swipe or tap buttons',
       gameOverTitle: 'Order Simmering!',
       gameOverFinalLabel: 'Your Score:',
-      gameOverBestLabel: 'High Score:',
+      gameOverBestLabel: 'Highest Score:',
       gameChefMsg: '👨‍🍳 Your fresh dishes are being prepared in the kitchen. Keep playing!',
       gameRestartLabel: 'Play Again',
       fabGameLabel: 'Wait Game',
+      heroGameWaitingTitle: 'Waiting for food?',
+      heroGameWaitingSub: 'Play <strong>Biryani Catcher</strong> while food is prepared!',
+      heroGameBestLabel: 'Best:',
+      newRecordBanner: '🎉 NEW ALL-TIME RECORD! 🏆',
+      gameShareScoreLabel: 'Show Waiter / Table',
+      gameShareToast: '🏆 High Score: {score} pts! Show your screen to your table or waiter!',
       greetings: {
         morning: 'Good morning! Steaming breakfast & chai await you.',
         afternoon: 'Good afternoon! Savor hearty Andhra biryanis & meals.',
@@ -164,10 +170,10 @@
       instagramLabel: 'ఇన్‌స్టాగ్రామ్',
       heroOfferBadge: 'ఇన్‌స్టాగ్రామ్ స్పెషల్ ఆఫర్',
       heroOfferTitle: 'మొత్తం బిల్లుపై 5% తగ్గింపు (OFF)!',
-      heroOfferDesc: 'Instagramలో @navrang786fr ని ఫాలో అయి, బిల్లింగ్ సమయంలో వెయిటర్ లేదా క్యాషియర్‌కి మీ స్క్రీన్ చూపించండి.',
+      heroOfferDesc: 'Instagramలో @navrang786fr ని ఫాలో అయి, బిల్లింగ్ సమయంలో స్క్రీన్ చూపించి 5% రాయితీ పొందండి.',
       heroOfferFollowText: 'ఇప్పుడే ఫాలో అవ్వండి',
       heroOfferDetailsText: 'ఆఫర్ వివరాలు',
-      heroOfferTip: 'బిల్లింగ్ సమయంలో మీ ఇన్‌స్టాగ్రామ్ ఫాలో స్క్రీన్‌ను వెయిటర్ లేదా క్యాషియర్‌కి చూపించి 5% డిస్కౌంట్ పొందండి!',
+      heroOfferTip: 'Instagramలో @navrang786fr ని ఫాలో అయి, బిల్లింగ్ సమయంలో స్క్రీన్ చూపించి 5% రాయితీ పొందండి.',
       offersLabel: 'ప్రత్యేక ఆఫర్‌లు',
       offersTitle: 'ప్రత్యేక ఆఫర్‌లు & డీల్స్',
       offersSub: 'నవరంగ్ ప్రత్యేక ప్రయోజనాలు',
@@ -197,6 +203,12 @@
       gameChefMsg: '👨‍🍳 మీ వేడి వేడి తాజా భోజనం వంటింట్లో సిద్ధమవుతోంది. ఆడుతూ ఉండండి!',
       gameRestartLabel: 'మళ్ళీ ఆడండి',
       fabGameLabel: 'వెయిట్ గేమ్',
+      heroGameWaitingTitle: 'భోజనం కోసం వేచిచూస్తున్నారా?',
+      heroGameWaitingSub: 'వంటకాలు సిద్ధమయ్యే వరకు <strong>బిర్యానీ క్యాచర్</strong> ఆడండి!',
+      heroGameBestLabel: 'హై స్కోర్:',
+      newRecordBanner: '🎉 నూతన ఆల్-టైమ్ రికార్డు! 🏆',
+      gameShareScoreLabel: 'వెయిటర్ / టేబుల్‌కి చూపించండి',
+      gameShareToast: '🏆 హై స్కోర్: {score} పాయింట్లు! మీ టేబుల్ లేదా వెయిటర్‌కి చూపించండి!',
       greetings: {
         morning: 'శుభోదయం! వేడి వేడి అల్పాహారం & టీ తో ప్రారంభించండి.',
         afternoon: 'శుభ మధ్యాహ్నం! ఘుమఘుమలాడే ఆంధ్రా బిర్యానీలు & భోజనం.',
@@ -346,6 +358,11 @@
     var gameOverBestLabel = qs('#gameOverBestLabel'); if (gameOverBestLabel) gameOverBestLabel.textContent = S.gameOverBestLabel;
     var gameChefMsg = qs('#gameChefMsg'); if (gameChefMsg) gameChefMsg.textContent = S.gameChefMsg;
     var gameRestartLabel = qs('#gameRestartLabel'); if (gameRestartLabel) gameRestartLabel.textContent = S.gameRestartLabel;
+    var heroGameWaitingTitle = qs('#heroGameWaitingTitle'); if (heroGameWaitingTitle) heroGameWaitingTitle.textContent = S.heroGameWaitingTitle;
+    var heroGameWaitingSub = qs('#heroGameWaitingSub'); if (heroGameWaitingSub) heroGameWaitingSub.innerHTML = S.heroGameWaitingSub;
+    var heroGameBestLabel = qs('#heroGameBestLabel'); if (heroGameBestLabel) heroGameBestLabel.textContent = S.heroGameBestLabel;
+    var newRecordBanner = qs('#newRecordBanner'); if (newRecordBanner) newRecordBanner.textContent = S.newRecordBanner;
+    var gameShareScoreLabel = qs('#gameShareScoreLabel'); if (gameShareScoreLabel) gameShareScoreLabel.textContent = S.gameShareScoreLabel;
 
     // Top Offer Banner
     var heroOfferBadge = qs('#heroOfferBadge'); if (heroOfferBadge) heroOfferBadge.textContent = S.heroOfferBadge;
@@ -370,6 +387,7 @@
     var offersUpcomingTitle = qs('#offersUpcomingTitle'); if (offersUpcomingTitle) offersUpcomingTitle.textContent = S.offersUpcomingTitle;
     var offersUpcomingDesc = qs('#offersUpcomingDesc'); if (offersUpcomingDesc) offersUpcomingDesc.textContent = S.offersUpcomingDesc;
     var offersOkEl = qs('#offersOkBtn'); if (offersOkEl) offersOkEl.textContent = S.offersOk;
+    if (typeof updateAllBestScoreDisplays === 'function') updateAllBestScoreDisplays(bestScore);
     updateTimeGreeting();
 
     var priceOpts = qs('#priceFilter').options;
@@ -1050,6 +1068,9 @@
   var gameSoundToggle = qs('#gameSoundToggle');
   var gameLeftBtn = qs('#gameLeftBtn');
   var gameRightBtn = qs('#gameRightBtn');
+  var heroGameLaunchStrip = qs('#heroGameLaunchStrip');
+  var heroGamePlayBtn = qs('#heroGamePlayBtn');
+  var gameShareScoreBtn = qs('#gameShareScoreBtn');
 
   var BEST_SCORE_KEY = 'navrang_biryani_catcher_best';
   var SOUND_KEY = 'navrang_biryani_catcher_sound';
@@ -1057,7 +1078,15 @@
   try {
     bestScore = parseInt(localStorage.getItem(BEST_SCORE_KEY), 10) || 0;
   } catch(e){}
-  if (gameBestVal) gameBestVal.textContent = bestScore;
+
+  function updateAllBestScoreDisplays(score){
+    var s = Math.max(0, parseInt(score, 10) || 0);
+    var el1 = qs('#gameBestVal'); if (el1) el1.textContent = s;
+    var el2 = qs('#heroBestScoreVal'); if (el2) el2.textContent = s;
+    var el3 = qs('#filterBestScoreVal'); if (el3) el3.textContent = s;
+    var el4 = qs('#gameOverBestScore'); if (el4) el4.textContent = s;
+  }
+  updateAllBestScoreDisplays(bestScore);
 
   var isSoundMuted = false;
   try {
@@ -1071,17 +1100,23 @@
       var AC = window.AudioContext || window.webkitAudioContext;
       if (AC) audioCtx = new AC();
     }
-    if (audioCtx && audioCtx.state === 'suspended'){
-      audioCtx.resume().catch(function(){});
-    }
     return audioCtx;
+  }
+
+  function unlockAudio(){
+    try {
+      var ctx = getGameAudioContext();
+      if (ctx && ctx.state === 'suspended'){
+        ctx.resume().catch(function(){});
+      }
+    } catch(e){}
   }
 
   function playSoundEffect(type){
     if (isSoundMuted) return;
     try {
       var ctx = getGameAudioContext();
-      if (!ctx) return;
+      if (!ctx || ctx.state !== 'running') return;
       var now = ctx.currentTime;
       var osc = ctx.createOscillator();
       var gain = ctx.createGain();
@@ -1105,6 +1140,16 @@
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
         osc.start(now);
         osc.stop(now + 0.28);
+      } else if (type === 'newrecord'){
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523, now);
+        osc.frequency.setValueAtTime(659, now + 0.08);
+        osc.frequency.setValueAtTime(784, now + 0.16);
+        osc.frequency.setValueAtTime(1046, now + 0.24);
+        gain.gain.setValueAtTime(0.24, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.38);
+        osc.start(now);
+        osc.stop(now + 0.38);
       } else if (type === 'chilli'){
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(140, now);
@@ -1136,6 +1181,9 @@
     { type: 'chilli', emoji: '🌶️', isHazard: true, label: 'Fiery Chilli', weight: 22, speedMult: 1.1 }
   ];
 
+  var CANVAS_VIRTUAL_W = 340;
+  var CANVAS_VIRTUAL_H = 380;
+
   var gameState = {
     running: false,
     score: 0,
@@ -1151,8 +1199,32 @@
     spawnInterval: 1000,
     baseSpeed: 2.2,
     moveLeft: false,
-    moveRight: false
+    moveRight: false,
+    hasPassedPreviousBest: false
   };
+
+  function resizeGameCanvas(){
+    if (!gameCanvas) return;
+    var wrap = qs('#gameCanvasWrap');
+    var rect = wrap ? wrap.getBoundingClientRect() : gameCanvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    
+    if (rect.width > 0 && rect.height > 0){
+      var aspect = rect.height / rect.width;
+      CANVAS_VIRTUAL_H = Math.max(340, Math.min(460, Math.round(CANVAS_VIRTUAL_W * aspect)));
+    } else {
+      CANVAS_VIRTUAL_H = 380;
+    }
+    
+    gameCanvas.width = Math.round(CANVAS_VIRTUAL_W * dpr);
+    gameCanvas.height = Math.round(CANVAS_VIRTUAL_H * dpr);
+    
+    if (gameCtx){
+      gameCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    gameState.potY = CANVAS_VIRTUAL_H - 34;
+    gameState.potX = Math.max(gameState.potW / 2 + 4, Math.min(CANVAS_VIRTUAL_W - gameState.potW / 2 - 4, gameState.potX));
+  }
 
   function updateLivesUI(){
     if (!gameLivesWrap) return;
@@ -1164,6 +1236,7 @@
   }
 
   function resetGame(){
+    resizeGameCanvas();
     gameState.score = 0;
     gameState.lives = 3;
     gameState.items = [];
@@ -1171,10 +1244,14 @@
     gameState.baseSpeed = 2.2;
     gameState.spawnInterval = 1000;
     gameState.lastSpawn = Date.now();
-    gameState.potX = (gameCanvas ? gameCanvas.width : 340) / 2;
+    gameState.hasPassedPreviousBest = false;
+    gameState.potX = CANVAS_VIRTUAL_W / 2;
+    gameState.potY = CANVAS_VIRTUAL_H - 34;
     if (gameScoreVal) gameScoreVal.textContent = '0';
     updateLivesUI();
     if (gameOverOverlay) gameOverOverlay.style.display = 'none';
+    var newRecordBanner = qs('#newRecordBanner');
+    if (newRecordBanner) newRecordBanner.style.display = 'none';
   }
 
   function spawnFoodItem(){
@@ -1190,8 +1267,8 @@
       rand -= FOOD_TYPES[i].weight;
     }
 
-    var margin = 30;
-    var x = margin + Math.random() * (gameCanvas.width - margin * 2);
+    var margin = 28;
+    var x = margin + Math.random() * (CANVAS_VIRTUAL_W - margin * 2);
     gameState.items.push({
       x: x,
       y: -20,
@@ -1223,10 +1300,17 @@
       cancelAnimationFrame(gameState.animId);
       gameState.animId = null;
     }
-    if (gameState.score > bestScore){
+    var isNewRecord = (gameState.score > bestScore && gameState.score > 0);
+    if (isNewRecord){
       bestScore = gameState.score;
       try { localStorage.setItem(BEST_SCORE_KEY, bestScore); } catch(e){}
-      if (gameBestVal) gameBestVal.textContent = bestScore;
+      updateAllBestScoreDisplays(bestScore);
+      playSoundEffect('newrecord');
+      trackEvent('game_new_high_score', bestScore);
+    }
+    var newRecordBanner = qs('#newRecordBanner');
+    if (newRecordBanner){
+      newRecordBanner.style.display = isNewRecord ? 'block' : 'none';
     }
     if (gameOverFinalScore) gameOverFinalScore.textContent = gameState.score;
     if (gameOverBestScore) gameOverBestScore.textContent = bestScore;
@@ -1298,8 +1382,8 @@
   function gameLoop(){
     if (!gameState.running || !gameCtx || !gameCanvas) return;
     var ctx = gameCtx;
-    var W = gameCanvas.width;
-    var H = gameCanvas.height;
+    var W = CANVAS_VIRTUAL_W;
+    var H = CANVAS_VIRTUAL_H;
 
     // Clear Background
     ctx.clearRect(0, 0, W, H);
@@ -1370,8 +1454,16 @@
         } else {
           gameState.score += it.pts;
           if (gameScoreVal) gameScoreVal.textContent = gameState.score;
-          if (it.type === 'star') playSoundEffect('star');
-          else playSoundEffect('catch');
+          
+          if (bestScore > 0 && gameState.score > bestScore && !gameState.hasPassedPreviousBest){
+            gameState.hasPassedPreviousBest = true;
+            addScorePopup('🎉 NEW BEST!', gameState.potX, hitY - 24, '#FFE082');
+            playSoundEffect('newrecord');
+          } else if (it.type === 'star'){
+            playSoundEffect('star');
+          } else {
+            playSoundEffect('catch');
+          }
           addScorePopup('+' + it.pts, currentX, hitY - 10, it.type === 'star' ? '#FFEF8A' : '#76FF03');
         }
         gameState.items.splice(i, 1);
@@ -1424,9 +1516,14 @@
 
   function openGameDialog(){
     if (!gameDialog) return;
+    unlockAudio();
     gameDialog.classList.add('show');
     gameDialog.setAttribute('aria-hidden', 'false');
-    startGame();
+    // Ensure canvas dimensions adapt to mobile screen
+    setTimeout(function(){
+      resizeGameCanvas();
+      startGame();
+    }, 60);
   }
 
   function closeGameDialog(){
@@ -1440,54 +1537,134 @@
     gameDialog.addEventListener('click', closeGameDialog);
     if (gameCard) gameCard.addEventListener('click', function(e){ e.stopPropagation(); });
     if (gameCloseBtn) gameCloseBtn.addEventListener('click', closeGameDialog);
-    if (gameBtn) gameBtn.addEventListener('click', openGameDialog);
-    if (fabGameBtn) fabGameBtn.addEventListener('click', function(){ closeFab(); openGameDialog(); });
-    if (gameRestartBtn) gameRestartBtn.addEventListener('click', function(){ startGame(); });
+    if (gameBtn) gameBtn.addEventListener('click', function(){ unlockAudio(); openGameDialog(); });
+    if (fabGameBtn) fabGameBtn.addEventListener('click', function(){ closeFab(); unlockAudio(); openGameDialog(); });
+    if (gameRestartBtn) gameRestartBtn.addEventListener('click', function(){ unlockAudio(); startGame(); });
+
+    if (heroGameLaunchStrip){
+      heroGameLaunchStrip.addEventListener('click', function(){
+        unlockAudio();
+        openGameDialog();
+        trackEvent('game_open', 'hero_launch_strip');
+      });
+    }
+    if (heroGamePlayBtn){
+      heroGamePlayBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        unlockAudio();
+        openGameDialog();
+        trackEvent('game_open', 'hero_play_btn');
+      });
+    }
+
+    if (gameShareScoreBtn){
+      gameShareScoreBtn.addEventListener('click', function(){
+        var tmpl = S.gameShareToast || '🏆 High Score: {score} pts! Show your screen to your table or waiter!';
+        var msg = tmpl.replace('{score}', bestScore);
+        showToast(msg);
+        trackEvent('game_show_waiter', bestScore);
+      });
+    }
 
     if (gameSoundToggle){
       gameSoundToggle.addEventListener('click', function(){
         isSoundMuted = !isSoundMuted;
         gameSoundToggle.textContent = isSoundMuted ? '🔇' : '🔊';
+        if (!isSoundMuted) unlockAudio();
         try { localStorage.setItem(SOUND_KEY, isSoundMuted ? 'muted' : 'unmuted'); } catch(e){}
       });
     }
 
+    function updatePotFromClientX(clientX){
+      if (!gameCanvas) return;
+      var rect = gameCanvas.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      var scaleX = CANVAS_VIRTUAL_W / rect.width;
+      var x = (clientX - rect.left) * scaleX;
+      gameState.potX = Math.max(gameState.potW / 2 + 4, Math.min(CANVAS_VIRTUAL_W - gameState.potW / 2 - 4, x));
+    }
+
+    function stepMove(dir){
+      var step = 38;
+      if (dir === 'left'){
+        gameState.potX = Math.max(gameState.potW / 2 + 6, gameState.potX - step);
+      } else {
+        gameState.potX = Math.min(CANVAS_VIRTUAL_W - gameState.potW / 2 - 6, gameState.potX + step);
+      }
+    }
+
     if (gameCanvas){
-      var handleTouch = function(e){
+      var onTouch = function(e){
         if (!gameState.running) return;
-        var touch = e.touches ? e.touches[0] : e;
-        var rect = gameCanvas.getBoundingClientRect();
-        var scaleX = gameCanvas.width / rect.width;
-        var x = (touch.clientX - rect.left) * scaleX;
-        gameState.potX = Math.max(gameState.potW / 2 + 4, Math.min(gameCanvas.width - gameState.potW / 2 - 4, x));
-        if (e.preventDefault) e.preventDefault();
+        var touch = (e.touches && e.touches.length > 0) ? e.touches[0] : (e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0] : e);
+        if (touch && typeof touch.clientX === 'number'){
+          updatePotFromClientX(touch.clientX);
+        }
+        if (e.cancelable) e.preventDefault();
       };
-      gameCanvas.addEventListener('touchstart', handleTouch, { passive: false });
-      gameCanvas.addEventListener('touchmove', handleTouch, { passive: false });
-      gameCanvas.addEventListener('mousemove', function(e){
-        if (!gameState.running || e.buttons !== 1) return;
-        var rect = gameCanvas.getBoundingClientRect();
-        var scaleX = gameCanvas.width / rect.width;
-        var x = (e.clientX - rect.left) * scaleX;
-        gameState.potX = Math.max(gameState.potW / 2 + 4, Math.min(gameCanvas.width - gameState.potW / 2 - 4, x));
+      gameCanvas.addEventListener('touchstart', onTouch, { passive: false });
+      gameCanvas.addEventListener('touchmove', onTouch, { passive: false });
+      gameCanvas.addEventListener('pointerdown', function(e){
+        if (!gameState.running) return;
+        updatePotFromClientX(e.clientX);
+        if (e.cancelable) e.preventDefault();
+      });
+      gameCanvas.addEventListener('pointermove', function(e){
+        if (!gameState.running) return;
+        if (e.buttons === 1 || e.pointerType === 'touch'){
+          updatePotFromClientX(e.clientX);
+        }
       });
     }
 
     if (gameLeftBtn){
-      var startL = function(e){ gameState.moveLeft = true; if (e.cancelable) e.preventDefault(); };
-      var endL = function(){ gameState.moveLeft = false; };
+      var lInterval = null;
+      var startL = function(e){
+        unlockAudio();
+        stepMove('left');
+        gameState.moveLeft = true;
+        if (lInterval) clearInterval(lInterval);
+        lInterval = setInterval(function(){
+          if (gameState.moveLeft) gameState.potX = Math.max(gameState.potW / 2 + 6, gameState.potX - 6);
+        }, 25);
+        if (e && e.cancelable) e.preventDefault();
+      };
+      var stopL = function(){
+        gameState.moveLeft = false;
+        if (lInterval){ clearInterval(lInterval); lInterval = null; }
+      };
       gameLeftBtn.addEventListener('pointerdown', startL);
-      gameLeftBtn.addEventListener('pointerup', endL);
-      gameLeftBtn.addEventListener('pointerleave', endL);
-      gameLeftBtn.addEventListener('pointercancel', endL);
+      gameLeftBtn.addEventListener('pointerup', stopL);
+      gameLeftBtn.addEventListener('pointerleave', stopL);
+      gameLeftBtn.addEventListener('pointercancel', stopL);
+      gameLeftBtn.addEventListener('touchstart', startL, { passive: false });
+      gameLeftBtn.addEventListener('touchend', stopL);
+      gameLeftBtn.addEventListener('touchcancel', stopL);
     }
+
     if (gameRightBtn){
-      var startR = function(e){ gameState.moveRight = true; if (e.cancelable) e.preventDefault(); };
-      var endR = function(){ gameState.moveRight = false; };
+      var rInterval = null;
+      var startR = function(e){
+        unlockAudio();
+        stepMove('right');
+        gameState.moveRight = true;
+        if (rInterval) clearInterval(rInterval);
+        rInterval = setInterval(function(){
+          if (gameState.moveRight) gameState.potX = Math.min(CANVAS_VIRTUAL_W - gameState.potW / 2 - 6, gameState.potX + 6);
+        }, 25);
+        if (e && e.cancelable) e.preventDefault();
+      };
+      var stopR = function(){
+        gameState.moveRight = false;
+        if (rInterval){ clearInterval(rInterval); rInterval = null; }
+      };
       gameRightBtn.addEventListener('pointerdown', startR);
-      gameRightBtn.addEventListener('pointerup', endR);
-      gameRightBtn.addEventListener('pointerleave', endR);
-      gameRightBtn.addEventListener('pointercancel', endR);
+      gameRightBtn.addEventListener('pointerup', stopR);
+      gameRightBtn.addEventListener('pointerleave', stopR);
+      gameRightBtn.addEventListener('pointercancel', stopR);
+      gameRightBtn.addEventListener('touchstart', startR, { passive: false });
+      gameRightBtn.addEventListener('touchend', stopR);
+      gameRightBtn.addEventListener('touchcancel', stopR);
     }
 
     window.addEventListener('keydown', function(e){
@@ -1503,6 +1680,12 @@
         gameState.moveLeft = false;
       } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D'){
         gameState.moveRight = false;
+      }
+    });
+
+    window.addEventListener('resize', function(){
+      if (gameState.running){
+        resizeGameCanvas();
       }
     });
   }
