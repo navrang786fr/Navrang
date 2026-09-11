@@ -206,6 +206,96 @@
     font-weight:700;opacity:.85;
   }
 
+  /* ---------- Instagram 5% Offer Top Highlight Banner ---------- */
+  .insta-offer-highlight{
+    padding:12px 14px 6px;
+  }
+  .insta-card{
+    background:#FFFFFF;border-radius:20px;
+    box-shadow:0 8px 26px rgba(10,42,18,0.08), 0 2px 6px rgba(212,155,34,0.1);
+    border:1.5px solid rgba(212,155,34,0.35);overflow:hidden;
+    transition:box-shadow .2s ease, transform .2s ease;
+  }
+  .insta-media{
+    position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;
+    background:#081A0C;cursor:pointer;
+  }
+  .insta-img{
+    width:100%;height:100%;object-fit:cover;display:block;
+    transition:transform .4s var(--ease);
+  }
+  .insta-media:hover .insta-img{transform:scale(1.03);}
+  .insta-media-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 40%, rgba(10,42,18,0.45) 100%);
+    pointer-events:none;
+  }
+  .insta-pill-exclusive{
+    position:absolute;top:10px;left:10px;
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(10,42,18,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,0.25);border-radius:20px;
+    padding:4px 10px;font-size:10px;font-weight:800;color:#FFF;
+    letter-spacing:0.8px;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,0.3);
+  }
+  .insta-pill-icon{width:14px;height:14px;display:flex;align-items:center;justify-content:center;}
+  .insta-pill-icon img{width:100%;height:100%;object-fit:contain;}
+  .insta-pill-discount{
+    position:absolute;top:10px;right:10px;
+    background:linear-gradient(135deg, #FF3366, #FD1D1D 45%, #F77737 100%);
+    color:#FFF;border-radius:12px;padding:5px 9px;text-align:center;
+    box-shadow:0 3px 12px rgba(253,29,29,0.4);border:1px solid rgba(255,255,255,0.3);
+    line-height:1;display:flex;flex-direction:column;align-items:center;
+  }
+  .discount-flair{font-size:9px;margin-bottom:1px;}
+  .discount-bold{font-size:13px;font-weight:900;letter-spacing:.3px;}
+  .discount-sub{font-size:8px;font-weight:800;opacity:.9;letter-spacing:.5px;margin-top:1px;}
+
+  .insta-card-body{padding:14px 14px 12px;}
+  .insta-title-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
+  .insta-icon-badge{
+    width:36px;height:36px;border-radius:10px;flex:0 0 auto;
+    background:linear-gradient(135deg, #833AB4, #FD1D1D 50%, #FCB045);
+    padding:6px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 8px rgba(253,29,29,0.25);
+  }
+  .insta-icon-badge img{width:100%;height:100%;object-fit:contain;}
+  .insta-title-col{flex:1;}
+  .insta-headline{
+    font-family:'Yatra One',cursive;font-size:18px;color:var(--maroon-deep);
+    margin:0 0 3px;line-height:1.2;
+  }
+  .insta-subline{
+    font-size:12px;color:var(--ink-secondary);margin:0;line-height:1.45;
+  }
+  .insta-subline strong{color:var(--maroon-light);}
+
+  .insta-actions-row{display:flex;gap:8px;margin-bottom:10px;}
+  .insta-follow-cta{
+    flex:1.4;background:linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #F77737 100%);
+    color:#fff;text-decoration:none;border-radius:12px;padding:9px 12px;
+    font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;
+    box-shadow:0 3px 10px rgba(253,29,29,0.25);transition:all .15s ease;
+  }
+  .cta-insta-icon{width:16px;height:16px;object-fit:contain;}
+  .cta-arrow-icon{width:13px;height:13px;flex:0 0 auto;}
+  .insta-follow-cta:active{transform:scale(.97);}
+  .insta-details-btn{
+    flex:1;background:rgba(18,64,28,0.08);color:var(--maroon-deep);border:1px solid rgba(18,64,28,0.18);
+    border-radius:12px;padding:9px 10px;font-size:12px;font-weight:700;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;
+    transition:all .15s ease;
+  }
+  .insta-details-btn svg{width:14px;height:14px;}
+  .insta-details-btn:active{background:rgba(18,64,28,0.14);transform:scale(.97);}
+
+  .insta-hint-strip{
+    display:flex;align-items:center;gap:8px;
+    background:#FFFDF7;border:1px dashed var(--turmeric-gold);border-radius:10px;
+    padding:8px 12px;font-size:11.5px;color:var(--maroon-deep);font-weight:600;line-height:1.35;
+  }
+  .insta-hint-icon{font-size:15px;flex:0 0 auto;}
+
   /* ---------- Sticky Subheader (Search, Multi-Filter & Categories) ---------- */
   .sticky-subheader{
     position:sticky;top:0;z-index:35;
@@ -324,16 +414,21 @@
   }
   .price-filter:focus{box-shadow:0 0 0 3px rgba(18,64,28,0.12);}
 
-  .surprise-btn{
-    flex:0 0 auto;display:flex;align-items:center;gap:5px;
-    border:1.4px solid var(--turmeric-gold);color:#7D5400;
-    border-radius:11px;padding:7px 11px;font-size:12px;font-weight:700;
-    background:linear-gradient(135deg, #FFF9EC, #FDF0D5);cursor:pointer;white-space:nowrap;
-    box-shadow:var(--shadow-xs);
-    transition:all .16s ease;
+  .game-btn{
+    flex:0 0 auto;display:flex;align-items:center;gap:6px;
+    border:1.5px solid var(--turmeric-gold);color:#7D5400;
+    border-radius:11px;padding:7px 12px;font-size:12px;font-weight:700;
+    background:linear-gradient(135deg, #FFF8E7 0%, #FEE8B7 100%);
+    cursor:pointer;white-space:nowrap;box-shadow:var(--shadow-xs);
+    transition:all .16s ease;position:relative;overflow:hidden;
   }
-  .surprise-btn svg{width:13px;height:13px;flex:0 0 auto;color:var(--turmeric-gold);}
-  .surprise-btn:active{transform:scale(.95);}
+  .game-btn:active{transform:scale(.95);}
+  .game-btn-icon{font-size:13px;line-height:1;display:inline-block;animation:game-btn-wobble 2s ease-in-out infinite;}
+  @keyframes game-btn-wobble{
+    0%,100%{transform:rotate(0deg);}
+    25%{transform:rotate(-10deg) scale(1.1);}
+    75%{transform:rotate(10deg) scale(1.1);}
+  }
 
   /* ---------- Category Carousel (Horizontal Scroll Tab Bar) ---------- */
   .chip-row{
@@ -693,34 +788,103 @@
   /* Special Offers Dialog */
   .offers-dialog{
     position:fixed;inset:0;z-index:96;
-    background:rgba(6, 18, 9, 0.74);
+    background:rgba(6, 18, 9, 0.76);
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    display:flex;align-items:center;justify-content:center;padding:24px;
+    display:flex;align-items:center;justify-content:center;padding:16px;
     opacity:0;pointer-events:none;transition:opacity .24s var(--ease);
   }
   .offers-dialog.show{opacity:1;pointer-events:auto;}
   .offers-card{
-    position:relative;max-width:350px;width:100%;background:#FFFFFF;border-radius:22px;
-    box-shadow:var(--shadow-sheet);padding:32px 24px 24px;text-align:center;
+    position:relative;max-width:min(94vw,420px);width:100%;max-height:92vh;
+    background:#FFFFFF;border-radius:24px;box-shadow:var(--shadow-sheet);
+    padding:24px 20px 20px;display:flex;flex-direction:column;
     transform:scale(.95);transition:transform .24s var(--ease);
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    border:1.5px solid rgba(212,155,34,0.3);
   }
   .offers-dialog.show .offers-card{transform:scale(1);}
+  .offers-close-btn{
+    position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;
+    background:rgba(22,35,26,0.08);border:none;color:var(--ink);font-size:13px;
+    font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:background .15s ease;z-index:2;
+  }
+  .offers-close-btn:hover{background:rgba(22,35,26,0.15);}
+  .offers-header{text-align:center;margin-bottom:16px;}
   .offers-icon{
-    width:66px;height:66px;border-radius:50%;margin:0 auto 16px;
+    width:54px;height:54px;border-radius:50%;margin:0 auto 10px;
     background:linear-gradient(135deg,var(--turmeric-gold),#A3700C);color:#fff;
     display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);
   }
-  .offers-icon svg{width:32px;height:32px;}
-  .offers-card h3{
-    font-family:'Yatra One',cursive;font-size:24px;color:var(--maroon-deep);margin:0 0 4px;
+  .offers-icon svg{width:26px;height:26px;}
+  .offers-header h3{
+    font-family:'Yatra One',cursive;font-size:22px;color:var(--maroon-deep);margin:0 0 3px;
   }
   .offers-sub{
-    font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
-    color:var(--turmeric);margin:0 0 14px;
+    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
+    color:var(--turmeric);margin:0;
   }
-  .offers-msg{
-    font-size:13.5px;line-height:1.6;color:var(--ink-secondary);margin:0 0 22px;
+
+  /* Active Deal Card */
+  .offers-deal-card{
+    background:#FFFDF7;border:1.5px solid rgba(212,155,34,0.35);border-radius:18px;
+    padding:16px 14px;margin-bottom:14px;position:relative;
+    box-shadow:0 3px 12px rgba(212,155,34,0.07);
   }
+  .offers-deal-badge{
+    display:inline-flex;align-items:center;gap:4px;
+    background:linear-gradient(135deg,#FF3366,#FD1D1D);color:#fff;
+    padding:3px 8px;border-radius:10px;font-size:9.5px;font-weight:800;letter-spacing:.6px;
+    margin-bottom:8px;box-shadow:0 2px 6px rgba(253,29,29,0.3);
+  }
+  .offers-deal-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .offers-insta-emblem{
+    width:38px;height:38px;border-radius:10px;
+    background:linear-gradient(135deg, #833AB4, #FD1D1D 50%, #FCB045);
+    padding:6px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+    box-shadow:0 3px 8px rgba(253,29,29,0.25);
+  }
+  .offers-insta-emblem img{width:100%;height:100%;object-fit:contain;}
+  .offers-deal-headings h4{
+    font-size:17px;font-weight:800;color:var(--maroon-deep);margin:0;line-height:1.2;
+  }
+  .offers-deal-for{font-size:11.5px;color:var(--turmeric);font-weight:700;}
+  .offers-deal-desc{font-size:12.5px;color:var(--ink-secondary);line-height:1.45;margin:0 0 12px;}
+
+  .offers-steps-list{
+    background:#FFFFFF;border:1px solid var(--rule-strong);border-radius:12px;
+    padding:10px 12px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;
+  }
+  .offers-step-item{display:flex;align-items:flex-start;gap:8px;}
+  .step-num{
+    width:18px;height:18px;border-radius:50%;background:var(--maroon);color:#fff;
+    font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+    margin-top:1px;
+  }
+  .step-text{font-size:12px;color:var(--ink);line-height:1.35;}
+  .step-text strong{color:var(--maroon-deep);}
+
+
+  .offers-modal-insta-btn{
+    width:100%;background:linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #F77737 100%);
+    color:#fff;text-decoration:none;border-radius:12px;padding:11px;font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 10px rgba(253,29,29,0.25);
+    margin-bottom:10px;transition:all .15s ease;
+  }
+  .offers-modal-insta-btn img{width:16px;height:16px;object-fit:contain;}
+  .offers-modal-insta-btn svg{width:14px;height:14px;}
+  .offers-modal-insta-btn:active{transform:scale(.98);}
+  .offers-terms-note{font-size:10.5px;color:var(--ink-muted);margin:0;line-height:1.4;text-align:center;}
+
+  /* Upcoming Teaser */
+  .offers-upcoming-card{
+    display:flex;align-items:center;gap:10px;background:#F9F6EE;border-radius:14px;
+    padding:10px 12px;margin-bottom:14px;border:1px solid var(--rule);
+  }
+  .upcoming-icon{font-size:22px;flex:0 0 auto;}
+  .upcoming-info h5{font-size:12.5px;color:var(--maroon-deep);margin:0 0 2px;font-weight:700;}
+  .upcoming-info p{font-size:11px;color:var(--ink-secondary);margin:0;line-height:1.35;}
+
   .offers-ok-btn{
     width:100%;background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));
     color:#fff;border:none;padding:12px;border-radius:12px;font-size:14px;
@@ -728,98 +892,100 @@
   }
   .offers-ok-btn:active{transform:scale(.98);}
 
-  /* "Can't Decide? Surprise Me!" Roulette Modal */
-  .surprise-dialog{
+  /* "While You Wait" Biryani Catcher Game Modal */
+  .game-dialog{
     position:fixed;inset:0;z-index:96;
-    background:rgba(6, 18, 9, 0.74);
+    background:rgba(6, 18, 9, 0.82);
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    display:flex;align-items:center;justify-content:center;padding:16px;
+    display:flex;align-items:center;justify-content:center;padding:12px;
     opacity:0;pointer-events:none;transition:opacity .24s var(--ease);
   }
-  .surprise-dialog.show{opacity:1;pointer-events:auto;}
-  .surprise-card{
-    position:relative;max-width:min(92vw,430px);width:100%;max-height:90vh;
-    background:var(--paper);border-radius:22px;box-shadow:var(--shadow-sheet);
+  .game-dialog.show{opacity:1;pointer-events:auto;}
+  .game-card{
+    position:relative;max-width:min(94vw,420px);width:100%;max-height:94vh;
+    background:#FFFFFF;border-radius:24px;box-shadow:var(--shadow-sheet);
     display:flex;flex-direction:column;transform:scale(.96);transition:transform .24s var(--ease);
-    overflow:hidden;
+    overflow:hidden;border:1.5px solid rgba(212,155,34,0.3);
   }
-  .surprise-dialog.show .surprise-card{transform:scale(1);}
-  .surprise-card-body{
-    min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-    padding:24px 20px 20px;text-align:center;
+  .game-dialog.show .game-card{transform:scale(1);}
+  .game-header{
+    padding:14px 16px 10px;background:linear-gradient(180deg,#FDFBF6 0%,#F6EEDD 100%);
+    border-bottom:1px solid var(--rule);flex:0 0 auto;
   }
-  .surprise-icon{
-    width:62px;height:62px;border-radius:50%;margin:0 auto 14px;
-    background:linear-gradient(135deg,var(--turmeric-gold),#A3700C);color:#fff;
-    display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);
+  .game-title-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .game-head-icon{font-size:24px;flex:0 0 auto;}
+  .game-header h3{
+    font-family:'Yatra One',cursive;font-size:19px;color:var(--maroon-deep);margin:0;line-height:1.15;
   }
-  .surprise-icon svg{width:30px;height:30px;}
-  .surprise-header h3{
-    font-family:'Yatra One',cursive;font-size:22px;color:var(--maroon-deep);margin:0 0 4px;letter-spacing:.3px;
+  .game-sub{
+    font-size:11px;color:var(--ink-secondary);margin:2px 0 0;line-height:1.3;
   }
-  .surprise-sub{
-    font-size:12px;color:var(--ink-secondary);margin:0 0 16px;line-height:1.45;
+  .game-stats-bar{
+    display:flex;align-items:center;justify-content:space-between;gap:6px;
   }
-  .surprise-filter-tabs{
-    display:inline-flex;background:rgba(22,35,26,0.08);padding:3px;border-radius:20px;
-    gap:4px;margin-bottom:14px;
+  .stat-pill{
+    display:inline-flex;align-items:center;gap:4px;background:#fff;
+    border:1.2px solid var(--rule-strong);border-radius:14px;padding:3px 8px;
+    font-size:11px;box-shadow:var(--shadow-xs);
   }
-  .surprise-tab-btn{
-    border:none;background:transparent;padding:6px 14px;border-radius:16px;
-    font-size:11.5px;font-weight:700;color:var(--ink-secondary);cursor:pointer;
-    transition:all .15s ease;font-family:inherit;
+  .stat-label{font-weight:600;color:var(--ink-secondary);font-size:10px;}
+  .stat-val{font-weight:800;color:var(--maroon-deep);font-family:'IBM Plex Mono',monospace;}
+  .lives-pill{letter-spacing:1px;font-size:11px;}
+  .game-sound-toggle{
+    border:none;background:#fff;border:1px solid var(--rule-strong);border-radius:50%;
+    width:28px;height:28px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--shadow-xs);transition:transform .15s ease;
   }
-  .surprise-tab-btn.active{
-    background:#fff;color:var(--maroon-deep);box-shadow:0 1px 4px rgba(0,0,0,0.12);
+  .game-sound-toggle:active{transform:scale(.9);}
+  .game-canvas-wrap{
+    position:relative;background:#0D1F11;width:100%;flex:1 1 auto;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
   }
-  .surprise-result-wrap{
-    background:#FFFFFF;border-radius:16px;border:1.4px solid var(--rule-strong);
-    padding:14px;box-shadow:var(--shadow-sm);margin-bottom:16px;
-    transition:transform .2s ease, opacity .2s ease;
+  #gameCanvas{
+    display:block;max-width:100%;height:auto;touch-action:none;cursor:pointer;
   }
-  .surprise-result-wrap.rolling{
-    animation:roulette-spin .32s ease-in-out infinite;
+  .game-overlay{
+    position:absolute;inset:0;background:rgba(8,26,12,0.88);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;padding:16px;z-index:10;
   }
-  @keyframes roulette-spin{
-    0%{transform:scale(1);}
-    50%{transform:scale(0.96);opacity:0.75;}
-    100%{transform:scale(1);}
+  .game-over-box{
+    background:#FFFFFF;border-radius:20px;padding:22px 18px;max-width:320px;width:100%;
+    text-align:center;box-shadow:0 12px 36px rgba(0,0,0,0.35);border:2px solid var(--turmeric-gold);
   }
-  .surprise-dish-img{
-    width:100%;height:155px;object-fit:cover;border-radius:12px;
-    background:var(--paper-soft);display:block;margin-bottom:10px;
+  .game-over-trophy{font-size:38px;margin-bottom:4px;animation:trophy-bounce 1s infinite alternate;}
+  @keyframes trophy-bounce{0%{transform:translateY(0) scale(1);}100%{transform:translateY(-5px) scale(1.08);}}
+  .game-over-title{
+    font-family:'Yatra One',cursive;font-size:21px;color:var(--maroon-deep);margin:0 0 6px;
   }
-  .surprise-dish-meta{
-    display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px;
+  .game-over-score-text{font-size:14px;color:var(--ink);margin:0 0 3px;}
+  .game-over-score-text strong{color:var(--turmeric-gold);font-size:22px;font-family:'IBM Plex Mono',monospace;}
+  .game-over-best-text{font-size:12px;color:var(--ink-secondary);margin:0 0 10px;}
+  .game-chef-msg{
+    font-size:11.5px;color:var(--maroon);background:#F9F6ED;border-radius:10px;
+    padding:8px 10px;margin:0 0 14px;line-height:1.4;font-weight:600;border:1px dashed var(--turmeric-gold);
   }
-  .surprise-dish-name{
-    font-size:16.5px;font-weight:700;color:var(--ink);margin:0 0 3px;
+  .game-restart-btn{
+    width:100%;background:linear-gradient(135deg,var(--turmeric-gold),#A76E08);color:#fff;
+    border:none;padding:11px;border-radius:12px;font-size:13.5px;font-weight:700;
+    cursor:pointer;box-shadow:0 3px 10px rgba(212,155,34,0.35);transition:all .15s ease;
+    display:flex;align-items:center;justify-content:center;gap:6px;
   }
-  .surprise-dish-cat{
-    font-size:12px;color:var(--turmeric);font-weight:700;margin-bottom:6px;
+  .game-restart-btn:active{transform:scale(.97);}
+  .game-touch-controls{
+    padding:8px 12px 10px;background:#F8F5ED;border-top:1px solid var(--rule);
+    display:flex;align-items:center;justify-content:space-between;gap:10px;flex:0 0 auto;
   }
-  .surprise-dish-price{
-    font-size:16px;font-weight:700;color:var(--maroon-light);
+  .touch-btn{
+    flex:1;background:#fff;border:1.5px solid var(--rule-strong);border-radius:12px;
+    padding:10px 12px;display:flex;align-items:center;justify-content:center;gap:6px;
+    font-size:12.5px;font-weight:700;color:var(--maroon-deep);cursor:pointer;
+    box-shadow:var(--shadow-xs);user-select:none;-webkit-user-select:none;touch-action:manipulation;
+    transition:all .12s ease;
   }
-  .surprise-actions{
-    display:flex;gap:8px;
-  }
-  .surprise-spin-btn{
-    flex:1;background:linear-gradient(135deg,var(--turmeric-gold),#B37D12);
-    color:#fff;border:none;padding:12px 14px;border-radius:12px;font-size:13.5px;
-    font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:all .15s ease;
-    display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;
-  }
-  .surprise-spin-btn:hover:not(:disabled){box-shadow:var(--shadow-md);transform:translateY(-1px);}
-  .surprise-spin-btn:active:not(:disabled){transform:scale(.98);}
-  .surprise-view-btn{
-    flex:1;background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));
-    color:#fff;border:none;padding:12px 14px;border-radius:12px;font-size:13.5px;
-    font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:all .15s ease;
-    display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;
-  }
-  .surprise-view-btn:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
-  .surprise-view-btn:active{transform:scale(.98);}
+  .touch-btn svg{width:16px;height:16px;}
+  .touch-btn:active{background:var(--turmeric-soft);border-color:var(--turmeric-gold);transform:scale(.95);}
+  .touch-hint{font-size:10px;color:var(--ink-muted);font-weight:600;text-align:center;white-space:nowrap;}
 
   /* Group Split Bill Calculator Dialog */
   .split-dialog{
@@ -1094,7 +1260,6 @@
   .fab-stack.open .fab-item:nth-child(4){transition-delay:.04s;}
   .fab-stack.open .fab-item:nth-child(5){transition-delay:0s;}
   .fab-split .fab-item-btn{background:linear-gradient(135deg,#1E823C,#0F5324);}
-  .fab-surprise .fab-item-btn{background:linear-gradient(135deg,var(--turmeric-gold),#9E6B08);}
 
   .fab-item-label{
     background:var(--maroon-deep);color:#fff;font-size:12px;font-weight:700;
@@ -1111,6 +1276,7 @@
   .fab-item-btn svg{width:20px;height:20px;flex:0 0 auto;}
   .fab-item-btn img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;}
   .fab-offers .fab-item-btn{background:linear-gradient(135deg,var(--turmeric-gold),#8A5E0C);}
+  .fab-game .fab-item-btn{background:linear-gradient(135deg,#2B5A8F,#12335A);font-size:20px;}
   .fab-rating .fab-item-btn{background:linear-gradient(135deg,var(--turmeric),var(--maroon-deep));}
   .fab-insta .fab-item-btn{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);padding:9px;}
   .fab-item-btn:active{transform:scale(.92);}
@@ -1131,10 +1297,10 @@
 
   /* ---------- Responsive Bottom-Sheet on Mobile ---------- */
   @media (max-width:600px){
-    .rate-dialog, .image-lightbox, .offers-dialog, .surprise-dialog, .split-dialog{
+    .rate-dialog, .image-lightbox, .offers-dialog, .game-dialog, .split-dialog{
       align-items:flex-end;padding:0;
     }
-    .rate-card, .lightbox-card, .offers-card, .surprise-card, .split-card{
+    .rate-card, .lightbox-card, .offers-card, .game-card, .split-card{
       max-width:100% !important;border-radius:24px 24px 0 0 !important;
       transform:translateY(100%) !important;
       padding-bottom:max(20px, env(safe-area-inset-bottom)) !important;
@@ -1142,7 +1308,7 @@
     .rate-dialog.show .rate-card,
     .image-lightbox.show .lightbox-card,
     .offers-dialog.show .offers-card,
-    .surprise-dialog.show .surprise-card,
+    .game-dialog.show .game-card,
     .split-dialog.show .split-card{
       transform:translateY(0) !important;
     }
@@ -1402,7 +1568,7 @@
       color: #000 !important;
     }
     .app-header, .search-wrap, .category-nav, .cart-bar, .bottom-bar,
-    .fab-stack, .fab-trigger, .cart-drawer, .dish-dialog, .surprise-dialog,
+    .fab-stack, .fab-trigger, .cart-drawer, .dish-dialog, .game-dialog,
     .toast, .splash-screen, .lightbox-close, .split-toast,
     button, .split-presets, .people-pills, .stepper-btn, .split-actions, .sheet-handle {
       display: none !important;
@@ -1593,6 +1759,58 @@
     <div class="tag" id="heroTag">Scan · Browse · Order</div>
   </div>
 
+  <!-- Top Highlight Offer Banner: Instagram 5% OFF -->
+  <section class="insta-offer-highlight" id="instaOfferHighlight" aria-label="Instagram Special Offer">
+    <div class="insta-card">
+      <!-- Media Header with Rich Food Banner & Overlay Badges -->
+      <div class="insta-media" id="instaBannerMedia" role="button" tabindex="0" aria-label="View 5% Off Instagram Offer details">
+        <img src="images/app/instagram-offer-banner.jpg" alt="Instagram 5% Discount Offer - Navrang Restaurant" class="insta-img" loading="eager" fetchpriority="high">
+        <div class="insta-media-overlay"></div>
+        <div class="insta-pill-exclusive">
+          <span class="insta-pill-icon"><img src="images/app/instagram.png" alt=""></span>
+          <span id="heroOfferBadge">INSTAGRAM EXCLUSIVE</span>
+        </div>
+        <div class="insta-pill-discount">
+          <span class="discount-flair">🔥</span>
+          <span class="discount-bold">5% OFF</span>
+          <span class="discount-sub">TOTAL BILL</span>
+        </div>
+      </div>
+
+      <!-- Card Content -->
+      <div class="insta-card-body">
+        <div class="insta-title-row">
+          <div class="insta-icon-badge">
+            <img src="images/app/instagram.png" alt="Instagram">
+          </div>
+          <div class="insta-title-col">
+            <h2 class="insta-headline" id="heroOfferTitle">Follow Us &amp; Get 5% OFF!</h2>
+            <p class="insta-subline" id="heroOfferDesc">Follow <strong>@navrang786fr</strong> on Instagram &amp; show your screen to the waiter or cashier during billing.</p>
+          </div>
+        </div>
+
+        <!-- Interactive Action Buttons -->
+        <div class="insta-actions-row">
+          <a href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" class="insta-follow-cta" id="heroOfferFollowBtn" aria-label="Follow @navrang786fr on Instagram">
+            <img src="images/app/instagram.png" alt="" class="cta-insta-icon">
+            <span id="heroOfferFollowText">Follow @navrang786fr</span>
+            <svg class="cta-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+          <button type="button" class="insta-details-btn" id="heroOfferDetailsBtn" aria-label="View offer details and terms">
+            <span id="heroOfferDetailsText">Offer Details</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          </button>
+        </div>
+
+        <!-- How to Claim Hint Strip -->
+        <div class="insta-hint-strip">
+          <span class="insta-hint-icon">📱</span>
+          <span id="heroOfferTip">Show your Instagram follow screen to your waiter or cashier during billing to claim 5% OFF!</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Sticky Subheader with Search, Quick Filters & Category Carousel -->
   <div class="sticky-subheader" id="stickySubheader">
     <div class="search-bar">
@@ -1619,9 +1837,9 @@
           <option value="200-300">₹200 – ₹300</option>
           <option value="300-999999">₹300+</option>
         </select>
-        <button class="surprise-btn" id="surpriseBtn" type="button" aria-label="Surprise Me!">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.6l-6.3 4.4L8 13.8 2 9.4h7.6z"/></svg>
-          <span id="surpriseBtnLabel">Surprise Me</span>
+        <button class="game-btn" id="gameBtn" type="button" aria-label="Play game while waiting for food">
+          <span class="game-btn-icon">🎮</span>
+          <span id="gameBtnLabel">Play &amp; Wait</span>
         </button>
       </div>
     </div>
@@ -1708,55 +1926,141 @@
   </div>
 </div>
 
-<!-- Special Offers "Coming Soon" Modal -->
+<!-- Special Offers Modal -->
 <div class="offers-dialog" id="offersDialog" role="dialog" aria-label="Special Offers" aria-hidden="true">
   <div class="offers-card" id="offersCard">
     <div class="sheet-handle" aria-hidden="true"></div>
-    <div class="offers-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C10 2 12 5 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C14 2 12 5 12 7z"/></svg>
+    <button class="offers-close-btn" id="offersCloseBtn" type="button" aria-label="Close offers dialog">✕</button>
+    
+    <div class="offers-header">
+      <div class="offers-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C10 2 12 5 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C14 2 12 5 12 7z"/></svg>
+      </div>
+      <h3 id="offersTitle">Special Offers &amp; Deals</h3>
+      <p class="offers-sub" id="offersSub">Exclusive Dining Perks</p>
     </div>
-    <h3 id="offersTitle">Special Offers</h3>
-    <p class="offers-sub" id="offersSub">Coming Soon</p>
-    <p class="offers-msg" id="offersMsg">We're preparing exclusive deals and combo offers just for you. Check back soon — good things are on the way!</p>
+
+    <!-- Active Deal Card: Instagram 5% OFF -->
+    <div class="offers-deal-card">
+      <div class="offers-deal-badge" id="offersActiveBadge">
+        <span class="badge-fire">🔥</span>
+        <span>ACTIVE OFFER</span>
+      </div>
+      
+      <div class="offers-deal-top">
+        <div class="offers-insta-emblem">
+          <img src="images/app/instagram.png" alt="Instagram">
+        </div>
+        <div class="offers-deal-headings">
+          <h4 id="offersDealTitle">5% OFF Total Bill</h4>
+          <span class="offers-deal-for" id="offersDealFor">For all Instagram Followers</span>
+        </div>
+      </div>
+
+      <p class="offers-deal-desc" id="offersDealDesc">Follow <strong>@navrang786fr</strong> on Instagram and get an instant 5% discount deducted from your total food bill!</p>
+
+      <div class="offers-steps-list">
+        <div class="offers-step-item">
+          <span class="step-num">1</span>
+          <span class="step-text" id="offersStep1">Follow <strong>@navrang786fr</strong> on Instagram</span>
+        </div>
+        <div class="offers-step-item">
+          <span class="step-num">2</span>
+          <span class="step-text" id="offersStep2">Show your following profile screen to waiter or cashier</span>
+        </div>
+        <div class="offers-step-item">
+          <span class="step-num">3</span>
+          <span class="step-text" id="offersStep3">Enjoy flat 5% instant discount on your total bill!</span>
+        </div>
+      </div>
+
+
+      <a href="https://www.instagram.com/navrang786fr/" target="_blank" rel="noopener" class="offers-modal-insta-btn" id="offersModalInstaBtn">
+        <img src="images/app/instagram.png" alt="">
+        <span id="offersModalInstaText">Open Instagram @navrang786fr</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+
+      <p class="offers-terms-note" id="offersTermsNote">* Valid on all Dine-In &amp; Takeaway bills. Show screen to waiter/cashier during ordering or billing.</p>
+    </div>
+
+    <!-- Upcoming Teaser -->
+    <div class="offers-upcoming-card">
+      <div class="upcoming-icon">🍛</div>
+      <div class="upcoming-info">
+        <h5 id="offersUpcomingTitle">More Exciting Deals Coming!</h5>
+        <p id="offersUpcomingDesc">Weekend Biryani combos &amp; loyalty treats are in the kitchen for you.</p>
+      </div>
+    </div>
+
     <button class="offers-ok-btn" id="offersOkBtn" type="button">Got it</button>
   </div>
 </div>
 
-<!-- "Can't Decide? Surprise Me!" Food Roulette Modal -->
-<div class="surprise-dialog" id="surpriseDialog" role="dialog" aria-label="Surprise Me Food Roulette" aria-hidden="true">
-  <div class="surprise-card" id="surpriseCard">
+<!-- "While You Wait" Biryani Catcher Mini-Game Modal -->
+<div class="game-dialog" id="gameDialog" role="dialog" aria-label="Play Game While Waiting For Food" aria-hidden="true">
+  <div class="game-card" id="gameCard">
     <div class="sheet-handle" aria-hidden="true"></div>
-    <button class="lightbox-close" id="surpriseClose" type="button" aria-label="Close">✕</button>
-    <div class="surprise-card-body">
-      <div class="surprise-header">
-        <div class="surprise-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.6l-6.3 4.4L8 13.8 2 9.4h7.6z"/></svg>
+    <button class="lightbox-close" id="gameCloseBtn" type="button" aria-label="Close game">✕</button>
+    
+    <div class="game-header">
+      <div class="game-title-row">
+        <span class="game-head-icon">🎮</span>
+        <div>
+          <h3 id="gameModalTitle">Biryani Catcher</h3>
+          <p class="game-sub" id="gameModalSub">Chef is preparing your food! Catch dishes &amp; dodge the chillies 🌶️</p>
         </div>
-        <h3 id="surpriseTitle">Can't Decide? Surprise Me!</h3>
-        <p class="surprise-sub" id="surpriseSub">Spin the wheel to discover your next delicious craving</p>
       </div>
-      <div class="surprise-filter-tabs" id="surpriseTabs" role="tablist">
-        <button type="button" class="surprise-tab-btn active" data-diet="all" id="surpriseTabAll">All</button>
-        <button type="button" class="surprise-tab-btn" data-diet="nonveg" id="surpriseTabNonveg">Non-Veg</button>
-        <button type="button" class="surprise-tab-btn" data-diet="veg" id="surpriseTabVeg">Veg</button>
-      </div>
-      <div class="surprise-result-wrap" id="surpriseResultWrap">
-        <img class="surprise-dish-img" id="surpriseDishImg" src="" alt="" loading="lazy">
-        <div class="surprise-dish-meta">
-          <span class="diet-badge" id="surpriseDietBadge"></span>
-          <span class="surprise-dish-cat" id="surpriseDishCat"></span>
+
+      <!-- Live Game Stats Bar -->
+      <div class="game-stats-bar">
+        <div class="stat-pill score-pill">
+          <span class="stat-label" id="gameScoreLabel">Score</span>
+          <span class="stat-val" id="gameScoreVal">0</span>
         </div>
-        <div class="surprise-dish-name" id="surpriseDishName"></div>
-        <div class="surprise-dish-price" id="surpriseDishPrice"></div>
+        <div class="stat-pill best-pill">
+          <span class="stat-label" id="gameBestLabel">Best</span>
+          <span class="stat-val" id="gameBestVal">0</span>
+        </div>
+        <div class="stat-pill lives-pill" id="gameLivesWrap" title="3 Lives remaining">
+          <span class="life-heart">❤️</span>
+          <span class="life-heart">❤️</span>
+          <span class="life-heart">❤️</span>
+        </div>
+        <button type="button" class="game-sound-toggle" id="gameSoundToggle" title="Sound On/Off" aria-label="Toggle sound">🔊</button>
       </div>
-      <div class="surprise-actions">
-        <button type="button" class="surprise-spin-btn" id="surpriseSpinBtn">
-          <span>🎲</span> <span id="surpriseSpinLabel">Spin Again</span>
-        </button>
-        <button type="button" class="surprise-view-btn" id="surpriseViewBtn">
-          <span id="surpriseViewLabel">View on Menu ↗</span>
-        </button>
+    </div>
+
+    <!-- Canvas Play Area -->
+    <div class="game-canvas-wrap" id="gameCanvasWrap">
+      <canvas id="gameCanvas" width="340" height="380"></canvas>
+      
+      <!-- Start / Pause / Game Over Overlay -->
+      <div class="game-overlay" id="gameOverOverlay" style="display:none;">
+        <div class="game-over-box">
+          <div class="game-over-trophy" id="gameOverTrophy">🏆</div>
+          <h4 class="game-over-title" id="gameOverTitle">Order Simmering!</h4>
+          <p class="game-over-score-text"><span id="gameOverFinalLabel">Your Score:</span> <strong id="gameOverFinalScore">0</strong></p>
+          <p class="game-over-best-text"><span id="gameOverBestLabel">High Score:</span> <span id="gameOverBestScore">0</span></p>
+          <p class="game-chef-msg" id="gameChefMsg">👨‍🍳 Your fresh dishes are being prepared in the kitchen. Keep playing!</p>
+          <button type="button" class="game-restart-btn" id="gameRestartBtn">
+            <span>🔄</span> <span id="gameRestartLabel">Play Again</span>
+          </button>
+        </div>
       </div>
+    </div>
+
+    <!-- Mobile Touch Ergonomic Controls -->
+    <div class="game-touch-controls">
+      <button type="button" class="touch-btn touch-btn-left" id="gameLeftBtn" aria-label="Move left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span id="gameLeftLabel">Left</span>
+      </button>
+      <div class="touch-hint" id="gameTouchHint">Swipe or tap buttons</div>
+      <button type="button" class="touch-btn touch-btn-right" id="gameRightBtn" aria-label="Move right">
+        <span id="gameRightLabel">Right</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
     </div>
   </div>
 </div>
@@ -1844,11 +2148,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
     </button>
   </div>
-  <div class="fab-item fab-surprise">
-    <span class="fab-item-label" id="fabSurpriseLabel">Surprise Me!</span>
-    <button type="button" class="fab-item-btn" id="fabSurpriseBtn" aria-label="Surprise Me">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.6l-6.3 4.4L8 13.8 2 9.4h7.6z"/></svg>
-    </button>
+  <div class="fab-item fab-game">
+    <span class="fab-item-label" id="fabGameLabel">Wait Game</span>
+    <button type="button" class="fab-item-btn" id="fabGameBtn" aria-label="Play game while waiting">🎮</button>
   </div>
   <div class="fab-item fab-offers">
     <span class="fab-item-label" id="fabOffersLabel">Special Offers</span>

@@ -61,19 +61,41 @@
       footerNote: 'Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.',
       instaTitle: 'Follow us on Instagram',
       instagramLabel: 'Instagram',
+      heroOfferBadge: 'Instagram Exclusive',
+      heroOfferTitle: 'Get 5% OFF on Total Bill!',
+      heroOfferDesc: 'Follow @navrang786fr on Instagram & show your screen to your waiter or cashier during billing.',
+      heroOfferFollowText: 'Follow @navrang786fr',
+      heroOfferDetailsText: 'Offer Details',
+      heroOfferTip: 'Show your Instagram follow screen to your waiter or cashier during billing to claim 5% OFF!',
       offersLabel: 'Special Offers',
-      offersTitle: 'Special Offers',
-      offersSub: 'Coming Soon',
-      offersMsg: "We're preparing exclusive deals and combo offers just for you. Check back soon — good things are on the way!",
+      offersTitle: 'Special Offers & Deals',
+      offersSub: 'Exclusive Dining Perks',
+      offersActiveBadge: 'Active Offer',
+      offersDealTitle: '5% OFF Total Bill',
+      offersDealFor: 'For all Instagram Followers',
+      offersDealDesc: 'Follow @navrang786fr on Instagram and get flat 5% off deducted from your total food bill across all dine-in and takeaway orders!',
+      offersStep1: 'Follow our official Instagram: @navrang786fr',
+      offersStep2: 'Show your following profile screen to waiter or cashier',
+      offersStep3: 'Get flat 5% deducted instantly from your total bill!',
+      offersModalInstaText: 'Open Instagram @navrang786fr',
+      offersTermsNote: '* Valid on all Dine-In & Takeaway bills. Show screen to waiter/cashier during ordering or billing.',
+      offersUpcomingTitle: 'More Exciting Deals Coming!',
+      offersUpcomingDesc: 'Weekend Biryani combos & loyalty treats are in the kitchen for you.',
       offersOk: 'Got it',
-      surpriseBtnLabel: 'Surprise Me',
-      surpriseTitle: "Can't Decide? Surprise Me!",
-      surpriseSub: 'Spin the wheel to discover your next delicious craving',
-      surpriseSpin: 'Spin Again',
-      surpriseView: 'View on Menu',
-      surpriseTabAll: 'All',
-      surpriseTabNonveg: 'Non-Veg',
-      surpriseTabVeg: 'Veg',
+      gameBtnLabel: 'Play & Wait',
+      gameModalTitle: 'Biryani Catcher',
+      gameModalSub: "Chef is cooking your fresh food! Catch dishes & dodge the chillies 🌶️",
+      gameScoreLabel: 'Score',
+      gameBestLabel: 'Best',
+      gameLeftLabel: 'Left',
+      gameRightLabel: 'Right',
+      gameTouchHint: 'Swipe or tap buttons',
+      gameOverTitle: 'Order Simmering!',
+      gameOverFinalLabel: 'Your Score:',
+      gameOverBestLabel: 'High Score:',
+      gameChefMsg: '👨‍🍳 Your fresh dishes are being prepared in the kitchen. Keep playing!',
+      gameRestartLabel: 'Play Again',
+      fabGameLabel: 'Wait Game',
       greetings: {
         morning: 'Good morning! Steaming breakfast & chai await you.',
         afternoon: 'Good afternoon! Savor hearty Andhra biryanis & meals.',
@@ -140,19 +162,41 @@
       footerNote: 'ఆర్డర్ చేయడానికి సిద్ధంగా ఉన్నారా? మీ వెయిటర్‌కు తెలియజేయండి. అన్ని ధరలలో వర్తించే పన్నులు కలిపి ఉన్నాయి — ఏవైనా ఆహార అలర్జీల గురించి మీ సర్వర్‌కు తెలియజేయండి.',
       instaTitle: 'ఇన్‌స్టాగ్రామ్‌లో మమ్మల్ని ఫాలో అవ్వండి',
       instagramLabel: 'ఇన్‌స్టాగ్రామ్',
+      heroOfferBadge: 'ఇన్‌స్టాగ్రామ్ స్పెషల్ ఆఫర్',
+      heroOfferTitle: 'మొత్తం బిల్లుపై 5% తగ్గింపు (OFF)!',
+      heroOfferDesc: 'Instagramలో @navrang786fr ని ఫాలో అయి, బిల్లింగ్ సమయంలో వెయిటర్ లేదా క్యాషియర్‌కి మీ స్క్రీన్ చూపించండి.',
+      heroOfferFollowText: 'ఇప్పుడే ఫాలో అవ్వండి',
+      heroOfferDetailsText: 'ఆఫర్ వివరాలు',
+      heroOfferTip: 'బిల్లింగ్ సమయంలో మీ ఇన్‌స్టాగ్రామ్ ఫాలో స్క్రీన్‌ను వెయిటర్ లేదా క్యాషియర్‌కి చూపించి 5% డిస్కౌంట్ పొందండి!',
       offersLabel: 'ప్రత్యేక ఆఫర్‌లు',
-      offersTitle: 'ప్రత్యేక ఆఫర్‌లు',
-      offersSub: 'త్వరలో వస్తుంది',
-      offersMsg: 'మీ కోసం ప్రత్యేక డీల్స్ మరియు కాంబో ఆఫర్‌లను సిద్ధం చేస్తున్నాము. త్వరలో మళ్ళీ చూడండి — మంచి విషయాలు రాబోతున్నాయి!',
+      offersTitle: 'ప్రత్యేక ఆఫర్‌లు & డీల్స్',
+      offersSub: 'నవరంగ్ ప్రత్యేక ప్రయోజనాలు',
+      offersActiveBadge: 'లైవ్ ఆఫర్',
+      offersDealTitle: 'మొత్తం బిల్లుపై 5% రాయితీ',
+      offersDealFor: 'అన్ని ఇన్‌స్టాగ్రామ్ ఫాలోవర్లకు',
+      offersDealDesc: 'Instagramలో @navrang786fr ని ఫాలో అవ్వండి మరియు మీ మొత్తం ఫుడ్ బిల్లుపై 5% తక్షణ డిస్కౌంట్ పొందండి!',
+      offersStep1: 'Instagramలో @navrang786fr ని ఫాలో అవ్వండి',
+      offersStep2: 'ఆర్డర్ లేదా బిల్లింగ్ సమయంలో వెయిటర్ లేదా క్యాషియర్‌కి మీ స్క్రీన్ చూపించండి',
+      offersStep3: 'మీ మొత్తం బిల్లులో 5% తక్షణ తగ్గింపును ఆనందించండి!',
+      offersModalInstaText: 'Instagram @navrang786fr ఓపెన్ చేయండి',
+      offersTermsNote: '* అన్ని డైన్-ఇన్ & టేక్‌అవే ఆర్డర్‌లకు వర్తిస్తుంది. బిల్లింగ్ సమయంలో మీ స్క్రీన్ చూపించండి.',
+      offersUpcomingTitle: 'మరిన్ని ఆఫర్‌లు త్వరలో!',
+      offersUpcomingDesc: 'స్పెషల్ వీకెండ్ బిర్యానీ కాంబోలు & రాయల్ డీల్స్ త్వరలోనే రానున్నాయి.',
       offersOk: 'సరే',
-      surpriseBtnLabel: 'సర్ప్రైజ్ మీ',
-      surpriseTitle: 'నిర్ణయించుకోలేకపోతున్నారా? సర్ప్రైజ్ మీ!',
-      surpriseSub: 'మా ఫుడ్ రౌలెట్ మీ కోసం ఒక వంటకాన్ని ఎంచుకోనివ్వండి',
-      surpriseSpin: 'మళ్ళీ తిప్పండి',
-      surpriseView: 'మెనూలో చూడండి',
-      surpriseTabAll: 'అన్నీ',
-      surpriseTabNonveg: 'నాన్-వెజ్',
-      surpriseTabVeg: 'వెజ్',
+      gameBtnLabel: 'గేమ్ ఆడండి',
+      gameModalTitle: 'బిర్యానీ క్యాచర్',
+      gameModalSub: 'షెఫ్ మీ ఆర్డర్‌ని వండుతున్నారు! వంటకాలను పట్టుకోండి, మిరపకాయలను తప్పించండి 🌶️',
+      gameScoreLabel: 'స్కోరు',
+      gameBestLabel: 'బెస్ట్',
+      gameLeftLabel: 'ఎడమ',
+      gameRightLabel: 'కుడి',
+      gameTouchHint: 'స్వైప్ చేయండి లేదా బటన్లను నొక్కండి',
+      gameOverTitle: 'ఆర్డర్ సిద్ధమవుతోంది!',
+      gameOverFinalLabel: 'మీ స్కోరు:',
+      gameOverBestLabel: 'హైయెస్ట్ స్కోర్:',
+      gameChefMsg: '👨‍🍳 మీ వేడి వేడి తాజా భోజనం వంటింట్లో సిద్ధమవుతోంది. ఆడుతూ ఉండండి!',
+      gameRestartLabel: 'మళ్ళీ ఆడండి',
+      fabGameLabel: 'వెయిట్ గేమ్',
       greetings: {
         morning: 'శుభోదయం! వేడి వేడి అల్పాహారం & టీ తో ప్రారంభించండి.',
         afternoon: 'శుభ మధ్యాహ్నం! ఘుమఘుమలాడే ఆంధ్రా బిర్యానీలు & భోజనం.',
@@ -288,15 +332,44 @@
     qs('#vegLabel').textContent = S.veg;
     var nonvegLabel = qs('#nonvegLabel'); if (nonvegLabel) nonvegLabel.textContent = S.nonveg;
     qs('#topToggleLabel').textContent = S.topPicks;
-    var surpriseBtnLabel = qs('#surpriseBtnLabel'); if (surpriseBtnLabel) surpriseBtnLabel.textContent = S.surpriseBtnLabel;
-    var fabSurpriseLabel = qs('#fabSurpriseLabel'); if (fabSurpriseLabel) fabSurpriseLabel.textContent = S.surpriseBtnLabel;
-    var surpriseTitle = qs('#surpriseTitle'); if (surpriseTitle) surpriseTitle.textContent = S.surpriseTitle;
-    var surpriseSub = qs('#surpriseSub'); if (surpriseSub) surpriseSub.textContent = S.surpriseSub;
-    var surpriseSpinLabel = qs('#surpriseSpinLabel'); if (surpriseSpinLabel) surpriseSpinLabel.textContent = S.surpriseSpin;
-    var surpriseViewLabel = qs('#surpriseViewLabel'); if (surpriseViewLabel) surpriseViewLabel.textContent = S.surpriseView;
-    var surpriseTabAll = qs('#surpriseTabAll'); if (surpriseTabAll) surpriseTabAll.textContent = S.surpriseTabAll;
-    var surpriseTabNonveg = qs('#surpriseTabNonveg'); if (surpriseTabNonveg) surpriseTabNonveg.textContent = S.surpriseTabNonveg;
-    var surpriseTabVeg = qs('#surpriseTabVeg'); if (surpriseTabVeg) surpriseTabVeg.textContent = S.surpriseTabVeg;
+    var gameBtnLabel = qs('#gameBtnLabel'); if (gameBtnLabel) gameBtnLabel.textContent = S.gameBtnLabel;
+    var fabGameLabel = qs('#fabGameLabel'); if (fabGameLabel) fabGameLabel.textContent = S.fabGameLabel;
+    var gameModalTitle = qs('#gameModalTitle'); if (gameModalTitle) gameModalTitle.textContent = S.gameModalTitle;
+    var gameModalSub = qs('#gameModalSub'); if (gameModalSub) gameModalSub.textContent = S.gameModalSub;
+    var gameScoreLabel = qs('#gameScoreLabel'); if (gameScoreLabel) gameScoreLabel.textContent = S.gameScoreLabel;
+    var gameBestLabel = qs('#gameBestLabel'); if (gameBestLabel) gameBestLabel.textContent = S.gameBestLabel;
+    var gameLeftLabel = qs('#gameLeftLabel'); if (gameLeftLabel) gameLeftLabel.textContent = S.gameLeftLabel;
+    var gameRightLabel = qs('#gameRightLabel'); if (gameRightLabel) gameRightLabel.textContent = S.gameRightLabel;
+    var gameTouchHint = qs('#gameTouchHint'); if (gameTouchHint) gameTouchHint.textContent = S.gameTouchHint;
+    var gameOverTitle = qs('#gameOverTitle'); if (gameOverTitle) gameOverTitle.textContent = S.gameOverTitle;
+    var gameOverFinalLabel = qs('#gameOverFinalLabel'); if (gameOverFinalLabel) gameOverFinalLabel.textContent = S.gameOverFinalLabel;
+    var gameOverBestLabel = qs('#gameOverBestLabel'); if (gameOverBestLabel) gameOverBestLabel.textContent = S.gameOverBestLabel;
+    var gameChefMsg = qs('#gameChefMsg'); if (gameChefMsg) gameChefMsg.textContent = S.gameChefMsg;
+    var gameRestartLabel = qs('#gameRestartLabel'); if (gameRestartLabel) gameRestartLabel.textContent = S.gameRestartLabel;
+
+    // Top Offer Banner
+    var heroOfferBadge = qs('#heroOfferBadge'); if (heroOfferBadge) heroOfferBadge.textContent = S.heroOfferBadge;
+    var heroOfferTitle = qs('#heroOfferTitle'); if (heroOfferTitle) heroOfferTitle.textContent = S.heroOfferTitle;
+    var heroOfferDesc = qs('#heroOfferDesc'); if (heroOfferDesc) heroOfferDesc.textContent = S.heroOfferDesc;
+    var heroOfferFollowText = qs('#heroOfferFollowText'); if (heroOfferFollowText) heroOfferFollowText.textContent = S.heroOfferFollowText;
+    var heroOfferDetailsText = qs('#heroOfferDetailsText'); if (heroOfferDetailsText) heroOfferDetailsText.textContent = S.heroOfferDetailsText;
+    var heroOfferTip = qs('#heroOfferTip'); if (heroOfferTip) heroOfferTip.textContent = S.heroOfferTip;
+
+    // Special Offers Modal
+    var offersTitleEl = qs('#offersTitle'); if (offersTitleEl) offersTitleEl.textContent = S.offersTitle;
+    var offersSubEl = qs('#offersSub'); if (offersSubEl) offersSubEl.textContent = S.offersSub;
+    var offersActiveBadge = qs('#offersActiveBadge span:last-child'); if (offersActiveBadge) offersActiveBadge.textContent = S.offersActiveBadge;
+    var offersDealTitle = qs('#offersDealTitle'); if (offersDealTitle) offersDealTitle.textContent = S.offersDealTitle;
+    var offersDealFor = qs('#offersDealFor'); if (offersDealFor) offersDealFor.textContent = S.offersDealFor;
+    var offersDealDesc = qs('#offersDealDesc'); if (offersDealDesc) offersDealDesc.textContent = S.offersDealDesc;
+    var offersStep1 = qs('#offersStep1'); if (offersStep1) offersStep1.textContent = S.offersStep1;
+    var offersStep2 = qs('#offersStep2'); if (offersStep2) offersStep2.textContent = S.offersStep2;
+    var offersStep3 = qs('#offersStep3'); if (offersStep3) offersStep3.textContent = S.offersStep3;
+    var offersModalInstaText = qs('#offersModalInstaText'); if (offersModalInstaText) offersModalInstaText.textContent = S.offersModalInstaText;
+    var offersTermsNote = qs('#offersTermsNote'); if (offersTermsNote) offersTermsNote.textContent = S.offersTermsNote;
+    var offersUpcomingTitle = qs('#offersUpcomingTitle'); if (offersUpcomingTitle) offersUpcomingTitle.textContent = S.offersUpcomingTitle;
+    var offersUpcomingDesc = qs('#offersUpcomingDesc'); if (offersUpcomingDesc) offersUpcomingDesc.textContent = S.offersUpcomingDesc;
+    var offersOkEl = qs('#offersOkBtn'); if (offersOkEl) offersOkEl.textContent = S.offersOk;
     updateTimeGreeting();
 
     var priceOpts = qs('#priceFilter').options;
@@ -311,10 +384,6 @@
     var fabOffersLabel = qs('#fabOffersLabel'); if (fabOffersLabel) fabOffersLabel.textContent = S.offersLabel;
     var fabRatingLabel = qs('#fabRatingLabel'); if (fabRatingLabel) fabRatingLabel.textContent = S.rateCta;
     var fabInstaLabel = qs('#fabInstaLabel'); if (fabInstaLabel) fabInstaLabel.textContent = S.instagramLabel;
-    var offersTitleEl = qs('#offersTitle'); if (offersTitleEl) offersTitleEl.textContent = S.offersTitle;
-    var offersSubEl = qs('#offersSub'); if (offersSubEl) offersSubEl.textContent = S.offersSub;
-    var offersMsgEl = qs('#offersMsg'); if (offersMsgEl) offersMsgEl.textContent = S.offersMsg;
-    var offersOkEl = qs('#offersOkBtn'); if (offersOkEl) offersOkEl.textContent = S.offersOk;
     langOpts.forEach(function(btn){
       btn.classList.toggle('active', btn.dataset.lang === currentLang);
     });
@@ -924,178 +993,518 @@
   if (offersDialog){
     offersDialog.addEventListener('click', closeOffersDialog);
     offersCard.addEventListener('click', function(e){ e.stopPropagation(); });
-    qs('#offersOkBtn').addEventListener('click', closeOffersDialog);
-    qs('#fabOffersBtn').addEventListener('click', function(){ closeFab(); openOffersDialog(); trackEvent('offers_view', 'Special Offers'); });
+    var offersCloseBtn = qs('#offersCloseBtn');
+    if (offersCloseBtn) offersCloseBtn.addEventListener('click', closeOffersDialog);
+    var offersOkBtn = qs('#offersOkBtn');
+    if (offersOkBtn) offersOkBtn.addEventListener('click', closeOffersDialog);
+    var fabOffersBtn = qs('#fabOffersBtn');
+    if (fabOffersBtn) fabOffersBtn.addEventListener('click', function(){ closeFab(); openOffersDialog(); trackEvent('offers_view', 'Special Offers'); });
   }
   var fabRatingBtn = qs('#fabRatingBtn');
   if (fabRatingBtn) fabRatingBtn.addEventListener('click', function(){ closeFab(); openRateDialog(); });
   var fabInstaBtn = qs('#fabInstaBtn');
   if (fabInstaBtn) fabInstaBtn.addEventListener('click', function(){ closeFab(); trackEvent('instagram_click', 'clicked'); });
 
-  /* ---------- Feature 1: "Can't Decide? Surprise Me!" Roulette ---------- */
-  var surpriseDialog = qs('#surpriseDialog');
-  var surpriseCard = qs('#surpriseCard');
-  var surpriseClose = qs('#surpriseClose');
-  var surpriseBtn = qs('#surpriseBtn');
-  var surpriseSpinBtn = qs('#surpriseSpinBtn');
-  var surpriseViewBtn = qs('#surpriseViewBtn');
-  var surpriseResultWrap = qs('#surpriseResultWrap');
-  var surpriseDishImg = qs('#surpriseDishImg');
-  var surpriseDishName = qs('#surpriseDishName');
-  var surpriseDishCat = qs('#surpriseDishCat');
-  var surpriseDishPrice = qs('#surpriseDishPrice');
-  var surpriseDietBadge = qs('#surpriseDietBadge');
-  var surpriseTabBtns = qsa('.surprise-tab-btn');
-  var currentSurpriseDiet = 'all';
-  var pickedDish = null;
-
-  var allActiveDishes = [];
-  (typeof CATEGORY_META !== 'undefined' ? CATEGORY_META : []).forEach(function(cat){
-    (MENU_DATA[cat.id] || []).forEach(function(item){
-      if (item.status === 'Active'){
-        var d = {};
-        for (var k in item){ if (Object.prototype.hasOwnProperty.call(item, k)) d[k] = item[k]; }
-        d.catId = cat.id;
-        d.catTitle = cat.title;
-        d.catTitleTe = cat.titleTe;
-        d.catImage = cat.image;
-        allActiveDishes.push(d);
-      }
+  var heroOfferDetailsBtn = qs('#heroOfferDetailsBtn');
+  if (heroOfferDetailsBtn){
+    heroOfferDetailsBtn.addEventListener('click', function(){
+      openOffersDialog();
+      trackEvent('offers_view', 'Top Banner Details');
     });
-  });
-
-  function pickRandomDish(){
-    var pool = allActiveDishes.filter(function(d){
-      if (currentSurpriseDiet === 'veg') return !!d.veg;
-      if (currentSurpriseDiet === 'nonveg') return !d.veg;
-      return true;
+  }
+  var instaBannerMedia = qs('#instaBannerMedia');
+  if (instaBannerMedia){
+    instaBannerMedia.addEventListener('click', function(){
+      openOffersDialog();
+      trackEvent('offers_view', 'Top Banner Media');
     });
-    if (!pool.length) pool = allActiveDishes;
-    if (pool.length > 1 && pickedDish){
-      var filtered = pool.filter(function(d){ return d.name !== pickedDish.name; });
-      if (filtered.length) pool = filtered;
+  }
+  var heroOfferFollowBtn = qs('#heroOfferFollowBtn');
+  if (heroOfferFollowBtn){
+    heroOfferFollowBtn.addEventListener('click', function(){
+      trackEvent('instagram_click', 'top_banner');
+    });
+  }
+  var offersModalInstaBtn = qs('#offersModalInstaBtn');
+  if (offersModalInstaBtn){
+    offersModalInstaBtn.addEventListener('click', function(){
+      trackEvent('instagram_click', 'offers_modal');
+    });
+  }
+
+  /* ---------- Feature 1: "While You Wait" Biryani Catcher Mini-Game ---------- */
+  var gameDialog = qs('#gameDialog');
+  var gameCard = qs('#gameCard');
+  var gameCloseBtn = qs('#gameCloseBtn');
+  var gameBtn = qs('#gameBtn');
+  var fabGameBtn = qs('#fabGameBtn');
+  var gameCanvas = qs('#gameCanvas');
+  var gameCtx = gameCanvas ? gameCanvas.getContext('2d') : null;
+  var gameOverOverlay = qs('#gameOverOverlay');
+  var gameRestartBtn = qs('#gameRestartBtn');
+  var gameScoreVal = qs('#gameScoreVal');
+  var gameBestVal = qs('#gameBestVal');
+  var gameLivesWrap = qs('#gameLivesWrap');
+  var gameOverFinalScore = qs('#gameOverFinalScore');
+  var gameOverBestScore = qs('#gameOverBestScore');
+  var gameSoundToggle = qs('#gameSoundToggle');
+  var gameLeftBtn = qs('#gameLeftBtn');
+  var gameRightBtn = qs('#gameRightBtn');
+
+  var BEST_SCORE_KEY = 'navrang_biryani_catcher_best';
+  var SOUND_KEY = 'navrang_biryani_catcher_sound';
+  var bestScore = 0;
+  try {
+    bestScore = parseInt(localStorage.getItem(BEST_SCORE_KEY), 10) || 0;
+  } catch(e){}
+  if (gameBestVal) gameBestVal.textContent = bestScore;
+
+  var isSoundMuted = false;
+  try {
+    isSoundMuted = localStorage.getItem(SOUND_KEY) === 'muted';
+  } catch(e){}
+  if (gameSoundToggle) gameSoundToggle.textContent = isSoundMuted ? '🔇' : '🔊';
+
+  var audioCtx = null;
+  function getGameAudioContext(){
+    if (!audioCtx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
     }
-    return pool[Math.floor(Math.random() * pool.length)];
+    if (audioCtx && audioCtx.state === 'suspended'){
+      audioCtx.resume().catch(function(){});
+    }
+    return audioCtx;
   }
 
-  function renderSurpriseDish(d){
-    pickedDish = d;
-    if (!d) return;
-    var imgSrc = d.photo || d.thumb || d.catImage || NO_IMAGE_FULL;
-    surpriseDishImg.src = imgSrc;
-    surpriseDishImg.alt = d.name;
-    surpriseDishName.textContent = currentLang === 'te' && d.nameTe ? d.nameTe : d.name;
-    surpriseDishCat.textContent = currentLang === 'te' && d.catTitleTe ? d.catTitleTe : d.catTitle;
-    surpriseDishPrice.textContent = d.price !== null && d.price !== undefined ? (CUR + d.price) : (STRINGS[currentLang].askStaff || 'Ask staff');
-    surpriseDietBadge.className = 'diet-badge ' + (d.veg ? 'veg' : 'nonveg');
-    surpriseDietBadge.title = d.veg ? 'Veg' : 'Non-Veg';
-  }
+  function playSoundEffect(type){
+    if (isSoundMuted) return;
+    try {
+      var ctx = getGameAudioContext();
+      if (!ctx) return;
+      var now = ctx.currentTime;
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
 
-  function spinRoulette(){
-    if (!surpriseResultWrap) return;
-    surpriseResultWrap.classList.add('rolling');
-    if (surpriseSpinBtn) surpriseSpinBtn.disabled = true;
-    var count = 0;
-    var shuffleTimer = setInterval(function(){
-      var temp = pickRandomDish();
-      if (temp){
-        surpriseDishName.textContent = currentLang === 'te' && temp.nameTe ? temp.nameTe : temp.name;
+      if (type === 'catch'){
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } else if (type === 'star'){
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523, now);
+        osc.frequency.setValueAtTime(659, now + 0.08);
+        osc.frequency.setValueAtTime(784, now + 0.16);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+        osc.start(now);
+        osc.stop(now + 0.28);
+      } else if (type === 'chilli'){
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.linearRampToValueAtTime(90, now + 0.18);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+      } else if (type === 'gameover'){
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(220, now + 0.35);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.38);
+        osc.start(now);
+        osc.stop(now + 0.38);
       }
-      count++;
-      if (count > 5){
-        clearInterval(shuffleTimer);
-        var finalDish = pickRandomDish();
-        renderSurpriseDish(finalDish);
-        surpriseResultWrap.classList.remove('rolling');
-        if (surpriseSpinBtn) surpriseSpinBtn.disabled = false;
-        trackEvent('surprise_spin', finalDish ? finalDish.name : 'none');
+    } catch(e){}
+  }
+
+  // Food Item Types
+  var FOOD_TYPES = [
+    { type: 'biryani', emoji: '🍛', pts: 25, label: 'Royal Biryani', weight: 24, speedMult: 1 },
+    { type: 'chicken', emoji: '🍗', pts: 10, label: 'Chicken Kebab', weight: 28, speedMult: 1.05 },
+    { type: 'naan', emoji: '🫓', pts: 15, label: 'Butter Naan', weight: 20, speedMult: 0.95 },
+    { type: 'samosa', emoji: '🥟', pts: 20, label: 'Samosa', weight: 16, speedMult: 1.1 },
+    { type: 'sweet', emoji: '🍰', pts: 30, label: 'Gulab Jamun', weight: 12, speedMult: 1.15 },
+    { type: 'star', emoji: '⭐', pts: 50, label: 'Chef Star', weight: 8, speedMult: 1.25 },
+    { type: 'chilli', emoji: '🌶️', isHazard: true, label: 'Fiery Chilli', weight: 22, speedMult: 1.1 }
+  ];
+
+  var gameState = {
+    running: false,
+    score: 0,
+    lives: 3,
+    potX: 170,
+    potY: 340,
+    potW: 68,
+    potH: 34,
+    items: [],
+    popups: [],
+    animId: null,
+    lastSpawn: 0,
+    spawnInterval: 1000,
+    baseSpeed: 2.2,
+    moveLeft: false,
+    moveRight: false
+  };
+
+  function updateLivesUI(){
+    if (!gameLivesWrap) return;
+    var hearts = '';
+    for (var i = 0; i < 3; i++){
+      hearts += i < gameState.lives ? '❤️ ' : '🖤 ';
+    }
+    gameLivesWrap.textContent = hearts.trim();
+  }
+
+  function resetGame(){
+    gameState.score = 0;
+    gameState.lives = 3;
+    gameState.items = [];
+    gameState.popups = [];
+    gameState.baseSpeed = 2.2;
+    gameState.spawnInterval = 1000;
+    gameState.lastSpawn = Date.now();
+    gameState.potX = (gameCanvas ? gameCanvas.width : 340) / 2;
+    if (gameScoreVal) gameScoreVal.textContent = '0';
+    updateLivesUI();
+    if (gameOverOverlay) gameOverOverlay.style.display = 'none';
+  }
+
+  function spawnFoodItem(){
+    if (!gameCanvas) return;
+    var totalWeight = FOOD_TYPES.reduce(function(sum, f){ return sum + f.weight; }, 0);
+    var rand = Math.random() * totalWeight;
+    var chosen = FOOD_TYPES[0];
+    for (var i = 0; i < FOOD_TYPES.length; i++){
+      if (rand < FOOD_TYPES[i].weight){
+        chosen = FOOD_TYPES[i];
+        break;
       }
-    }, 60);
-  }
-
-  function openSurpriseDialog(){
-    if (!surpriseDialog) return;
-    surpriseDialog.classList.add('show');
-    surpriseDialog.setAttribute('aria-hidden', 'false');
-    spinRoulette();
-  }
-
-  function closeSurpriseDialog(){
-    if (!surpriseDialog) return;
-    surpriseDialog.classList.remove('show');
-    surpriseDialog.setAttribute('aria-hidden', 'true');
-  }
-
-  if (surpriseDialog){
-    surpriseDialog.addEventListener('click', closeSurpriseDialog);
-    if (surpriseCard) surpriseCard.addEventListener('click', function(e){ e.stopPropagation(); });
-    if (surpriseClose) surpriseClose.addEventListener('click', closeSurpriseDialog);
-    if (surpriseBtn) surpriseBtn.addEventListener('click', function(){ openSurpriseDialog(); });
-    var fabSurpriseBtn = qs('#fabSurpriseBtn');
-    if (fabSurpriseBtn) fabSurpriseBtn.addEventListener('click', function(){ closeFab(); openSurpriseDialog(); });
-
-    surpriseTabBtns.forEach(function(tab){
-      tab.addEventListener('click', function(){
-        surpriseTabBtns.forEach(function(t){ t.classList.remove('active'); });
-        tab.classList.add('active');
-        currentSurpriseDiet = tab.dataset.diet || 'all';
-        spinRoulette();
-      });
-    });
-
-    if (surpriseSpinBtn){
-      surpriseSpinBtn.addEventListener('click', function(){ spinRoulette(); });
+      rand -= FOOD_TYPES[i].weight;
     }
 
-    if (surpriseViewBtn){
-      surpriseViewBtn.addEventListener('click', function(){
-        if (!pickedDish) return;
-        closeSurpriseDialog();
-        if (searchInput.value){
-          searchInput.value = '';
-          if (searchClear) searchClear.classList.remove('visible');
-        }
-        if (vegOnly && !pickedDish.veg){
-          vegOnly = false;
-          if (vegToggle) vegToggle.classList.remove('active');
-        }
-        if (nonvegOnly && pickedDish.veg){
-          nonvegOnly = false;
-          if (nonvegToggle) nonvegToggle.classList.remove('active');
-        }
-        if (topOnly && !pickedDish.top){
-          topOnly = false;
-          if (topToggle) topToggle.classList.remove('active');
-        }
-        if (priceMin !== null && (pickedDish.price < priceMin || pickedDish.price > priceMax)){
-          priceMin = null;
-          priceMax = null;
-          if (priceFilter) priceFilter.value = '';
-        }
-        applyFilters();
+    var margin = 30;
+    var x = margin + Math.random() * (gameCanvas.width - margin * 2);
+    gameState.items.push({
+      x: x,
+      y: -20,
+      size: 26,
+      type: chosen.type,
+      emoji: chosen.emoji,
+      pts: chosen.pts || 0,
+      isHazard: !!chosen.isHazard,
+      speed: (gameState.baseSpeed * (chosen.speedMult || 1)) + (Math.random() * 0.5 - 0.25),
+      wobble: Math.random() * Math.PI * 2
+    });
+  }
 
-        var targetDishEl = null;
-        qsa('.dish').forEach(function(row){
-          if (row.dataset.name && row.dataset.name.indexOf(pickedDish.name.toLowerCase()) !== -1){
-            targetDishEl = row;
+  function addScorePopup(text, x, y, color){
+    gameState.popups.push({
+      text: text,
+      x: x,
+      y: y,
+      alpha: 1,
+      color: color || '#FFD700',
+      vy: -1.2
+    });
+  }
+
+  function triggerGameOver(){
+    gameState.running = false;
+    playSoundEffect('gameover');
+    if (gameState.animId){
+      cancelAnimationFrame(gameState.animId);
+      gameState.animId = null;
+    }
+    if (gameState.score > bestScore){
+      bestScore = gameState.score;
+      try { localStorage.setItem(BEST_SCORE_KEY, bestScore); } catch(e){}
+      if (gameBestVal) gameBestVal.textContent = bestScore;
+    }
+    if (gameOverFinalScore) gameOverFinalScore.textContent = gameState.score;
+    if (gameOverBestScore) gameOverBestScore.textContent = bestScore;
+    if (gameOverOverlay) gameOverOverlay.style.display = 'flex';
+    trackEvent('game_finished', 'score_' + gameState.score);
+  }
+
+  function drawHandiPot(ctx, x, y, w, h){
+    ctx.save();
+    ctx.translate(x, y);
+
+    // Steam wisps
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    var steamOffset = Math.sin(Date.now() / 150) * 3;
+    ctx.fillText('♨️', 0, -h / 2 - 4 + steamOffset);
+
+    // Handi Body (Golden rounded cauldron)
+    var grad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
+    grad.addColorStop(0, '#9E6A08');
+    grad.addColorStop(0.2, '#D49B22');
+    grad.addColorStop(0.5, '#FFE999');
+    grad.addColorStop(0.8, '#D49B22');
+    grad.addColorStop(1, '#784E03');
+
+    ctx.beginPath();
+    ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = '#FFEAA7';
+    ctx.stroke();
+
+    // Handi Rim
+    var rimGrad = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, -h / 2);
+    rimGrad.addColorStop(0, '#784E03');
+    rimGrad.addColorStop(0.5, '#FFF2BD');
+    rimGrad.addColorStop(1, '#784E03');
+    ctx.beginPath();
+    ctx.ellipse(0, -h / 2 + 2, w / 2 - 2, 5, 0, 0, Math.PI * 2);
+    ctx.fillStyle = rimGrad;
+    ctx.fill();
+
+    // Side Handles
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = '#D49B22';
+    // Left handle
+    ctx.beginPath();
+    ctx.arc(-w / 2 - 2, -2, 5, -Math.PI / 2, Math.PI / 2, true);
+    ctx.stroke();
+    // Right handle
+    ctx.beginPath();
+    ctx.arc(w / 2 + 2, -2, 5, -Math.PI / 2, Math.PI / 2, false);
+    ctx.stroke();
+
+    // Decorative Emerald jewel center
+    ctx.beginPath();
+    ctx.arc(0, 2, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#1E823C';
+    ctx.fill();
+    ctx.strokeStyle = '#FFEAA7';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function gameLoop(){
+    if (!gameState.running || !gameCtx || !gameCanvas) return;
+    var ctx = gameCtx;
+    var W = gameCanvas.width;
+    var H = gameCanvas.height;
+
+    // Clear Background
+    ctx.clearRect(0, 0, W, H);
+
+    // Warm Kitchen Ambience Background
+    var bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#0F2414');
+    bgGrad.addColorStop(0.5, '#0B1C10');
+    bgGrad.addColorStop(1, '#061309');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Floor Line
+    ctx.strokeStyle = 'rgba(212, 155, 34, 0.25)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, H - 24);
+    ctx.lineTo(W, H - 24);
+    ctx.stroke();
+
+    // Handle smooth keyboard / button movement
+    var moveSpeed = 5.2;
+    if (gameState.moveLeft){
+      gameState.potX = Math.max(gameState.potW / 2 + 6, gameState.potX - moveSpeed);
+    }
+    if (gameState.moveRight){
+      gameState.potX = Math.min(W - gameState.potW / 2 - 6, gameState.potX + moveSpeed);
+    }
+
+    // Spawn items over time
+    var now = Date.now();
+    if (now - gameState.lastSpawn > gameState.spawnInterval){
+      spawnFoodItem();
+      gameState.lastSpawn = now;
+      gameState.baseSpeed = Math.min(5.2, 2.2 + (gameState.score / 150));
+      gameState.spawnInterval = Math.max(520, 1000 - (gameState.score * 3));
+    }
+
+    // Draw & Update Food Items
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var hitY = gameState.potY - gameState.potH / 2;
+
+    for (var i = gameState.items.length - 1; i >= 0; i--){
+      var it = gameState.items[i];
+      it.y += it.speed;
+      it.wobble += 0.05;
+      var currentX = it.x + Math.sin(it.wobble) * 4;
+
+      // Draw Emoji
+      ctx.font = it.size + 'px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
+      ctx.fillText(it.emoji, currentX, it.y);
+
+      // Check Catch Collision with Handi
+      var inX = Math.abs(currentX - gameState.potX) < (gameState.potW / 2 + 10);
+      var inY = (it.y >= hitY - 14) && (it.y <= hitY + 18);
+
+      if (inX && inY){
+        if (it.isHazard){
+          gameState.lives--;
+          updateLivesUI();
+          playSoundEffect('chilli');
+          addScorePopup('-1 ❤️', gameState.potX, hitY - 10, '#FF4444');
+          if (gameState.lives <= 0){
+            triggerGameOver();
+            return;
           }
-        });
-        if (targetDishEl){
-          var topbarH = topbarEl ? topbarEl.getBoundingClientRect().height : 56;
-          var subH = stickySubheader ? stickySubheader.getBoundingClientRect().height : 100;
-          var offset = topbarH + subH + 16;
-          var y = targetDishEl.getBoundingClientRect().top + window.pageYOffset - offset;
-          window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
-          targetDishEl.classList.remove('highlight-dish');
-          void targetDishEl.offsetWidth;
-          targetDishEl.classList.add('highlight-dish');
-          setTimeout(function(){
-            targetDishEl.classList.remove('highlight-dish');
-          }, 2400);
+        } else {
+          gameState.score += it.pts;
+          if (gameScoreVal) gameScoreVal.textContent = gameState.score;
+          if (it.type === 'star') playSoundEffect('star');
+          else playSoundEffect('catch');
+          addScorePopup('+' + it.pts, currentX, hitY - 10, it.type === 'star' ? '#FFEF8A' : '#76FF03');
         }
-        trackEvent('surprise_view_menu', pickedDish.name);
+        gameState.items.splice(i, 1);
+        continue;
+      }
+
+      if (it.y > H - 10){
+        gameState.items.splice(i, 1);
+      }
+    }
+
+    // Draw Player Handi Pot
+    drawHandiPot(ctx, gameState.potX, gameState.potY, gameState.potW, gameState.potH);
+
+    // Draw & Update Score Popups
+    for (var p = gameState.popups.length - 1; p >= 0; p--){
+      var pop = gameState.popups[p];
+      pop.y += pop.vy;
+      pop.alpha -= 0.025;
+      if (pop.alpha <= 0){
+        gameState.popups.splice(p, 1);
+        continue;
+      }
+      ctx.save();
+      ctx.globalAlpha = pop.alpha;
+      ctx.fillStyle = pop.color;
+      ctx.font = 'bold 15px "Karla", sans-serif';
+      ctx.fillText(pop.text, pop.x, pop.y);
+      ctx.restore();
+    }
+
+    gameState.animId = requestAnimationFrame(gameLoop);
+  }
+
+  function startGame(){
+    resetGame();
+    gameState.running = true;
+    if (gameState.animId) cancelAnimationFrame(gameState.animId);
+    gameState.animId = requestAnimationFrame(gameLoop);
+    trackEvent('game_started', 'biryani_catcher');
+  }
+
+  function pauseGame(){
+    gameState.running = false;
+    if (gameState.animId){
+      cancelAnimationFrame(gameState.animId);
+      gameState.animId = null;
+    }
+  }
+
+  function openGameDialog(){
+    if (!gameDialog) return;
+    gameDialog.classList.add('show');
+    gameDialog.setAttribute('aria-hidden', 'false');
+    startGame();
+  }
+
+  function closeGameDialog(){
+    if (!gameDialog) return;
+    gameDialog.classList.remove('show');
+    gameDialog.setAttribute('aria-hidden', 'true');
+    pauseGame();
+  }
+
+  if (gameDialog){
+    gameDialog.addEventListener('click', closeGameDialog);
+    if (gameCard) gameCard.addEventListener('click', function(e){ e.stopPropagation(); });
+    if (gameCloseBtn) gameCloseBtn.addEventListener('click', closeGameDialog);
+    if (gameBtn) gameBtn.addEventListener('click', openGameDialog);
+    if (fabGameBtn) fabGameBtn.addEventListener('click', function(){ closeFab(); openGameDialog(); });
+    if (gameRestartBtn) gameRestartBtn.addEventListener('click', function(){ startGame(); });
+
+    if (gameSoundToggle){
+      gameSoundToggle.addEventListener('click', function(){
+        isSoundMuted = !isSoundMuted;
+        gameSoundToggle.textContent = isSoundMuted ? '🔇' : '🔊';
+        try { localStorage.setItem(SOUND_KEY, isSoundMuted ? 'muted' : 'unmuted'); } catch(e){}
       });
     }
+
+    if (gameCanvas){
+      var handleTouch = function(e){
+        if (!gameState.running) return;
+        var touch = e.touches ? e.touches[0] : e;
+        var rect = gameCanvas.getBoundingClientRect();
+        var scaleX = gameCanvas.width / rect.width;
+        var x = (touch.clientX - rect.left) * scaleX;
+        gameState.potX = Math.max(gameState.potW / 2 + 4, Math.min(gameCanvas.width - gameState.potW / 2 - 4, x));
+        if (e.preventDefault) e.preventDefault();
+      };
+      gameCanvas.addEventListener('touchstart', handleTouch, { passive: false });
+      gameCanvas.addEventListener('touchmove', handleTouch, { passive: false });
+      gameCanvas.addEventListener('mousemove', function(e){
+        if (!gameState.running || e.buttons !== 1) return;
+        var rect = gameCanvas.getBoundingClientRect();
+        var scaleX = gameCanvas.width / rect.width;
+        var x = (e.clientX - rect.left) * scaleX;
+        gameState.potX = Math.max(gameState.potW / 2 + 4, Math.min(gameCanvas.width - gameState.potW / 2 - 4, x));
+      });
+    }
+
+    if (gameLeftBtn){
+      var startL = function(e){ gameState.moveLeft = true; if (e.cancelable) e.preventDefault(); };
+      var endL = function(){ gameState.moveLeft = false; };
+      gameLeftBtn.addEventListener('pointerdown', startL);
+      gameLeftBtn.addEventListener('pointerup', endL);
+      gameLeftBtn.addEventListener('pointerleave', endL);
+      gameLeftBtn.addEventListener('pointercancel', endL);
+    }
+    if (gameRightBtn){
+      var startR = function(e){ gameState.moveRight = true; if (e.cancelable) e.preventDefault(); };
+      var endR = function(){ gameState.moveRight = false; };
+      gameRightBtn.addEventListener('pointerdown', startR);
+      gameRightBtn.addEventListener('pointerup', endR);
+      gameRightBtn.addEventListener('pointerleave', endR);
+      gameRightBtn.addEventListener('pointercancel', endR);
+    }
+
+    window.addEventListener('keydown', function(e){
+      if (!gameState.running) return;
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A'){
+        gameState.moveLeft = true;
+      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D'){
+        gameState.moveRight = true;
+      }
+    });
+    window.addEventListener('keyup', function(e){
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A'){
+        gameState.moveLeft = false;
+      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D'){
+        gameState.moveRight = false;
+      }
+    });
   }
 
   /* ---------- Feature: Group Split Bill Calculator ---------- */
