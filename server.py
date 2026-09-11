@@ -14,6 +14,7 @@ import threading
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 import urllib.parse
+import subprocess
 
 PORT = 3000
 BIND = "0.0.0.0"
@@ -106,6 +107,24 @@ class NavrangRequestHandler(SimpleHTTPRequestHandler):
                 self._send_json(200, {"success": True, "order": match})
             else:
                 self._send_json(404, {"error": "Order not found", "id": order_id})
+            return
+
+        # API Route: GET /api/categories
+        if path == "/api/categories":
+            try:
+                out = subprocess.check_output(["node", os.path.join(BASE_DIR, "category_service.js"), "get-categories"], encoding="utf-8")
+                self._send_json(200, json.loads(out))
+            except Exception as e:
+                self._send_json(500, {"error": f"Failed to load categories: {e}"})
+            return
+
+        # API Route: GET /api/dishes
+        if path == "/api/dishes":
+            try:
+                out = subprocess.check_output(["node", os.path.join(BASE_DIR, "category_service.js"), "get-dishes"], encoding="utf-8")
+                self._send_json(200, json.loads(out))
+            except Exception as e:
+                self._send_json(500, {"error": f"Failed to load dishes: {e}"})
             return
 
         # Fallback to standard static file serving
@@ -287,6 +306,32 @@ class NavrangRequestHandler(SimpleHTTPRequestHandler):
 
             save_orders(orders)
             self._send_json(200, {"success": True, "order": order_record})
+            return
+
+        # API Route: POST /api/categories
+        if path == "/api/categories":
+            content_len = int(self.headers.get("Content-Length", 0))
+            body_bytes = self.rfile.read(content_len) if content_len > 0 else b"{}"
+            try:
+                proc = subprocess.Popen(
+                    ["node", os.path.join(BASE_DIR, "category_service.js"), "save-category"],
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE
+                )
+                stdout, stderr = proc.communicate(input=body_bytes)
+                if proc.returncode != 0:
+                    err_data = {}
+                    try:
+                        err_data = json.loads(stderr.decode("utf-8"))
+                    except Exception:
+                        pass
+                    self._send_json(400, {"error": err_data.get("error", "Failed to save category")})
+                else:
+                    res_data = json.loads(stdout.decode("utf-8"))
+                    self._send_json(200, res_data)
+            except Exception as e:
+                self._send_json(500, {"error": f"Internal server error: {e}"})
             return
 
         self._send_json(404, {"error": "Not found"})

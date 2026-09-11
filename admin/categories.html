@@ -389,6 +389,14 @@
     handleCategoryFile(cNewImageFile.files[0]);
   });
 
+  uploadZone.addEventListener('click', function(e){
+    if (e.target.closest('#removeImageBtn')) return;
+    if (e.target !== cNewImageFile){
+      e.preventDefault();
+      cNewImageFile.click();
+    }
+  });
+
   uploadZone.addEventListener('dragover', function(e){
     e.preventDefault();
     uploadZone.classList.add('dragover');
@@ -479,11 +487,11 @@
               '<img class="cat-thumb" src="' + esc(resolvedImg) + '" alt="' + esc(c.title) + '" style="' + (resolvedImg ? '' : 'display:none;') + '" data-full="' + esc(resolvedImg) + '" data-caption="' + esc(c.title) + '" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'flex\';">' +
               '<div class="cat-thumb-empty" style="' + (resolvedImg ? 'display:none;' : '') + '">No photo</div>' +
               '<div class="cat-img-actions">' +
-                '<label class="cat-row-upload-btn" title="Upload new photo for this category">' +
-                  '<input type="file" accept="image/*" class="cat-row-file-input" style="display:none;">' +
+                '<button type="button" class="cat-row-upload-btn" title="Upload new photo for this category">' +
                   '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
                   '<span>📷 Upload</span>' +
-                '</label>' +
+                '</button>' +
+                '<input type="file" accept="image/*" class="cat-row-file-input" style="display:none;">' +
                 '<input class="cat-input cat-img-input" data-field="image" placeholder="images/..." value="' + esc(c.image || '') + '" title="Image URL or uploaded data URL">' +
               '</div>' +
             '</div>' +
@@ -505,6 +513,14 @@
       var thumb = row.querySelector('.cat-thumb');
       var empty = row.querySelector('.cat-thumb-empty');
       var fileInput = row.querySelector('.cat-row-file-input');
+      var uploadBtn = row.querySelector('.cat-row-upload-btn');
+
+      if (uploadBtn && fileInput){
+        uploadBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          fileInput.click();
+        });
+      }
 
       // Click thumbnail to zoom in lightbox
       if (thumb){

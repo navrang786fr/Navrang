@@ -120,7 +120,7 @@
       </div>
       <div class="admin-field">
         <label for="password" id="labelPassword">4-Digit Login PIN</label>
-        <input type="password" id="password" autocomplete="current-password" placeholder="Enter 4-digit PIN (e.g. 1234)" required>
+        <input type="password" id="password" autocomplete="current-password" placeholder="Enter 4-digit PIN" required>
       </div>
 
       <button type="submit" class="admin-btn" id="loginBtn" style="width:100%;">
@@ -275,7 +275,7 @@
       labelPassword.textContent = '4-Digit Login PIN';
       usernameInput.placeholder = 'e.g. W-01 or Raju';
       usernameInput.value = 'W-01';
-      passwordInput.placeholder = 'Enter 4-digit PIN (e.g. 1234)';
+      passwordInput.placeholder = 'Enter 4-digit PIN';
       passwordInput.value = '';
       loginBtn.textContent = 'Open Table Ordering';
       passwordInput.focus();
@@ -289,7 +289,7 @@
       var cfg = getActiveCashierConfig();
       usernameInput.placeholder = 'e.g. ' + cfg.cashierId;
       usernameInput.value = cfg.cashierId;
-      passwordInput.placeholder = 'Enter PIN or password (e.g. 1234)';
+      passwordInput.placeholder = 'Enter PIN or password';
       passwordInput.value = '';
       loginBtn.textContent = 'Open Counter Billing';
       passwordInput.focus();
@@ -302,7 +302,7 @@
       labelPassword.textContent = 'Admin Password';
       usernameInput.placeholder = 'e.g. admin';
       usernameInput.value = 'admin';
-      passwordInput.placeholder = 'Enter admin password (e.g. admin or admin123)';
+      passwordInput.placeholder = 'Enter admin password';
       passwordInput.value = '';
       loginBtn.textContent = 'Sign In to Admin Portal';
       passwordInput.focus();
@@ -419,9 +419,9 @@
         return;
       }
       if (activeRole === 'counter') {
-        status.textContent = 'Invalid Cashier ID or PIN. Default PIN is 1234.';
+        status.textContent = 'Invalid Cashier ID or PIN.';
       } else {
-        status.textContent = 'Invalid admin credentials. Default password is "admin" or "admin123".';
+        status.textContent = 'Invalid admin credentials.';
       }
       status.className = 'admin-status error';
       loginBtn.disabled = false;

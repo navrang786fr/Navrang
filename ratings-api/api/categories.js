@@ -7,6 +7,7 @@
 // immutable once created: they're load-bearing (MENU_DATA is keyed by them),
 // so renaming one here would orphan its dishes.
 
+const crypto = require('crypto');
 const { readRawFile, putFile, writeJsonArrayWithRetry } = require('./_lib/github.js');
 const { requireAuth } = require('./_lib/auth.js');
 const { parseMenuData, parseCategoryMeta, serializeMenuDataFile, serializeCategoryMetaFile, findCategoryById, nextCategoryId } = require('./_lib/menuData.js');
@@ -16,6 +17,18 @@ const EDITABLE_FIELDS = ['title', 'titleTe', 'short', 'shortTe', 'image'];
 
 // Generic bookmark/tag icon used for a newly created category until an admin picks a real one.
 const DEFAULT_ICON = '<path d="M18 8h22a4 4 0 014 4v40l-15-9-15 9V12a4 4 0 014-4z"/>';
+
+async function uploadCategoryImage(publicRepo, token, categoryId, dataUrl, username) {
+  const m = /^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/.exec(dataUrl);
+  if (!m) return null;
+  const ext = 'jpg';
+  const buffer = Buffer.from(m[2], 'base64');
+  const filePath = `images/menu/categories/${categoryId}.${ext}`;
+  const put = await putFile(publicRepo, filePath, token, buffer, null, `Upload category photo ${categoryId} (${username})`);
+  if (!put.ok) throw new Error('image-upload-failed:' + filePath);
+  const version = crypto.createHash('sha1').update(buffer).digest('hex').slice(0, 10);
+  return `${filePath}?v=${version}`;
+}
 
 async function mutateCategoryMeta(publicRepo, githubToken, mutator, commitMessage, maxRetries) {
   maxRetries = maxRetries || 4;
@@ -37,7 +50,7 @@ module.exports = async function handler(req, res) {
   const auth = requireAuth(req, res);
   if (!auth) return;
 
-  const publicRepo = process.env.PUBLIC_REPO || 'rahamathalisk/navarang-menu';
+  const publicRepo = process.env.PUBLIC_REPO || 'navrang786fr/Navrang';
   const publicToken = process.env.PUBLIC_REPO_TOKEN || process.env.GITHUB_TOKEN;
   const adminRepo = process.env.ADMIN_REPO || 'rahamathalisk/navrang-admin';
   const adminToken = process.env.ADMIN_REPO_TOKEN || process.env.GITHUB_TOKEN;
@@ -92,6 +105,17 @@ module.exports = async function handler(req, res) {
     let auditPayload;
 
     if (action === 'create') {
+      if (submitted.image && submitted.image.startsWith('data:image/')) {
+        const { raw } = await readRawFile(publicRepo, 'menu-data.js', publicToken);
+        if (raw) {
+          const { restSrc } = parseMenuData(raw);
+          const categories = parseCategoryMeta(restSrc);
+          const plannedId = nextCategoryId(categories);
+          const uploaded = await uploadCategoryImage(publicRepo, publicToken, plannedId, submitted.image, auth.sub);
+          if (uploaded) submitted.image = uploaded;
+        }
+      }
+
       const outcome = await mutateCategoryMeta(publicRepo, publicToken, function (menuData, categories) {
         const id = nextCategoryId(categories);
         const category = Object.assign({ id: id, icon: DEFAULT_ICON }, submitted);
@@ -106,6 +130,11 @@ module.exports = async function handler(req, res) {
     } else {
       const id = String(body.id || '');
       if (!id) { res.status(400).json({ error: 'id is required to update a category' }); return; }
+
+      if (submitted.image && submitted.image.startsWith('data:image/')) {
+        const uploaded = await uploadCategoryImage(publicRepo, publicToken, id, submitted.image, auth.sub);
+        if (uploaded) submitted.image = uploaded;
+      }
 
       const outcome = await mutateCategoryMeta(publicRepo, publicToken, function (menuData, categories) {
         const cat = findCategoryById(categories, id);

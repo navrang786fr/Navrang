@@ -1,3 +1,4 @@
 .claude/
 pos-orders.json
 pos-orders.json.tmp.*
+__pycache__/

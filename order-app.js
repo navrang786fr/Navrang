@@ -1074,17 +1074,44 @@
 
   var BEST_SCORE_KEY = 'navrang_biryani_catcher_best';
   var SOUND_KEY = 'navrang_biryani_catcher_sound';
+  var TOTAL_PLAYERS_KEY = 'navrang_biryani_catcher_total_players';
+
   var bestScore = 0;
   try {
     bestScore = parseInt(localStorage.getItem(BEST_SCORE_KEY), 10) || 0;
   } catch(e){}
 
+  var totalPlayers = 1480;
+  try {
+    var storedPlayers = parseInt(localStorage.getItem(TOTAL_PLAYERS_KEY), 10);
+    if (storedPlayers && storedPlayers >= 1480){
+      totalPlayers = storedPlayers;
+    } else {
+      localStorage.setItem(TOTAL_PLAYERS_KEY, totalPlayers);
+    }
+  } catch(e){}
+
+  function updateAllPlayersDisplays(count){
+    var formatted = (count || 1480).toLocaleString('en-IN') + '+';
+    var el1 = qs('#topPlayersCount'); if (el1) el1.textContent = formatted;
+    var el2 = qs('#gameTotalPlayersVal'); if (el2) el2.textContent = formatted;
+    var el3 = qs('#gameOverPlayersCount'); if (el3) el3.textContent = formatted;
+  }
+  updateAllPlayersDisplays(totalPlayers);
+
+  function recordGamePlayed(){
+    totalPlayers++;
+    try { localStorage.setItem(TOTAL_PLAYERS_KEY, totalPlayers); } catch(e){}
+    updateAllPlayersDisplays(totalPlayers);
+  }
+
   function updateAllBestScoreDisplays(score){
     var s = Math.max(0, parseInt(score, 10) || 0);
     var el1 = qs('#gameBestVal'); if (el1) el1.textContent = s;
     var el2 = qs('#heroBestScoreVal'); if (el2) el2.textContent = s;
-    var el3 = qs('#filterBestScoreVal'); if (el3) el3.textContent = s;
-    var el4 = qs('#gameOverBestScore'); if (el4) el4.textContent = s;
+    var el3 = qs('#topBestScoreVal'); if (el3) el3.textContent = s;
+    var el4 = qs('#filterBestScoreVal'); if (el4) el4.textContent = s;
+    var el5 = qs('#gameOverBestScore'); if (el5) el5.textContent = s;
   }
   updateAllBestScoreDisplays(bestScore);
 
@@ -1112,7 +1139,7 @@
     } catch(e){}
   }
 
-  function playSoundEffect(type){
+  function playSoundEffect(type, mult){
     if (isSoundMuted) return;
     try {
       var ctx = getGameAudioContext();
@@ -1125,12 +1152,22 @@
 
       if (type === 'catch'){
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(587, now);
-        osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+        var baseFreq = 587 + Math.min(300, ((mult || 1) - 1) * 80);
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, now + 0.1);
         gain.gain.setValueAtTime(0.18, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
         osc.start(now);
         osc.stop(now + 0.12);
+      } else if (type === 'combo'){
+        osc.type = 'triangle';
+        var freq = 520 + Math.min(650, (mult || 1) * 75);
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.45, now + 0.14);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
+        osc.start(now);
+        osc.stop(now + 0.16);
       } else if (type === 'star'){
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(523, now);
@@ -1154,7 +1191,7 @@
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(140, now);
         osc.frequency.linearRampToValueAtTime(90, now + 0.18);
-        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.setValueAtTime(0.25, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
         osc.start(now);
         osc.stop(now + 0.2);
@@ -1188,10 +1225,17 @@
     running: false,
     score: 0,
     lives: 3,
+    combo: 0,
+    maxCombo: 0,
     potX: 170,
     potY: 340,
     potW: 68,
     potH: 34,
+    potTilt: 0,
+    screenShake: 0,
+    embers: [],
+    burstParticles: [],
+    thrusterParticles: [],
     items: [],
     popups: [],
     animId: null,
@@ -1202,6 +1246,21 @@
     moveRight: false,
     hasPassedPreviousBest: false
   };
+
+  function initEmbers(){
+    gameState.embers = [];
+    for (var i = 0; i < 22; i++){
+      gameState.embers.push({
+        x: Math.random() * CANVAS_VIRTUAL_W,
+        y: Math.random() * CANVAS_VIRTUAL_H,
+        radius: Math.random() * 1.6 + 0.6,
+        vy: Math.random() * 0.7 + 0.3,
+        vx: (Math.random() - 0.5) * 0.35,
+        alpha: Math.random() * 0.5 + 0.25,
+        hue: Math.random() > 0.35 ? 42 : 18
+      });
+    }
+  }
 
   function resizeGameCanvas(){
     if (!gameCanvas) return;
@@ -1239,8 +1298,15 @@
     resizeGameCanvas();
     gameState.score = 0;
     gameState.lives = 3;
+    gameState.combo = 0;
+    gameState.maxCombo = 0;
     gameState.items = [];
     gameState.popups = [];
+    gameState.burstParticles = [];
+    gameState.thrusterParticles = [];
+    gameState.potTilt = 0;
+    gameState.screenShake = 0;
+    initEmbers();
     gameState.baseSpeed = 2.2;
     gameState.spawnInterval = 1000;
     gameState.lastSpawn = Date.now();
@@ -1282,14 +1348,48 @@
     });
   }
 
-  function addScorePopup(text, x, y, color){
+  function spawnBurstParticles(x, y, isStar, customColor){
+    var count = isStar ? 18 : 10;
+    var defaultColor = isStar ? '#FFE082' : '#69F0AE';
+    for (var k = 0; k < count; k++){
+      var angle = Math.random() * Math.PI * 2;
+      var speed = Math.random() * 3.8 + 1.2;
+      gameState.burstParticles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1.2,
+        radius: Math.random() * 2.4 + 1.2,
+        color: customColor || defaultColor,
+        alpha: 1,
+        decay: Math.random() * 0.035 + 0.035
+      });
+    }
+  }
+
+  function spawnThrusterSpark(x, y, dir){
+    gameState.thrusterParticles.push({
+      x: x,
+      y: y,
+      vx: (dir > 0 ? -1 : 1) * (Math.random() * 1.8 + 1.2),
+      vy: Math.random() * 1.2 + 0.5,
+      radius: Math.random() * 2 + 1,
+      alpha: 0.9,
+      decay: 0.07,
+      color: Math.random() > 0.4 ? '#FFB300' : '#FF5722'
+    });
+  }
+
+  function addScorePopup(text, x, y, color, isCombo){
     gameState.popups.push({
       text: text,
       x: x,
       y: y,
       alpha: 1,
       color: color || '#FFD700',
-      vy: -1.2
+      isCombo: !!isCombo,
+      vy: isCombo ? -1.6 : -1.2,
+      scale: isCombo ? 1.25 : 1
     });
   }
 
@@ -1318,45 +1418,50 @@
     trackEvent('game_finished', 'score_' + gameState.score);
   }
 
-  function drawHandiPot(ctx, x, y, w, h){
+  function drawHandiPot(ctx, x, y, w, h, tilt){
     ctx.save();
     ctx.translate(x, y);
+    ctx.rotate(tilt || 0);
 
     // Steam wisps
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.48)';
     ctx.font = '14px sans-serif';
     ctx.textAlign = 'center';
-    var steamOffset = Math.sin(Date.now() / 150) * 3;
+    var steamOffset = Math.sin(Date.now() / 140) * 3.5;
     ctx.fillText('♨️', 0, -h / 2 - 4 + steamOffset);
 
-    // Handi Body (Golden rounded cauldron)
+    // Cyber / Golden Aura Glow
+    ctx.shadowColor = '#FFD54F';
+    ctx.shadowBlur = 9;
+
+    // Handi Body (Golden burnished cauldron)
     var grad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
-    grad.addColorStop(0, '#9E6A08');
+    grad.addColorStop(0, '#8E5A05');
     grad.addColorStop(0.2, '#D49B22');
-    grad.addColorStop(0.5, '#FFE999');
+    grad.addColorStop(0.5, '#FFF3B3');
     grad.addColorStop(0.8, '#D49B22');
-    grad.addColorStop(1, '#784E03');
+    grad.addColorStop(1, '#6E4502');
 
     ctx.beginPath();
     ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, Math.PI * 2);
     ctx.fillStyle = grad;
     ctx.fill();
     ctx.lineWidth = 1.8;
-    ctx.strokeStyle = '#FFEAA7';
+    ctx.strokeStyle = '#FFF1C2';
     ctx.stroke();
 
     // Handi Rim
     var rimGrad = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, -h / 2);
-    rimGrad.addColorStop(0, '#784E03');
-    rimGrad.addColorStop(0.5, '#FFF2BD');
-    rimGrad.addColorStop(1, '#784E03');
+    rimGrad.addColorStop(0, '#6E4502');
+    rimGrad.addColorStop(0.5, '#FFF8D6');
+    rimGrad.addColorStop(1, '#6E4502');
     ctx.beginPath();
     ctx.ellipse(0, -h / 2 + 2, w / 2 - 2, 5, 0, 0, Math.PI * 2);
     ctx.fillStyle = rimGrad;
     ctx.fill();
 
     // Side Handles
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2.6;
     ctx.strokeStyle = '#D49B22';
     // Left handle
     ctx.beginPath();
@@ -1367,13 +1472,15 @@
     ctx.arc(w / 2 + 2, -2, 5, -Math.PI / 2, Math.PI / 2, false);
     ctx.stroke();
 
-    // Decorative Emerald jewel center
+    // Decorative Emerald Jewel Center
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = '#00E676';
     ctx.beginPath();
-    ctx.arc(0, 2, 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#1E823C';
+    ctx.arc(0, 2, 4.2, 0, Math.PI * 2);
+    ctx.fillStyle = '#00C853';
     ctx.fill();
-    ctx.strokeStyle = '#FFEAA7';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#E8F5E9';
+    ctx.lineWidth = 1.2;
     ctx.stroke();
 
     ctx.restore();
@@ -1385,32 +1492,84 @@
     var W = CANVAS_VIRTUAL_W;
     var H = CANVAS_VIRTUAL_H;
 
+    ctx.save();
+
+    // Screen Shake effect on hazards
+    if (gameState.screenShake > 0.1){
+      var sx = (Math.random() - 0.5) * gameState.screenShake;
+      var sy = (Math.random() - 0.5) * gameState.screenShake;
+      ctx.translate(sx, sy);
+      gameState.screenShake *= 0.85;
+    }
+
     // Clear Background
     ctx.clearRect(0, 0, W, H);
 
-    // Warm Kitchen Ambience Background
+    // Dynamic Deep Arcade Kitchen Gradient
     var bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-    bgGrad.addColorStop(0, '#0F2414');
-    bgGrad.addColorStop(0.5, '#0B1C10');
-    bgGrad.addColorStop(1, '#061309');
+    bgGrad.addColorStop(0, '#06170B');
+    bgGrad.addColorStop(0.45, '#0B2412');
+    bgGrad.addColorStop(1, '#041007');
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, W, H);
 
-    // Floor Line
-    ctx.strokeStyle = 'rgba(212, 155, 34, 0.25)';
+    // Drifting Golden/Fire Embers
+    for (var eIdx = 0; eIdx < gameState.embers.length; eIdx++){
+      var em = gameState.embers[eIdx];
+      em.y -= em.vy;
+      em.x += em.vx + Math.sin(em.y * 0.04) * 0.3;
+      if (em.y < -5){
+        em.y = H + 5;
+        em.x = Math.random() * W;
+      }
+      ctx.beginPath();
+      ctx.arc(em.x, em.y, em.radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'hsla(' + em.hue + ', 100%, 65%, ' + em.alpha + ')';
+      ctx.fill();
+    }
+
+    // High-Tech Cyber Floor Grid Line
+    ctx.strokeStyle = 'rgba(212, 155, 34, 0.45)';
     ctx.lineWidth = 2;
+    ctx.shadowColor = '#D49B22';
+    ctx.shadowBlur = 6;
     ctx.beginPath();
     ctx.moveTo(0, H - 24);
     ctx.lineTo(W, H - 24);
     ctx.stroke();
+    ctx.shadowBlur = 0;
 
-    // Handle smooth keyboard / button movement
-    var moveSpeed = 5.2;
+    // Movement & Banking Physics
+    var moveSpeed = 5.4;
+    var targetTilt = 0;
     if (gameState.moveLeft){
       gameState.potX = Math.max(gameState.potW / 2 + 6, gameState.potX - moveSpeed);
+      targetTilt = -0.16;
+      spawnThrusterSpark(gameState.potX + gameState.potW / 2 + 2, gameState.potY - 2, 1);
     }
     if (gameState.moveRight){
       gameState.potX = Math.min(W - gameState.potW / 2 - 6, gameState.potX + moveSpeed);
+      targetTilt = 0.16;
+      spawnThrusterSpark(gameState.potX - gameState.potW / 2 - 2, gameState.potY - 2, -1);
+    }
+    gameState.potTilt += (targetTilt - gameState.potTilt) * 0.22;
+
+    // Draw Thruster Sparks
+    for (var tIdx = gameState.thrusterParticles.length - 1; tIdx >= 0; tIdx--){
+      var tp = gameState.thrusterParticles[tIdx];
+      tp.x += tp.vx;
+      tp.y += tp.vy;
+      tp.alpha -= tp.decay;
+      if (tp.alpha <= 0){
+        gameState.thrusterParticles.splice(tIdx, 1);
+        continue;
+      }
+      ctx.beginPath();
+      ctx.arc(tp.x, tp.y, tp.radius, 0, Math.PI * 2);
+      ctx.fillStyle = tp.color;
+      ctx.globalAlpha = tp.alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
     }
 
     // Spawn items over time
@@ -1418,8 +1577,8 @@
     if (now - gameState.lastSpawn > gameState.spawnInterval){
       spawnFoodItem();
       gameState.lastSpawn = now;
-      gameState.baseSpeed = Math.min(5.2, 2.2 + (gameState.score / 150));
-      gameState.spawnInterval = Math.max(520, 1000 - (gameState.score * 3));
+      gameState.baseSpeed = Math.min(5.4, 2.2 + (gameState.score / 140));
+      gameState.spawnInterval = Math.max(500, 1000 - (gameState.score * 3));
     }
 
     // Draw & Update Food Items
@@ -1433,7 +1592,7 @@
       it.wobble += 0.05;
       var currentX = it.x + Math.sin(it.wobble) * 4;
 
-      // Draw Emoji
+      // Draw Emoji with subtle glow
       ctx.font = it.size + 'px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
       ctx.fillText(it.emoji, currentX, it.y);
 
@@ -1444,27 +1603,54 @@
       if (inX && inY){
         if (it.isHazard){
           gameState.lives--;
+          gameState.combo = 0;
           updateLivesUI();
           playSoundEffect('chilli');
-          addScorePopup('-1 ❤️', gameState.potX, hitY - 10, '#FF4444');
+          gameState.screenShake = 12;
+          spawnBurstParticles(gameState.potX, hitY, false, '#FF1744');
+          addScorePopup('-1 ❤️', gameState.potX, hitY - 12, '#FF1744', true);
           if (gameState.lives <= 0){
+            ctx.restore();
             triggerGameOver();
             return;
           }
         } else {
-          gameState.score += it.pts;
+          gameState.combo++;
+          if (gameState.combo > gameState.maxCombo) gameState.maxCombo = gameState.combo;
+
+          var mult = 1;
+          var comboLabel = '';
+          var comboColor = '#FFE082';
+          if (gameState.combo >= 10){
+            mult = 3; comboLabel = '👑 3x ROYAL CHEF!'; comboColor = '#FF1744';
+          } else if (gameState.combo >= 6){
+            mult = 2.5; comboLabel = '⚡ 2.5x MEGA STREAK!'; comboColor = '#00E5FF';
+          } else if (gameState.combo >= 4){
+            mult = 2; comboLabel = '🔥 2x COMBO!'; comboColor = '#FF9100';
+          } else if (gameState.combo >= 2){
+            mult = 1.5; comboLabel = '✨ 1.5x STREAK!'; comboColor = '#FFEA00';
+          }
+
+          var earnedPts = Math.round(it.pts * mult);
+          gameState.score += earnedPts;
           if (gameScoreVal) gameScoreVal.textContent = gameState.score;
           
+          spawnBurstParticles(currentX, hitY, it.type === 'star');
+
           if (bestScore > 0 && gameState.score > bestScore && !gameState.hasPassedPreviousBest){
             gameState.hasPassedPreviousBest = true;
-            addScorePopup('🎉 NEW BEST!', gameState.potX, hitY - 24, '#FFE082');
+            addScorePopup('🎉 NEW BEST!', gameState.potX, hitY - 26, '#FFE082', true);
             playSoundEffect('newrecord');
+          } else if (comboLabel && (gameState.combo === 2 || gameState.combo === 4 || gameState.combo === 6 || gameState.combo === 10)){
+            addScorePopup(comboLabel, currentX, hitY - 26, comboColor, true);
+            playSoundEffect('combo', mult);
           } else if (it.type === 'star'){
             playSoundEffect('star');
+            addScorePopup('+' + earnedPts, currentX, hitY - 10, '#FFF59D');
           } else {
-            playSoundEffect('catch');
+            playSoundEffect('catch', mult);
+            addScorePopup('+' + earnedPts, currentX, hitY - 10, '#69F0AE');
           }
-          addScorePopup('+' + it.pts, currentX, hitY - 10, it.type === 'star' ? '#FFEF8A' : '#76FF03');
         }
         gameState.items.splice(i, 1);
         continue;
@@ -1475,31 +1661,66 @@
       }
     }
 
-    // Draw Player Handi Pot
-    drawHandiPot(ctx, gameState.potX, gameState.potY, gameState.potW, gameState.potH);
+    // Draw Player Handi Pot with Dynamic Banking Tilt
+    drawHandiPot(ctx, gameState.potX, gameState.potY, gameState.potW, gameState.potH, gameState.potTilt);
 
-    // Draw & Update Score Popups
+    // Draw Burst Particles
+    for (var bIdx = gameState.burstParticles.length - 1; bIdx >= 0; bIdx--){
+      var bp = gameState.burstParticles[bIdx];
+      bp.x += bp.vx;
+      bp.y += bp.vy;
+      bp.alpha -= bp.decay;
+      if (bp.alpha <= 0){
+        gameState.burstParticles.splice(bIdx, 1);
+        continue;
+      }
+      ctx.beginPath();
+      ctx.arc(bp.x, bp.y, bp.radius, 0, Math.PI * 2);
+      ctx.fillStyle = bp.color;
+      ctx.globalAlpha = bp.alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // Draw Floating Combo HUD Badge in top right
+    if (gameState.combo >= 2){
+      ctx.save();
+      ctx.textAlign = 'right';
+      ctx.font = 'bold 12px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#FFE082';
+      ctx.shadowColor = '#FF9100';
+      ctx.shadowBlur = 6;
+      ctx.fillText('🔥 STREAK x' + gameState.combo, W - 14, 22);
+      ctx.restore();
+    }
+
+    // Draw & Update Score Popups with Arcade Outlined Typography
     for (var p = gameState.popups.length - 1; p >= 0; p--){
       var pop = gameState.popups[p];
       pop.y += pop.vy;
-      pop.alpha -= 0.025;
+      pop.alpha -= 0.024;
       if (pop.alpha <= 0){
         gameState.popups.splice(p, 1);
         continue;
       }
       ctx.save();
       ctx.globalAlpha = pop.alpha;
+      ctx.font = pop.isCombo ? '900 14px "Karla", sans-serif' : '800 13px "IBM Plex Mono", monospace';
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+      ctx.strokeText(pop.text, pop.x, pop.y);
       ctx.fillStyle = pop.color;
-      ctx.font = 'bold 15px "Karla", sans-serif';
       ctx.fillText(pop.text, pop.x, pop.y);
       ctx.restore();
     }
 
+    ctx.restore();
     gameState.animId = requestAnimationFrame(gameLoop);
   }
 
   function startGame(){
     resetGame();
+    recordGamePlayed();
     gameState.running = true;
     if (gameState.animId) cancelAnimationFrame(gameState.animId);
     gameState.animId = requestAnimationFrame(gameLoop);
