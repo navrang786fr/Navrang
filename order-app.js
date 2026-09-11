@@ -1562,7 +1562,7 @@
     img.crossOrigin = 'anonymous';
     img.onload = function(){ cb(img); };
     img.onerror = function(){ cb(null); };
-    img.src = 'navrang_logo.png';
+    img.src = 'navrang_logo_sm.png';
   }
 
   function getMenuQr(cb){
