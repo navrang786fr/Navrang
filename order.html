@@ -720,6 +720,221 @@
   .menu-footer p{margin:10px auto 0;max-width:440px;font-size:12px;color:var(--ink-secondary);line-height:1.55;}
   .menu-footer p.menu-version{font-size:10.5px;letter-spacing:.04em;color:var(--ink-muted);margin-top:6px;}
 
+  /* ---------- Professional Home Delivery Interest Card ---------- */
+  .delivery-interest-card{
+    margin:10px 14px 12px;
+    background:linear-gradient(135deg, #0A2A12 0%, #12401C 60%, #1A5427 100%);
+    border:1.5px solid rgba(212,155,34,0.38);
+    border-radius:18px;
+    box-shadow:var(--shadow-md), 0 0 20px rgba(18,64,28,0.22);
+    position:relative;overflow:hidden;
+    transition:transform .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  .delivery-interest-card:hover{
+    transform:translateY(-1px);
+    box-shadow:var(--shadow-lg), 0 0 26px rgba(212,155,34,0.25);
+    border-color:rgba(212,155,34,0.6);
+  }
+  .delivery-interest-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg, var(--turmeric) 0%, var(--turmeric-gold) 50%, var(--leaf) 100%);
+  }
+  .delivery-interest-card::after{
+    content:'';position:absolute;right:-25px;bottom:-25px;width:120px;height:120px;
+    background:radial-gradient(circle, rgba(212,155,34,0.15) 0%, transparent 70%);
+    pointer-events:none;border-radius:50%;
+  }
+  .delivery-card-inner{padding:14px 16px 15px;position:relative;z-index:2;}
+  
+  .delivery-card-header{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap;
+  }
+  .delivery-live-tag{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);
+    border-radius:12px;padding:3px 9px;font-size:10px;font-weight:800;
+    color:#FDF8EC;letter-spacing:0.8px;text-transform:uppercase;
+  }
+  .delivery-pulse-dot{
+    width:7px;height:7px;border-radius:50%;background:#34D399;
+    box-shadow:0 0 8px #34D399;
+    animation:delivery-pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes delivery-pulse{
+    0%,100%{opacity:1;transform:scale(1);}
+    50%{opacity:0.4;transform:scale(1.25);}
+  }
+  .delivery-counter-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    background:linear-gradient(135deg, rgba(212,155,34,0.24), rgba(212,155,34,0.12));
+    border:1px solid rgba(212,155,34,0.45);
+    border-radius:12px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--turmeric-light);
+  }
+  .delivery-counter-badge strong{color:#FFF;font-size:12.5px;font-weight:800;}
+
+  .delivery-card-content{
+    display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;
+  }
+  .delivery-scooter-icon{
+    width:46px;height:46px;border-radius:14px;flex:0 0 auto;
+    background:linear-gradient(135deg, rgba(212,155,34,0.28), rgba(18,64,28,0.4));
+    border:1.5px solid rgba(212,155,34,0.4);
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    animation:scooter-bob 3s ease-in-out infinite;
+  }
+  @keyframes scooter-bob{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-3px);}
+  }
+  .delivery-text-wrap{flex:1;min-width:0;}
+  .delivery-headline{
+    margin:0 0 4px;font-size:16px;font-weight:800;color:#FFF;line-height:1.25;
+    letter-spacing:0.2px;
+  }
+  .delivery-subtext{
+    margin:0;font-size:12px;color:rgba(255,255,255,0.82);line-height:1.45;
+  }
+
+  .delivery-actions-row{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .delivery-vote-cta{
+    display:inline-flex;align-items:center;gap:7px;
+    background:linear-gradient(135deg, #D49B22 0%, #B3821E 100%);
+    color:#0A2A12;border:1px solid #FFE494;
+    padding:9px 18px;border-radius:24px;font-size:13px;font-weight:800;
+    cursor:pointer;box-shadow:0 3px 12px rgba(212,155,34,0.35);
+    transition:all .18s var(--ease);font-family:inherit;
+  }
+  .delivery-vote-cta:hover{
+    transform:translateY(-1px);box-shadow:0 5px 16px rgba(212,155,34,0.5);
+    background:linear-gradient(135deg, #F5C767 0%, #D49B22 100%);
+  }
+  .delivery-vote-cta:active{transform:scale(0.96);}
+  .vote-sparkle{font-size:11px;color:#FFF;animation:splash-twinkle 1.8s infinite;}
+
+  .delivery-voted-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(30,130,60,0.25);border:1.2px solid rgba(74,222,128,0.5);
+    color:#86EFAC;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:800;
+  }
+  .delivery-voted-pill svg{stroke:#4ADE80;}
+
+  /* Modal Styling */
+  .delivery-modal{
+    position:fixed;inset:0;z-index:95;
+    background:rgba(6, 18, 9, 0.76);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    display:flex;align-items:center;justify-content:center;padding:20px;
+    opacity:0;pointer-events:none;transition:opacity .24s var(--ease);
+  }
+  .delivery-modal.show{opacity:1;pointer-events:auto;}
+  .delivery-modal-card{
+    position:relative;max-width:440px;width:100%;
+    background:#FFFFFF;border-radius:22px;box-shadow:var(--shadow-sheet);
+    padding:24px 20px 22px;transform:scale(0.95) translateY(10px);
+    transition:transform .24s var(--ease);max-height:92vh;overflow-y:auto;
+  }
+  .delivery-modal.show .delivery-modal-card{transform:scale(1) translateY(0);}
+  .delivery-modal-head{
+    text-align:center;margin-bottom:16px;position:relative;
+  }
+  .delivery-modal-badge{
+    width:56px;height:56px;border-radius:50%;margin:0 auto 10px;
+    background:linear-gradient(135deg, var(--turmeric-soft), #FCE8B3);
+    border:2px solid var(--turmeric-gold);
+    display:flex;align-items:center;justify-content:center;font-size:28px;
+    box-shadow:0 4px 14px rgba(212,155,34,0.25);
+  }
+  .delivery-modal-title{
+    margin:0 0 4px;font-family:'Yatra One',cursive;font-size:21px;color:var(--maroon-deep);
+    letter-spacing:0.2px;
+  }
+  .delivery-modal-sub{
+    margin:0;font-size:13px;color:var(--ink-secondary);line-height:1.45;
+  }
+
+  /* Demand Stats Highlights */
+  .delivery-stats-banner{
+    background:var(--paper-soft);border:1px solid var(--rule-strong);
+    border-radius:14px;padding:10px 14px;margin-bottom:18px;
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;
+  }
+  .stats-col strong{display:block;font-size:16px;color:var(--maroon);font-family:'IBM Plex Mono',monospace;}
+  .stats-col span{font-size:10.5px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.6px;font-weight:700;}
+
+  /* Area Quick Selection Chips */
+  .delivery-chips-label{
+    font-size:11px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;
+    letter-spacing:0.6px;margin-bottom:6px;display:block;
+  }
+  .delivery-chips-wrap{
+    display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;
+  }
+  .area-chip{
+    background:var(--bg-page);border:1px solid var(--rule-strong);
+    border-radius:16px;padding:4px 10px;font-size:12px;font-weight:600;
+    color:var(--ink-secondary);cursor:pointer;transition:all .14s ease;
+  }
+  .area-chip:hover, .area-chip.active{
+    background:var(--turmeric-soft);border-color:var(--turmeric-gold);
+    color:var(--maroon);font-weight:700;
+  }
+
+  .delivery-form-group{margin-bottom:14px;}
+  .delivery-form-group label{
+    display:block;font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:5px;
+  }
+  .delivery-form-input{
+    width:100%;padding:11px 14px;border-radius:12px;border:1.4px solid var(--rule-strong);
+    background:var(--paper);font-size:13.5px;outline:none;transition:border-color .15s ease;
+    font-family:inherit;
+  }
+  .delivery-form-input:focus{
+    border-color:var(--turmeric-gold);background:#FFFFFF;box-shadow:0 0 0 3px rgba(212,155,34,0.15);
+  }
+  .delivery-form-hint{
+    font-size:11px;color:var(--ink-muted);margin-top:4px;display:block;line-height:1.4;
+  }
+
+  .delivery-submit-cta{
+    width:100%;padding:12px;border-radius:14px;
+    background:linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color:#FFF;font-size:14.5px;font-weight:800;border:1px solid rgba(247,229,181,0.25);
+    cursor:pointer;box-shadow:var(--shadow-md);transition:all .18s var(--ease);
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    font-family:inherit;margin-top:16px;
+  }
+  .delivery-submit-cta:hover{
+    transform:translateY(-1px);box-shadow:var(--shadow-lg);background:linear-gradient(135deg, #185226, var(--maroon-deep));
+  }
+  .delivery-submit-cta:active{transform:scale(0.98);}
+
+  /* Success View */
+  .delivery-success-view{display:none;text-align:center;padding:10px 0;}
+  .delivery-success-ring{
+    width:64px;height:64px;border-radius:50%;margin:0 auto 12px;
+    background:linear-gradient(135deg, #EAF7EE, #C8E8D2);
+    border:2.5px solid var(--leaf);display:flex;align-items:center;justify-content:center;
+    font-size:32px;color:var(--leaf);
+    box-shadow:0 0 20px rgba(30,130,60,0.3);
+  }
+  .delivery-success-title{font-family:'Yatra One',cursive;font-size:22px;color:var(--maroon-deep);margin:0 0 6px;}
+  .delivery-success-desc{font-size:13.5px;color:var(--ink-secondary);line-height:1.55;margin:0 0 18px;}
+  .delivery-share-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#25D366;color:#FFF;border:none;border-radius:24px;
+    padding:10px 20px;font-size:13px;font-weight:800;cursor:pointer;
+    text-decoration:none;box-shadow:0 3px 10px rgba(37,211,102,0.35);
+    margin-bottom:10px;
+  }
+  .delivery-done-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--paper-soft);color:var(--ink);border:1px solid var(--rule-strong);
+    border-radius:20px;padding:8px 18px;font-size:12.5px;font-weight:700;cursor:pointer;
+  }
+
   /* ---------- Bottom Sheets & Modal Dialogs (Shared System) ---------- */
   .sheet-handle{
     width:36px;height:4px;border-radius:2px;background:rgba(22,35,26,0.18);
@@ -1925,6 +2140,39 @@
     </div>
   </section>
 
+  <!-- Home Delivery Demand Survey Card -->
+  <section class="delivery-interest-card" id="deliveryInterestCard" aria-label="Home Delivery Demand Survey">
+    <div class="delivery-card-inner">
+      <div class="delivery-card-header">
+        <div class="delivery-live-tag">
+          <span class="delivery-pulse-dot"></span>
+          <span id="deliverySurveyTag">COMING SOON · DEMAND SURVEY</span>
+        </div>
+        <div class="delivery-counter-badge" id="deliveryCounterBadge">
+          🔥 <strong id="deliveryUniqueCount">0</strong>&nbsp;<span id="deliveryCountLabel">interested in Home Delivery</span>
+        </div>
+      </div>
+      <div class="delivery-card-content">
+        <div class="delivery-scooter-icon" aria-hidden="true">🛵</div>
+        <div class="delivery-text-wrap">
+          <h3 class="delivery-headline" id="deliveryHeadline">Want Navrang Delivered to Your Doorstep?</h3>
+          <p class="delivery-subtext" id="deliverySubtext">Vote for your colony or area! If we receive enough demand, we'll launch express home delivery with an exclusive 20% OFF launch discount.</p>
+        </div>
+      </div>
+      <div class="delivery-actions-row">
+        <button type="button" class="delivery-vote-cta" id="deliveryVoteBtn" aria-label="Vote for home delivery">
+          <span class="vote-icon">🛵</span>
+          <span id="deliveryVoteBtnText">Yes, I Want Home Delivery!</span>
+          <span class="vote-sparkle">✦</span>
+        </button>
+        <span class="delivery-voted-pill" id="deliveryVotedPill" style="display:none;">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="deliveryVotedText">You Voted! Launching Soon</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
   <!-- Sticky Subheader with Search, Quick Filters & Category Carousel -->
   <div class="sticky-subheader" id="stickySubheader">
     <!-- Sleek Top Single-Line Game Bar -->
@@ -2010,6 +2258,73 @@
     <p class="menu-version">v26.08.1</p>
   </div>
 
+</div>
+
+<!-- Home Delivery Interest Modal -->
+<div class="delivery-modal" id="deliveryModal" role="dialog" aria-label="Home Delivery Interest Survey" aria-hidden="true">
+  <div class="delivery-modal-card" id="deliveryModalCard">
+    <button class="lightbox-close" id="deliveryModalClose" type="button" aria-label="Close">✕</button>
+    
+    <!-- Form View -->
+    <div id="deliveryFormView">
+      <div class="delivery-modal-head">
+        <div class="delivery-modal-badge">🛵</div>
+        <h3 class="delivery-modal-title" id="deliveryModalTitle">Bring Navrang to Your Home!</h3>
+        <p class="delivery-modal-sub" id="deliveryModalSub">Vote for your area &amp; help us prioritize delivery routes.</p>
+      </div>
+
+      <div class="delivery-stats-banner">
+        <div class="stats-col">
+          <strong id="modalDeliveryCount">0</strong>
+          <span id="modalDeliveryCountLabel">Customer Votes</span>
+        </div>
+        <div class="stats-col">
+          <strong id="modalDeliveryOffer">20% OFF</strong>
+          <span id="modalDeliveryOfferLabel">Launch Coupon</span>
+        </div>
+      </div>
+
+      <form id="deliveryVoteForm" onsubmit="return false;">
+        <div class="delivery-form-group">
+          <label id="deliveryAreaLabel" for="deliveryAreaInput">Your Colony / Area / Landmark <span style="color:var(--nonveg);">*</span></label>
+          <span class="delivery-chips-label">Popular Areas (Tap to select):</span>
+          <div class="delivery-chips-wrap" id="deliveryAreaChips">
+            <button type="button" class="area-chip" data-area="Gandhi Nagar">Gandhi Nagar</button>
+            <button type="button" class="area-chip" data-area="Station Road">Station Road</button>
+            <button type="button" class="area-chip" data-area="RTC Bus Stand">RTC Bus Stand</button>
+            <button type="button" class="area-chip" data-area="Housing Board">Housing Board</button>
+            <button type="button" class="area-chip" data-area="Collector Office">Collector Office</button>
+            <button type="button" class="area-chip" data-area="Clock Tower">Clock Tower</button>
+          </div>
+          <input type="text" id="deliveryAreaInput" class="delivery-form-input" placeholder="e.g. Gandhi Nagar, Station Road..." required autocomplete="off">
+        </div>
+
+        <div class="delivery-form-group">
+          <label id="deliveryPhoneLabel" for="deliveryPhoneInput">WhatsApp / Mobile Number (Optional)</label>
+          <input type="tel" id="deliveryPhoneInput" class="delivery-form-input" placeholder="10-digit mobile number" maxlength="15" autocomplete="tel">
+          <span class="delivery-form-hint" id="deliveryPhoneNote">We will WhatsApp your 20% OFF launch coupon when delivery opens. Zero spam.</span>
+        </div>
+
+        <button type="button" class="delivery-submit-cta" id="deliverySubmitBtn">
+          <span id="deliverySubmitText">Vote for My Area &amp; Get 20% Coupon 🚀</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Success View -->
+    <div id="deliverySuccessView" class="delivery-success-view">
+      <div class="delivery-success-ring">✔</div>
+      <h3 class="delivery-success-title" id="deliverySuccessTitle">🎉 Your Vote is Recorded!</h3>
+      <p class="delivery-success-desc" id="deliverySuccessMsg">Thank you! We've recorded your demand. We're planning express delivery routes to bring steaming hot food to your home soon!</p>
+      <div>
+        <a href="#" target="_blank" rel="noopener" class="delivery-share-btn" id="deliveryShareBtn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
+          <span id="deliveryShareBtnText">Share with Neighbors on WhatsApp</span>
+        </a>
+      </div>
+      <button type="button" class="delivery-done-btn" id="deliveryDoneBtn">Done</button>
+    </div>
+  </div>
 </div>
 
 <!-- Dish Image & Ingredients Lightbox Modal -->
@@ -2312,6 +2627,10 @@
 
 <!-- Floating Action Button (FAB) Speed Dial -->
 <div class="fab-stack" id="fabStack">
+  <div class="fab-item fab-delivery">
+    <span class="fab-item-label" id="fabDeliveryLabel">Delivery</span>
+    <button type="button" class="fab-item-btn" id="fabDeliveryBtn" aria-label="Home Delivery Survey">🛵</button>
+  </div>
   <div class="fab-item fab-split">
     <span class="fab-item-label" id="fabSplitLabel">Split Bill</span>
     <button type="button" class="fab-item-btn" id="fabSplitBtn" aria-label="Split Bill">

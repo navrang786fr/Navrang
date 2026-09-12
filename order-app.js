@@ -159,7 +159,30 @@
                '• Total People: ' + people + '\n' +
                '• *Each Person Pays: ₹' + each + '*\n\n' +
                'Order & browse menu: ' + window.location.href;
-      }
+      },
+      deliverySurveyTag: 'COMING SOON · DEMAND SURVEY',
+      deliveryCountLabel: 'interested in Home Delivery',
+      deliveryHeadline: 'Want Navrang Delivered to Your Doorstep?',
+      deliverySubtext: "Vote for your colony or area! If we receive enough demand, we'll launch express home delivery with an exclusive 20% OFF launch discount.",
+      deliveryVoteBtnText: 'Yes, I Want Home Delivery!',
+      deliveryVotedText: 'You Voted! Launching Soon',
+      deliveryModalTitle: 'Bring Navrang to Your Home!',
+      deliveryModalSub: 'Vote for your area & help us prioritize delivery routes.',
+      deliveryVotesLabel: 'Customer Votes',
+      deliveryOfferLabel: 'Launch Coupon',
+      deliveryAreaLabel: 'Your Colony / Area / Landmark',
+      deliveryAreaPlaceholder: 'e.g. Gandhi Nagar, Station Road...',
+      deliveryPhoneLabel: 'WhatsApp / Mobile Number (Optional)',
+      deliveryPhonePlaceholder: '10-digit mobile number',
+      deliveryPhoneNote: 'We will WhatsApp your 20% OFF launch coupon when delivery opens. Zero spam.',
+      deliverySubmitText: 'Vote for My Area & Get 20% Coupon 🚀',
+      deliverySubmitting: 'Recording your vote…',
+      deliverySuccessTitle: '🎉 Your Vote is Recorded!',
+      deliverySuccessMsg: "Thank you! We've recorded your demand. We're planning express delivery routes to bring steaming hot food to your home soon!",
+      deliveryShareBtnText: 'Share with Neighbors on WhatsApp',
+      deliveryDoneText: 'Done',
+      deliveryErrArea: 'Please enter or select your area / colony.',
+      fabDeliveryLabel: 'Delivery'
     },
     te: {
       tag: 'స్కాన్ చేయండి · చూడండి · ఆర్డర్ చేయండి',
@@ -272,7 +295,30 @@
                '• వ్యక్తుల సంఖ్య: ' + people + '\n' +
                '• *ఒక్కొక్కరు చెల్లించాల్సింది: ₹' + each + '*\n\n' +
                'మెనూ చూడండి: ' + window.location.href;
-      }
+      },
+      deliverySurveyTag: 'త్వరలో రాబోతోంది · డిమాండ్ సర్వే',
+      deliveryCountLabel: 'మంది హోమ్ డెలివరీ కోరుకుంటున్నారు',
+      deliveryHeadline: 'నవరంగ్ రుచులు మీ ఇంటి వద్దకే కావాలా?',
+      deliverySubtext: 'మీ కాలనీ లేదా ఏరియా కోసం ఓటు వేయండి! మంచి డిమాండ్ వస్తే, 20% లాంచ్ డిస్కౌంట్‌తో ఎక్స్‌ప్రెస్ హోమ్ డెలివరీ ప్రారంభిస్తాం.',
+      deliveryVoteBtnText: 'అవును, నాకు హోమ్ డెలివరీ కావాలి!',
+      deliveryVotedText: 'మీ ఓటు నమోదైంది! త్వరలో వస్తున్నాం',
+      deliveryModalTitle: 'నవరంగ్ రుచులు మీ ఇంటికి!',
+      deliveryModalSub: 'మీ ఏరియాను ఎంచుకోండి, డెలివరీ రూట్లను వేగవంతం చేయడంలో మాకు సహాయపడండి.',
+      deliveryVotesLabel: 'కస్టమర్ ఓట్లు',
+      deliveryOfferLabel: 'లాంచ్ కూపన్',
+      deliveryAreaLabel: 'మీ కాలనీ / ఏరియా / ల్యాండ్‌మార్క్',
+      deliveryAreaPlaceholder: 'ఉదా: గాంధీ నగర్, స్టేషన్ రోడ్...',
+      deliveryPhoneLabel: 'వాట్సాప్ / మొబైల్ నంబర్ (ఐచ్ఛికం)',
+      deliveryPhonePlaceholder: '10 అంకెల మొబైల్ నంబర్',
+      deliveryPhoneNote: 'డెలివరీ ప్రారంభమైన వెంటనే 20% తగ్గింపు కూపన్ వాట్సాప్ చేస్తాం. ఎలాంటి స్పామ్ ఉండదు.',
+      deliverySubmitText: 'నా ఏరియాకు ఓటు వేసి 20% కూపన్ పొందండి 🚀',
+      deliverySubmitting: 'నమోదవుతోంది…',
+      deliverySuccessTitle: '🎉 మీ ఓటు విజయవంతంగా నమోదైంది!',
+      deliverySuccessMsg: 'ధన్యవాదాలు! మీ ప్రాంత డిమాండ్ నమోదైంది. మీ ఇంటికే వేడి వేడి ఆహారాన్ని అందించేందుకు మేము డెలివరీ మార్గాలను రూపొందిస్తున్నాం!',
+      deliveryShareBtnText: 'వాట్సాప్‌లో ఇతరులతో షేర్ చేయండి',
+      deliveryDoneText: 'పూర్తయింది',
+      deliveryErrArea: 'దయచేసి మీ ప్రాంతం లేదా కాలనీ పేరు నమోదు చేయండి.',
+      fabDeliveryLabel: 'డెలివరీ'
     }
   };
 
@@ -415,12 +461,35 @@
     if (youtubeLink){ youtubeLink.title = S.youtubeTitle; youtubeLink.setAttribute('aria-label', S.youtubeTitle); }
     var fabOffersLabel = qs('#fabOffersLabel'); if (fabOffersLabel) fabOffersLabel.textContent = S.offersLabel;
     var fabRatingLabel = qs('#fabRatingLabel'); if (fabRatingLabel) fabRatingLabel.textContent = S.rateCta;
+    var fabDeliveryLabel = qs('#fabDeliveryLabel'); if (fabDeliveryLabel) fabDeliveryLabel.textContent = S.fabDeliveryLabel;
     var fabInstaLabel = qs('#fabInstaLabel'); if (fabInstaLabel) fabInstaLabel.textContent = S.instagramLabel;
     var fabYoutubeLabel = qs('#fabYoutubeLabel'); if (fabYoutubeLabel) fabYoutubeLabel.textContent = S.youtubeLabel;
     var fabYoutubeBtn = qs('#fabYoutubeBtn');
     if (fabYoutubeBtn){ fabYoutubeBtn.title = S.youtubeTitle; fabYoutubeBtn.setAttribute('aria-label', S.youtubeTitle); }
     var footerYoutubeText = qs('#footerYoutubeText'); if (footerYoutubeText) footerYoutubeText.textContent = S.footerYoutubeText;
     var footerInstaText = qs('#footerInstaText'); if (footerInstaText) footerInstaText.textContent = S.footerInstaText;
+
+    // Home Delivery Survey elements
+    var deliverySurveyTag = qs('#deliverySurveyTag'); if (deliverySurveyTag) deliverySurveyTag.textContent = S.deliverySurveyTag;
+    var deliveryCountLabel = qs('#deliveryCountLabel'); if (deliveryCountLabel) deliveryCountLabel.textContent = S.deliveryCountLabel;
+    var deliveryHeadline = qs('#deliveryHeadline'); if (deliveryHeadline) deliveryHeadline.textContent = S.deliveryHeadline;
+    var deliverySubtext = qs('#deliverySubtext'); if (deliverySubtext) deliverySubtext.textContent = S.deliverySubtext;
+    var deliveryVoteBtnText = qs('#deliveryVoteBtnText'); if (deliveryVoteBtnText) deliveryVoteBtnText.textContent = S.deliveryVoteBtnText;
+    var deliveryVotedText = qs('#deliveryVotedText'); if (deliveryVotedText) deliveryVotedText.textContent = S.deliveryVotedText;
+    var deliveryModalTitle = qs('#deliveryModalTitle'); if (deliveryModalTitle) deliveryModalTitle.textContent = S.deliveryModalTitle;
+    var deliveryModalSub = qs('#deliveryModalSub'); if (deliveryModalSub) deliveryModalSub.textContent = S.deliveryModalSub;
+    var modalDeliveryCountLabel = qs('#modalDeliveryCountLabel'); if (modalDeliveryCountLabel) modalDeliveryCountLabel.textContent = S.deliveryVotesLabel;
+    var modalDeliveryOfferLabel = qs('#modalDeliveryOfferLabel'); if (modalDeliveryOfferLabel) modalDeliveryOfferLabel.textContent = S.deliveryOfferLabel;
+    var deliveryAreaLabel = qs('#deliveryAreaLabel'); if (deliveryAreaLabel) deliveryAreaLabel.innerHTML = S.deliveryAreaLabel + ' <span style="color:var(--nonveg);">*</span>';
+    var deliveryAreaInput = qs('#deliveryAreaInput'); if (deliveryAreaInput) deliveryAreaInput.placeholder = S.deliveryAreaPlaceholder;
+    var deliveryPhoneLabel = qs('#deliveryPhoneLabel'); if (deliveryPhoneLabel) deliveryPhoneLabel.textContent = S.deliveryPhoneLabel;
+    var deliveryPhoneInput = qs('#deliveryPhoneInput'); if (deliveryPhoneInput) deliveryPhoneInput.placeholder = S.deliveryPhonePlaceholder;
+    var deliveryPhoneNote = qs('#deliveryPhoneNote'); if (deliveryPhoneNote) deliveryPhoneNote.textContent = S.deliveryPhoneNote;
+    var deliverySubmitText = qs('#deliverySubmitText'); if (deliverySubmitText) deliverySubmitText.textContent = S.deliverySubmitText;
+    var deliverySuccessTitle = qs('#deliverySuccessTitle'); if (deliverySuccessTitle) deliverySuccessTitle.textContent = S.deliverySuccessTitle;
+    var deliverySuccessMsg = qs('#deliverySuccessMsg'); if (deliverySuccessMsg) deliverySuccessMsg.textContent = S.deliverySuccessMsg;
+    var deliveryShareBtnText = qs('#deliveryShareBtnText'); if (deliveryShareBtnText) deliveryShareBtnText.textContent = S.deliveryShareBtnText;
+    var deliveryDoneBtn = qs('#deliveryDoneBtn'); if (deliveryDoneBtn) deliveryDoneBtn.textContent = S.deliveryDoneText;
     if (typeof updateAllPlayersDisplays === 'function') updateAllPlayersDisplays(totalPlayers);
     langOpts.forEach(function(btn){
       btn.classList.toggle('active', btn.dataset.lang === currentLang);
@@ -2569,6 +2638,260 @@
     updatePeopleUI();
     calculateSplitBill();
   }
+
+  /* ---------- Home Delivery Demand Survey Controller ---------- */
+  var DELIVERY_STORAGE_KEY = 'navrang_delivery_voted';
+  var DELIVERY_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? '/api/delivery-interest'
+    : 'https://ratings-api-pink.vercel.app/api/delivery-interest';
+
+  function getDeliveryDeviceId(){
+    var id = localStorage.getItem('navrang-device-id');
+    if (!id){
+      id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 9);
+      localStorage.setItem('navrang-device-id', id);
+    }
+    return id;
+  }
+
+  function getStoredDeliveryVote(){
+    try {
+      var raw = localStorage.getItem(DELIVERY_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  var currentDeliveryCount = 0;
+  function animateCounter(el, targetVal){
+    if (!el) return;
+    var startVal = parseInt(el.textContent, 10) || 0;
+    if (isNaN(startVal)) startVal = 0;
+    if (startVal === targetVal){ el.textContent = targetVal; return; }
+    var diff = targetVal - startVal;
+    var duration = 800;
+    var startTime = performance.now();
+
+    function step(now){
+      var progress = Math.min((now - startTime) / duration, 1);
+      var ease = 1 - Math.pow(1 - progress, 3);
+      var current = Math.round(startVal + diff * ease);
+      el.textContent = current;
+      if (progress < 1){
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = targetVal;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function updateDeliveryDisplays(count){
+    if (typeof count === 'number' && !isNaN(count)){
+      currentDeliveryCount = count;
+      var elCard = qs('#deliveryUniqueCount');
+      var elModal = qs('#modalDeliveryCount');
+      if (elCard) animateCounter(elCard, count);
+      if (elModal) animateCounter(elModal, count);
+    }
+  }
+
+  function initDeliverySurvey(){
+    var deliveryModal = qs('#deliveryModal');
+    var deliveryModalCard = qs('#deliveryModalCard');
+    var deliveryModalClose = qs('#deliveryModalClose');
+    var deliveryVoteBtn = qs('#deliveryVoteBtn');
+    var deliveryVotedPill = qs('#deliveryVotedPill');
+    var fabDeliveryBtn = qs('#fabDeliveryBtn');
+    var formView = qs('#deliveryFormView');
+    var successView = qs('#deliverySuccessView');
+    var areaInput = qs('#deliveryAreaInput');
+    var phoneInput = qs('#deliveryPhoneInput');
+    var submitBtn = qs('#deliverySubmitBtn');
+    var submitText = qs('#deliverySubmitText');
+    var doneBtn = qs('#deliveryDoneBtn');
+    var shareBtn = qs('#deliveryShareBtn');
+    var areaChips = qsa('.area-chip', qs('#deliveryAreaChips'));
+
+    var storedVote = getStoredDeliveryVote();
+    if (storedVote){
+      if (deliveryVotedPill) deliveryVotedPill.style.display = 'inline-flex';
+      var voteBtnText = qs('#deliveryVoteBtnText');
+      if (voteBtnText) voteBtnText.textContent = (currentLang === 'te') ? 'మీ ఓటు వివరాలు చూడండి' : 'View Your Registered Area';
+    }
+
+    // Fetch live unique vote count from API, fallback to JSON
+    fetch(DELIVERY_API_URL)
+      .then(function(res){
+        if (!res.ok) throw new Error('API offline');
+        return res.json();
+      })
+      .then(function(data){
+        if (data && typeof data.uniqueCount === 'number'){
+          updateDeliveryDisplays(data.uniqueCount);
+        }
+      })
+      .catch(function(){
+        fetch('delivery-interest.json')
+          .then(function(r){ return r.json(); })
+          .then(function(fallback){
+            if (fallback && typeof fallback.uniqueCount === 'number'){
+              updateDeliveryDisplays(fallback.uniqueCount);
+            }
+          })
+          .catch(function(){});
+      });
+
+    function setupWhatsAppShare(area){
+      if (!shareBtn) return;
+      var currentArea = area || (storedVote ? storedVote.area : 'my area');
+      var textEn = '🛵 I just voted for Navrang Restaurant Home Delivery in ' + currentArea + '! 🍛 Support our colony so they start home delivery soon with 20% OFF: ' + window.location.href;
+      var textTe = '🛵 నవరంగ్ రెస్టారెంట్ హోమ్ డెలివరీ కోసం నేను ' + currentArea + ' కు ఓటు వేశాను! 🍛 మన ఏరియాలో డెలివరీ త్వరగా ప్రారంభం కావడానికి మీరు కూడా ఓటు వేయండి & 20% ఆఫర్ పొందండి: ' + window.location.href;
+      var shareText = currentLang === 'te' ? textTe : textEn;
+      shareBtn.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(shareText);
+    }
+
+    function openDeliveryModal(){
+      if (!deliveryModal) return;
+      storedVote = getStoredDeliveryVote();
+      if (storedVote && storedVote.area){
+        // Show success view directly with user's registered area
+        if (formView) formView.style.display = 'none';
+        if (successView) successView.style.display = 'block';
+        var successDesc = qs('#deliverySuccessMsg');
+        if (successDesc){
+          successDesc.textContent = (currentLang === 'te')
+            ? 'మీ ఏరియా (' + storedVote.area + ') కోసం మీ ఓటు నమోదైంది! డెలివరీ ప్రారంభమైన వెంటనే 20% తగ్గింపు కూపన్ అందజేస్తాం.'
+            : 'Your vote for ' + storedVote.area + ' is recorded! When home delivery routes open, your 20% discount coupon will be ready.';
+        }
+        setupWhatsAppShare(storedVote.area);
+      } else {
+        if (formView) formView.style.display = 'block';
+        if (successView) successView.style.display = 'none';
+        setTimeout(function(){
+          if (areaInput) areaInput.focus();
+        }, 120);
+      }
+      deliveryModal.classList.add('show');
+      deliveryModal.setAttribute('aria-hidden', 'false');
+      trackEvent('delivery_interest', 'modal_opened');
+    }
+
+    function closeDeliveryModal(){
+      if (!deliveryModal) return;
+      deliveryModal.classList.remove('show');
+      deliveryModal.setAttribute('aria-hidden', 'true');
+    }
+
+    if (deliveryVoteBtn) deliveryVoteBtn.addEventListener('click', openDeliveryModal);
+    if (deliveryVotedPill) deliveryVotedPill.addEventListener('click', openDeliveryModal);
+    if (fabDeliveryBtn) fabDeliveryBtn.addEventListener('click', function(){
+      if (typeof closeFab === 'function') closeFab();
+      openDeliveryModal();
+    });
+    if (deliveryModalClose) deliveryModalClose.addEventListener('click', closeDeliveryModal);
+    if (doneBtn) doneBtn.addEventListener('click', closeDeliveryModal);
+
+    if (deliveryModal){
+      deliveryModal.addEventListener('click', closeDeliveryModal);
+      if (deliveryModalCard){
+        deliveryModalCard.addEventListener('click', function(e){ e.stopPropagation(); });
+      }
+    }
+
+    // Quick selection chips
+    areaChips.forEach(function(chip){
+      chip.addEventListener('click', function(){
+        var area = chip.dataset.area;
+        if (areaInput){
+          areaInput.value = area;
+          areaInput.classList.remove('input-err');
+        }
+        areaChips.forEach(function(c){ c.classList.toggle('active', c === chip); });
+      });
+    });
+
+    if (areaInput){
+      areaInput.addEventListener('input', function(){
+        var val = areaInput.value.trim().toLowerCase();
+        areaChips.forEach(function(c){
+          c.classList.toggle('active', c.dataset.area.toLowerCase() === val);
+        });
+      });
+    }
+
+    // Form submission
+    if (submitBtn){
+      submitBtn.addEventListener('click', function(){
+        var areaVal = (areaInput ? areaInput.value : '').trim();
+        var S = STRINGS[currentLang] || STRINGS.en;
+
+        if (!areaVal){
+          if (areaInput){
+            areaInput.classList.add('input-err');
+            areaInput.focus();
+          }
+          alert(S.deliveryErrArea);
+          return;
+        }
+
+        var phoneVal = (phoneInput ? phoneInput.value : '').trim().replace(/[^0-9+]/g, '');
+
+        var origBtnText = submitText ? submitText.innerHTML : '';
+        submitBtn.disabled = true;
+        if (submitText) submitText.textContent = S.deliverySubmitting;
+
+        var payload = {
+          deviceId: getDeliveryDeviceId(),
+          sessionId: getSessionId(),
+          area: areaVal,
+          phone: phoneVal,
+          lang: currentLang
+        };
+
+        function onVoteSaved(newCount){
+          submitBtn.disabled = false;
+          if (submitText) submitText.innerHTML = origBtnText;
+
+          var voteData = { area: areaVal, phone: phoneVal, timestamp: Date.now() };
+          localStorage.setItem(DELIVERY_STORAGE_KEY, JSON.stringify(voteData));
+          storedVote = voteData;
+
+          if (deliveryVotedPill) deliveryVotedPill.style.display = 'inline-flex';
+          var voteBtnText = qs('#deliveryVoteBtnText');
+          if (voteBtnText) voteBtnText.textContent = (currentLang === 'te') ? 'మీ ఓటు వివరాలు చూడండి' : 'View Your Registered Area';
+
+          if (typeof newCount === 'number') updateDeliveryDisplays(newCount);
+          else updateDeliveryDisplays(currentDeliveryCount + 1);
+
+          setupWhatsAppShare(areaVal);
+
+          if (formView) formView.style.display = 'none';
+          if (successView) successView.style.display = 'block';
+
+          trackEvent('delivery_vote', areaVal + (phoneVal ? '_ph' : ''));
+        }
+
+        fetch(DELIVERY_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+          var count = (res && typeof res.uniqueCount === 'number') ? res.uniqueCount : undefined;
+          onVoteSaved(count);
+        })
+        .catch(function(){
+          // Graceful fallback: record locally even if offline/network error
+          onVoteSaved();
+        });
+      });
+    }
+  }
+
+  initDeliverySurvey();
 
   /* ---------- Dismiss Splash Screen once App is Ready ---------- */
   if (typeof window.__dismissSplash === 'function'){

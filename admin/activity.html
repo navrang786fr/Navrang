@@ -8,8 +8,9 @@
 <link rel="icon" href="../navrang_logo.png">
 <link rel="stylesheet" href="admin-style.css">
 <style>
-  .summary-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px;}
-  @media (max-width:960px){ .summary-grid{grid-template-columns:repeat(3,1fr);} }
+  .summary-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin-bottom:20px;}
+  @media (max-width:1100px){ .summary-grid{grid-template-columns:repeat(4,1fr);} }
+  @media (max-width:720px){ .summary-grid{grid-template-columns:repeat(3,1fr);} }
   @media (max-width:540px){ .summary-grid{grid-template-columns:repeat(2,1fr);gap:8px;} }
   .summary-card{background:var(--bg-surface);border:1px solid var(--rule);border-radius:var(--radius-md);padding:14px 10px;text-align:center;box-shadow:var(--shadow-xs);transition:all .15s ease;}
   .summary-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm);border-color:#CBD5E1;}
@@ -72,6 +73,7 @@
       <div class="summary-card"><div class="val" id="statViews">–</div><div class="lbl">Dish Views</div></div>
       <div class="summary-card"><div class="val" id="statZooms">–</div><div class="lbl">Photo Zooms</div></div>
       <div class="summary-card"><div class="val" id="statSplits">–</div><div class="lbl">Split Bill</div></div>
+      <div class="summary-card"><div class="val" id="statDeliveryVotes" style="color:var(--leaf);">–</div><div class="lbl" style="color:var(--leaf);">Delivery Votes</div></div>
       <div class="summary-card"><div class="val" id="statZeroResults" style="color:var(--nonveg);">–</div><div class="lbl" style="color:var(--nonveg);">Unmet Searches</div></div>
       <div class="summary-card"><div class="val" id="statSessions">–</div><div class="lbl">Unique Guests</div></div>
     </div>
@@ -97,6 +99,7 @@
           <option value="category_click">Category Clicks</option>
           <option value="group_filters">Dietary &amp; Price Filters</option>
           <option value="group_split">Split Bill Interactions</option>
+          <option value="delivery_vote">Home Delivery Votes (Colonies)</option>
           <option value="lang_switch">Language Switches</option>
           <option value="group_engagement">Ratings &amp; Social</option>
         </select>
@@ -125,6 +128,16 @@
         </h2>
         <div class="admin-card" id="topZeroResults"></div>
       </div>
+    </div>
+
+    <div class="admin-card" style="margin-bottom:20px;padding:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <h2 style="font-size:15px;margin:0;display:flex;align-items:center;gap:8px;color:var(--maroon-deep);">
+          <span style="font-size:18px;">🛵</span> Top Requested Home Delivery Areas (Colonies)
+        </h2>
+        <span id="deliveryVotesSummaryBadge" style="font-size:12px;font-weight:700;color:var(--leaf);background:rgba(22,163,74,0.1);padding:4px 12px;border-radius:12px;border:1px solid rgba(22,163,74,0.25);">0 Customer Votes</span>
+      </div>
+      <div id="topDeliveryAreas"></div>
     </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px;flex-wrap:wrap;gap:8px;">
@@ -189,6 +202,8 @@
     split_preset_click: { label: 'Split Preset', badge: 'badge-split' },
     split_bill_download_image: { label: 'Bill Image', badge: 'badge-split' },
     split_bill_copy: { label: 'Bill Copied', badge: 'badge-split' },
+    delivery_interest: { label: 'Delivery View', badge: 'badge-action' },
+    delivery_vote: { label: 'Delivery Vote', badge: 'badge-zoom' },
     surprise_spin: { label: 'Roulette Spin', badge: 'badge-action' },
     surprise_view_menu: { label: 'Roulette Pick', badge: 'badge-action' },
     rate_food_open: { label: 'Rating Opened', badge: 'badge-action' },
@@ -235,6 +250,7 @@
     if (!filterVal || filterVal === 'all') return true;
     if (filterVal === 'group_filters') return ['veg_filter','nonveg_filter','top_filter','price_filter','category_click'].indexOf(row.type) !== -1;
     if (filterVal === 'group_split') return row.type.indexOf('split_') === 0;
+    if (filterVal === 'delivery_vote') return row.type === 'delivery_vote' || row.type === 'delivery_interest';
     if (filterVal === 'group_engagement') return ['rate_food_open','instagram_click','offers_view','surprise_spin','surprise_view_menu'].indexOf(row.type) !== -1;
     return row.type === filterVal;
   }
@@ -280,6 +296,7 @@
     var views = dateRows.filter(function(r){ return r.type === 'item_view'; });
     var zooms = dateRows.filter(function(r){ return r.type === 'dish_zoom' || r.type === 'dish_ingredients'; });
     var splits = dateRows.filter(function(r){ return r.type.indexOf('split_') === 0; });
+    var deliveryVotes = dateRows.filter(function(r){ return r.type === 'delivery_vote'; });
     var zeroResults = dateRows.filter(function(r){ return r.type === 'search_no_results'; });
     var sessions = {};
     dateRows.forEach(function(r){ if (r.sessionId) sessions[r.sessionId] = true; });
@@ -288,13 +305,19 @@
     document.getElementById('statViews').textContent = views.length;
     document.getElementById('statZooms').textContent = zooms.length;
     document.getElementById('statSplits').textContent = splits.length;
+    var statDeliveryEl = document.getElementById('statDeliveryVotes');
+    if (statDeliveryEl) statDeliveryEl.textContent = deliveryVotes.length;
     document.getElementById('statZeroResults').textContent = zeroResults.length;
     document.getElementById('statSessions').textContent = Object.keys(sessions).length;
+
+    var deliveryBadge = document.getElementById('deliveryVotesSummaryBadge');
+    if (deliveryBadge) deliveryBadge.textContent = deliveryVotes.length + ' Customer Votes';
 
     // Top analytics cards
     renderBars(document.getElementById('topSearches'), topList(dateRows, 'search'));
     renderBars(document.getElementById('topItems'), topList(dateRows, 'item_view'));
     renderBars(document.getElementById('topZeroResults'), topList(dateRows, 'search_no_results'), true);
+    renderBars(document.getElementById('topDeliveryAreas'), topList(dateRows, 'delivery_vote'));
 
     // Apply event type filter for the table
     var selectedType = typeFilter ? typeFilter.value : 'all';

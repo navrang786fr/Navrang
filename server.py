@@ -127,6 +127,24 @@ class NavrangRequestHandler(SimpleHTTPRequestHandler):
                 self._send_json(500, {"error": f"Failed to load dishes: {e}"})
             return
 
+        # API Route: GET /api/delivery-interest
+        if path == "/api/delivery-interest":
+            deliv_file = os.path.join(BASE_DIR, "delivery-interest.json")
+            data = {"uniqueCount": 0, "totalVotes": 0, "topAreas": []}
+            if os.path.exists(deliv_file):
+                try:
+                    with open(deliv_file, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                except Exception:
+                    pass
+            self._send_json(200, {
+                "uniqueCount": data.get("uniqueCount", 0),
+                "totalVotes": data.get("totalVotes", 0),
+                "topAreas": data.get("topAreas", [])[:8],
+                "lastUpdated": data.get("lastUpdated", "")
+            })
+            return
+
         # Fallback to standard static file serving
         return super().do_GET()
 
@@ -232,6 +250,71 @@ class NavrangRequestHandler(SimpleHTTPRequestHandler):
                 "ok": True,
                 "message": "Password updated successfully",
                 "token": token
+            })
+        # API Route: POST /api/delivery-interest
+        if path == "/api/delivery-interest":
+            content_len = int(self.headers.get("Content-Length", 0))
+            body = {}
+            if content_len > 0:
+                try:
+                    body = json.loads(self.rfile.read(content_len).decode("utf-8"))
+                except Exception:
+                    body = {}
+
+            area = str(body.get("area") or "").strip()[:80]
+            phone = str(body.get("phone") or "").strip()[:20]
+            device_id = str(body.get("deviceId") or "").strip()[:80]
+            client_ip = self.client_address[0] if self.client_address else "local"
+            voter_key = device_id or f"ip_{client_ip}"
+
+            deliv_file = os.path.join(BASE_DIR, "delivery-interest.json")
+            store = {"uniqueCount": 0, "totalVotes": 0, "areas": {}, "voters": []}
+            with LOCK:
+                if os.path.exists(deliv_file):
+                    try:
+                        with open(deliv_file, "r", encoding="utf-8") as f:
+                            store = json.load(f)
+                    except Exception:
+                        pass
+
+                store["uniqueCount"] = max(0, int(store.get("uniqueCount", 0)))
+                store["totalVotes"] = max(0, int(store.get("totalVotes", 0)))
+                store["areas"] = store.get("areas") or {}
+                store["voters"] = store.get("voters") or []
+
+                is_new_unique = True
+                if voter_key in store["voters"]:
+                    is_new_unique = False
+                else:
+                    store["voters"].append(voter_key)
+                    if len(store["voters"]) > 5000:
+                        store["voters"] = store["voters"][-5000:]
+                    store["uniqueCount"] += 1
+
+                store["totalVotes"] += 1
+
+                if area:
+                    norm_area = " ".join([w.capitalize() for w in area.split()])
+                    store["areas"][norm_area] = store["areas"].get(norm_area, 0) + 1
+
+                area_pairs = [{"name": k, "count": v} for k, v in store["areas"].items()]
+                area_pairs.sort(key=lambda x: x["count"], reverse=True)
+                store["topAreas"] = area_pairs[:10]
+                store["lastUpdated"] = time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime())
+
+                temp_file = deliv_file + f".tmp.{os.getpid()}"
+                try:
+                    with open(temp_file, "w", encoding="utf-8") as f:
+                        json.dump(store, f, indent=2, ensure_ascii=False)
+                    os.replace(temp_file, deliv_file)
+                except Exception:
+                    pass
+
+            self._send_json(200, {
+                "ok": True,
+                "uniqueCount": store["uniqueCount"],
+                "isNewUnique": is_new_unique,
+                "message": "Thank you! Your interest has been recorded."
             })
             return
 

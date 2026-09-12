@@ -14,7 +14,7 @@ const ALLOWED_TYPES = [
   'lang_switch', 'surprise_spin', 'surprise_view_menu', 'split_bill_open',
   'split_preset_click', 'split_bill_download_image', 'split_bill_copy',
   'rate_food_open', 'instagram_click', 'offers_view', 'page_view',
-  'game_play', 'youtube_click'
+  'game_play', 'youtube_click', 'delivery_interest', 'delivery_vote'
 ];
 const THROTTLE_WINDOW_MS = 5 * 60 * 1000;
 const MAX_EVENTS_PER_IP = 60;
