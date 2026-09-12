@@ -61,6 +61,12 @@
       footerNote: 'Ready to order? Just let your waiter know. All prices are inclusive of applicable taxes — please inform your server of any food allergies.',
       instaTitle: 'Follow us on Instagram',
       instagramLabel: 'Instagram',
+      youtubeTitle: 'Subscribe to Navrang on YouTube',
+      youtubeLabel: 'YouTube',
+      footerYoutubeText: 'Subscribe on YouTube',
+      footerInstaText: 'Follow @navrang786fr',
+      playersSuffix: 'played',
+      gameOverPlayersLabel: 'players have competed!',
       heroOfferBadge: 'Instagram Exclusive',
       heroOfferTitle: 'Get 5% OFF on Total Bill!',
       heroOfferDesc: 'Follow @navrang786fr on Instagram & show your screen during billing to claim 5% OFF!',
@@ -168,6 +174,12 @@
       footerNote: 'ఆర్డర్ చేయడానికి సిద్ధంగా ఉన్నారా? మీ వెయిటర్‌కు తెలియజేయండి. అన్ని ధరలలో వర్తించే పన్నులు కలిపి ఉన్నాయి — ఏవైనా ఆహార అలర్జీల గురించి మీ సర్వర్‌కు తెలియజేయండి.',
       instaTitle: 'ఇన్‌స్టాగ్రామ్‌లో మమ్మల్ని ఫాలో అవ్వండి',
       instagramLabel: 'ఇన్‌స్టాగ్రామ్',
+      youtubeTitle: 'యూట్యూబ్‌లో నవరంగ్ సబ్‌స్క్రైబ్ చేయండి',
+      youtubeLabel: 'యూట్యూబ్',
+      footerYoutubeText: 'యూట్యూబ్‌లో సబ్‌స్క్రైబ్ చేయండి',
+      footerInstaText: 'ఇన్‌స్టాగ్రామ్‌లో ఫాలో అవ్వండి',
+      playersSuffix: 'ఆడారు',
+      gameOverPlayersLabel: 'మంది ఆడారు!',
       heroOfferBadge: 'ఇన్‌స్టాగ్రామ్ స్పెషల్ ఆఫర్',
       heroOfferTitle: 'మొత్తం బిల్లుపై 5% తగ్గింపు (OFF)!',
       heroOfferDesc: 'Instagramలో @navrang786fr ని ఫాలో అయి, బిల్లింగ్ సమయంలో స్క్రీన్ చూపించి 5% రాయితీ పొందండి.',
@@ -399,9 +411,17 @@
     qs('#footerNote').textContent = S.footerNote;
     var instaLink = qs('#instaLink');
     if (instaLink){ instaLink.title = S.instaTitle; instaLink.setAttribute('aria-label', S.instaTitle); }
+    var youtubeLink = qs('#youtubeLink');
+    if (youtubeLink){ youtubeLink.title = S.youtubeTitle; youtubeLink.setAttribute('aria-label', S.youtubeTitle); }
     var fabOffersLabel = qs('#fabOffersLabel'); if (fabOffersLabel) fabOffersLabel.textContent = S.offersLabel;
     var fabRatingLabel = qs('#fabRatingLabel'); if (fabRatingLabel) fabRatingLabel.textContent = S.rateCta;
     var fabInstaLabel = qs('#fabInstaLabel'); if (fabInstaLabel) fabInstaLabel.textContent = S.instagramLabel;
+    var fabYoutubeLabel = qs('#fabYoutubeLabel'); if (fabYoutubeLabel) fabYoutubeLabel.textContent = S.youtubeLabel;
+    var fabYoutubeBtn = qs('#fabYoutubeBtn');
+    if (fabYoutubeBtn){ fabYoutubeBtn.title = S.youtubeTitle; fabYoutubeBtn.setAttribute('aria-label', S.youtubeTitle); }
+    var footerYoutubeText = qs('#footerYoutubeText'); if (footerYoutubeText) footerYoutubeText.textContent = S.footerYoutubeText;
+    var footerInstaText = qs('#footerInstaText'); if (footerInstaText) footerInstaText.textContent = S.footerInstaText;
+    if (typeof updateAllPlayersDisplays === 'function') updateAllPlayersDisplays(totalPlayers);
     langOpts.forEach(function(btn){
       btn.classList.toggle('active', btn.dataset.lang === currentLang);
     });
@@ -1022,6 +1042,14 @@
   if (fabRatingBtn) fabRatingBtn.addEventListener('click', function(){ closeFab(); openRateDialog(); });
   var fabInstaBtn = qs('#fabInstaBtn');
   if (fabInstaBtn) fabInstaBtn.addEventListener('click', function(){ closeFab(); trackEvent('instagram_click', 'clicked'); });
+  var fabYoutubeBtn = qs('#fabYoutubeBtn');
+  if (fabYoutubeBtn) fabYoutubeBtn.addEventListener('click', function(){ closeFab(); trackEvent('youtube_click', 'fab'); });
+  var youtubeLink = qs('#youtubeLink');
+  if (youtubeLink) youtubeLink.addEventListener('click', function(){ trackEvent('youtube_click', 'topbar'); });
+  var footerYoutubeBtn = qs('#footerYoutubeBtn');
+  if (footerYoutubeBtn) footerYoutubeBtn.addEventListener('click', function(){ trackEvent('youtube_click', 'footer'); });
+  var footerInstaBtn = qs('#footerInstaBtn');
+  if (footerInstaBtn) footerInstaBtn.addEventListener('click', function(){ trackEvent('instagram_click', 'footer'); });
 
   var heroOfferDetailsBtn = qs('#heroOfferDetailsBtn');
   if (heroOfferDetailsBtn){
@@ -1074,17 +1102,22 @@
 
   var BEST_SCORE_KEY = 'navrang_biryani_catcher_best';
   var SOUND_KEY = 'navrang_biryani_catcher_sound';
-  var TOTAL_PLAYERS_KEY = 'navrang_biryani_catcher_total_players';
+  var TOTAL_PLAYERS_KEY = 'navrang_biryani_catcher_real_plays';
 
   var bestScore = 0;
   try {
     bestScore = parseInt(localStorage.getItem(BEST_SCORE_KEY), 10) || 0;
   } catch(e){}
 
-  var totalPlayers = 1480;
+  // Purge legacy mock player counter from previous test
+  try {
+    localStorage.removeItem('navrang_biryani_catcher_total_players');
+  } catch(e){}
+
+  var totalPlayers = 3;
   try {
     var storedPlayers = parseInt(localStorage.getItem(TOTAL_PLAYERS_KEY), 10);
-    if (storedPlayers && storedPlayers >= 1480){
+    if (!isNaN(storedPlayers) && storedPlayers >= 0 && storedPlayers < 1000){
       totalPlayers = storedPlayers;
     } else {
       localStorage.setItem(TOTAL_PLAYERS_KEY, totalPlayers);
@@ -1092,17 +1125,71 @@
   } catch(e){}
 
   function updateAllPlayersDisplays(count){
-    var formatted = (count || 1480).toLocaleString('en-IN') + '+';
+    var n = Math.max(0, parseInt(count, 10) || 0);
+    var S = STRINGS[currentLang] || STRINGS.en;
+    var formatted = n.toLocaleString('en-IN');
     var el1 = qs('#topPlayersCount'); if (el1) el1.textContent = formatted;
+    var el1Lbl = qs('#topPlayersLabel'); if (el1Lbl) el1Lbl.textContent = S.playersSuffix || 'played';
     var el2 = qs('#gameTotalPlayersVal'); if (el2) el2.textContent = formatted;
     var el3 = qs('#gameOverPlayersCount'); if (el3) el3.textContent = formatted;
+    var el3Lbl = qs('#gameOverPlayersLabel'); if (el3Lbl) el3Lbl.textContent = S.gameOverPlayersLabel || 'players have competed!';
   }
   updateAllPlayersDisplays(totalPlayers);
+
+  function syncGamePlayToServer(){
+    try {
+      fetch('https://ratings-api-pink.vercel.app/api/game-stats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'play' })
+      })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(data){
+        if (data && typeof data.totalPlays === 'number' && data.totalPlays > totalPlayers){
+          totalPlayers = data.totalPlays;
+          try { localStorage.setItem(TOTAL_PLAYERS_KEY, totalPlayers); } catch(e){}
+          updateAllPlayersDisplays(totalPlayers);
+        }
+      })
+      .catch(function(){});
+    } catch(e){}
+  }
+
+  function fetchRealPlayerCount(){
+    fetch('game-stats.json?v=' + Date.now())
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (d && typeof d.totalPlays === 'number' && d.totalPlays > totalPlayers){
+          totalPlayers = d.totalPlays;
+          try { localStorage.setItem(TOTAL_PLAYERS_KEY, totalPlayers); } catch(e){}
+          updateAllPlayersDisplays(totalPlayers);
+        }
+      })
+      .catch(function(){});
+
+    try {
+      fetch('https://ratings-api-pink.vercel.app/api/game-stats')
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(d){
+          if (d && typeof d.totalPlays === 'number' && d.totalPlays > totalPlayers){
+            totalPlayers = d.totalPlays;
+            try { localStorage.setItem(TOTAL_PLAYERS_KEY, totalPlayers); } catch(e){}
+            updateAllPlayersDisplays(totalPlayers);
+          }
+        })
+        .catch(function(){});
+    } catch(e){}
+  }
+  fetchRealPlayerCount();
 
   function recordGamePlayed(){
     totalPlayers++;
     try { localStorage.setItem(TOTAL_PLAYERS_KEY, totalPlayers); } catch(e){}
     updateAllPlayersDisplays(totalPlayers);
+    if (typeof trackEvent === 'function') {
+      trackEvent('game_play', String(bestScore || 1));
+    }
+    syncGamePlayToServer();
   }
 
   function updateAllBestScoreDisplays(score){

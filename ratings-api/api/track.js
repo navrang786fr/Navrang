@@ -13,7 +13,8 @@ const ALLOWED_TYPES = [
   'category_click', 'veg_filter', 'nonveg_filter', 'top_filter', 'price_filter',
   'lang_switch', 'surprise_spin', 'surprise_view_menu', 'split_bill_open',
   'split_preset_click', 'split_bill_download_image', 'split_bill_copy',
-  'rate_food_open', 'instagram_click', 'offers_view', 'page_view'
+  'rate_food_open', 'instagram_click', 'offers_view', 'page_view',
+  'game_play', 'youtube_click'
 ];
 const THROTTLE_WINDOW_MS = 5 * 60 * 1000;
 const MAX_EVENTS_PER_IP = 60;
