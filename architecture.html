@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Navrang Platform — Architecture & Engineering Blueprint</title>
+<title>Navrang Platform — System Architecture & Engineering Blueprint</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A2A12">
-<meta name="description" content="End-to-end architectural blueprint of the Navrang Family Restaurant & Digital Ordering Platform. Detailed diagrams, data flows, cloud infrastructure, POS sync, and technology stacks.">
+<meta name="description" content="Comprehensive, publication-grade engineering blueprint and system architecture of the Navrang Digital Ordering Platform. Detailed vector diagrams, data flows, cloud infrastructure, LAN POS sync, and technology stacks.">
 <link rel="icon" href="navrang_logo_sm.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,6 +17,7 @@
     --maroon-dark: #05180A;
     --turmeric: #B3821E;
     --turmeric-gold: #D49B22;
+    --turmeric-light: #FCE8B3;
     --turmeric-soft: #FBF4DE;
     --leaf: #1E823C;
     --leaf-bg: #EAF7EE;
@@ -26,38 +27,60 @@
     --bg-page: #FBF9F4;
     --bg-surface: #FFFFFF;
     --bg-surface-soft: #F5F1E6;
+    --bg-surface-hover: #ECE6D5;
     --bg-code: #0A1C10;
     
     --ink: #16231A;
-    --ink-secondary: #4A5B4F;
-    --ink-muted: #7E9083;
+    --ink-secondary: #425547;
+    --ink-muted: #738879;
     --rule: rgba(22, 35, 26, 0.10);
     --rule-strong: rgba(22, 35, 26, 0.18);
     
-    --shadow-sm: 0 2px 8px rgba(10, 42, 18, 0.05);
+    --shadow-xs: 0 1px 3px rgba(10, 42, 18, 0.04);
+    --shadow-sm: 0 2px 8px rgba(10, 42, 18, 0.06);
     --shadow-md: 0 8px 24px rgba(10, 42, 18, 0.08);
     --shadow-lg: 0 16px 40px rgba(10, 42, 18, 0.12);
+    --shadow-xl: 0 24px 60px rgba(10, 42, 18, 0.20);
+    
     --radius-sm: 8px;
     --radius-md: 14px;
     --radius-lg: 20px;
+    --radius-xl: 28px;
     --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    
+    --doc-font-size: 16px;
+    --doc-line-height: 1.72;
+    --reading-max-width: 1320px;
   }
 
   [data-theme="dark"] {
     --bg-page: #06150B;
     --bg-surface: #0B2113;
     --bg-surface-soft: #102C1B;
+    --bg-surface-hover: #153923;
     --bg-code: #040D07;
+    
     --ink: #EDF3EE;
     --ink-secondary: #A3B8AA;
     --ink-muted: #6F8576;
     --rule: rgba(255, 255, 255, 0.08);
-    --rule-strong: rgba(255, 255, 255, 0.15);
+    --rule-strong: rgba(255, 255, 255, 0.16);
     --turmeric-soft: rgba(212, 155, 34, 0.15);
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+    
+    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.2);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.60);
+    --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.80);
   }
+
+  /* Reader / Focus Mode */
+  body.reader-mode .doc-sidebar { display: none !important; }
+  body.reader-mode .doc-container {
+    grid-template-columns: minmax(0, 820px) !important;
+    justify-content: center;
+  }
+  body.reader-mode .article-title { font-size: 38px !important; }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
@@ -66,31 +89,32 @@
     font-family: 'Karla', sans-serif;
     color: var(--ink);
     background: var(--bg-page);
-    line-height: 1.65;
-    font-size: 16px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    line-height: var(--doc-line-height);
+    font-size: var(--doc-font-size);
+    transition: background-color 0.2s ease, color 0.2s ease, font-size 0.15s ease;
   }
 
   /* Sticky Reading Progress Indicator */
   #progressBar {
     position: fixed; top: 0; left: 0; height: 3.5px;
-    background: linear-gradient(90deg, var(--turmeric) 0%, var(--turmeric-gold) 50%, #FF2626 100%);
-    width: 0%; z-index: 100; transition: width 0.1s linear;
+    background: linear-gradient(90deg, var(--turmeric) 0%, var(--turmeric-gold) 50%, var(--leaf) 100%);
+    width: 0%; z-index: 1000; transition: width 0.1s linear;
   }
 
   /* Top Navigation Bar */
   .doc-topbar {
-    position: sticky; top: 0; z-index: 90;
+    position: sticky; top: 0; z-index: 900;
     background: var(--bg-surface);
     border-bottom: 1px solid var(--rule);
     box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    padding: 12px 24px;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    padding: 10px 24px;
     display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
   }
   .doc-brand {
     display: flex; align-items: center; gap: 12px;
-    text-decoration: none; color: var(--ink); font-weight: 800;
+    text-decoration: none; color: var(--ink); font-weight: 800; flex: 0 0 auto;
   }
   .doc-brand img {
     width: 34px; height: 34px; border-radius: 50%;
@@ -104,23 +128,69 @@
   .doc-brand-tag {
     font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
     background: var(--turmeric-soft); color: var(--turmeric-gold);
-    padding: 3px 8px; border-radius: 6px; font-weight: 700;
+    padding: 3px 8px; border-radius: 6px; font-weight: 800;
   }
+
+  /* In-Article Search Bar */
+  .doc-search-box {
+    position: relative; flex: 1 1 360px; max-width: 440px;
+  }
+  .doc-search-input {
+    width: 100%; height: 36px; padding: 0 36px 0 34px;
+    border-radius: 20px; border: 1px solid var(--rule-strong);
+    background: var(--bg-surface-soft); color: var(--ink);
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    outline: none; transition: all 0.18s var(--ease);
+  }
+  .doc-search-input:focus {
+    border-color: var(--turmeric-gold); background: var(--bg-surface);
+    box-shadow: 0 0 0 3px rgba(212, 155, 34, 0.18);
+  }
+  .doc-search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 13px; color: var(--ink-muted); pointer-events: none;
+  }
+  .doc-search-clear {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; font-size: 14px; color: var(--ink-muted);
+    cursor: pointer; padding: 2px 6px; display: none;
+  }
+  .search-match-count {
+    position: absolute; right: 32px; top: 50%; transform: translateY(-50%);
+    font-size: 11px; font-weight: 700; color: var(--turmeric-gold);
+  }
+
   .doc-topbar-actions {
-    display: flex; align-items: center; gap: 10px;
+    display: flex; align-items: center; gap: 8px; flex: 0 0 auto;
   }
   .doc-btn {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: 20px; font-size: 12.5px; font-weight: 700;
+    padding: 7px 13px; border-radius: 20px; font-size: 12.5px; font-weight: 700;
     cursor: pointer; border: 1px solid var(--rule);
     background: var(--bg-surface-soft); color: var(--ink);
     text-decoration: none; transition: all 0.18s var(--ease);
   }
   .doc-btn:hover {
     border-color: var(--turmeric-gold); color: var(--maroon);
-    transform: translateY(-1px);
+    background: var(--bg-surface-hover); transform: translateY(-1px);
   }
   [data-theme="dark"] .doc-btn:hover { color: #F7E5B5; }
+  .doc-btn.active {
+    background: var(--turmeric-soft); border-color: var(--turmeric-gold); color: var(--turmeric-gold);
+  }
+
+  .font-size-group {
+    display: inline-flex; align-items: center;
+    background: var(--bg-surface-soft); border: 1px solid var(--rule);
+    border-radius: 20px; padding: 2px 4px; gap: 2px;
+  }
+  .font-size-btn {
+    border: none; background: transparent; color: var(--ink-secondary);
+    font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 12px;
+    cursor: pointer; transition: all 0.12s ease;
+  }
+  .font-size-btn:hover { color: var(--ink); background: var(--bg-surface-hover); }
+
   .theme-toggle-btn {
     width: 36px; height: 36px; border-radius: 50%; padding: 0;
     display: flex; align-items: center; justify-content: center; font-size: 15px;
@@ -128,34 +198,41 @@
 
   /* Layout Container */
   .doc-container {
-    max-width: 1280px; margin: 0 auto;
-    display: grid; grid-template-columns: 270px minmax(0, 1fr);
+    max-width: var(--reading-max-width); margin: 0 auto;
+    display: grid; grid-template-columns: 280px minmax(0, 1fr);
     gap: 40px; padding: 36px 24px 80px;
   }
-  @media (max-width: 960px) {
+  @media (max-width: 992px) {
     .doc-container { grid-template-columns: 1fr; gap: 24px; padding: 20px 16px 60px; }
+    .doc-search-box { display: none; }
   }
 
   /* Sticky Table of Contents (Sidebar) */
   .doc-sidebar {
-    position: sticky; top: 80px; align-self: start;
-    max-height: calc(100vh - 100px); overflow-y: auto;
-    padding-right: 12px;
+    position: sticky; top: 76px; align-self: start;
+    max-height: calc(100vh - 96px); overflow-y: auto;
+    padding-right: 12px; scrollbar-width: thin;
   }
-  @media (max-width: 960px) {
+  @media (max-width: 992px) {
     .doc-sidebar { display: none; }
+  }
+  .toc-box {
+    background: var(--bg-surface); border: 1px solid var(--rule);
+    border-radius: var(--radius-md); padding: 18px 16px;
+    box-shadow: var(--shadow-xs);
   }
   .toc-title {
     font-size: 11.5px; text-transform: uppercase; letter-spacing: 1.2px;
     font-weight: 800; color: var(--ink-muted); margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
   }
   .toc-list {
     list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 3px;
     border-left: 2px solid var(--rule);
-    display: flex; flex-direction: column; gap: 4px;
   }
   .toc-link {
-    display: block; padding: 6px 14px; font-size: 13px; font-weight: 600;
+    display: block; padding: 6px 12px; font-size: 13px; font-weight: 600;
     color: var(--ink-secondary); text-decoration: none; border-radius: 0 8px 8px 0;
     transition: all 0.15s ease;
   }
@@ -166,9 +243,59 @@
     background: var(--turmeric-soft);
   }
   [data-theme="dark"] .toc-link.active { color: #F7E5B5; }
+  .toc-sublink {
+    padding-left: 22px; font-size: 12px; color: var(--ink-muted);
+  }
+
+  /* Mobile Floating TOC Trigger */
+  .mobile-toc-bar {
+    display: none;
+    position: sticky; top: 57px; z-index: 850;
+    background: var(--bg-surface); border-bottom: 1px solid var(--rule);
+    padding: 8px 16px; align-items: center; justify-content: space-between;
+    font-size: 12.5px; font-weight: 700; color: var(--ink);
+  }
+  @media (max-width: 992px) {
+    .mobile-toc-bar { display: flex; }
+  }
+  .mobile-toc-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--bg-surface-soft); border: 1px solid var(--rule-strong);
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 800;
+    cursor: pointer; color: var(--ink);
+  }
+
+  /* Mobile TOC Drawer Sheet */
+  .toc-drawer {
+    display: none; position: fixed; inset: 0; z-index: 999;
+    background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(6px);
+  }
+  .toc-drawer.open { display: block; }
+  .toc-drawer-panel {
+    position: absolute; bottom: 0; left: 0; right: 0; max-height: 80vh;
+    background: var(--bg-surface); border-radius: 24px 24px 0 0;
+    padding: 24px 20px 36px; overflow-y: auto; box-shadow: var(--shadow-xl);
+    animation: slideUp 0.25s var(--ease);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .drawer-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--rule);
+  }
 
   /* Main Article Area */
   .doc-article { min-width: 0; }
+
+  /* Breadcrumb */
+  .doc-breadcrumb {
+    display: flex; align-items: center; gap: 6px; font-size: 12.5px;
+    color: var(--ink-muted); margin-bottom: 14px; font-weight: 600;
+  }
+  .doc-breadcrumb a { color: var(--turmeric-gold); text-decoration: none; }
+  .doc-breadcrumb a:hover { text-decoration: underline; }
 
   /* Article Header Hero */
   .article-hero {
@@ -189,7 +316,7 @@
   }
   .badge {
     font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
-    padding: 4px 10px; border-radius: 6px;
+    padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;
   }
   .badge-emerald { background: var(--leaf-bg); color: var(--leaf); border: 1px solid var(--leaf-border); }
   .badge-gold { background: var(--turmeric-soft); color: var(--turmeric-gold); border: 1px solid rgba(212, 155, 34, 0.3); }
@@ -197,11 +324,12 @@
 
   .article-title {
     font-size: 34px; font-weight: 800; color: var(--maroon-deep);
-    margin: 0 0 10px; line-height: 1.25; letter-spacing: -0.4px;
+    margin: 0 0 12px; line-height: 1.25; letter-spacing: -0.4px;
   }
   [data-theme="dark"] .article-title { color: #FDF9EE; }
   .article-subtitle {
-    font-size: 17px; color: var(--ink-secondary); margin: 0 0 20px; line-height: 1.55;
+    font-size: 17.5px; color: var(--ink-secondary); margin: 0 0 20px; line-height: 1.55;
+    max-width: 85ch;
   }
   .article-meta-row {
     display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
@@ -210,36 +338,37 @@
   }
   .article-meta-row span { display: inline-flex; align-items: center; gap: 6px; }
 
-  /* Key Metrics Grid */
+  /* Key Metrics Highlight Grid */
   .metrics-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 14px; margin-bottom: 36px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px; margin-bottom: 36px;
   }
   .metric-card {
     background: var(--bg-surface); border: 1px solid var(--rule);
-    border-radius: var(--radius-md); padding: 18px 20px;
-    box-shadow: var(--shadow-sm); transition: transform 0.18s ease;
+    border-radius: var(--radius-md); padding: 20px 20px;
+    box-shadow: var(--shadow-sm); transition: transform 0.18s ease, box-shadow 0.18s ease;
+    position: relative;
   }
-  .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-  .metric-icon { font-size: 22px; margin-bottom: 6px; display: inline-block; }
-  .metric-title { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
-  .metric-desc { font-size: 12.5px; color: var(--ink-secondary); margin: 0; line-height: 1.45; }
+  .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--rule-strong); }
+  .metric-icon { font-size: 24px; margin-bottom: 8px; display: inline-block; }
+  .metric-title { font-size: 15.5px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .metric-desc { font-size: 13px; color: var(--ink-secondary); margin: 0; line-height: 1.5; }
 
-  /* Article Sections */
+  /* Article Section Cards */
   .doc-section {
     background: var(--bg-surface);
     border: 1px solid var(--rule);
     border-radius: var(--radius-lg);
-    padding: 32px 32px 36px;
+    padding: 34px 34px 38px;
     box-shadow: var(--shadow-sm);
-    margin-bottom: 32px;
+    margin-bottom: 36px;
   }
   @media (max-width: 640px) {
-    .doc-section { padding: 22px 18px; }
+    .doc-section { padding: 22px 18px; border-radius: var(--radius-md); }
   }
   .section-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding-bottom: 14px; border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px; border-bottom: 1px solid var(--rule);
     margin-bottom: 22px; flex-wrap: wrap; gap: 10px;
   }
   .section-title {
@@ -253,40 +382,94 @@
     padding: 3px 8px; border-radius: 6px;
   }
 
-  /* Subsystems Cards Grid */
+  /* Subsystem Cards Grid */
   .subsystem-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 18px; margin-top: 16px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 20px; margin-top: 20px;
   }
   .subsystem-card {
     background: var(--bg-surface-soft);
     border: 1px solid var(--rule);
     border-radius: var(--radius-md);
-    padding: 22px 20px; display: flex; flex-direction: column;
+    padding: 24px 22px; display: flex; flex-direction: column;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
   }
-  .subsystem-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .subsystem-head .icon { font-size: 24px; }
-  .subsystem-head h4 { margin: 0; font-size: 16px; font-weight: 800; color: var(--ink); }
-  .subsystem-body { font-size: 13.5px; color: var(--ink-secondary); line-height: 1.55; }
+  .subsystem-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .subsystem-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .subsystem-head .icon {
+    font-size: 24px; width: 44px; height: 44px; border-radius: 12px;
+    background: var(--bg-surface); display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--rule); box-shadow: var(--shadow-xs); flex: 0 0 auto;
+  }
+  .subsystem-head h4 { margin: 0; font-size: 16.5px; font-weight: 800; color: var(--ink); }
+  .subsystem-body { font-size: 13.5px; color: var(--ink-secondary); line-height: 1.6; }
   .subsystem-features {
-    list-style: none; padding: 0; margin: 12px 0 0;
-    display: flex; flex-direction: column; gap: 6px; font-size: 12.5px;
+    list-style: none; padding: 0; margin: 14px 0 0;
+    display: flex; flex-direction: column; gap: 7px; font-size: 12.5px;
   }
-  .subsystem-features li { display: flex; align-items: flex-start; gap: 6px; }
+  .subsystem-features li { display: flex; align-items: flex-start; gap: 8px; line-height: 1.45; }
   .subsystem-features li::before { content: '✔'; color: var(--leaf); font-weight: 800; font-size: 11px; margin-top: 2px; }
 
-  /* Interactive Mermaid Diagrams */
+  /* Interactive Mermaid Diagram Wrapper */
+  .diagram-container {
+    margin: 24px 0; position: relative;
+  }
+  .diagram-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg-surface-hover); border: 1px solid var(--rule-strong);
+    border-bottom: none; border-radius: var(--radius-md) var(--radius-md) 0 0;
+    padding: 8px 16px; font-size: 12px; font-weight: 700; color: var(--ink-secondary);
+  }
+  .diagram-toolbar-actions { display: flex; align-items: center; gap: 6px; }
+  .diagram-action-btn {
+    background: var(--bg-surface); border: 1px solid var(--rule);
+    padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700;
+    color: var(--ink); cursor: pointer; transition: all 0.12s ease;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .diagram-action-btn:hover {
+    border-color: var(--turmeric-gold); color: var(--turmeric-gold);
+  }
+
   .mermaid-wrapper {
     background: var(--bg-surface-soft);
     border: 1px solid var(--rule-strong);
-    border-radius: var(--radius-md);
-    padding: 24px 18px; margin: 20px 0;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    padding: 28px 20px;
     overflow-x: auto; text-align: center;
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
   }
-  .mermaid-wrapper svg { max-width: 100%; height: auto; margin: 0 auto; }
+  .mermaid-wrapper svg { max-width: 100%; height: auto; margin: 0 auto; display: block; }
 
-  /* Tabs for Flow Sequence Diagrams */
+  /* Dark Theme Overrides for Mermaid SVGs */
+  [data-theme="dark"] .mermaid-wrapper {
+    background: #081B0F;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  [data-theme="dark"] .mermaid-wrapper svg text {
+    fill: #EDF3EE !important;
+  }
+  [data-theme="dark"] .mermaid-wrapper svg .node rect,
+  [data-theme="dark"] .mermaid-wrapper svg .node polygon,
+  [data-theme="dark"] .mermaid-wrapper svg .actor {
+    fill: #0F2D1A !important;
+    stroke: #2E8B57 !important;
+  }
+  [data-theme="dark"] .mermaid-wrapper svg .cluster rect {
+    fill: #07170D !important;
+    stroke: rgba(212, 155, 34, 0.4) !important;
+  }
+  [data-theme="dark"] .mermaid-wrapper svg .edgePath path,
+  [data-theme="dark"] .mermaid-wrapper svg .messageLine0,
+  [data-theme="dark"] .mermaid-wrapper svg .messageLine1 {
+    stroke: #D49B22 !important;
+  }
+  [data-theme="dark"] .mermaid-wrapper svg marker path {
+    fill: #D49B22 !important;
+    stroke: #D49B22 !important;
+  }
+
+  /* Flow Sequence Tabs */
   .flow-tabs-header {
     display: flex; gap: 6px; border-bottom: 1px solid var(--rule);
     margin-bottom: 16px; overflow-x: auto; padding-bottom: 6px;
@@ -302,40 +485,79 @@
     box-shadow: 0 2px 6px rgba(10, 42, 18, 0.2);
   }
   [data-theme="dark"] .flow-tab-btn.active { background: var(--turmeric-gold); color: #05180A; }
-  .flow-tab-pane { display: none; }
-  .flow-tab-pane.active { display: block; }
 
-  /* Tech Stack Table */
-  .tech-table-wrap { overflow-x: auto; margin-top: 14px; }
+  /* Inactive tab panes kept in DOM without display:none to preserve Mermaid vector geometry */
+  .flow-tab-pane {
+    position: absolute; opacity: 0; pointer-events: none;
+    height: 0; overflow: hidden; visibility: hidden;
+  }
+  .flow-tab-pane.active {
+    position: static; opacity: 1; pointer-events: auto;
+    height: auto; overflow: visible; visibility: visible;
+  }
+
+  /* Architectural Decision Records (ADRs) */
+  .adr-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px; margin-top: 18px;
+  }
+  .adr-card {
+    background: var(--bg-surface-soft);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 22px 20px; display: flex; flex-direction: column;
+  }
+  .adr-tag {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 800;
+    color: var(--turmeric-gold); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .adr-card h4 { margin: 0 0 10px; font-size: 16px; font-weight: 800; color: var(--ink); }
+  .adr-desc { font-size: 13px; color: var(--ink-secondary); line-height: 1.6; margin-bottom: 12px; }
+  .adr-tradeoff {
+    background: var(--bg-surface); border-radius: 8px; padding: 10px 12px;
+    font-size: 12px; border-left: 3px solid var(--leaf); margin-top: auto;
+  }
+
+  /* Tech Stack Matrix Table */
+  .tech-table-wrap { overflow-x: auto; margin-top: 16px; border-radius: var(--radius-md); border: 1px solid var(--rule); }
   .tech-table {
     width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left;
   }
   .tech-table th {
     background: var(--bg-surface-soft); color: var(--ink-muted);
     font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.8px;
-    padding: 10px 14px; border-bottom: 1.5px solid var(--rule-strong);
+    padding: 12px 16px; border-bottom: 1.5px solid var(--rule-strong);
   }
   .tech-table td {
-    padding: 12px 14px; border-bottom: 1px solid var(--rule); vertical-align: middle;
+    padding: 13px 16px; border-bottom: 1px solid var(--rule); vertical-align: middle;
   }
   .tech-table tr:hover td { background: var(--bg-surface-soft); }
   .tech-badge {
-    display: inline-flex; align-items: center; gap: 5px;
+    display: inline-flex; align-items: center; gap: 6px;
     font-weight: 700; color: var(--ink);
   }
   .tech-code {
     font-family: 'IBM Plex Mono', monospace; font-size: 12px;
-    background: var(--bg-surface-soft); padding: 2px 6px; border-radius: 4px;
+    background: var(--bg-surface-soft); padding: 2px 7px; border-radius: 4px;
     color: var(--maroon); font-weight: 600;
   }
   [data-theme="dark"] .tech-code { color: #F7E5B5; }
 
-  /* File Tree Explorer */
+  /* Interactive File Tree Explorer */
+  .file-tree-container {
+    margin-top: 16px; border-radius: var(--radius-md); overflow: hidden;
+    border: 1px solid var(--rule-strong);
+  }
+  .file-tree-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #040D07; padding: 10px 18px; border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #A3B8AA;
+  }
   .file-tree {
     background: var(--bg-code); color: #E4ECE6;
-    border-radius: var(--radius-md); padding: 20px 22px;
+    padding: 22px 24px;
     font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;
-    line-height: 1.7; overflow-x: auto; box-shadow: var(--shadow-sm);
+    line-height: 1.75; overflow-x: auto; margin: 0;
   }
   .file-comment { color: #7B9983; font-style: italic; }
   .file-dir { color: var(--turmeric-gold); font-weight: 700; }
@@ -346,21 +568,87 @@
     border-left: 4px solid var(--turmeric-gold);
     background: var(--turmeric-soft);
     border-radius: 0 10px 10px 0;
-    padding: 14px 18px; margin: 18px 0;
-    font-size: 13.5px; color: var(--ink);
+    padding: 16px 20px; margin: 20px 0;
+    font-size: 14px; color: var(--ink); line-height: 1.6;
   }
   .callout strong { color: var(--maroon-deep); }
   [data-theme="dark"] .callout strong { color: #F7E5B5; }
+  .callout.callout-leaf {
+    border-left-color: var(--leaf); background: var(--leaf-bg); color: var(--ink);
+  }
+
+  /* Diagram Lightbox Modal */
+  .lightbox-overlay {
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .lightbox-overlay.open { display: flex; }
+  .lightbox-dialog {
+    background: var(--bg-surface); border-radius: 20px;
+    width: 95vw; height: 90vh; max-width: 1400px;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: var(--shadow-xl); border: 1px solid var(--rule-strong);
+  }
+  .lightbox-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; border-bottom: 1px solid var(--rule);
+    background: var(--bg-surface-soft);
+  }
+  .lightbox-title { font-size: 15px; font-weight: 800; color: var(--ink); }
+  .lightbox-controls { display: flex; align-items: center; gap: 8px; }
+  .lightbox-btn {
+    padding: 6px 12px; border-radius: 6px; border: 1px solid var(--rule);
+    background: var(--bg-surface); font-size: 13px; font-weight: 700;
+    cursor: pointer; color: var(--ink);
+  }
+  .lightbox-btn:hover { background: var(--bg-surface-hover); }
+  .lightbox-viewport {
+    flex: 1; overflow: auto; padding: 30px; display: flex;
+    align-items: center; justify-content: center; cursor: grab;
+    background: var(--bg-page);
+  }
+  .lightbox-viewport:active { cursor: grabbing; }
+  .lightbox-canvas {
+    transition: transform 0.15s ease-out; transform-origin: center center;
+    display: flex; align-items: center; justify-content: center; min-width: 100%; min-height: 100%;
+  }
+
+  /* Floating Back-To-Top Button */
+  .back-to-top {
+    position: fixed; bottom: 28px; right: 28px; z-index: 800;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--maroon); color: #FFF; border: none;
+    box-shadow: var(--shadow-lg); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; opacity: 0; pointer-events: none;
+    transition: all 0.2s var(--ease);
+  }
+  .back-to-top.visible { opacity: 1; pointer-events: auto; }
+  .back-to-top:hover {
+    background: var(--turmeric-gold); color: #05180A; transform: translateY(-3px);
+  }
+
+  /* Search Highlight */
+  mark.search-highlight {
+    background: #FFEF82; color: #16231A; padding: 1px 4px; border-radius: 3px; font-weight: 700;
+  }
+  [data-theme="dark"] mark.search-highlight {
+    background: #966C05; color: #FFF;
+  }
 
   /* Footer */
   .doc-footer {
     border-top: 1px solid var(--rule);
-    padding: 24px; text-align: center; font-size: 13px; color: var(--ink-muted);
+    padding: 36px 24px; text-align: center; font-size: 13px; color: var(--ink-muted);
     background: var(--bg-surface);
   }
+  .doc-footer a { color: var(--turmeric-gold); text-decoration: none; font-weight: 700; }
+  .doc-footer a:hover { text-decoration: underline; }
 
   @media print {
-    .doc-topbar, .doc-sidebar, #progressBar, .doc-btn { display: none !important; }
+    .doc-topbar, .doc-sidebar, .mobile-toc-bar, #progressBar, .doc-btn, .back-to-top, .diagram-toolbar { display: none !important; }
     .doc-container { padding: 0 !important; display: block !important; }
     .doc-section { box-shadow: none !important; border: 1px solid #ccc !important; page-break-inside: avoid; }
   }
@@ -398,77 +686,155 @@
       <span class="doc-brand-tag">Architecture</span>
     </div>
   </a>
+
+  <!-- In-Article Search Bar -->
+  <div class="doc-search-box">
+    <span class="doc-search-icon">🔍</span>
+    <input type="text" id="searchInput" class="doc-search-input" placeholder="Search blueprint (e.g. POS, offline, Vercel, ratings, game)..." aria-label="Search architecture documentation">
+    <span class="search-match-count" id="searchMatchCount"></span>
+    <button type="button" class="doc-search-clear" id="searchClearBtn" title="Clear search">✕</button>
+  </div>
+
   <div class="doc-topbar-actions">
-    <a class="doc-btn" href="ARCHITECTURE.md" title="View raw Markdown source">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      <span>Source MD</span>
+    <!-- Font Sizing Adjuster -->
+    <div class="font-size-group" title="Adjust text size">
+      <button type="button" class="font-size-btn" id="fontDecBtn" aria-label="Decrease font size">A−</button>
+      <button type="button" class="font-size-btn" id="fontResetBtn" aria-label="Reset font size">A</button>
+      <button type="button" class="font-size-btn" id="fontIncBtn" aria-label="Increase font size">A+</button>
+    </div>
+
+    <!-- Reader Mode Toggle -->
+    <button type="button" class="doc-btn" id="readerModeBtn" title="Toggle Distraction-Free Reader Mode">
+      <span>📖 Focus</span>
+    </button>
+
+    <!-- Source Markdown Link -->
+    <a class="doc-btn" href="ARCHITECTURE.md" title="View raw Markdown source file">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>MD</span>
     </a>
-    <a class="doc-btn" href="order.html" title="Open Customer Menu">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      <span>Live App</span>
-    </a>
+
+    <!-- Print / Export PDF -->
+    <button type="button" class="doc-btn" onclick="window.print()" title="Print or Save as PDF">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      <span>PDF</span>
+    </button>
+
+    <!-- Theme Toggle Button -->
     <button class="doc-btn theme-toggle-btn" id="themeToggle" title="Toggle dark/light mode" aria-label="Toggle theme">🌙</button>
   </div>
 </header>
+
+<!-- Mobile Sticky TOC Bar -->
+<div class="mobile-toc-bar">
+  <span>📑 Architecture Blueprint</span>
+  <button type="button" class="mobile-toc-btn" id="openMobileTocBtn">Contents ▾</button>
+</div>
+
+<!-- Mobile Drawer Sheet -->
+<div class="toc-drawer" id="tocDrawer">
+  <div class="toc-drawer-panel">
+    <div class="drawer-head">
+      <strong style="font-size:16px;">Table of Contents</strong>
+      <button type="button" class="doc-btn" id="closeMobileTocBtn" style="padding:4px 10px;">✕ Close</button>
+    </div>
+    <ul class="toc-list" id="mobileTocList">
+      <li><a class="toc-link" href="#sec-overview">1. System Overview</a></li>
+      <li><a class="toc-link" href="#sec-architecture">2. Full Architecture Diagram</a></li>
+      <li><a class="toc-link" href="#sec-subsystems">3. Core Subsystems</a></li>
+      <li><a class="toc-link" href="#sec-adrs">4. Architectural Decisions (ADRs)</a></li>
+      <li><a class="toc-link" href="#sec-dataflows">5. End-to-End Data Flows</a></li>
+      <li><a class="toc-link" href="#sec-techstack">6. Technology Stack Matrix</a></li>
+      <li><a class="toc-link" href="#sec-directory">7. Directory & Code Map</a></li>
+      <li><a class="toc-link" href="#sec-resilience">8. Reliability & Security Pillars</a></li>
+    </ul>
+  </div>
+</div>
 
 <div class="doc-container">
 
   <!-- Left Sidebar (TOC) -->
   <aside class="doc-sidebar">
-    <div class="toc-title">Table of Contents</div>
-    <ul class="toc-list" id="tocList">
-      <li><a class="toc-link" href="#sec-overview">1. System Overview</a></li>
-      <li><a class="toc-link" href="#sec-architecture">2. Full Architecture Diagram</a></li>
-      <li><a class="toc-link" href="#sec-subsystems">3. Core Subsystems</a></li>
-      <li><a class="toc-link" href="#sec-dataflows">4. End-to-End Data Flows</a></li>
-      <li><a class="toc-link" href="#sec-techstack">5. Technology Stack Matrix</a></li>
-      <li><a class="toc-link" href="#sec-directory">6. Directory & Code Map</a></li>
-      <li><a class="toc-link" href="#sec-resilience">7. Reliability & Security</a></li>
-    </ul>
+    <div class="toc-box">
+      <div class="toc-title">
+        <span>Table of Contents</span>
+        <span style="font-size:10px; font-weight:700; color:var(--turmeric-gold);">8 Sections</span>
+      </div>
+      <ul class="toc-list" id="tocList">
+        <li><a class="toc-link" href="#sec-overview">1. System Overview</a></li>
+        <li><a class="toc-link" href="#sec-architecture">2. Full Architecture Diagram</a></li>
+        <li><a class="toc-link" href="#sec-subsystems">3. Core Subsystems</a></li>
+        <li><a class="toc-link" href="#sec-adrs">4. Architectural Decisions (ADRs)</a></li>
+        <li><a class="toc-link" href="#sec-dataflows">5. End-to-End Data Flows</a></li>
+        <li><a class="toc-link" href="#sec-techstack">6. Technology Stack Matrix</a></li>
+        <li><a class="toc-link" href="#sec-directory">7. Directory & Code Map</a></li>
+        <li><a class="toc-link" href="#sec-resilience">8. Reliability & Security Pillars</a></li>
+      </ul>
+
+      <div style="margin-top:20px; padding-top:14px; border-top:1px solid var(--rule); font-size:12px; color:var(--ink-muted);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span>Reading Progress</span>
+          <strong id="sideProgressText">0%</strong>
+        </div>
+        <div style="height:4px; background:var(--rule); border-radius:2px; overflow:hidden;">
+          <div id="sideProgressBar" style="width:0%; height:100%; background:var(--turmeric-gold); transition:width 0.1s linear;"></div>
+        </div>
+      </div>
+    </div>
   </aside>
 
   <!-- Main Article Content -->
-  <main class="doc-article">
+  <main class="doc-article" id="articleBody">
+
+    <!-- Breadcrumbs -->
+    <nav class="doc-breadcrumb" aria-label="Breadcrumb">
+      <a href="order.html">Navrang Restaurant</a>
+      <span>/</span>
+      <a href="admin/billing.html">Management</a>
+      <span>/</span>
+      <span>Engineering Architecture Blueprint</span>
+    </nav>
 
     <!-- Hero Header -->
     <header class="article-hero" id="sec-overview">
       <div class="hero-badges">
-        <span class="badge badge-emerald">Production Verified</span>
-        <span class="badge badge-gold">100% Serverless Edge</span>
-        <span class="badge badge-version">v26.08.1</span>
+        <span class="badge badge-emerald">✔ Production Verified</span>
+        <span class="badge badge-gold">⚡ 100% Serverless Edge</span>
+        <span class="badge badge-version">🏷️ v26.08.1</span>
       </div>
       <h1 class="article-title">Navrang Platform — System Architecture & Engineering Blueprint</h1>
-      <p class="article-subtitle">A comprehensive engineering reference detailing system components, cloud edge functions, on-premise POS LAN synchronization, Git-as-a-Database transactional persistence, and technology stacks.</p>
+      <p class="article-subtitle">An end-to-end technical reference detailing system components, cloud edge functions, on-premise POS LAN synchronization, Git-as-a-Database transactional persistence, and technology stacks.</p>
       
       <div class="article-meta-row">
-        <span>👨‍💻 <strong>Author:</strong> Navrang Engineering Team</span>
-        <span>🕒 <strong>Read Time:</strong> ~7 minutes</span>
-        <span>🌐 <strong>Target:</strong> Web, PWA, LAN POS & Vercel Edge</span>
+        <span>👨‍💻 <strong>Author:</strong> Navrang Core Engineering</span>
+        <span>🕒 <strong>Read Time:</strong> ~8 minutes</span>
+        <span>📝 <strong>Word Count:</strong> ~2,850 words</span>
+        <span>🌐 <strong>Target:</strong> Web PWA, Python POS, Vercel Edge</span>
         <span>📅 <strong>Updated:</strong> September 2026</span>
       </div>
     </header>
 
-    <!-- Key Metrics Highlight -->
+    <!-- Key Metrics Highlight Grid -->
     <div class="metrics-grid">
       <div class="metric-card">
         <span class="metric-icon">⚡</span>
-        <div class="metric-title">Zero-Cost Cloud</div>
-        <p class="metric-desc">Static assets hosted on GitHub Pages CDN; APIs running on Vercel Edge with zero server maintenance overhead.</p>
+        <div class="metric-title">Zero-Cost Cloud Hosting</div>
+        <p class="metric-desc">Static bundles hosted on GitHub Pages CDN; microservices running on Vercel Edge with zero server maintenance bills.</p>
       </div>
       <div class="metric-card">
         <span class="metric-icon">🛡️</span>
-        <div class="metric-title">Dual-Offline LAN</div>
-        <p class="metric-desc">Python POS server synchronizes waiter orders and cashier billing over local Wi-Fi, completely surviving broadband outages.</p>
+        <div class="metric-title">Dual-Offline Resilience</div>
+        <p class="metric-desc">Python POS server coordinates waiter orders and cashier billing over local Wi-Fi, surviving broadband blackouts.</p>
       </div>
       <div class="metric-card">
         <span class="metric-icon">🗄️</span>
         <div class="metric-title">Git-as-a-Database</div>
-        <p class="metric-desc">Optimistic concurrency via GitHub Contents REST API with SHA collision detection and auto-retries.</p>
+        <p class="metric-desc">Optimistic concurrency via GitHub Contents REST API with Git SHA collision detection and auto-retries.</p>
       </div>
       <div class="metric-card">
         <span class="metric-icon">🎮</span>
         <div class="metric-title">60 FPS Canvas Game</div>
-        <p class="metric-desc">Biryani Catcher mini-game built with retro physics, Web Audio synthesizer, and live global player counter synchronization.</p>
+        <p class="metric-desc">Biryani Catcher mini-game with retro physics, Web Audio synthesizer, and live global player counter synchronization.</p>
       </div>
     </div>
 
@@ -479,12 +845,26 @@
           <span class="section-number">02</span>
           High-Level Architecture Diagram
         </h2>
-        <span class="badge badge-gold">End-to-End Topology</span>
+        <span class="badge badge-gold">Full System Topology</span>
       </div>
       <p>The system operates across three decoupled physical environments: <strong>Client Devices</strong> (customer mobile PWA, waiter handhelds, cashier PC), <strong>Cloud Serverless & CDN</strong> (GitHub Pages & Vercel Microservices), and <strong>On-Premise LAN POS</strong> (Python 3 local synchronization daemon).</p>
 
-      <div class="mermaid-wrapper">
-        <pre class="mermaid">
+      <!-- Diagram Container with Lightbox Zoom -->
+      <div class="diagram-container">
+        <div class="diagram-toolbar">
+          <span>Vector Architecture Diagram (Mermaid.js)</span>
+          <div class="diagram-toolbar-actions">
+            <button type="button" class="diagram-action-btn zoom-btn" data-target="diagram-main" title="Open full screen zoom">
+              <span>🔍 Zoom / Fullscreen</span>
+            </button>
+            <button type="button" class="diagram-action-btn copy-code-btn" data-target="code-main" title="Copy Mermaid code">
+              <span>📋 Copy Code</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mermaid-wrapper" id="diagram-main">
+          <pre class="mermaid" id="code-main">
 flowchart TB
     subgraph ClientDevices["1. CLIENT APPLICATION TIER"]
         CustomerMobile["Customer Handheld<br/>(order.html - Mobile PWA)"]
@@ -548,7 +928,8 @@ flowchart TB
 
     PythonServer --> POSOrders
     PythonServer --> LocalAdminStore
-        </pre>
+          </pre>
+        </div>
       </div>
 
       <div class="callout">
@@ -563,75 +944,142 @@ flowchart TB
           <span class="section-number">03</span>
           Core Subsystem Details
         </h2>
-        <span class="badge badge-emerald">Modular Design</span>
+        <span class="badge badge-emerald">Modular Architecture</span>
       </div>
 
       <div class="subsystem-grid">
         <div class="subsystem-card">
           <div class="subsystem-head">
-            <span class="icon">📱</span>
-            <h4>Customer PWA Shell (`order.html`)</h4>
+            <div class="icon">📱</div>
+            <div>
+              <h4>Customer PWA Shell</h4>
+              <span class="tech-code">order.html & order-app.js</span>
+            </div>
           </div>
           <div class="subsystem-body">
-            Flagship digital menu loaded instantly via QR code scan on dining tables.
+            Flagship digital menu loaded instantaneously via QR code scans placed on dining tables.
           </div>
           <ul class="subsystem-features">
-            <li><strong>Bilingual Engine:</strong> Instant toggle between English and Telugu (`తెలుగు`).</li>
-            <li><strong>Smart Search & Filters:</strong> Instant search by name, Telugu script, and ingredients.</li>
-            <li><strong>Biryani Catcher Game:</strong> 60 FPS HTML5 Canvas mini-game while waiting.</li>
-            <li><strong>Split Bill Utility:</strong> Guest bill splitting with clipboard copy and screenshot download.</li>
-            <li><strong>Social Channels:</strong> YouTube Channel & Instagram 5% OFF banner integration.</li>
+            <li><strong>Bilingual Translation Engine:</strong> Instant real-time toggle between English and Telugu (`తెలుగు`) with complete string dictionary.</li>
+            <li><strong>Smart Search & Multi-Filters:</strong> Instant indexing across dish titles, Telugu script, and ingredients with Veg/Non-Veg pills.</li>
+            <li><strong>Biryani Catcher Game:</strong> 60 FPS HTML5 Canvas mini-game with retro particle physics while waiting for food.</li>
+            <li><strong>Split Bill Utility:</strong> Native bill division for guest groups with clipboard copy and downloadable receipt screenshots.</li>
+            <li><strong>Social Channels:</strong> Direct integration with YouTube Channel & Instagram 5% OFF discount campaign.</li>
           </ul>
         </div>
 
         <div class="subsystem-card">
           <div class="subsystem-head">
-            <span class="icon">🖥️</span>
-            <h4>On-Premise POS (`server.py`)</h4>
+            <div class="icon">🖥️</div>
+            <div>
+              <h4>On-Premise POS Server</h4>
+              <span class="tech-code">server.py & pos-orders.json</span>
+            </div>
           </div>
           <div class="subsystem-body">
             Local multi-threaded Python server coordinating table orders and cashier billing over LAN.
           </div>
           <ul class="subsystem-features">
-            <li><strong>Zero Cloud Dependence:</strong> Restaurant continues billing during internet outages.</li>
-            <li><strong>Thread-Safe Storage:</strong> Atomic file swaps on `pos-orders.json` prevent race conditions.</li>
-            <li><strong>Waiter Handheld Mode:</strong> Tables, item add/remove, kitchen ticket dispatch.</li>
-            <li><strong>Counter POS Mode:</strong> Bill settlement, tender selection (Cash/UPI/Card), receipt printing.</li>
-            <li><strong>Daily Collections:</strong> Automatic end-of-day revenue audit and settlement reports.</li>
+            <li><strong>Zero Cloud Dependence:</strong> Restaurant operations continue smoothly even during complete broadband outages.</li>
+            <li><strong>Thread-Safe Storage:</strong> Atomic file swapping on `pos-orders.json` prevents race conditions during dinner rush.</li>
+            <li><strong>Waiter Handheld Mode:</strong> Tables, item add/remove, kitchen ticket dispatch with sub-millisecond local latency.</li>
+            <li><strong>Counter POS Mode:</strong> Bill settlement, tender selection (Cash/UPI/Card), and thermal receipt printing.</li>
+            <li><strong>Daily Collections Audit:</strong> Automated end-of-day revenue audit and settlement reports.</li>
           </ul>
         </div>
 
         <div class="subsystem-card">
           <div class="subsystem-head">
-            <span class="icon">⚡</span>
-            <h4>Cloud Serverless (`ratings-api`)</h4>
+            <div class="icon">⚡</div>
+            <div>
+              <h4>Cloud Serverless Microservices</h4>
+              <span class="tech-code">ratings-api/api/*.js</span>
+            </div>
           </div>
           <div class="subsystem-body">
-            Node.js serverless microservices hosted on Vercel handling reviews, tracking, and catalog CRUD.
+            Node.js serverless microservices hosted on Vercel handling customer reviews, telemetry, and catalog CRUD.
           </div>
           <ul class="subsystem-features">
-            <li><strong>Git-as-a-Database:</strong> Public/Private GitHub repos as relational state storage.</li>
-            <li><strong>Optimistic Concurrency:</strong> SHA-validated PUT commits with retry loops on 409 conflicts.</li>
+            <li><strong>Git-as-a-Database:</strong> Public/Private GitHub repos as relational state storage with version history.</li>
+            <li><strong>Optimistic Concurrency:</strong> SHA-validated PUT commits with retry loops on concurrent 409 conflicts.</li>
             <li><strong>Sliding-Window Throttling:</strong> IP rate limiting to prevent spam and review manipulation.</li>
             <li><strong>Automated Backups:</strong> Daily Vercel Cron worker snapshots 7-day activity logs.</li>
-            <li><strong>Stateless JWT Auth:</strong> HMAC-SHA256 tokens for admin & management portals.</li>
+            <li><strong>Stateless JWT Auth:</strong> HMAC-SHA256 tokens for admin and management portals.</li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- Section 4: End-to-End Data Flows -->
-    <section class="doc-section" id="sec-dataflows">
+    <!-- Section 4: Architectural Decision Records (ADRs) -->
+    <section class="doc-section" id="sec-adrs">
       <div class="section-header">
         <h2 class="section-title">
           <span class="section-number">04</span>
+          Architectural Decisions (ADRs)
+        </h2>
+        <span class="badge badge-gold">Key Trade-offs</span>
+      </div>
+      <p>Engineering decisions that define the platform's reliability, simplicity, and zero operating overhead:</p>
+
+      <div class="adr-grid">
+        <div class="adr-card">
+          <div class="adr-tag">ADR-001 • DATA TIER</div>
+          <h4>Git-as-a-Database with Optimistic Concurrency</h4>
+          <div class="adr-desc">
+            Instead of provisioning managed cloud SQL/NoSQL databases (RDS, MongoDB, Supabase) with recurring monthly bills, data is persisted as version-controlled JSON files committed via the GitHub Contents API.
+          </div>
+          <div class="adr-tradeoff">
+            <strong>Trade-off:</strong> Write latency is ~400ms (acceptable for reviews, game plays, and catalog edits), while read operations are globally cached on GitHub CDN for sub-10ms response times.
+          </div>
+        </div>
+
+        <div class="adr-card">
+          <div class="adr-tag">ADR-002 • RESILIENCE</div>
+          <h4>Local-First LAN POS vs Cloud-Only Ordering</h4>
+          <div class="adr-desc">
+            Commercial restaurants cannot afford POS downtime when local broadband drops. The floor POS runs on an on-premise Python 3 server on the dining room's local Wi-Fi router.
+          </div>
+          <div class="adr-tradeoff">
+            <strong>Trade-off:</strong> Requires a local PC/laptop running `server.py`, but guarantees 100% dining room ordering and billing uptime regardless of telecom stability.
+          </div>
+        </div>
+
+        <div class="adr-card">
+          <div class="adr-tag">ADR-003 • AUDIO SYSTEM</div>
+          <h4>Procedural Web Audio Synthesis vs Audio Assets</h4>
+          <div class="adr-desc">
+            The Biryani Catcher mini-game synthesizes audio chimes, bells, and collision bursts procedurally using the Web Audio API (`AudioContext`, `OscillatorNode`, `GainNode`) rather than loading MP3 files.
+          </div>
+          <div class="adr-tradeoff">
+            <strong>Trade-off:</strong> Requires programmatic frequency curves, but eliminates 100% of audio bandwidth, avoiding 404 file errors and audio decode lag on cellular connections.
+          </div>
+        </div>
+
+        <div class="adr-card">
+          <div class="adr-tag">ADR-004 • FRONTEND STACK</div>
+          <h4>Vanilla Web Platform vs Single-Page Frameworks</h4>
+          <div class="adr-desc">
+            The entire customer application is implemented with semantic HTML5, CSS Custom Properties, and Vanilla ES6+ without React, Vue, or Webpack bundle toolchains.
+          </div>
+          <div class="adr-tradeoff">
+            <strong>Trade-off:</strong> Manual DOM updates, but achieves sub-100ms First Contentful Paint (FCP), instant QR code menu loading on budget Android devices, and zero build tool maintenance.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: End-to-End Data Flows -->
+    <section class="doc-section" id="sec-dataflows">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-number">05</span>
           End-to-End Data Flows
         </h2>
-        <span class="badge badge-gold">Interactive Sequence Diagrams</span>
+        <span class="badge badge-emerald">Interactive Sequence Diagrams</span>
       </div>
       <p>Select a scenario tab below to inspect the step-by-step communication protocol across clients, edge proxies, and local servers:</p>
 
-      <!-- Flow Tabs -->
+      <!-- Flow Tabs Header -->
       <div class="flow-tabs-header">
         <button type="button" class="flow-tab-btn active" data-tab="flow1">Flow 1: Menu & Real Game Play Sync</button>
         <button type="button" class="flow-tab-btn" data-tab="flow2">Flow 2: Floor Waiter to Counter POS</button>
@@ -640,8 +1088,20 @@ flowchart TB
 
       <!-- Tab Pane 1 -->
       <div class="flow-tab-pane active" id="flow1">
-        <div class="mermaid-wrapper">
-          <pre class="mermaid">
+        <div class="diagram-container">
+          <div class="diagram-toolbar">
+            <span>Sequence: Menu Delivery & Real Game Play Synchronization</span>
+            <div class="diagram-toolbar-actions">
+              <button type="button" class="diagram-action-btn zoom-btn" data-target="diag-flow1">
+                <span>🔍 Zoom</span>
+              </button>
+              <button type="button" class="diagram-action-btn copy-code-btn" data-target="code-flow1">
+                <span>📋 Copy</span>
+              </button>
+            </div>
+          </div>
+          <div class="mermaid-wrapper" id="diag-flow1">
+            <pre class="mermaid" id="code-flow1">
 sequenceDiagram
     autonumber
     actor Customer as 📱 Customer Phone
@@ -663,7 +1123,8 @@ sequenceDiagram
     Repo-->>Vercel: Commit success
     Vercel-->>Customer: Return updated { totalPlays, ok: true }
     Customer->>Customer: Increment live badge display
-          </pre>
+            </pre>
+          </div>
         </div>
         <p style="font-size:13.5px;color:var(--ink-secondary);">
           <strong>Key Mechanism:</strong> The customer handheld retrieves `menu-data.js` and `game-stats.json` directly from the edge CDN. When a game completes, a background fetch sends a telemetry increment to `/api/game-stats`, atomically committing the new verified count to the GitHub repository without blocking the user interface.
@@ -672,8 +1133,20 @@ sequenceDiagram
 
       <!-- Tab Pane 2 -->
       <div class="flow-tab-pane" id="flow2">
-        <div class="mermaid-wrapper">
-          <pre class="mermaid">
+        <div class="diagram-container">
+          <div class="diagram-toolbar">
+            <span>Sequence: Floor Waiter to Counter POS Billing Workflow</span>
+            <div class="diagram-toolbar-actions">
+              <button type="button" class="diagram-action-btn zoom-btn" data-target="diag-flow2">
+                <span>🔍 Zoom</span>
+              </button>
+              <button type="button" class="diagram-action-btn copy-code-btn" data-target="code-flow2">
+                <span>📋 Copy</span>
+              </button>
+            </div>
+          </div>
+          <div class="mermaid-wrapper" id="diag-flow2">
+            <pre class="mermaid" id="code-flow2">
 sequenceDiagram
     autonumber
     actor Waiter as 🧑‍🍳 Waiter (waiters.html)
@@ -697,7 +1170,8 @@ sequenceDiagram
     LAN->>Storage: Update order record to settled
     Storage-->>LAN: Saved
     LAN-->>Cashier: Bill Printed & Revenue Logged
-          </pre>
+            </pre>
+          </div>
         </div>
         <p style="font-size:13.5px;color:var(--ink-secondary);">
           <strong>Key Mechanism:</strong> Local operations stay strictly within the dining room's Wi-Fi network. `server.py` locks `pos-orders.json` to write atomic updates, guaranteeing zero data corruption even under simultaneous ticket submissions by multiple floor servers.
@@ -706,8 +1180,20 @@ sequenceDiagram
 
       <!-- Tab Pane 3 -->
       <div class="flow-tab-pane" id="flow3">
-        <div class="mermaid-wrapper">
-          <pre class="mermaid">
+        <div class="diagram-container">
+          <div class="diagram-toolbar">
+            <span>Sequence: Food Review Submission with Git-as-a-Database</span>
+            <div class="diagram-toolbar-actions">
+              <button type="button" class="diagram-action-btn zoom-btn" data-target="diag-flow3">
+                <span>🔍 Zoom</span>
+              </button>
+              <button type="button" class="diagram-action-btn copy-code-btn" data-target="code-flow3">
+                <span>📋 Copy</span>
+              </button>
+            </div>
+          </div>
+          <div class="mermaid-wrapper" id="diag-flow3">
+            <pre class="mermaid" id="code-flow3">
 sequenceDiagram
     autonumber
     actor Customer as 📱 Customer (order.html)
@@ -729,7 +1215,8 @@ sequenceDiagram
     
     Vercel->>AdminDB: Record IP in rating-submissions.json
     Vercel-->>Customer: HTTP 200 { ok: true, message: "Thank you!" }
-          </pre>
+            </pre>
+          </div>
         </div>
         <p style="font-size:13.5px;color:var(--ink-secondary);">
           <strong>Key Mechanism:</strong> Reviews are appended directly to `ratings.json` using GitHub REST APIs with optimistic SHA concurrency. The customer's IP address is safely recorded in the private `admin-db` repository solely for rate limiting, ensuring client privacy.
@@ -737,14 +1224,14 @@ sequenceDiagram
       </div>
     </section>
 
-    <!-- Section 5: Technology Stack Matrix -->
+    <!-- Section 6: Technology Stack Matrix -->
     <section class="doc-section" id="sec-techstack">
       <div class="section-header">
         <h2 class="section-title">
-          <span class="section-number">05</span>
+          <span class="section-number">06</span>
           Technology Stack Matrix
         </h2>
-        <span class="badge badge-emerald">Comprehensive Breakdown</span>
+        <span class="badge badge-gold">Complete Engineering Stack</span>
       </div>
       <p>The entire platform is built with deliberate simplicity, avoiding heavy dependencies and bloated build tools to maximize speed and maintainability:</p>
 
@@ -824,18 +1311,25 @@ sequenceDiagram
       </div>
     </section>
 
-    <!-- Section 6: File & Directory Map -->
+    <!-- Section 7: Directory & File Map -->
     <section class="doc-section" id="sec-directory">
       <div class="section-header">
         <h2 class="section-title">
-          <span class="section-number">06</span>
+          <span class="section-number">07</span>
           Directory & File Map
         </h2>
-        <span class="badge badge-gold">Clean Project Structure</span>
+        <span class="badge badge-emerald">Clean Repository Structure</span>
       </div>
       <p>Annotated file tree outlining the operational responsibility of every asset in the repository:</p>
 
-      <div class="file-tree">
+      <div class="file-tree-container">
+        <div class="file-tree-header">
+          <span>PROJECT REPOSITORY STRUCTURE</span>
+          <button type="button" class="diagram-action-btn copy-code-btn" data-target="code-tree" style="background:#112A18; color:#A7F3D0; border-color:#1E823C;">
+            <span>📋 Copy Tree</span>
+          </button>
+        </div>
+        <pre class="file-tree" id="code-tree">
 <span class="file-dir">d:\Navrang\</span>
 ├── <span class="file-name">index.html</span>                   <span class="file-comment"># Desktop & brand landing presentation page</span>
 ├── <span class="file-name">order.html</span>                   <span class="file-comment"># Flagship mobile digital menu & order PWA shell</span>
@@ -885,43 +1379,44 @@ sequenceDiagram
     ├── <span class="file-dir">app/</span>                     <span class="file-comment"># Icons, Instagram banners, logo marks</span>
     ├── <span class="file-dir">menu/</span>                    <span class="file-comment"># Compressed dish photos (categories & item thumbnails)</span>
     └── <span class="file-dir">qr-cards/</span>                <span class="file-comment"># High-contrast scannable QR card codes (EN/TE)</span>
+        </pre>
       </div>
     </section>
 
-    <!-- Section 7: Reliability & Security -->
+    <!-- Section 8: Reliability & Security -->
     <section class="doc-section" id="sec-resilience">
       <div class="section-header">
         <h2 class="section-title">
-          <span class="section-number">07</span>
+          <span class="section-number">08</span>
           Reliability & Security Pillars
         </h2>
-        <span class="badge badge-emerald">Enterprise Grade</span>
+        <span class="badge badge-emerald">Production Verified</span>
       </div>
 
-      <div style="display:flex; flex-direction:column; gap:16px;">
-        <div style="border-left: 3px solid var(--leaf); padding-left: 14px;">
-          <h4 style="margin:0 0 4px; color:var(--ink);">1. Survives Total Internet Outages</h4>
+      <div style="display:flex; flex-direction:column; gap:18px;">
+        <div class="callout callout-leaf" style="margin:0;">
+          <h4 style="margin:0 0 6px; color:var(--ink);">1. Survives Total Internet Outages</h4>
           <p style="margin:0; font-size:13.5px; color:var(--ink-secondary);">
-            The floor POS system runs on an on-premise local server (`server.py`). Even if the restaurant's broadband connection is severed, waiters can still place table orders, the kitchen receives KOTs, and the counter can print receipts and log cash payments seamlessly over the local Wi-Fi router.
+            The floor POS system runs on an on-premise local server (`server.py`). Even if the restaurant's broadband connection is completely severed, waiters can still place table orders, the kitchen receives KOTs, and the counter can print receipts and log cash payments seamlessly over the local Wi-Fi router.
           </p>
         </div>
 
-        <div style="border-left: 3px solid var(--turmeric-gold); padding-left: 14px;">
-          <h4 style="margin:0 0 4px; color:var(--ink);">2. Zero Plaintext Credential Exposure</h4>
+        <div class="callout" style="margin:0;">
+          <h4 style="margin:0 0 6px; color:var(--maroon-deep);">2. Zero Plaintext Credential Exposure</h4>
           <p style="margin:0; font-size:13.5px; color:var(--ink-secondary);">
             Administrative tokens, JWT secrets, and fine-grained GitHub PATs are injected securely as serverless runtime environment variables (`JWT_SECRET`, `ADMIN_GITHUB_TOKEN`). Public repositories contain zero database passwords or private API keys.
           </p>
         </div>
 
-        <div style="border-left: 3px solid var(--leaf); padding-left: 14px;">
-          <h4 style="margin:0 0 4px; color:var(--ink);">3. Customer Privacy by Design (SAIF Framework)</h4>
+        <div class="callout callout-leaf" style="margin:0;">
+          <h4 style="margin:0 0 6px; color:var(--ink);">3. Customer Privacy by Design (SAIF Framework)</h4>
           <p style="margin:0; font-size:13.5px; color:var(--ink-secondary);">
             Sensitive diagnostic data like customer IP addresses, device user agents, and geolocation are segregated into the private `admin-db` repository. Public assets served to browsers (`ratings.json`, `menu-data.js`, `game-stats.json`) strictly contain sanitized business data.
           </p>
         </div>
 
-        <div style="border-left: 3px solid var(--turmeric-gold); padding-left: 14px;">
-          <h4 style="margin:0 0 4px; color:var(--ink);">4. Zero CDN Stale Cache Headaches</h4>
+        <div class="callout" style="margin:0;">
+          <h4 style="margin:0 0 6px; color:var(--maroon-deep);">4. Zero CDN Stale Cache Headaches</h4>
           <p style="margin:0; font-size:13.5px; color:var(--ink-secondary);">
             Whenever an administrator changes a dish price or adds an item, the script loader appends a fresh timestamp hash (`menu-data.js?v=Date.now()`), completely bypassing aggressive mobile browser caches without requiring manual cache clearing by dining customers.
           </p>
@@ -932,40 +1427,122 @@ sequenceDiagram
   </main>
 </div>
 
+<!-- Diagram Lightbox Modal -->
+<div class="lightbox-overlay" id="lightboxModal" role="dialog" aria-modal="true">
+  <div class="lightbox-dialog">
+    <div class="lightbox-head">
+      <div class="lightbox-title" id="lightboxTitle">Interactive Diagram Viewer</div>
+      <div class="lightbox-controls">
+        <button type="button" class="lightbox-btn" id="zoomInBtn" title="Zoom In">➕</button>
+        <button type="button" class="lightbox-btn" id="zoomOutBtn" title="Zoom Out">➖</button>
+        <button type="button" class="lightbox-btn" id="zoomResetBtn" title="Reset Zoom">↺ Reset</button>
+        <button type="button" class="lightbox-btn" id="closeLightboxBtn" title="Close">✕ Close</button>
+      </div>
+    </div>
+    <div class="lightbox-viewport" id="lightboxViewport">
+      <div class="lightbox-canvas" id="lightboxCanvas"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Back to Top Button -->
+<button type="button" class="back-to-top" id="backToTopBtn" aria-label="Back to top">↑</button>
+
 <!-- Footer -->
 <footer class="doc-footer">
-  <div>© 2026 <strong>Navrang Family Restaurant</strong> — Engineering Architecture Documentation.</div>
-  <div style="margin-top:4px; font-size:11.5px; color:var(--ink-muted);">
-    Designed with Vanilla HTML5, CSS3, ES6 JavaScript & Mermaid.js Vector Diagrams.
+  <div>© 2026 <strong>Navrang Family Restaurant</strong> — Engineering Architecture Blueprint.</div>
+  <div style="margin-top:6px; font-size:12px; color:var(--ink-muted);">
+    Designed with Vanilla HTML5, CSS3 Tokens, ES6 JavaScript & Mermaid.js Vector Diagrams.
+  </div>
+  <div style="margin-top:8px; display:flex; justify-content:center; gap:16px; font-size:12px;">
+    <a href="order.html">Customer Menu</a>
+    <span>•</span>
+    <a href="admin/billing.html">Counter POS</a>
+    <span>•</span>
+    <a href="admin/dishes.html">Menu Editor</a>
+    <span>•</span>
+    <a href="ARCHITECTURE.md">Raw Markdown</a>
   </div>
 </footer>
 
 <script>
 (function(){
-  // Reading Progress Bar
+  // 1. Reading Progress Bar & Sidebar Progress
+  var progressBar = document.getElementById('progressBar');
+  var sideProgressBar = document.getElementById('sideProgressBar');
+  var sideProgressText = document.getElementById('sideProgressText');
+
   window.addEventListener('scroll', function(){
     var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
     var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    var scrolled = (winScroll / height) * 100;
-    document.getElementById('progressBar').style.width = scrolled + '%';
+    var scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+    var rounded = Math.min(100, Math.max(0, Math.round(scrolled)));
+    
+    progressBar.style.width = scrolled + '%';
+    if (sideProgressBar) sideProgressBar.style.width = scrolled + '%';
+    if (sideProgressText) sideProgressText.textContent = rounded + '%';
+
+    // Back to top button visibility
+    var btt = document.getElementById('backToTopBtn');
+    if (btt) {
+      btt.classList.toggle('visible', winScroll > 400);
+    }
   });
 
-  // Theme Toggle (Dark / Light)
-  var themeBtn = document.getElementById('themeToggle');
-  var currentTheme = localStorage.getItem('navrang_doc_theme') || 'light';
-  if (currentTheme === 'dark'){
-    document.documentElement.setAttribute('data-theme', 'dark');
-    themeBtn.textContent = '☀️';
+  // Back to top click
+  var btt = document.getElementById('backToTopBtn');
+  if (btt) {
+    btt.addEventListener('click', function(){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
-  themeBtn.addEventListener('click', function(){
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var nextTheme = isDark ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', nextTheme);
-    localStorage.setItem('navrang_doc_theme', nextTheme);
-    themeBtn.textContent = nextTheme === 'dark' ? '☀️' : '🌙';
-  });
 
-  // Interactive Flow Tabs
+  // 2. Theme Toggle (Dark / Light)
+  var themeBtn = document.getElementById('themeToggle');
+  var currentTheme = localStorage.getItem('navrang_doc_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  
+  function applyTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('navrang_doc_theme', theme);
+    if (themeBtn) themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  }
+  applyTheme(currentTheme);
+
+  if (themeBtn){
+    themeBtn.addEventListener('click', function(){
+      var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      applyTheme(isDark ? 'light' : 'dark');
+    });
+  }
+
+  // 3. Font Size Controls
+  var currentFontSize = parseInt(localStorage.getItem('navrang_doc_font_size')) || 16;
+  function applyFontSize(size){
+    currentFontSize = Math.min(22, Math.max(13, size));
+    document.documentElement.style.setProperty('--doc-font-size', currentFontSize + 'px');
+    localStorage.setItem('navrang_doc_font_size', currentFontSize);
+  }
+  applyFontSize(currentFontSize);
+
+  var fontDecBtn = document.getElementById('fontDecBtn');
+  var fontResetBtn = document.getElementById('fontResetBtn');
+  var fontIncBtn = document.getElementById('fontIncBtn');
+  if (fontDecBtn) fontDecBtn.addEventListener('click', function(){ applyFontSize(currentFontSize - 1.5); });
+  if (fontResetBtn) fontResetBtn.addEventListener('click', function(){ applyFontSize(16); });
+  if (fontIncBtn) fontIncBtn.addEventListener('click', function(){ applyFontSize(currentFontSize + 1.5); });
+
+  // 4. Focus / Reader Mode Toggle
+  var readerBtn = document.getElementById('readerModeBtn');
+  if (readerBtn){
+    readerBtn.addEventListener('click', function(){
+      document.body.classList.toggle('reader-mode');
+      var isReader = document.body.classList.contains('reader-mode');
+      readerBtn.classList.toggle('active', isReader);
+      readerBtn.innerHTML = isReader ? '<span>📂 Sidebar</span>' : '<span>📖 Focus</span>';
+    });
+  }
+
+  // 5. Interactive Flow Tabs
   var tabButtons = document.querySelectorAll('.flow-tab-btn');
   var tabPanes = document.querySelectorAll('.flow-tab-pane');
   tabButtons.forEach(function(btn){
@@ -979,11 +1556,11 @@ sequenceDiagram
     });
   });
 
-  // Table of Contents ScrollSpy
+  // 6. Table of Contents ScrollSpy
   var sections = document.querySelectorAll('.doc-section, .article-hero');
   var tocLinks = document.querySelectorAll('.toc-link');
   window.addEventListener('scroll', function(){
-    var fromTop = window.scrollY + 120;
+    var fromTop = window.scrollY + 140;
     sections.forEach(function(sec){
       if (sec.offsetTop <= fromTop && (sec.offsetTop + sec.offsetHeight) > fromTop){
         var id = sec.getAttribute('id');
@@ -993,6 +1570,204 @@ sequenceDiagram
       }
     });
   });
+
+  // Mobile Drawer Toggle
+  var openDrawerBtn = document.getElementById('openMobileTocBtn');
+  var closeDrawerBtn = document.getElementById('closeMobileTocBtn');
+  var drawer = document.getElementById('tocDrawer');
+  if (openDrawerBtn && drawer){
+    openDrawerBtn.addEventListener('click', function(){ drawer.classList.add('open'); });
+  }
+  if (closeDrawerBtn && drawer){
+    closeDrawerBtn.addEventListener('click', function(){ drawer.classList.remove('open'); });
+  }
+  if (drawer){
+    drawer.addEventListener('click', function(e){
+      if (e.target === drawer) drawer.classList.remove('open');
+    });
+    var mobileLinks = drawer.querySelectorAll('.toc-link');
+    mobileLinks.forEach(function(l){
+      l.addEventListener('click', function(){ drawer.classList.remove('open'); });
+    });
+  }
+
+  // 7. Interactive Diagram Lightbox Modal with Zoom & Pan
+  var modal = document.getElementById('lightboxModal');
+  var canvas = document.getElementById('lightboxCanvas');
+  var modalClose = document.getElementById('closeLightboxBtn');
+  var zoomIn = document.getElementById('zoomInBtn');
+  var zoomOut = document.getElementById('zoomOutBtn');
+  var zoomReset = document.getElementById('zoomResetBtn');
+  var scale = 1;
+  var isPanning = false, startX = 0, startY = 0, translateX = 0, translateY = 0;
+
+  function updateTransform(){
+    canvas.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px) scale(' + scale + ')';
+  }
+
+  function openDiagramModal(wrapperEl){
+    if (!wrapperEl || !modal) return;
+    var svg = wrapperEl.querySelector('svg');
+    if (!svg) return;
+    canvas.innerHTML = '';
+    var clone = svg.cloneNode(true);
+    clone.style.maxWidth = 'none';
+    clone.style.width = '100%';
+    clone.style.height = 'auto';
+    canvas.appendChild(clone);
+    scale = 1; translateX = 0; translateY = 0;
+    updateTransform();
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(){
+    if (modal){
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      canvas.innerHTML = '';
+    }
+  }
+
+  document.querySelectorAll('.zoom-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var targetId = btn.dataset.target;
+      var wrapper = document.getElementById(targetId);
+      openDiagramModal(wrapper);
+    });
+  });
+
+  if (modalClose) modalClose.addEventListener('click', closeDiagramModal);
+  if (modal) modal.addEventListener('click', function(e){
+    if (e.target === modal) closeDiagramModal();
+  });
+  window.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeDiagramModal();
+  });
+
+  if (zoomIn) zoomIn.addEventListener('click', function(){ scale = Math.min(3.5, scale + 0.25); updateTransform(); });
+  if (zoomOut) zoomOut.addEventListener('click', function(){ scale = Math.max(0.5, scale - 0.25); updateTransform(); });
+  if (zoomReset) zoomReset.addEventListener('click', function(){ scale = 1; translateX = 0; translateY = 0; updateTransform(); });
+
+  // Pan via dragging in modal
+  var viewport = document.getElementById('lightboxViewport');
+  if (viewport){
+    viewport.addEventListener('mousedown', function(e){
+      if (e.target.tagName === 'BUTTON') return;
+      isPanning = true; startX = e.clientX - translateX; startY = e.clientY - translateY;
+    });
+    window.addEventListener('mousemove', function(e){
+      if (!isPanning) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      updateTransform();
+    });
+    window.addEventListener('mouseup', function(){ isPanning = false; });
+
+    // Mouse wheel zoom
+    viewport.addEventListener('wheel', function(e){
+      e.preventDefault();
+      var delta = e.deltaY < 0 ? 0.15 : -0.15;
+      scale = Math.min(3.5, Math.max(0.5, scale + delta));
+      updateTransform();
+    }, { passive: false });
+  }
+
+  // 8. Copy Code / Diagram Definitions
+  document.querySelectorAll('.copy-code-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var targetId = btn.dataset.target;
+      var el = document.getElementById(targetId);
+      if (!el) return;
+      var text = el.innerText || el.textContent;
+      navigator.clipboard.writeText(text.trim()).then(function(){
+        var original = btn.innerHTML;
+        btn.innerHTML = '<span>✔ Copied!</span>';
+        setTimeout(function(){ btn.innerHTML = original; }, 1800);
+      });
+    });
+  });
+
+  // 9. Quick Search & Highlight in Article
+  var searchInput = document.getElementById('searchInput');
+  var searchClearBtn = document.getElementById('searchClearBtn');
+  var matchCounter = document.getElementById('searchMatchCount');
+  var articleBody = document.getElementById('articleBody');
+
+  if (searchInput && articleBody){
+    searchInput.addEventListener('input', function(){
+      var query = searchInput.value.trim().toLowerCase();
+      searchClearBtn.style.display = query ? 'block' : 'none';
+      
+      // Clear previous marks
+      var marks = articleBody.querySelectorAll('mark.search-highlight');
+      marks.forEach(function(m){
+        var parent = m.parentNode;
+        parent.replaceChild(document.createTextNode(m.textContent), m);
+        parent.normalize();
+      });
+
+      if (!query || query.length < 2){
+        matchCounter.textContent = '';
+        return;
+      }
+
+      var count = 0;
+      var walker = document.createTreeWalker(articleBody, NodeFilter.SHOW_TEXT, {
+        acceptNode: function(node){
+          if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          if (node.parentNode.tagName === 'SCRIPT' || node.parentNode.tagName === 'STYLE' || node.parentNode.classList.contains('mermaid')) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+
+      var nodesToReplace = [];
+      while(walker.nextNode()){
+        var val = walker.currentNode.nodeValue;
+        if (val.toLowerCase().indexOf(query) !== -1){
+          nodesToReplace.push(walker.currentNode);
+        }
+      }
+
+      nodesToReplace.forEach(function(node){
+        var val = node.nodeValue;
+        var lower = val.toLowerCase();
+        var idx = lower.indexOf(query);
+        if (idx !== -1){
+          var frag = document.createDocumentFragment();
+          var lastIdx = 0;
+          while(idx !== -1){
+            count++;
+            frag.appendChild(document.createTextNode(val.substring(lastIdx, idx)));
+            var mark = document.createElement('mark');
+            mark.className = 'search-highlight';
+            mark.textContent = val.substr(idx, query.length);
+            frag.appendChild(mark);
+            lastIdx = idx + query.length;
+            idx = lower.indexOf(query, lastIdx);
+          }
+          frag.appendChild(document.createTextNode(val.substring(lastIdx)));
+          node.parentNode.replaceChild(frag, node);
+        }
+      });
+
+      matchCounter.textContent = count > 0 ? count + ' matches' : 'No matches';
+
+      // Scroll to first match if available
+      var firstMatch = articleBody.querySelector('mark.search-highlight');
+      if (firstMatch){
+        firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    if (searchClearBtn){
+      searchClearBtn.addEventListener('click', function(){
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+        searchInput.focus();
+      });
+    }
+  }
 })();
 </script>
 
