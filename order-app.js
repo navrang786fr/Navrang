@@ -163,7 +163,7 @@
       deliverySurveyTag: 'COMING SOON · DEMAND SURVEY',
       deliveryCountLabel: 'interested in Home Delivery',
       deliveryHeadline: 'Want Navrang Delivered to Your Doorstep?',
-      deliverySubtext: "Vote for your colony or area! If we receive enough demand, we'll launch express home delivery with an exclusive 20% OFF launch discount.",
+      deliverySubtext: "Vote for your colony or area! If we receive enough demand, we'll launch express home delivery with an exclusive 5% OFF launch discount.",
       deliveryVoteBtnText: 'Yes, I Want Home Delivery!',
       deliveryVotedText: 'You Voted! Launching Soon',
       deliveryModalTitle: 'Bring Navrang to Your Home!',
@@ -174,8 +174,8 @@
       deliveryAreaPlaceholder: 'e.g. Gandhi Nagar, Station Road...',
       deliveryPhoneLabel: 'WhatsApp / Mobile Number (Optional)',
       deliveryPhonePlaceholder: '10-digit mobile number',
-      deliveryPhoneNote: 'We will WhatsApp your 20% OFF launch coupon when delivery opens. Zero spam.',
-      deliverySubmitText: 'Vote for My Area & Get 20% Coupon 🚀',
+      deliveryPhoneNote: 'We will WhatsApp your 5% OFF launch coupon when delivery opens. Zero spam.',
+      deliverySubmitText: 'Vote for My Area & Get 5% Coupon 🚀',
       deliverySubmitting: 'Recording your vote…',
       deliverySuccessTitle: '🎉 Your Vote is Recorded!',
       deliverySuccessMsg: "Thank you! We've recorded your demand. We're planning express delivery routes to bring steaming hot food to your home soon!",
@@ -299,7 +299,7 @@
       deliverySurveyTag: 'త్వరలో రాబోతోంది · డిమాండ్ సర్వే',
       deliveryCountLabel: 'మంది హోమ్ డెలివరీ కోరుకుంటున్నారు',
       deliveryHeadline: 'నవరంగ్ రుచులు మీ ఇంటి వద్దకే కావాలా?',
-      deliverySubtext: 'మీ కాలనీ లేదా ఏరియా కోసం ఓటు వేయండి! మంచి డిమాండ్ వస్తే, 20% లాంచ్ డిస్కౌంట్‌తో ఎక్స్‌ప్రెస్ హోమ్ డెలివరీ ప్రారంభిస్తాం.',
+      deliverySubtext: 'మీ కాలనీ లేదా ఏరియా కోసం ఓటు వేయండి! మంచి డిమాండ్ వస్తే, 5% లాంచ్ డిస్కౌంట్‌తో ఎక్స్‌ప్రెస్ హోమ్ డెలివరీ ప్రారంభిస్తాం.',
       deliveryVoteBtnText: 'అవును, నాకు హోమ్ డెలివరీ కావాలి!',
       deliveryVotedText: 'మీ ఓటు నమోదైంది! త్వరలో వస్తున్నాం',
       deliveryModalTitle: 'నవరంగ్ రుచులు మీ ఇంటికి!',
@@ -310,8 +310,8 @@
       deliveryAreaPlaceholder: 'ఉదా: గాంధీ నగర్, స్టేషన్ రోడ్...',
       deliveryPhoneLabel: 'వాట్సాప్ / మొబైల్ నంబర్ (ఐచ్ఛికం)',
       deliveryPhonePlaceholder: '10 అంకెల మొబైల్ నంబర్',
-      deliveryPhoneNote: 'డెలివరీ ప్రారంభమైన వెంటనే 20% తగ్గింపు కూపన్ వాట్సాప్ చేస్తాం. ఎలాంటి స్పామ్ ఉండదు.',
-      deliverySubmitText: 'నా ఏరియాకు ఓటు వేసి 20% కూపన్ పొందండి 🚀',
+      deliveryPhoneNote: 'డెలివరీ ప్రారంభమైన వెంటనే 5% తగ్గింపు కూపన్ వాట్సాప్ చేస్తాం. ఎలాంటి స్పామ్ ఉండదు.',
+      deliverySubmitText: 'నా ఏరియాకు ఓటు వేసి 5% కూపన్ పొందండి 🚀',
       deliverySubmitting: 'నమోదవుతోంది…',
       deliverySuccessTitle: '🎉 మీ ఓటు విజయవంతంగా నమోదైంది!',
       deliverySuccessMsg: 'ధన్యవాదాలు! మీ ప్రాంత డిమాండ్ నమోదైంది. మీ ఇంటికే వేడి వేడి ఆహారాన్ని అందించేందుకు మేము డెలివరీ మార్గాలను రూపొందిస్తున్నాం!',
@@ -2746,8 +2746,8 @@
     function setupWhatsAppShare(area){
       if (!shareBtn) return;
       var currentArea = area || (storedVote ? storedVote.area : 'my area');
-      var textEn = '🛵 I just voted for Navrang Restaurant Home Delivery in ' + currentArea + '! 🍛 Support our colony so they start home delivery soon with 20% OFF: ' + window.location.href;
-      var textTe = '🛵 నవరంగ్ రెస్టారెంట్ హోమ్ డెలివరీ కోసం నేను ' + currentArea + ' కు ఓటు వేశాను! 🍛 మన ఏరియాలో డెలివరీ త్వరగా ప్రారంభం కావడానికి మీరు కూడా ఓటు వేయండి & 20% ఆఫర్ పొందండి: ' + window.location.href;
+      var textEn = '🛵 I just voted for Navrang Restaurant Home Delivery in ' + currentArea + '! 🍛 Support our colony so they start home delivery soon with 5% OFF: ' + window.location.href;
+      var textTe = '🛵 నవరంగ్ రెస్టారెంట్ హోమ్ డెలివరీ కోసం నేను ' + currentArea + ' కు ఓటు వేశాను! 🍛 మన ఏరియాలో డెలివరీ త్వరగా ప్రారంభం కావడానికి మీరు కూడా ఓటు వేయండి & 5% ఆఫర్ పొందండి: ' + window.location.href;
       var shareText = currentLang === 'te' ? textTe : textEn;
       shareBtn.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(shareText);
     }
@@ -2762,8 +2762,8 @@
         var successDesc = qs('#deliverySuccessMsg');
         if (successDesc){
           successDesc.textContent = (currentLang === 'te')
-            ? 'మీ ఏరియా (' + storedVote.area + ') కోసం మీ ఓటు నమోదైంది! డెలివరీ ప్రారంభమైన వెంటనే 20% తగ్గింపు కూపన్ అందజేస్తాం.'
-            : 'Your vote for ' + storedVote.area + ' is recorded! When home delivery routes open, your 20% discount coupon will be ready.';
+            ? 'మీ ఏరియా (' + storedVote.area + ') కోసం మీ ఓటు నమోదైంది! డెలివరీ ప్రారంభమైన వెంటనే 5% తగ్గింపు కూపన్ అందజేస్తాం.'
+            : 'Your vote for ' + storedVote.area + ' is recorded! When home delivery routes open, your 5% discount coupon will be ready.';
         }
         setupWhatsAppShare(storedVote.area);
       } else {
