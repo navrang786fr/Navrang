@@ -864,23 +864,6 @@
   .stats-col strong{display:block;font-size:16px;color:var(--maroon);font-family:'IBM Plex Mono',monospace;}
   .stats-col span{font-size:10.5px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.6px;font-weight:700;}
 
-  /* Area Quick Selection Chips */
-  .delivery-chips-label{
-    font-size:11px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;
-    letter-spacing:0.6px;margin-bottom:6px;display:block;
-  }
-  .delivery-chips-wrap{
-    display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;
-  }
-  .area-chip{
-    background:var(--bg-page);border:1px solid var(--rule-strong);
-    border-radius:16px;padding:4px 10px;font-size:12px;font-weight:600;
-    color:var(--ink-secondary);cursor:pointer;transition:all .14s ease;
-  }
-  .area-chip:hover, .area-chip.active{
-    background:var(--turmeric-soft);border-color:var(--turmeric-gold);
-    color:var(--maroon);font-weight:700;
-  }
 
   .delivery-form-group{margin-bottom:14px;}
   .delivery-form-group label{
@@ -2287,15 +2270,6 @@
       <form id="deliveryVoteForm" onsubmit="return false;">
         <div class="delivery-form-group">
           <label id="deliveryAreaLabel" for="deliveryAreaInput">Your Colony / Area / Landmark <span style="color:var(--nonveg);">*</span></label>
-          <span class="delivery-chips-label">Popular Areas (Tap to select):</span>
-          <div class="delivery-chips-wrap" id="deliveryAreaChips">
-            <button type="button" class="area-chip" data-area="Gandhi Nagar">Gandhi Nagar</button>
-            <button type="button" class="area-chip" data-area="Station Road">Station Road</button>
-            <button type="button" class="area-chip" data-area="RTC Bus Stand">RTC Bus Stand</button>
-            <button type="button" class="area-chip" data-area="Housing Board">Housing Board</button>
-            <button type="button" class="area-chip" data-area="Collector Office">Collector Office</button>
-            <button type="button" class="area-chip" data-area="Clock Tower">Clock Tower</button>
-          </div>
           <input type="text" id="deliveryAreaInput" class="delivery-form-input" placeholder="e.g. Gandhi Nagar, Station Road..." required autocomplete="off">
         </div>
 

@@ -2712,7 +2712,6 @@
     var submitText = qs('#deliverySubmitText');
     var doneBtn = qs('#deliveryDoneBtn');
     var shareBtn = qs('#deliveryShareBtn');
-    var areaChips = qsa('.area-chip', qs('#deliveryAreaChips'));
 
     var storedVote = getStoredDeliveryVote();
     if (storedVote){
@@ -2800,24 +2799,9 @@
       }
     }
 
-    // Quick selection chips
-    areaChips.forEach(function(chip){
-      chip.addEventListener('click', function(){
-        var area = chip.dataset.area;
-        if (areaInput){
-          areaInput.value = area;
-          areaInput.classList.remove('input-err');
-        }
-        areaChips.forEach(function(c){ c.classList.toggle('active', c === chip); });
-      });
-    });
-
     if (areaInput){
       areaInput.addEventListener('input', function(){
-        var val = areaInput.value.trim().toLowerCase();
-        areaChips.forEach(function(c){
-          c.classList.toggle('active', c.dataset.area.toLowerCase() === val);
-        });
+        areaInput.classList.remove('input-err');
       });
     }
 
