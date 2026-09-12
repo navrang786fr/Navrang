@@ -136,6 +136,7 @@
     storefront: '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
     billing: '<path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
     cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>',
+    delivery: '<circle cx="18.5" cy="17.5" r="2.5"/><circle cx="5.5" cy="17.5" r="2.5"/><path d="M15 6h-5a2 2 0 00-2 2v6h10V9a3 3 0 00-3-3h-2zm-6 2H5a2 2 0 00-2 2v4h3m7 3.5h-4M19 17.5V14h-3"/>',
     shortcuts: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>'
   };
 
@@ -182,6 +183,7 @@
       label: 'Customer Insights',
       icon: 'activity',
       items: [
+        { key: 'delivery-enquiries', label: 'Delivery Enquiries', href: 'delivery-enquiries.html', icon: 'delivery' },
         { key: 'activity', label: 'Activity Analytics', href: 'activity.html', icon: 'activity' },
         { key: 'ratings', label: 'Customer Ratings', href: 'ratings.html', icon: 'ratings' },
         { key: 'qrscans', label: 'QR Scans', href: 'qr-scans.html', icon: 'qr' }

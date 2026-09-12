@@ -140,7 +140,9 @@ class NavrangRequestHandler(SimpleHTTPRequestHandler):
             self._send_json(200, {
                 "uniqueCount": data.get("uniqueCount", 0),
                 "totalVotes": data.get("totalVotes", 0),
-                "topAreas": data.get("topAreas", [])[:8],
+                "topAreas": data.get("topAreas", [])[:15],
+                "areas": data.get("areas", {}),
+                "enquiries": data.get("enquiries", []),
                 "lastUpdated": data.get("lastUpdated", "")
             })
             return
@@ -293,13 +295,23 @@ class NavrangRequestHandler(SimpleHTTPRequestHandler):
 
                 store["totalVotes"] += 1
 
+                norm_area = " ".join([w.capitalize() for w in area.split()]) if area else "General Demand"
                 if area:
-                    norm_area = " ".join([w.capitalize() for w in area.split()])
                     store["areas"][norm_area] = store["areas"].get(norm_area, 0) + 1
+
+                store["enquiries"] = store.get("enquiries") or []
+                store["enquiries"].insert(0, {
+                    "area": norm_area,
+                    "phone": phone,
+                    "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime()),
+                    "isNewUnique": is_new_unique
+                })
+                if len(store["enquiries"]) > 1000:
+                    store["enquiries"] = store["enquiries"][:1000]
 
                 area_pairs = [{"name": k, "count": v} for k, v in store["areas"].items()]
                 area_pairs.sort(key=lambda x: x["count"], reverse=True)
-                store["topAreas"] = area_pairs[:10]
+                store["topAreas"] = area_pairs[:15]
                 store["lastUpdated"] = time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime())
 
                 temp_file = deliv_file + f".tmp.{os.getpid()}"

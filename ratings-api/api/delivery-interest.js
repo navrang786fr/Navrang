@@ -29,13 +29,16 @@ module.exports = async function handler(req, res) {
     }
     try {
       const { raw } = await readRawFile(publicRepo, filePath, token);
-      let data = { uniqueCount: 0, totalVotes: 0, topAreas: [] };
+      let data = { uniqueCount: 0, totalVotes: 0, topAreas: [], areas: {}, enquiries: [] };
       if (raw) {
         try {
           const parsed = JSON.parse(raw);
           data.uniqueCount = Math.max(0, parseInt(parsed.uniqueCount, 10) || 0);
           data.totalVotes = Math.max(0, parseInt(parsed.totalVotes, 10) || 0);
-          data.topAreas = Array.isArray(parsed.topAreas) ? parsed.topAreas.slice(0, 8) : [];
+          data.topAreas = Array.isArray(parsed.topAreas) ? parsed.topAreas.slice(0, 15) : [];
+          data.areas = parsed.areas || {};
+          data.enquiries = Array.isArray(parsed.enquiries) ? parsed.enquiries : [];
+          data.lastUpdated = parsed.lastUpdated || '';
         } catch(e){}
       }
       res.status(200).json(data);
@@ -107,10 +110,23 @@ module.exports = async function handler(req, res) {
           store.areas[normArea] = (store.areas[normArea] || 0) + 1;
         }
 
+        // Record customer enquiry lead
+        const finalArea = area
+          ? area.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+          : 'General Demand';
+        store.enquiries = Array.isArray(store.enquiries) ? store.enquiries : [];
+        store.enquiries.unshift({
+          area: finalArea,
+          phone: phone || '',
+          timestamp: new Date().toISOString(),
+          isNewUnique: isNewUnique
+        });
+        if (store.enquiries.length > 1000) store.enquiries = store.enquiries.slice(0, 1000);
+
         // Compute top areas
         const areaPairs = Object.keys(store.areas).map(name => ({ name, count: store.areas[name] }));
         areaPairs.sort((a, b) => b.count - a.count);
-        store.topAreas = areaPairs.slice(0, 10);
+        store.topAreas = areaPairs.slice(0, 15);
         store.lastUpdated = new Date().toISOString();
 
         uniqueCount = store.uniqueCount;

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Admin — Home Delivery Enquiries</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<link rel="icon" href="../navrang_logo.png">
+<link rel="stylesheet" href="admin-style.css">
+<style>
+  .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+  @media (max-width:880px){ .summary-grid{grid-template-columns:repeat(2,1fr);gap:10px;} }
+  @media (max-width:480px){ .summary-grid{grid-template-columns:1fr;gap:8px;} }
+  
+  .summary-card{
+    background:var(--bg-surface);border:1px solid var(--rule);border-radius:var(--radius-lg);
+    padding:16px 14px;text-align:center;box-shadow:var(--shadow-sm);transition:all .15s ease;
+  }
+  .summary-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:#CBD5E1;}
+  .summary-card .val{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:700;color:var(--maroon-deep);line-height:1.2;}
+  .summary-card .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-muted);font-weight:700;margin-top:6px;}
+
+  .areas-card{
+    background:var(--bg-surface);border:1px solid var(--rule);border-radius:var(--radius-lg);
+    padding:18px;margin-bottom:20px;box-shadow:var(--shadow-sm);
+  }
+  .areas-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+  .areas-head h3{margin:0;font-size:15px;color:var(--maroon-deep);display:flex;align-items:center;gap:8px;font-weight:700;}
+  .areas-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:10px;}
+  .area-stat-box{
+    background:var(--bg-surface-soft);border:1px solid var(--rule);border-radius:12px;
+    padding:10px 12px;cursor:pointer;transition:all .15s ease;display:flex;flex-direction:column;gap:6px;
+  }
+  .area-stat-box:hover, .area-stat-box.active{
+    background:#FFFDF7;border-color:var(--turmeric-gold);box-shadow:var(--shadow-xs);transform:translateY(-1px);
+  }
+  .area-stat-top{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+  .area-stat-name{font-size:13px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .area-stat-count{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:800;color:var(--leaf);background:rgba(22,163,74,0.1);padding:2px 7px;border-radius:10px;}
+  .area-progress-track{height:6px;background:rgba(0,0,0,0.06);border-radius:4px;overflow:hidden;}
+  .area-progress-bar{height:100%;background:linear-gradient(90deg,var(--turmeric),var(--leaf));border-radius:4px;}
+
+  .filter-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px;}
+  .search-wrap{position:relative;flex:1 1 200px;}
+  .search-input{
+    width:100%;height:38px;padding:6px 12px 6px 34px;border-radius:10px;
+    border:1.2px solid var(--rule);background:var(--paper);font-size:13px;outline:none;
+    font-family:inherit;
+  }
+  .search-input:focus{border-color:var(--maroon);background:#fff;}
+  .search-icon{position:absolute;left:10px;top:10px;color:var(--ink-muted);width:16px;height:16px;}
+
+  .action-btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .action-pill-btn{
+    border:1px solid var(--rule);background:var(--bg-surface);color:var(--ink);
+    border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;
+  }
+  .action-pill-btn:hover{background:var(--bg-surface-soft);border-color:#CBD5E1;color:var(--maroon);}
+  .action-pill-btn.primary{
+    background:var(--emerald-gradient);border-color:var(--maroon-deep);color:#fff;
+    box-shadow:0 1px 3px rgba(14,77,38,.2);
+  }
+  .action-pill-btn.primary:hover{box-shadow:0 2px 6px rgba(14,77,38,.35);}
+  .action-pill-btn.whatsapp{
+    background:#25D366;border-color:#20BD5A;color:#fff;
+  }
+  .action-pill-btn.whatsapp:hover{background:#20BD5A;}
+
+  .phone-link{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:var(--maroon-deep);
+    text-decoration:none;display:inline-flex;align-items:center;gap:6px;
+  }
+  .phone-link:hover{text-decoration:underline;color:var(--leaf);}
+
+  .wa-badge-btn{
+    background:#25D366;color:#fff;border-radius:14px;padding:3px 9px;font-size:11px;
+    font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:4px;
+    box-shadow:0 1px 4px rgba(37,211,102,0.3);transition:transform .12s ease;
+  }
+  .wa-badge-btn:hover{transform:scale(1.05);background:#20BD5A;}
+  .wa-badge-btn svg{width:12px;height:12px;fill:currentColor;}
+
+  .status-pill{
+    display:inline-flex;align-items:center;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;
+  }
+  .status-unique{background:rgba(22,163,74,0.12);color:#15803D;border:1px solid rgba(22,163,74,0.25);}
+  .status-repeat{background:rgba(100,116,139,0.12);color:#475569;border:1px solid rgba(100,116,139,0.25);}
+
+  .toast-notice{
+    position:fixed;bottom:24px;right:24px;z-index:9999;
+    background:var(--maroon-deep);color:#fff;border:1px solid rgba(255,255,255,0.2);
+    padding:10px 18px;border-radius:12px;box-shadow:var(--shadow-sheet);
+    font-size:13px;font-weight:700;display:none;align-items:center;gap:8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-header-bar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <img src="../navrang_logo.png" alt="Navrang">
+    <h1>Home Delivery Enquiries</h1>
+  </div>
+  <nav class="admin-topnav-bar" id="adminTopNav"></nav>
+  <div class="admin-body">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="admin-sidebar" id="adminSidebar">
+      <nav class="admin-nav" id="adminNav"></nav>
+    </aside>
+    <main class="admin-main">
+  <div class="admin-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
+      <div>
+        <h2 style="margin:0 0 2px;">Customer Delivery Demand &amp; Enquiries</h2>
+        <p style="margin:0;font-size:13px;color:var(--ink-muted);">Track customer interest counts, top requested colonies, and WhatsApp contact numbers.</p>
+      </div>
+      <div class="action-btn-row">
+        <button type="button" class="action-pill-btn whatsapp" id="copyNumbersBtn" title="Copy all phone numbers for broadcast">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
+          Copy WhatsApp Numbers
+        </button>
+        <button type="button" class="action-pill-btn" id="exportCsvBtn" title="Download enquiries spreadsheet">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <button type="button" class="action-pill-btn" id="refreshBtn" title="Refresh live enquiries">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary KPI Cards -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="val" id="kpiUnique" style="color:var(--leaf);">0</div>
+        <div class="lbl">Unique Interested Customers</div>
+      </div>
+      <div class="summary-card">
+        <div class="val" id="kpiTotal">0</div>
+        <div class="lbl">Total Votes / Submissions</div>
+      </div>
+      <div class="summary-card">
+        <div class="val" id="kpiLeads" style="color:var(--turmeric);">0</div>
+        <div class="lbl">WhatsApp Phone Leads</div>
+      </div>
+      <div class="summary-card">
+        <div class="val" id="kpiAreas">0</div>
+        <div class="lbl">Colonies / Areas Requested</div>
+      </div>
+    </div>
+
+    <!-- Top Colonies Demand Cards -->
+    <div class="areas-card" id="areasCard">
+      <div class="areas-head">
+        <h3>
+          <span>🛵</span> Demand by Colony / Area
+        </h3>
+        <span id="areasSummaryTag" style="font-size:12px;color:var(--ink-muted);font-weight:600;">Tap any colony to filter enquiries</span>
+      </div>
+      <div class="areas-grid" id="areasGrid">
+        <div style="font-size:13px;color:var(--ink-muted);padding:10px;">Loading colonies…</div>
+      </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="admin-card filter-bar">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="12" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" class="search-input" id="searchFilter" placeholder="Search by colony, phone number, etc…">
+      </div>
+      <div class="admin-field" style="margin-bottom:0;">
+        <select id="areaFilter" style="height:38px;padding:4px 10px;border-radius:10px;border:1.2px solid var(--rule);background:var(--paper);font-size:13px;">
+          <option value="all">All Colonies / Areas</option>
+        </select>
+      </div>
+      <div class="admin-field" style="margin-bottom:0;">
+        <select id="phoneFilter" style="height:38px;padding:4px 10px;border-radius:10px;border:1.2px solid var(--rule);background:var(--paper);font-size:13px;">
+          <option value="all">All Enquiries</option>
+          <option value="with_phone">With WhatsApp / Phone Only</option>
+          <option value="unique_only">Unique Voters Only</option>
+        </select>
+      </div>
+      <div style="margin-left:auto;font-size:12px;font-weight:700;color:var(--maroon);" id="tableCountBadge">
+        Showing 0 enquiries
+      </div>
+    </div>
+
+    <!-- Enquiries Data Table -->
+    <div class="admin-table-wrap" id="tableWrap">
+      <div class="admin-loading">Loading customer delivery enquiries…</div>
+    </div>
+  </div>
+    </main>
+  </div>
+</div>
+
+<div class="toast-notice" id="toastNotice"></div>
+
+<script src="admin-shared.js"></script>
+<script>
+(function(){
+  if (!AdminShared.requireAuthOrRedirect()) return;
+  AdminShared.renderNav('delivery-enquiries');
+  var esc = AdminShared.esc;
+
+  var kpiUnique = document.getElementById('kpiUnique');
+  var kpiTotal = document.getElementById('kpiTotal');
+  var kpiLeads = document.getElementById('kpiLeads');
+  var kpiAreas = document.getElementById('kpiAreas');
+  var areasGrid = document.getElementById('areasGrid');
+  var tableWrap = document.getElementById('tableWrap');
+  var searchFilter = document.getElementById('searchFilter');
+  var areaFilter = document.getElementById('areaFilter');
+  var phoneFilter = document.getElementById('phoneFilter');
+  var tableCountBadge = document.getElementById('tableCountBadge');
+  var copyNumbersBtn = document.getElementById('copyNumbersBtn');
+  var exportCsvBtn = document.getElementById('exportCsvBtn');
+  var refreshBtn = document.getElementById('refreshBtn');
+  var toastNotice = document.getElementById('toastNotice');
+
+  var rawStore = { uniqueCount: 0, totalVotes: 0, topAreas: [], areas: {}, enquiries: [] };
+  var allEnquiries = [];
+  var selectedColonyFilter = 'all';
+
+  function showToast(msg, duration){
+    if (!toastNotice) return;
+    toastNotice.textContent = msg;
+    toastNotice.style.display = 'inline-flex';
+    setTimeout(function(){ toastNotice.style.display = 'none'; }, duration || 2500);
+  }
+
+  function fmtDate(iso){
+    if (!iso) return '—';
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) + ' ' +
+           d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function cleanPhone(num){
+    if (!num) return '';
+    return String(num).replace(/[^0-9]/g, '');
+  }
+
+  function loadData(){
+    tableWrap.innerHTML = '<div class="admin-loading">Loading customer delivery enquiries…</div>';
+
+    var p1 = AdminShared.apiFetch('/api/delivery-interest')
+      .then(function(r){ return r.json(); })
+      .catch(function(){
+        return fetch('../delivery-interest.json').then(function(r){ return r.json(); }).catch(function(){ return {}; });
+      });
+
+    var p2 = AdminShared.apiFetch('/api/track')
+      .then(function(r){ return r.json(); })
+      .catch(function(){ return []; });
+
+    Promise.all([p1, p2]).then(function(results){
+      rawStore = results[0] || {};
+      var activityEvents = Array.isArray(results[1]) ? results[1] : (results[1] && Array.isArray(results[1].data) ? results[1].data : []);
+
+      // Build unified list of enquiries from both data store and activity log
+      var directEnquiries = Array.isArray(rawStore.enquiries) ? rawStore.enquiries : [];
+      var seenKeys = {};
+      var unified = [];
+
+      // Add direct enquiries
+      directEnquiries.forEach(function(e){
+        var key = (e.phone || '') + '_' + (e.area || '') + '_' + (e.timestamp ? e.timestamp.slice(0, 16) : '');
+        if (!seenKeys[key]){
+          seenKeys[key] = true;
+          unified.push({
+            area: e.area || 'General Demand',
+            phone: e.phone || '',
+            timestamp: e.timestamp || '',
+            isNewUnique: e.isNewUnique !== false
+          });
+        }
+      });
+
+      // Supplement with any delivery events logged in activity-log
+      activityEvents.forEach(function(act){
+        if (act.type === 'delivery_vote' || act.type === 'delivery_interest'){
+          var areaVal = (act.value || '').replace(/_ph$/, '');
+          var phoneVal = act.phone || '';
+          var key = phoneVal + '_' + areaVal + '_' + (act.timestamp ? act.timestamp.slice(0, 16) : '');
+          if (!seenKeys[key]){
+            seenKeys[key] = true;
+            unified.push({
+              area: areaVal || 'General Demand',
+              phone: phoneVal,
+              timestamp: act.timestamp || '',
+              isNewUnique: act.isNewUnique !== false
+            });
+          }
+        }
+      });
+
+      // Sort newest first
+      unified.sort(function(a, b){
+        return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+      });
+
+      allEnquiries = unified;
+      renderAll();
+    }).catch(function(err){
+      tableWrap.innerHTML = '<div class="admin-empty">Could not load delivery enquiries: ' + esc(err.message || 'Unknown error') + '</div>';
+    });
+  }
+
+  function renderAll(){
+    var uniqueCount = rawStore.uniqueCount || (allEnquiries.filter(function(e){ return e.isNewUnique; }).length || allEnquiries.length);
+    var totalVotes = rawStore.totalVotes || allEnquiries.length;
+    var leadsWithPhone = allEnquiries.filter(function(e){ return cleanPhone(e.phone).length >= 10; });
+
+    // Derive areas tally
+    var areasMap = Object.assign({}, rawStore.areas || {});
+    allEnquiries.forEach(function(e){
+      var a = e.area ? e.area.trim() : '';
+      if (a && !areasMap[a]) areasMap[a] = 1;
+    });
+
+    var areaKeys = Object.keys(areasMap);
+    var totalAreaVotes = 0;
+    areaKeys.forEach(function(k){ totalAreaVotes += (areasMap[k] || 0); });
+    if (totalAreaVotes <= 0) totalAreaVotes = 1;
+
+    // Update KPI cards
+    kpiUnique.textContent = uniqueCount;
+    kpiTotal.textContent = totalVotes;
+    kpiLeads.textContent = leadsWithPhone.length;
+    kpiAreas.textContent = areaKeys.length;
+
+    // Populate dropdown
+    var currentAreaSel = areaFilter.value;
+    areaFilter.innerHTML = '<option value="all">All Colonies / Areas (' + areaKeys.length + ')</option>' +
+      areaKeys.sort(function(a,b){ return (areasMap[b]||0) - (areasMap[a]||0); }).map(function(k){
+        return '<option value="' + esc(k) + '">' + esc(k) + ' (' + (areasMap[k] || 0) + ' votes)</option>';
+      }).join('');
+    if (currentAreaSel) areaFilter.value = currentAreaSel;
+
+    // Render Colony Demand Cards
+    if (!areaKeys.length){
+      areasGrid.innerHTML = '<div style="font-size:13px;color:var(--ink-muted);padding:10px;">No area votes recorded yet. Customer votes from order.html will appear here.</div>';
+    } else {
+      var sortedAreas = areaKeys.map(function(k){ return { name: k, count: areasMap[k] || 0 }; })
+        .sort(function(a,b){ return b.count - a.count; });
+      var maxCount = sortedAreas[0] ? sortedAreas[0].count : 1;
+
+      areasGrid.innerHTML = sortedAreas.map(function(item){
+        var pct = Math.round((item.count / maxCount) * 100);
+        var totalPct = Math.round((item.count / totalAreaVotes) * 100);
+        var isAct = selectedColonyFilter === item.name;
+        return '<div class="area-stat-box ' + (isAct ? 'active' : '') + '" data-area="' + esc(item.name) + '">' +
+          '<div class="area-stat-top">' +
+            '<span class="area-stat-name" title="' + esc(item.name) + '">📍 ' + esc(item.name) + '</span>' +
+            '<span class="area-stat-count">' + item.count + ' votes</span>' +
+          '</div>' +
+          '<div class="area-progress-track">' +
+            '<div class="area-progress-bar" style="width:' + Math.max(6, pct) + '%;"></div>' +
+          '</div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-muted);font-weight:600;">' +
+            '<span>' + totalPct + '% of total demand</span>' +
+            '<span>' + (isAct ? 'Filtering ✓' : 'Click to filter') + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      // Wire colony card clicks
+      Array.prototype.forEach.call(areasGrid.querySelectorAll('.area-stat-box'), function(box){
+        box.addEventListener('click', function(){
+          var clickedArea = box.dataset.area;
+          if (selectedColonyFilter === clickedArea){
+            selectedColonyFilter = 'all';
+            areaFilter.value = 'all';
+          } else {
+            selectedColonyFilter = clickedArea;
+            areaFilter.value = clickedArea;
+          }
+          renderAll();
+        });
+      });
+    }
+
+    renderTable();
+  }
+
+  function getFilteredRows(){
+    var search = (searchFilter.value || '').trim().toLowerCase();
+    var area = areaFilter.value;
+    var phoneOpt = phoneFilter.value;
+
+    return allEnquiries.filter(function(row){
+      if (selectedColonyFilter !== 'all' && row.area !== selectedColonyFilter) return false;
+      if (area !== 'all' && row.area !== area) return false;
+
+      if (phoneOpt === 'with_phone' && cleanPhone(row.phone).length < 10) return false;
+      if (phoneOpt === 'unique_only' && !row.isNewUnique) return false;
+
+      if (search){
+        var matchArea = (row.area || '').toLowerCase().indexOf(search) !== -1;
+        var matchPhone = (row.phone || '').indexOf(search) !== -1;
+        if (!matchArea && !matchPhone) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderTable(){
+    var rows = getFilteredRows();
+    tableCountBadge.textContent = 'Showing ' + rows.length + ' of ' + allEnquiries.length + ' enquiries';
+
+    if (!rows.length){
+      tableWrap.innerHTML = '<div class="admin-empty">No enquiries match the current filters.</div>';
+      return;
+    }
+
+    tableWrap.innerHTML = '<table class="admin-table"><thead><tr>' +
+      '<th>Date &amp; Time</th>' +
+      '<th>Requested Colony / Area</th>' +
+      '<th>Customer Mobile / WhatsApp</th>' +
+      '<th>Status</th>' +
+      '<th>Actions</th>' +
+      '</tr></thead><tbody>' +
+      rows.map(function(r){
+        var digits = cleanPhone(r.phone);
+        var hasValidPhone = digits.length >= 10;
+        var waPhone = digits.length === 10 ? '91' + digits : digits;
+        var waMsg = encodeURIComponent('Hello! Thank you for voting for Navrang Restaurant Home Delivery in ' + (r.area || 'your area') + '. Express delivery is launching soon with your 5% discount coupon! 🍛');
+        var waUrl = 'https://wa.me/' + waPhone + '?text=' + waMsg;
+
+        return '<tr>' +
+          '<td style="white-space:nowrap;font-size:12px;">' + esc(fmtDate(r.timestamp)) + '</td>' +
+          '<td><strong style="color:var(--maroon-deep);font-size:13.5px;">📍 ' + esc(r.area || 'General Demand') + '</strong></td>' +
+          '<td>' +
+            (hasValidPhone
+              ? '<a href="' + waUrl + '" target="_blank" rel="noopener" class="phone-link" title="Click to chat on WhatsApp">' +
+                  '<span>📱 ' + esc(r.phone) + '</span>' +
+                '</a>'
+              : '<span style="color:var(--ink-muted);font-style:italic;">— (Area vote only)</span>') +
+          '</td>' +
+          '<td>' +
+            (r.isNewUnique
+              ? '<span class="status-pill status-unique">Unique Customer</span>'
+              : '<span class="status-pill status-repeat">Repeat Voter</span>') +
+          '</td>' +
+          '<td>' +
+            (hasValidPhone
+              ? '<div style="display:flex;gap:6px;align-items:center;">' +
+                  '<a href="' + waUrl + '" target="_blank" rel="noopener" class="wa-badge-btn" title="Message on WhatsApp">' +
+                    '<svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>' +
+                    'Chat' +
+                  '</a>' +
+                  '<button type="button" class="action-pill-btn" style="padding:2px 8px;font-size:11px;" onclick="navigator.clipboard.writeText(\'' + esc(r.phone) + '\');showToastNotice(\'Phone copied: ' + esc(r.phone) + '\');">Copy</button>' +
+                '</div>'
+              : '<span style="color:var(--ink-muted);font-size:11px;">None</span>') +
+          '</td>' +
+        '</tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  window.showToastNotice = function(msg){
+    showToast(msg, 2000);
+  };
+
+  searchFilter.addEventListener('input', renderTable);
+  areaFilter.addEventListener('change', function(){
+    selectedColonyFilter = areaFilter.value;
+    renderAll();
+  });
+  phoneFilter.addEventListener('change', renderTable);
+  refreshBtn.addEventListener('click', loadData);
+
+  // Copy all phone numbers for WhatsApp broadcast
+  copyNumbersBtn.addEventListener('click', function(){
+    var numbers = allEnquiries
+      .map(function(e){ return cleanPhone(e.phone); })
+      .filter(function(p){ return p.length >= 10; });
+
+    // Deduplicate
+    var uniqueNums = [];
+    var seen = {};
+    numbers.forEach(function(n){
+      if (!seen[n]){ seen[n] = true; uniqueNums.push(n); }
+    });
+
+    if (!uniqueNums.length){
+      showToast('No phone numbers found to copy.');
+      return;
+    }
+
+    var csvText = uniqueNums.join(', ');
+    navigator.clipboard.writeText(csvText).then(function(){
+      showToast('Copied ' + uniqueNums.length + ' WhatsApp numbers to clipboard!');
+    }).catch(function(){
+      showToast('Could not access clipboard.');
+    });
+  });
+
+  // Export CSV
+  exportCsvBtn.addEventListener('click', function(){
+    var rows = getFilteredRows();
+    if (!rows.length){
+      showToast('No data to export.');
+      return;
+    }
+
+    var csv = 'Date,Colony Area,Phone,Customer Status\n';
+    rows.forEach(function(r){
+      csv += '"' + (r.timestamp || '') + '","' +
+             (r.area || '').replace(/"/g, '""') + '","' +
+             (r.phone || '').replace(/"/g, '""') + '","' +
+             (r.isNewUnique ? 'Unique' : 'Repeat') + '"\n';
+    });
+
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'navrang-delivery-enquiries-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Downloaded enquiries CSV!');
+  });
+
+  loadData();
+})();
+</script>
+
+</body>
+</html>

@@ -73,7 +73,10 @@
       <div class="summary-card"><div class="val" id="statViews">–</div><div class="lbl">Dish Views</div></div>
       <div class="summary-card"><div class="val" id="statZooms">–</div><div class="lbl">Photo Zooms</div></div>
       <div class="summary-card"><div class="val" id="statSplits">–</div><div class="lbl">Split Bill</div></div>
-      <div class="summary-card"><div class="val" id="statDeliveryVotes" style="color:var(--leaf);">–</div><div class="lbl" style="color:var(--leaf);">Delivery Votes</div></div>
+      <a href="delivery-enquiries.html" class="summary-card" style="text-decoration:none;cursor:pointer;" title="View all Home Delivery Enquiries & Customer Leads">
+        <div class="val" id="statDeliveryVotes" style="color:var(--leaf);">–</div>
+        <div class="lbl" style="color:var(--leaf);display:flex;align-items:center;justify-content:center;gap:3px;">Delivery Votes <span style="font-size:9px;">↗</span></div>
+      </a>
       <div class="summary-card"><div class="val" id="statZeroResults" style="color:var(--nonveg);">–</div><div class="lbl" style="color:var(--nonveg);">Unmet Searches</div></div>
       <div class="summary-card"><div class="val" id="statSessions">–</div><div class="lbl">Unique Guests</div></div>
     </div>
@@ -135,7 +138,10 @@
         <h2 style="font-size:15px;margin:0;display:flex;align-items:center;gap:8px;color:var(--maroon-deep);">
           <span style="font-size:18px;">🛵</span> Top Requested Home Delivery Areas (Colonies)
         </h2>
-        <span id="deliveryVotesSummaryBadge" style="font-size:12px;font-weight:700;color:var(--leaf);background:rgba(22,163,74,0.1);padding:4px 12px;border-radius:12px;border:1px solid rgba(22,163,74,0.25);">0 Customer Votes</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span id="deliveryVotesSummaryBadge" style="font-size:12px;font-weight:700;color:var(--leaf);background:rgba(22,163,74,0.1);padding:4px 12px;border-radius:12px;border:1px solid rgba(22,163,74,0.25);">0 Customer Votes</span>
+          <a href="delivery-enquiries.html" style="font-size:12px;font-weight:700;color:var(--maroon);text-decoration:underline;">View All Enquiries →</a>
+        </div>
       </div>
       <div id="topDeliveryAreas"></div>
     </div>

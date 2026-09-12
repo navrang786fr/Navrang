@@ -152,6 +152,11 @@
       <div class="stat-card"><span class="stat-icon" data-icon="dishes"></span><div class="val" id="statActive">–</div><div class="lbl">Active Dishes</div></div>
       <div class="stat-card"><span class="stat-icon" data-icon="ratings"></span><div class="val" id="statRatings">–</div><div class="lbl">Total Ratings</div></div>
       <div class="stat-card"><span class="stat-icon" data-icon="ratings"></span><div class="val" id="statAvgRating">–</div><div class="lbl">Avg Rating</div></div>
+      <a href="delivery-enquiries.html" class="stat-card" style="text-decoration:none;cursor:pointer;" title="View all Home Delivery Enquiries & Customer Leads">
+        <span class="stat-icon" data-icon="delivery"></span>
+        <div class="val" id="statDeliveryUnique" style="color:var(--leaf);">–</div>
+        <div class="lbl" style="color:var(--leaf);">Delivery Enquiries</div>
+      </a>
       <div class="stat-card"><span class="stat-icon" data-icon="activity"></span><div class="val" id="statSearchesToday">–</div><div class="lbl" id="lblSearches">Searches Today</div></div>
       <div class="stat-card"><span class="stat-icon" data-icon="activity"></span><div class="val" id="statViewsToday">–</div><div class="lbl" id="lblViews">Item Views Today</div></div>
     </div>
@@ -237,6 +242,7 @@
     </div>
 
     <div class="quick-links">
+      <a class="quick-link" href="delivery-enquiries.html"><span data-icon="delivery"></span>Delivery Enquiries</a>
       <a class="quick-link" href="qr-scans.html"><span data-icon="qr"></span>QR Codes &amp; Scans</a>
       <a class="quick-link" href="ratings.html"><span data-icon="ratings"></span>Customer Ratings</a>
       <a class="quick-link" href="dishes.html"><span data-icon="dishes"></span>Dish Rates</a>
@@ -310,6 +316,19 @@
     document.getElementById('auditFeed').innerHTML = '<div class="admin-empty" style="padding:14px;">Could not load.</div>';
   });
 
+  // Delivery Enquiries (unique customer count)
+  AdminShared.apiFetch('/api/delivery-interest').then(function(resp){
+    return resp.json().then(function(data){ return { ok: resp.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok) throw new Error();
+    var count = (result.data && typeof result.data.uniqueCount === 'number') ? result.data.uniqueCount : 0;
+    var el = document.getElementById('statDeliveryUnique');
+    if (el) el.textContent = count;
+  }).catch(function(){
+    var el = document.getElementById('statDeliveryUnique');
+    if (el) el.textContent = '—';
+  });
+
   // Activity (searches/views today + recent customer activity feed)
   // Activity (searches/views + unmet demand + customer activity feed)
   var ACTIVITY_META = {
@@ -323,6 +342,8 @@
     nonveg_filter: { label: 'Non-Veg Filter', badge: 'badge-filter' },
     top_filter: { label: 'Top Picks', badge: 'badge-filter' },
     price_filter: { label: 'Price Filter', badge: 'badge-filter' },
+    delivery_vote: { label: 'Delivery Vote', badge: 'badge-zoom' },
+    delivery_interest: { label: 'Delivery View', badge: 'badge-action' },
     lang_switch: { label: 'Language', badge: 'badge-action' },
     split_bill_open: { label: 'Split Bill', badge: 'badge-split' },
     split_preset_click: { label: 'Split Preset', badge: 'badge-split' },
