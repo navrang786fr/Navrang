@@ -476,12 +476,10 @@
 
   /* --- Render Edit Table with Row-Level Photo Upload --- */
   function renderList(categories){
-    listWrap.innerHTML = '<table class="admin-table cat-table"><thead><tr><th></th><th>ID</th><th>Category Photo</th><th>Title (EN)</th><th>Title (TE)</th><th>Short (EN)</th><th>Short (TE)</th><th></th><th></th></tr></thead><tbody>' +
+    listWrap.innerHTML = '<table class="admin-table cat-table"><thead><tr><th>Category Photo</th><th>Title (EN)</th><th>Title (TE)</th><th>Short (EN)</th><th>Short (TE)</th><th></th><th></th></tr></thead><tbody>' +
       categories.map(function(c){
         var resolvedImg = getCategoryImageUrl(c.image);
-        return '<tr data-id="' + esc(c.id) + '">' +
-          '<td><span class="cat-icon-preview">' + iconSvg(c.icon || '') + '</span></td>' +
-          '<td><span class="cat-id">' + esc(c.id) + '</span></td>' +
+        return '<tr data-id="' + esc(c.id) + '" title="ID: ' + esc(c.id) + '">' +
           '<td>' +
             '<div class="cat-img-cell">' +
               '<img class="cat-thumb" src="' + esc(resolvedImg) + '" alt="' + esc(c.title) + '" style="' + (resolvedImg ? '' : 'display:none;') + '" data-full="' + esc(resolvedImg) + '" data-caption="' + esc(c.title) + '" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'flex\';">' +
