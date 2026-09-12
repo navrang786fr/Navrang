@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navrang Platform — Architecture & Engineering Blueprint</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A2A12">
+<meta name="description" content="End-to-end architectural blueprint of the Navrang Family Restaurant & Digital Ordering Platform. Detailed diagrams, data flows, cloud infrastructure, POS sync, and technology stacks.">
+<link rel="icon" href="navrang_logo_sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Karla:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --maroon: #12401C;
+    --maroon-deep: #0A2A12;
+    --maroon-dark: #05180A;
+    --turmeric: #B3821E;
+    --turmeric-gold: #D49B22;
+    --turmeric-soft: #FBF4DE;
+    --leaf: #1E823C;
+    --leaf-bg: #EAF7EE;
+    --leaf-border: #9ED4AB;
+    --nonveg: #B92E22;
+    
+    --bg-page: #FBF9F4;
+    --bg-surface: #FFFFFF;
+    --bg-surface-soft: #F5F1E6;
+    --bg-code: #0A1C10;
+    
+    --ink: #16231A;
+    --ink-secondary: #4A5B4F;
+    --ink-muted: #7E9083;
+    --rule: rgba(22, 35, 26, 0.10);
+    --rule-strong: rgba(22, 35, 26, 0.18);
+    
+    --shadow-sm: 0 2px 8px rgba(10, 42, 18, 0.05);
+    --shadow-md: 0 8px 24px rgba(10, 42, 18, 0.08);
+    --shadow-lg: 0 16px 40px rgba(10, 42, 18, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-theme="dark"] {
+    --bg-page: #06150B;
+    --bg-surface: #0B2113;
+    --bg-surface-soft: #102C1B;
+    --bg-code: #040D07;
+    --ink: #EDF3EE;
+    --ink-secondary: #A3B8AA;
+    --ink-muted: #6F8576;
+    --rule: rgba(255, 255, 255, 0.08);
+    --rule-strong: rgba(255, 255, 255, 0.15);
+    --turmeric-soft: rgba(212, 155, 34, 0.15);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Karla', sans-serif;
+    color: var(--ink);
+    background: var(--bg-page);
+    line-height: 1.65;
+    font-size: 16px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Sticky Reading Progress Indicator */
+  #progressBar {
+    position: fixed; top: 0; left: 0; height: 3.5px;
+    background: linear-gradient(90deg, var(--turmeric) 0%, var(--turmeric-gold) 50%, #FF2626 100%);
+    width: 0%; z-index: 100; transition: width 0.1s linear;
+  }
+
+  /* Top Navigation Bar */
+  .doc-topbar {
+    position: sticky; top: 0; z-index: 90;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--rule);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .doc-brand {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; color: var(--ink); font-weight: 800;
+  }
+  .doc-brand img {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1.5px solid var(--turmeric-gold); display: block;
+  }
+  .doc-brand-title {
+    font-family: 'Yatra One', cursive; font-size: 20px;
+    color: var(--maroon); line-height: 1; letter-spacing: 0.3px;
+  }
+  [data-theme="dark"] .doc-brand-title { color: #F7E5B5; }
+  .doc-brand-tag {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    background: var(--turmeric-soft); color: var(--turmeric-gold);
+    padding: 3px 8px; border-radius: 6px; font-weight: 700;
+  }
+  .doc-topbar-actions {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .doc-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 20px; font-size: 12.5px; font-weight: 700;
+    cursor: pointer; border: 1px solid var(--rule);
+    background: var(--bg-surface-soft); color: var(--ink);
+    text-decoration: none; transition: all 0.18s var(--ease);
+  }
+  .doc-btn:hover {
+    border-color: var(--turmeric-gold); color: var(--maroon);
+    transform: translateY(-1px);
+  }
+  [data-theme="dark"] .doc-btn:hover { color: #F7E5B5; }
+  .theme-toggle-btn {
+    width: 36px; height: 36px; border-radius: 50%; padding: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+
+  /* Layout Container */
+  .doc-container {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: 270px minmax(0, 1fr);
+    gap: 40px; padding: 36px 24px 80px;
+  }
+  @media (max-width: 960px) {
+    .doc-container { grid-template-columns: 1fr; gap: 24px; padding: 20px 16px 60px; }
+  }
+
+  /* Sticky Table of Contents (Sidebar) */
+  .doc-sidebar {
+    position: sticky; top: 80px; align-self: start;
+    max-height: calc(100vh - 100px); overflow-y: auto;
+    padding-right: 12px;
+  }
+  @media (max-width: 960px) {
+    .doc-sidebar { display: none; }
+  }
+  .toc-title {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: 1.2px;
+    font-weight: 800; color: var(--ink-muted); margin-bottom: 12px;
+  }
+  .toc-list {
+    list-style: none; padding: 0; margin: 0;
+    border-left: 2px solid var(--rule);
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .toc-link {
+    display: block; padding: 6px 14px; font-size: 13px; font-weight: 600;
+    color: var(--ink-secondary); text-decoration: none; border-radius: 0 8px 8px 0;
+    transition: all 0.15s ease;
+  }
+  .toc-link:hover { color: var(--turmeric-gold); background: var(--bg-surface-soft); }
+  .toc-link.active {
+    color: var(--maroon); font-weight: 800;
+    border-left: 2px solid var(--turmeric-gold); margin-left: -2px;
+    background: var(--turmeric-soft);
+  }
+  [data-theme="dark"] .toc-link.active { color: #F7E5B5; }
+
+  /* Main Article Area */
+  .doc-article { min-width: 0; }
+
+  /* Article Header Hero */
+  .article-hero {
+    background: var(--bg-surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+    padding: 36px 36px 28px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .article-hero::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--turmeric) 0%, var(--turmeric-gold) 50%, var(--leaf) 100%);
+  }
+  .hero-badges {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .badge {
+    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 4px 10px; border-radius: 6px;
+  }
+  .badge-emerald { background: var(--leaf-bg); color: var(--leaf); border: 1px solid var(--leaf-border); }
+  .badge-gold { background: var(--turmeric-soft); color: var(--turmeric-gold); border: 1px solid rgba(212, 155, 34, 0.3); }
+  .badge-version { background: var(--bg-surface-soft); color: var(--ink-muted); border: 1px solid var(--rule); }
+
+  .article-title {
+    font-size: 34px; font-weight: 800; color: var(--maroon-deep);
+    margin: 0 0 10px; line-height: 1.25; letter-spacing: -0.4px;
+  }
+  [data-theme="dark"] .article-title { color: #FDF9EE; }
+  .article-subtitle {
+    font-size: 17px; color: var(--ink-secondary); margin: 0 0 20px; line-height: 1.55;
+  }
+  .article-meta-row {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    font-size: 12.5px; color: var(--ink-muted); padding-top: 16px;
+    border-top: 1px solid var(--rule);
+  }
+  .article-meta-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+  /* Key Metrics Grid */
+  .metrics-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px; margin-bottom: 36px;
+  }
+  .metric-card {
+    background: var(--bg-surface); border: 1px solid var(--rule);
+    border-radius: var(--radius-md); padding: 18px 20px;
+    box-shadow: var(--shadow-sm); transition: transform 0.18s ease;
+  }
+  .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .metric-icon { font-size: 22px; margin-bottom: 6px; display: inline-block; }
+  .metric-title { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .metric-desc { font-size: 12.5px; color: var(--ink-secondary); margin: 0; line-height: 1.45; }
+
+  /* Article Sections */
+  .doc-section {
+    background: var(--bg-surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+    padding: 32px 32px 36px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 32px;
+  }
+  @media (max-width: 640px) {
+    .doc-section { padding: 22px 18px; }
+  }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 14px; border-bottom: 1px solid var(--rule);
+    margin-bottom: 22px; flex-wrap: wrap; gap: 10px;
+  }
+  .section-title {
+    font-size: 23px; font-weight: 800; color: var(--maroon-deep);
+    margin: 0; display: flex; align-items: center; gap: 10px;
+  }
+  [data-theme="dark"] .section-title { color: #F7E5B5; }
+  .section-number {
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 800;
+    color: var(--turmeric-gold); background: var(--turmeric-soft);
+    padding: 3px 8px; border-radius: 6px;
+  }
+
+  /* Subsystems Cards Grid */
+  .subsystem-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px; margin-top: 16px;
+  }
+  .subsystem-card {
+    background: var(--bg-surface-soft);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 22px 20px; display: flex; flex-direction: column;
+  }
+  .subsystem-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .subsystem-head .icon { font-size: 24px; }
+  .subsystem-head h4 { margin: 0; font-size: 16px; font-weight: 800; color: var(--ink); }
+  .subsystem-body { font-size: 13.5px; color: var(--ink-secondary); line-height: 1.55; }
+  .subsystem-features {
+    list-style: none; padding: 0; margin: 12px 0 0;
+    display: flex; flex-direction: column; gap: 6px; font-size: 12.5px;
+  }
+  .subsystem-features li { display: flex; align-items: flex-start; gap: 6px; }
+  .subsystem-features li::before { content: '✔'; color: var(--leaf); font-weight: 800; font-size: 11px; margin-top: 2px; }
+
+  /* Interactive Mermaid Diagrams */
+  .mermaid-wrapper {
+    background: var(--bg-surface-soft);
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    padding: 24px 18px; margin: 20px 0;
+    overflow-x: auto; text-align: center;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+  }
+  .mermaid-wrapper svg { max-width: 100%; height: auto; margin: 0 auto; }
+
+  /* Tabs for Flow Sequence Diagrams */
+  .flow-tabs-header {
+    display: flex; gap: 6px; border-bottom: 1px solid var(--rule);
+    margin-bottom: 16px; overflow-x: auto; padding-bottom: 6px;
+  }
+  .flow-tab-btn {
+    border: none; background: transparent; padding: 8px 16px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; color: var(--ink-muted); cursor: pointer;
+    font-family: inherit; white-space: nowrap; transition: all 0.16s ease;
+  }
+  .flow-tab-btn:hover { color: var(--ink); background: var(--bg-surface-soft); }
+  .flow-tab-btn.active {
+    background: var(--maroon); color: #FFF;
+    box-shadow: 0 2px 6px rgba(10, 42, 18, 0.2);
+  }
+  [data-theme="dark"] .flow-tab-btn.active { background: var(--turmeric-gold); color: #05180A; }
+  .flow-tab-pane { display: none; }
+  .flow-tab-pane.active { display: block; }
+
+  /* Tech Stack Table */
+  .tech-table-wrap { overflow-x: auto; margin-top: 14px; }
+  .tech-table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left;
+  }
+  .tech-table th {
+    background: var(--bg-surface-soft); color: var(--ink-muted);
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 10px 14px; border-bottom: 1.5px solid var(--rule-strong);
+  }
+  .tech-table td {
+    padding: 12px 14px; border-bottom: 1px solid var(--rule); vertical-align: middle;
+  }
+  .tech-table tr:hover td { background: var(--bg-surface-soft); }
+  .tech-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-weight: 700; color: var(--ink);
+  }
+  .tech-code {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    background: var(--bg-surface-soft); padding: 2px 6px; border-radius: 4px;
+    color: var(--maroon); font-weight: 600;
+  }
+  [data-theme="dark"] .tech-code { color: #F7E5B5; }
+
+  /* File Tree Explorer */
+  .file-tree {
+    background: var(--bg-code); color: #E4ECE6;
+    border-radius: var(--radius-md); padding: 20px 22px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;
+    line-height: 1.7; overflow-x: auto; box-shadow: var(--shadow-sm);
+  }
+  .file-comment { color: #7B9983; font-style: italic; }
+  .file-dir { color: var(--turmeric-gold); font-weight: 700; }
+  .file-name { color: #A7F3D0; }
+
+  /* Callout Alert Boxes */
+  .callout {
+    border-left: 4px solid var(--turmeric-gold);
+    background: var(--turmeric-soft);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px; margin: 18px 0;
+    font-size: 13.5px; color: var(--ink);
+  }
+  .callout strong { color: var(--maroon-deep); }
+  [data-theme="dark"] .callout strong { color: #F7E5B5; }
+
+  /* Footer */
+  .doc-footer {
+    border-top: 1px solid var(--rule);
+    padding: 24px; text-align: center; font-size: 13px; color: var(--ink-muted);
+    background: var(--bg-surface);
+  }
+
+  @media print {
+    .doc-topbar, .doc-sidebar, #progressBar, .doc-btn { display: none !important; }
+    .doc-container { padding: 0 !important; display: block !important; }
+    .doc-section { box-shadow: none !important; border: 1px solid #ccc !important; page-break-inside: avoid; }
+  }
+</style>
+
+<!-- Mermaid JS for vector diagrams rendering -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#EAF7EE',
+      primaryTextColor: '#0A2A12',
+      primaryBorderColor: '#1E823C',
+      lineColor: '#B3821E',
+      secondaryColor: '#FDF9EE',
+      tertiaryColor: '#FFFFFF',
+      fontFamily: 'Karla, sans-serif',
+      fontSize: '13px'
+    }
+  });
+</script>
+</head>
+<body>
+
+<div id="progressBar"></div>
+
+<!-- Top Sticky Bar -->
+<header class="doc-topbar">
+  <a class="doc-brand" href="order.html" title="Back to Customer Menu">
+    <img src="navrang_logo_sm.png" alt="Navrang Logo" width="34" height="34">
+    <div>
+      <span class="doc-brand-title">Navrang</span>
+      <span class="doc-brand-tag">Architecture</span>
+    </div>
+  </a>
+  <div class="doc-topbar-actions">
+    <a class="doc-btn" href="ARCHITECTURE.md" title="View raw Markdown source">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span>Source MD</span>
+    </a>
+    <a class="doc-btn" href="order.html" title="Open Customer Menu">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <span>Live App</span>
+    </a>
+    <button class="doc-btn theme-toggle-btn" id="themeToggle" title="Toggle dark/light mode" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="doc-container">
+
+  <!-- Left Sidebar (TOC) -->
+  <aside class="doc-sidebar">
+    <div class="toc-title">Table of Contents</div>
+    <ul class="toc-list" id="tocList">
+      <li><a class="toc-link" href="#sec-overview">1. System Overview</a></li>
+      <li><a class="toc-link" href="#sec-architecture">2. Full Architecture Diagram</a></li>
+      <li><a class="toc-link" href="#sec-subsystems">3. Core Subsystems</a></li>
+      <li><a class="toc-link" href="#sec-dataflows">4. End-to-End Data Flows</a></li>
+      <li><a class="toc-link" href="#sec-techstack">5. Technology Stack Matrix</a></li>
+      <li><a class="toc-link" href="#sec-directory">6. Directory & Code Map</a></li>
+      <li><a class="toc-link" href="#sec-resilience">7. Reliability & Security</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Article Content -->
+  <main class="doc-article">
+
+    <!-- Hero Header -->
+    <header class="article-hero" id="sec-overview">
+      <div class="hero-badges">
+        <span class="badge badge-emerald">Production Verified</span>
+        <span class="badge badge-gold">100% Serverless Edge</span>
+        <span class="badge badge-version">v26.08.1</span>
+      </div>
+      <h1 class="article-title">Navrang Platform — System Architecture & Engineering Blueprint</h1>
+      <p class="article-subtitle">A comprehensive engineering reference detailing system components, cloud edge functions, on-premise POS LAN synchronization, Git-as-a-Database transactional persistence, and technology stacks.</p>
+      
+      <div class="article-meta-row">
+        <span>👨‍💻 <strong>Author:</strong> Navrang Engineering Team</span>
+        <span>🕒 <strong>Read Time:</strong> ~7 minutes</span>
+        <span>🌐 <strong>Target:</strong> Web, PWA, LAN POS & Vercel Edge</span>
+        <span>📅 <strong>Updated:</strong> September 2026</span>
+      </div>
+    </header>
+
+    <!-- Key Metrics Highlight -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-icon">⚡</span>
+        <div class="metric-title">Zero-Cost Cloud</div>
+        <p class="metric-desc">Static assets hosted on GitHub Pages CDN; APIs running on Vercel Edge with zero server maintenance overhead.</p>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">🛡️</span>
+        <div class="metric-title">Dual-Offline LAN</div>
+        <p class="metric-desc">Python POS server synchronizes waiter orders and cashier billing over local Wi-Fi, completely surviving broadband outages.</p>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">🗄️</span>
+        <div class="metric-title">Git-as-a-Database</div>
+        <p class="metric-desc">Optimistic concurrency via GitHub Contents REST API with SHA collision detection and auto-retries.</p>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">🎮</span>
+        <div class="metric-title">60 FPS Canvas Game</div>
+        <p class="metric-desc">Biryani Catcher mini-game built with retro physics, Web Audio synthesizer, and live global player counter synchronization.</p>
+      </div>
+    </div>
+
+    <!-- Section 2: High-Level Architecture Diagram -->
+    <section class="doc-section" id="sec-architecture">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-number">02</span>
+          High-Level Architecture Diagram
+        </h2>
+        <span class="badge badge-gold">End-to-End Topology</span>
+      </div>
+      <p>The system operates across three decoupled physical environments: <strong>Client Devices</strong> (customer mobile PWA, waiter handhelds, cashier PC), <strong>Cloud Serverless & CDN</strong> (GitHub Pages & Vercel Microservices), and <strong>On-Premise LAN POS</strong> (Python 3 local synchronization daemon).</p>
+
+      <div class="mermaid-wrapper">
+        <pre class="mermaid">
+flowchart TB
+    subgraph ClientDevices["1. CLIENT APPLICATION TIER"]
+        CustomerMobile["Customer Handheld<br/>(order.html - Mobile PWA)"]
+        WaiterDevice["Waiter Handheld Tablet<br/>(admin/waiters.html)"]
+        CounterPOS["Cashier / Counter Billing PC<br/>(admin/billing.html)"]
+        AdminLaptop["Manager / Owner Dashboard<br/>(admin/dishes.html, categories.html)"]
+    end
+
+    subgraph EdgeCDN["2. HOSTING & CDN LAYER"]
+        GH_Pages["GitHub Pages CDN<br/>(navrang786fr.github.io/Navrang)<br/>- High-speed global edge cache<br/>- Zero-cost static asset delivery"]
+    end
+
+    subgraph CloudServerless["3. CLOUD SERVERLESS TIER (Vercel)"]
+        direction TB
+        VercelGateway["Vercel Edge Gateway (ratings-api-pink.vercel.app)"]
+        APIRate["/api/rate<br/>(Customer Dish Reviews)"]
+        APITrack["/api/track<br/>(Customer Telemetry)"]
+        APIGame["/api/game-stats<br/>(Real Biryani Catcher Counter)"]
+        APICat["/api/categories<br/>(Image Upload & Category Meta)"]
+        APIDish["/api/dishes<br/>(Live Menu Pricing & Availability)"]
+        APIAuth["/api/login & change-password<br/>(JWT HMAC-SHA256 Auth)"]
+        APICron["/api/backup-activity<br/>(Vercel Cron 7-day Backup)"]
+    end
+
+    subgraph DataTier["4. TRANSACTIONAL SERVERLESS DATABASE (GitHub Repos)"]
+        PublicRepo[("Public Repo: navrang786fr/Navrang<br/>- menu-data.js (Live Dish Catalog)<br/>- ratings.json (Public Customer Reviews)<br/>- game-stats.json (Verified Plays)<br/>- images/menu/ (Optimized Media)")]
+        PrivateRepo[("Private Repo: rahamathalisk/admin-db<br/>- activity-log.json (Search & Item Views)<br/>- rating-submissions.json (IP Throttles)<br/>- access-log.json & audit-log.json<br/>- backups/activity-log-YYYY-MM-DD.json")]
+    end
+
+    subgraph OnPremiseTier["5. ON-PREMISE LAN POS TIER (Local Server)"]
+        PythonServer["Python 3 Multi-threaded Server<br/>(server.py on port 3000)<br/>- Zero cloud dependency<br/>- Sub-millisecond LAN latency"]
+        POSOrders[("pos-orders.json<br/>- Active Table Carts<br/>- Submitted Kitchen KOTs<br/>- Settled Bills & Daily Collections")]
+        LocalAdminStore["Local Credentials<br/>- cashier-pin.txt<br/>- admin-password.txt"]
+    end
+
+    CustomerMobile -->|HTTPS static bundle| GH_Pages
+    CustomerMobile -->|POST Ratings / Telemetry / Game| VercelGateway
+    CustomerMobile -.->|Optional in-restaurant Wi-Fi| PythonServer
+
+    WaiterDevice -->|HTTP LAN port 3000| PythonServer
+    CounterPOS -->|HTTP LAN port 3000| PythonServer
+    AdminLaptop -->|HTTPS / Cloud Management| VercelGateway
+    AdminLaptop -->|HTTP LAN / POS Overrides| PythonServer
+
+    VercelGateway --> APIRate
+    VercelGateway --> APITrack
+    VercelGateway --> APIGame
+    VercelGateway --> APICat
+    VercelGateway --> APIDish
+    VercelGateway --> APIAuth
+    VercelGateway --> APICron
+
+    APIRate -->|Octokit REST Contents API| PublicRepo
+    APIGame -->|Atomic SHA PUT| PublicRepo
+    APICat -->|Base64 Image Upload| PublicRepo
+    APIDish -->|Serialized AST Mutation| PublicRepo
+
+    APITrack -->|Encrypted Sliding Window Array| PrivateRepo
+    APIAuth -->|Audit Log Entries| PrivateRepo
+    APICron -->|Automated Snapshots| PrivateRepo
+
+    PythonServer --> POSOrders
+    PythonServer --> LocalAdminStore
+        </pre>
+      </div>
+
+      <div class="callout">
+        <strong>Architectural Invariant:</strong> The customer-facing web application never requires direct database credentials. All mutations are performed via authenticated serverless proxies or through client-safe GitHub Content APIs with server-side rate limits.
+      </div>
+    </section>
+
+    <!-- Section 3: Core Subsystems -->
+    <section class="doc-section" id="sec-subsystems">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-number">03</span>
+          Core Subsystem Details
+        </h2>
+        <span class="badge badge-emerald">Modular Design</span>
+      </div>
+
+      <div class="subsystem-grid">
+        <div class="subsystem-card">
+          <div class="subsystem-head">
+            <span class="icon">📱</span>
+            <h4>Customer PWA Shell (`order.html`)</h4>
+          </div>
+          <div class="subsystem-body">
+            Flagship digital menu loaded instantly via QR code scan on dining tables.
+          </div>
+          <ul class="subsystem-features">
+            <li><strong>Bilingual Engine:</strong> Instant toggle between English and Telugu (`తెలుగు`).</li>
+            <li><strong>Smart Search & Filters:</strong> Instant search by name, Telugu script, and ingredients.</li>
+            <li><strong>Biryani Catcher Game:</strong> 60 FPS HTML5 Canvas mini-game while waiting.</li>
+            <li><strong>Split Bill Utility:</strong> Guest bill splitting with clipboard copy and screenshot download.</li>
+            <li><strong>Social Channels:</strong> YouTube Channel & Instagram 5% OFF banner integration.</li>
+          </ul>
+        </div>
+
+        <div class="subsystem-card">
+          <div class="subsystem-head">
+            <span class="icon">🖥️</span>
+            <h4>On-Premise POS (`server.py`)</h4>
+          </div>
+          <div class="subsystem-body">
+            Local multi-threaded Python server coordinating table orders and cashier billing over LAN.
+          </div>
+          <ul class="subsystem-features">
+            <li><strong>Zero Cloud Dependence:</strong> Restaurant continues billing during internet outages.</li>
+            <li><strong>Thread-Safe Storage:</strong> Atomic file swaps on `pos-orders.json` prevent race conditions.</li>
+            <li><strong>Waiter Handheld Mode:</strong> Tables, item add/remove, kitchen ticket dispatch.</li>
+            <li><strong>Counter POS Mode:</strong> Bill settlement, tender selection (Cash/UPI/Card), receipt printing.</li>
+            <li><strong>Daily Collections:</strong> Automatic end-of-day revenue audit and settlement reports.</li>
+          </ul>
+        </div>
+
+        <div class="subsystem-card">
+          <div class="subsystem-head">
+            <span class="icon">⚡</span>
+            <h4>Cloud Serverless (`ratings-api`)</h4>
+          </div>
+          <div class="subsystem-body">
+            Node.js serverless microservices hosted on Vercel handling reviews, tracking, and catalog CRUD.
+          </div>
+          <ul class="subsystem-features">
+            <li><strong>Git-as-a-Database:</strong> Public/Private GitHub repos as relational state storage.</li>
+            <li><strong>Optimistic Concurrency:</strong> SHA-validated PUT commits with retry loops on 409 conflicts.</li>
+            <li><strong>Sliding-Window Throttling:</strong> IP rate limiting to prevent spam and review manipulation.</li>
+            <li><strong>Automated Backups:</strong> Daily Vercel Cron worker snapshots 7-day activity logs.</li>
+            <li><strong>Stateless JWT Auth:</strong> HMAC-SHA256 tokens for admin & management portals.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: End-to-End Data Flows -->
+    <section class="doc-section" id="sec-dataflows">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-number">04</span>
+          End-to-End Data Flows
+        </h2>
+        <span class="badge badge-gold">Interactive Sequence Diagrams</span>
+      </div>
+      <p>Select a scenario tab below to inspect the step-by-step communication protocol across clients, edge proxies, and local servers:</p>
+
+      <!-- Flow Tabs -->
+      <div class="flow-tabs-header">
+        <button type="button" class="flow-tab-btn active" data-tab="flow1">Flow 1: Menu & Real Game Play Sync</button>
+        <button type="button" class="flow-tab-btn" data-tab="flow2">Flow 2: Floor Waiter to Counter POS</button>
+        <button type="button" class="flow-tab-btn" data-tab="flow3">Flow 3: Food Review Submission</button>
+      </div>
+
+      <!-- Tab Pane 1 -->
+      <div class="flow-tab-pane active" id="flow1">
+        <div class="mermaid-wrapper">
+          <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Customer as 📱 Customer Phone
+    participant GH as 🌐 GitHub Pages CDN
+    participant Vercel as ⚡ Vercel Serverless
+    participant Repo as 📦 GitHub Repo (Navrang)
+
+    Customer->>GH: GET /order.html & menu-data.js?v=timestamp
+    GH-->>Customer: Cached HTML & Live Menu Catalog
+    Customer->>Customer: Render dishes, dietary pills, search index
+    Customer->>GH: GET /game-stats.json
+    GH-->>Customer: Current real game play count
+    Customer->>Customer: Display real verified players badge
+
+    Customer->>Customer: Plays "Biryani Catcher" game (Catch items, avoid chilies)
+    Customer->>Customer: Game Over: updates local best score in localStorage
+    Customer->>Vercel: POST /api/game-stats (action: "play")
+    Vercel->>Repo: Fetch game-stats.json SHA & increment totalPlays
+    Repo-->>Vercel: Commit success
+    Vercel-->>Customer: Return updated { totalPlays, ok: true }
+    Customer->>Customer: Increment live badge display
+          </pre>
+        </div>
+        <p style="font-size:13.5px;color:var(--ink-secondary);">
+          <strong>Key Mechanism:</strong> The customer handheld retrieves `menu-data.js` and `game-stats.json` directly from the edge CDN. When a game completes, a background fetch sends a telemetry increment to `/api/game-stats`, atomically committing the new verified count to the GitHub repository without blocking the user interface.
+        </p>
+      </div>
+
+      <!-- Tab Pane 2 -->
+      <div class="flow-tab-pane" id="flow2">
+        <div class="mermaid-wrapper">
+          <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Waiter as 🧑‍🍳 Waiter (waiters.html)
+    participant LAN as 🖥️ Python POS Server (server.py)
+    participant Storage as 💾 pos-orders.json
+    actor Cashier as 💵 Cashier (billing.html)
+
+    Waiter->>LAN: POST /api/login (Waiter PIN)
+    LAN-->>Waiter: Return Session Token
+    Waiter->>Waiter: Select Table 4, punch 2x Dum Biryani, 1x Chicken 65
+    Waiter->>LAN: POST /api/pos/orders (table: "Table 4", items, status: "submitted_to_counter")
+    LAN->>Storage: Acquire Lock & Atomic write pos-orders.json
+    Storage-->>LAN: Write Confirmed
+    LAN-->>Waiter: Order Placed (ID: ord_xxx)
+
+    Cashier->>LAN: Polling GET /api/pos/orders
+    LAN-->>Cashier: Return active table orders
+    Cashier->>Cashier: Table 4 illuminates yellow ("Active Order")
+    Cashier->>Cashier: Apply 5% Instagram follower discount
+    Cashier->>LAN: PUT /api/pos/orders/ord_xxx (status: "settled", paymentMethod: "UPI")
+    LAN->>Storage: Update order record to settled
+    Storage-->>LAN: Saved
+    LAN-->>Cashier: Bill Printed & Revenue Logged
+          </pre>
+        </div>
+        <p style="font-size:13.5px;color:var(--ink-secondary);">
+          <strong>Key Mechanism:</strong> Local operations stay strictly within the dining room's Wi-Fi network. `server.py` locks `pos-orders.json` to write atomic updates, guaranteeing zero data corruption even under simultaneous ticket submissions by multiple floor servers.
+        </p>
+      </div>
+
+      <!-- Tab Pane 3 -->
+      <div class="flow-tab-pane" id="flow3">
+        <div class="mermaid-wrapper">
+          <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Customer as 📱 Customer (order.html)
+    participant Vercel as ⚡ Vercel Edge (/api/rate)
+    participant AdminDB as 🔒 Private admin-db Repo
+    participant PublicDB as 📂 Public Navrang Repo
+
+    Customer->>Customer: Clicks "Rate Your Food", selects 5★, adds comments
+    Customer->>Vercel: POST /api/rate (name, dishes, rating, comments)
+    Vercel->>AdminDB: Read rating-submissions.json
+    AdminDB-->>Vercel: Return client submission timestamps
+    Vercel->>Vercel: Verify IP rate limit (< 5 ratings / hour)
+    
+    Vercel->>PublicDB: GET /contents/ratings.json
+    PublicDB-->>Vercel: Base64 content + current Git SHA
+    Vercel->>Vercel: Append new review object into JSON array
+    Vercel->>PublicDB: PUT /contents/ratings.json (with SHA validation)
+    PublicDB-->>Vercel: HTTP 201 Created
+    
+    Vercel->>AdminDB: Record IP in rating-submissions.json
+    Vercel-->>Customer: HTTP 200 { ok: true, message: "Thank you!" }
+          </pre>
+        </div>
+        <p style="font-size:13.5px;color:var(--ink-secondary);">
+          <strong>Key Mechanism:</strong> Reviews are appended directly to `ratings.json` using GitHub REST APIs with optimistic SHA concurrency. The customer's IP address is safely recorded in the private `admin-db` repository solely for rate limiting, ensuring client privacy.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 5: Technology Stack Matrix -->
+    <section class="doc-section" id="sec-techstack">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-number">05</span>
+          Technology Stack Matrix
+        </h2>
+        <span class="badge badge-emerald">Comprehensive Breakdown</span>
+      </div>
+      <p>The entire platform is built with deliberate simplicity, avoiding heavy dependencies and bloated build tools to maximize speed and maintainability:</p>
+
+      <div class="tech-table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Technology / Standard</th>
+              <th>Architectural Role</th>
+              <th>Key Implementation Files</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tech-badge">🎨 Frontend Core</span></td>
+              <td><strong>Vanilla HTML5 & CSS3 Tokens</strong></td>
+              <td>PWA viewport shell, CSS variables (`--maroon`, `--turmeric`), safe-area insets.</td>
+              <td><span class="tech-code">order.html</span>, <span class="tech-code">index.html</span></td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">⚡ Logic & i18n</span></td>
+              <td><strong>Vanilla JavaScript (ES6+)</strong></td>
+              <td>Zero-dependency client controllers, instant search index, English/Telugu translation.</td>
+              <td><span class="tech-code">order-app.js</span></td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">🎮 Mini-Game</span></td>
+              <td><strong>HTML5 Canvas 2D API</strong></td>
+              <td>Biryani Catcher 60 FPS physics, thruster particle sparks, combo multiplier streaks.</td>
+              <td><span class="tech-code">order-app.js#L1150-L1750</span></td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">🔊 Sound FX</span></td>
+              <td><strong>Web Audio API Synthesizer</strong></td>
+              <td>Procedural oscillator synthesis for chimes and alert tones (zero external MP3 files).</td>
+              <td><span class="tech-code">order-app.js#L1124-L1155</span></td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">🖥️ LAN POS</span></td>
+              <td><strong>Python 3 (`http.server`)</strong></td>
+              <td>Multi-threaded local web & REST sync daemon running on <span class="tech-code">0.0.0.0:3000</span>.</td>
+              <td><span class="tech-code">server.py</span></td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">☁️ Cloud Functions</span></td>
+              <td><strong>Node.js on Vercel Edge</strong></td>
+              <td>Serverless lambdas for ratings, activity tracking, category uploads, and auth.</td>
+              <td><span class="tech-code">ratings-api/api/*.js</span></td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">🗄️ Database</span></td>
+              <td><strong>GitHub REST Contents API</strong></td>
+              <td>Git-as-a-Database transactional persistence with optimistic locking via Git SHAs.</td>
+              <td><span class="tech-code">ratings-api/api/_lib/github.js</span></td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">🔒 Auth & Security</span></td>
+              <td><strong>HMAC-SHA256 JWT & PBKDF2</strong></td>
+              <td>Stateless authentication tokens with role-based permissions (Admin, Cashier, Waiter).</td>
+              <td><span class="tech-code">ratings-api/api/_lib/auth.js</span></td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">🌐 Global CDN</span></td>
+              <td><strong>GitHub Pages Edge Cache</strong></td>
+              <td>Global CDN asset serving with automated cache busting (<span class="tech-code">?v=Date.now()</span>).</td>
+              <td><span class="tech-code">navrang786fr.github.io/Navrang</span></td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">🔗 Social Integration</span></td>
+              <td><strong>YouTube & Instagram APIs</strong></td>
+              <td>Direct links to YouTube Channel (`UCgJrjCtAEO39sfaaTyd_EHA`) and Instagram 5% OFF.</td>
+              <td><span class="tech-code">order.html</span>, <span class="tech-code">order-app.js</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 6: File & Directory Map -->
+    <section class="doc-section" id="sec-directory">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-number">06</span>
+          Directory & File Map
+        </h2>
+        <span class="badge badge-gold">Clean Project Structure</span>
+      </div>
+      <p>Annotated file tree outlining the operational responsibility of every asset in the repository:</p>
+
+      <div class="file-tree">
+<span class="file-dir">d:\Navrang\</span>
+├── <span class="file-name">index.html</span>                   <span class="file-comment"># Desktop & brand landing presentation page</span>
+├── <span class="file-name">order.html</span>                   <span class="file-comment"># Flagship mobile digital menu & order PWA shell</span>
+├── <span class="file-name">order-app.js</span>                 <span class="file-comment"># Complete client logic (search, EN/TE, game, split bill)</span>
+├── <span class="file-name">menu-data.js</span>                 <span class="file-comment"># Central database of categories & dish inventory</span>
+├── <span class="file-name">ratings.json</span>                 <span class="file-comment"># Verified public customer reviews and feedback</span>
+├── <span class="file-name">game-stats.json</span>              <span class="file-comment"># Verified global count of Biryani Catcher games played</span>
+├── <span class="file-name">server.py</span>                    <span class="file-comment"># Multi-threaded on-premise LAN POS & Table Sync Server</span>
+├── <span class="file-name">pos-orders.json</span>              <span class="file-comment"># Local store of active, submitted, and settled table bills</span>
+├── <span class="file-name">config.js</span>                    <span class="file-comment"># Environment endpoint configuration</span>
+├── <span class="file-name">ARCHITECTURE.md</span>              <span class="file-comment"># Raw architectural design documentation</span>
+├── <span class="file-name">architecture.html</span>            <span class="file-comment"># Interactive architectural publication article (this page)</span>
+│
+├── <span class="file-dir">admin/</span>                       <span class="file-comment"># On-premise POS & Manager Control Suite</span>
+│   ├── <span class="file-name">login.html</span>               <span class="file-comment"># Staff login with cashier PIN / admin credentials</span>
+│   ├── <span class="file-name">billing.html</span>             <span class="file-comment"># Cashier counter terminal (bill settlement, print receipts)</span>
+│   ├── <span class="file-name">waiters.html</span>             <span class="file-comment"># Waiter handheld order punch tablet interface</span>
+│   ├── <span class="file-name">daily-collections.html</span>   <span class="file-comment"># End-of-day revenue, settlement, and payment audits</span>
+│   ├── <span class="file-name">pos-audit.html</span>           <span class="file-comment"># Live operational event stream & change log</span>
+│   ├── <span class="file-name">dishes.html</span>              <span class="file-comment"># Menu catalog editor (live prices, availability)</span>
+│   ├── <span class="file-name">categories.html</span>          <span class="file-comment"># Category order manager and photo uploader</span>
+│   ├── <span class="file-name">ratings.html</span>             <span class="file-comment"># Customer feedback moderation & insights</span>
+│   ├── <span class="file-name">activity.html</span>            <span class="file-comment"># Customer search query and traffic telemetry</span>
+│   ├── <span class="file-name">admin-shared.js</span>          <span class="file-comment"># Shared authentication, token verification, and navbar</span>
+│   └── <span class="file-name">admin-style.css</span>          <span class="file-comment"># Design system stylesheet for admin portals</span>
+│
+├── <span class="file-dir">ratings-api/</span>                 <span class="file-comment"># Cloud Serverless Microservices (Vercel)</span>
+│   ├── <span class="file-name">package.json</span>             <span class="file-comment"># Microservice package descriptor</span>
+│   ├── <span class="file-name">vercel.json</span>              <span class="file-comment"># Vercel cron schedules and edge configuration</span>
+│   └── <span class="file-dir">api/</span>
+│       ├── <span class="file-name">rate.js</span>              <span class="file-comment"># Append customer rating to ratings.json</span>
+│       ├── <span class="file-name">track.js</span>             <span class="file-comment"># Record search/view telemetry to activity-log.json</span>
+│       ├── <span class="file-name">game-stats.js</span>        <span class="file-comment"># Global Biryani Catcher player counter endpoint</span>
+│       ├── <span class="file-name">dishes.js</span>            <span class="file-comment"># Update dish inventory in menu-data.js</span>
+│       ├── <span class="file-name">categories.js</span>        <span class="file-comment"># Category CRUD and base64 image processor</span>
+│       ├── <span class="file-name">login.js</span>             <span class="file-comment"># Staff JWT token issuance</span>
+│       ├── <span class="file-name">change-password.js</span>   <span class="file-comment"># Secure credential updater</span>
+│       ├── <span class="file-name">backup-activity.js</span>   <span class="file-comment"># Automated 7-day activity snapshot worker</span>
+│       └── <span class="file-dir">_lib/</span>
+│           ├── <span class="file-name">auth.js</span>          <span class="file-comment"># JWT verification & claims validation</span>
+│           ├── <span class="file-name">github.js</span>        <span class="file-comment"># GitHub Contents API reader/writer with retry loops</span>
+│           ├── <span class="file-name">menuData.js</span>      <span class="file-comment"># AST parser and serializer for menu-data.js</span>
+│           ├── <span class="file-name">rateLimit.js</span>     <span class="file-comment"># Sliding window rate limiting engine</span>
+│           └── <span class="file-name">requestInfo.js</span>   <span class="file-comment"># Client IP, geo-location, and device detector</span>
+│
+└── <span class="file-dir">images/</span>                      <span class="file-comment"># Media assets</span>
+    ├── <span class="file-dir">app/</span>                     <span class="file-comment"># Icons, Instagram banners, logo marks</span>
+    ├── <span class="file-dir">menu/</span>                    <span class="file-comment"># Compressed dish photos (categories & item thumbnails)</span>
+    └── <span class="file-dir">qr-cards/</span>                <span class="file-comment"># High-contrast scannable QR card codes (EN/TE)</span>
+      </div>
+    </section>
+
+    <!-- Section 7: Reliability & Security -->
+    <section class="doc-section" id="sec-resilience">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-number">07</span>
+          Reliability & Security Pillars
+        </h2>
+        <span class="badge badge-emerald">Enterprise Grade</span>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="border-left: 3px solid var(--leaf); padding-left: 14px;">
+          <h4 style="margin:0 0 4px; color:var(--ink);">1. Survives Total Internet Outages</h4>
+          <p style="margin:0; font-size:13.5px; color:var(--ink-secondary);">
+            The floor POS system runs on an on-premise local server (`server.py`). Even if the restaurant's broadband connection is severed, waiters can still place table orders, the kitchen receives KOTs, and the counter can print receipts and log cash payments seamlessly over the local Wi-Fi router.
+          </p>
+        </div>
+
+        <div style="border-left: 3px solid var(--turmeric-gold); padding-left: 14px;">
+          <h4 style="margin:0 0 4px; color:var(--ink);">2. Zero Plaintext Credential Exposure</h4>
+          <p style="margin:0; font-size:13.5px; color:var(--ink-secondary);">
+            Administrative tokens, JWT secrets, and fine-grained GitHub PATs are injected securely as serverless runtime environment variables (`JWT_SECRET`, `ADMIN_GITHUB_TOKEN`). Public repositories contain zero database passwords or private API keys.
+          </p>
+        </div>
+
+        <div style="border-left: 3px solid var(--leaf); padding-left: 14px;">
+          <h4 style="margin:0 0 4px; color:var(--ink);">3. Customer Privacy by Design (SAIF Framework)</h4>
+          <p style="margin:0; font-size:13.5px; color:var(--ink-secondary);">
+            Sensitive diagnostic data like customer IP addresses, device user agents, and geolocation are segregated into the private `admin-db` repository. Public assets served to browsers (`ratings.json`, `menu-data.js`, `game-stats.json`) strictly contain sanitized business data.
+          </p>
+        </div>
+
+        <div style="border-left: 3px solid var(--turmeric-gold); padding-left: 14px;">
+          <h4 style="margin:0 0 4px; color:var(--ink);">4. Zero CDN Stale Cache Headaches</h4>
+          <p style="margin:0; font-size:13.5px; color:var(--ink-secondary);">
+            Whenever an administrator changes a dish price or adds an item, the script loader appends a fresh timestamp hash (`menu-data.js?v=Date.now()`), completely bypassing aggressive mobile browser caches without requiring manual cache clearing by dining customers.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Footer -->
+<footer class="doc-footer">
+  <div>© 2026 <strong>Navrang Family Restaurant</strong> — Engineering Architecture Documentation.</div>
+  <div style="margin-top:4px; font-size:11.5px; color:var(--ink-muted);">
+    Designed with Vanilla HTML5, CSS3, ES6 JavaScript & Mermaid.js Vector Diagrams.
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Reading Progress Bar
+  window.addEventListener('scroll', function(){
+    var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    var scrolled = (winScroll / height) * 100;
+    document.getElementById('progressBar').style.width = scrolled + '%';
+  });
+
+  // Theme Toggle (Dark / Light)
+  var themeBtn = document.getElementById('themeToggle');
+  var currentTheme = localStorage.getItem('navrang_doc_theme') || 'light';
+  if (currentTheme === 'dark'){
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeBtn.textContent = '☀️';
+  }
+  themeBtn.addEventListener('click', function(){
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var nextTheme = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', nextTheme);
+    localStorage.setItem('navrang_doc_theme', nextTheme);
+    themeBtn.textContent = nextTheme === 'dark' ? '☀️' : '🌙';
+  });
+
+  // Interactive Flow Tabs
+  var tabButtons = document.querySelectorAll('.flow-tab-btn');
+  var tabPanes = document.querySelectorAll('.flow-tab-pane');
+  tabButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var target = btn.dataset.tab;
+      tabButtons.forEach(function(b){ b.classList.remove('active'); });
+      tabPanes.forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var targetPane = document.getElementById(target);
+      if (targetPane) targetPane.classList.add('active');
+    });
+  });
+
+  // Table of Contents ScrollSpy
+  var sections = document.querySelectorAll('.doc-section, .article-hero');
+  var tocLinks = document.querySelectorAll('.toc-link');
+  window.addEventListener('scroll', function(){
+    var fromTop = window.scrollY + 120;
+    sections.forEach(function(sec){
+      if (sec.offsetTop <= fromTop && (sec.offsetTop + sec.offsetHeight) > fromTop){
+        var id = sec.getAttribute('id');
+        tocLinks.forEach(function(link){
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

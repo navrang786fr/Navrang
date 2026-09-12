@@ -206,7 +206,8 @@
       items: [
         { key: 'sc-orders', label: 'Online Orders', href: '../order.html', icon: 'orders', external: true },
         { key: 'sc-menu-en', label: 'Live Menu (EN)', href: '../navrang-menu.html', icon: 'menu', external: true },
-        { key: 'sc-menu-te', label: 'Live Menu (TE)', href: '../navrang-menu-te.html', icon: 'menu', external: true }
+        { key: 'sc-menu-te', label: 'Live Menu (TE)', href: '../navrang-menu-te.html', icon: 'menu', external: true },
+        { key: 'sc-arch', label: 'System Architecture', href: '../architecture.html', icon: 'audit', external: true }
       ]
     }
   ];
