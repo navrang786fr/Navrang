@@ -163,22 +163,23 @@
       deliverySurveyTag: 'COMING SOON · DEMAND SURVEY',
       deliveryCountLabel: 'interested in Home Delivery',
       deliveryHeadline: 'Want Navrang Delivered to Your Doorstep?',
-      deliverySubtext: "Vote for your colony or area! If we receive enough demand, we'll launch express home delivery with an exclusive 5% OFF launch discount.",
+      deliverySubtext: "Vote for your colony or area! If we receive enough demand, we'll launch express home delivery directly to your doorstep.",
       deliveryVoteBtnText: 'Yes, I Want Home Delivery!',
       deliveryVotedText: 'You Voted! Launching Soon',
       deliveryModalTitle: 'Bring Navrang to Your Home!',
       deliveryModalSub: 'Vote for your area & help us prioritize delivery routes.',
       modalDeliverySpeed: '⚡ Express',
       modalDeliverySpeedLabel: 'Direct Delivery',
+      modalDeliveryPack: '🍲 Fresh & Hot',
+      modalDeliveryPackLabel: 'Royal Packaging',
       deliveryVotesLabel: 'Customer Votes',
       deliveryOfferLabel: 'Launch Coupon',
       deliveryAreaLabel: 'Your Colony / Area / Landmark',
-      deliveryChipsLabel: 'Popular areas (tap to auto-fill):',
       deliveryAreaPlaceholder: 'e.g. Gandhi Nagar, Station Road...',
       deliveryPhoneLabel: 'WhatsApp / Mobile Number (Optional)',
       deliveryPhonePlaceholder: '10-digit mobile number',
-      deliveryPhoneNote: 'We will WhatsApp your 5% OFF launch coupon when delivery opens. Zero spam.',
-      deliverySubmitText: 'Vote for My Area & Get 5% Coupon 🚀',
+      deliveryPhoneNote: 'We will notify you when delivery opens in your area. Zero spam.',
+      deliverySubmitText: 'Vote for My Area 🚀',
       deliverySubmitting: 'Recording your vote…',
       deliverySuccessTitle: '🎉 Your Vote is Recorded!',
       deliverySuccessMsg: "Thank you! We've recorded your demand. We're planning express delivery routes to bring steaming hot food to your home soon!",
@@ -302,22 +303,23 @@
       deliverySurveyTag: 'త్వరలో రాబోతోంది · డిమాండ్ సర్వే',
       deliveryCountLabel: 'మంది హోమ్ డెలివరీ కోరుకుంటున్నారు',
       deliveryHeadline: 'నవరంగ్ రుచులు మీ ఇంటి వద్దకే కావాలా?',
-      deliverySubtext: 'మీ కాలనీ లేదా ఏరియా కోసం ఓటు వేయండి! మంచి డిమాండ్ వస్తే, 5% లాంచ్ డిస్కౌంట్‌తో ఎక్స్‌ప్రెస్ హోమ్ డెలివరీ ప్రారంభిస్తాం.',
+      deliverySubtext: 'మీ కాలనీ లేదా ఏరియా కోసం ఓటు వేయండి! మంచి డిమాండ్ వస్తే, మీ ఇంటికే నేరుగా ఎక్స్‌ప్రెస్ హోమ్ డెలివరీ ప్రారంభిస్తాం.',
       deliveryVoteBtnText: 'అవును, నాకు హోమ్ డెలివరీ కావాలి!',
       deliveryVotedText: 'మీ ఓటు నమోదైంది! త్వరలో వస్తున్నాం',
       deliveryModalTitle: 'నవరంగ్ రుచులు మీ ఇంటికి!',
       deliveryModalSub: 'మీ ఏరియాను ఎంచుకోండి, డెలివరీ రూట్లను వేగవంతం చేయడంలో మాకు సహాయపడండి.',
       modalDeliverySpeed: '⚡ ఎక్స్‌ప్రెస్',
       modalDeliverySpeedLabel: 'డైరెక్ట్ డెలివరీ',
+      modalDeliveryPack: '🍲 వేడి వేడిగా తాజా',
+      modalDeliveryPackLabel: 'రాయల్ ప్యాకేజింగ్',
       deliveryVotesLabel: 'కస్టమర్ ఓట్లు',
       deliveryOfferLabel: 'లాంచ్ కూపన్',
       deliveryAreaLabel: 'మీ కాలనీ / ఏరియా / ల్యాండ్‌మార్క్',
-      deliveryChipsLabel: 'ప్రసిద్ధ ప్రాంతాలు (ఎంచుకోవడానికి నొక్కండి):',
       deliveryAreaPlaceholder: 'ఉదా: గాంధీ నగర్, స్టేషన్ రోడ్...',
       deliveryPhoneLabel: 'వాట్సాప్ / మొబైల్ నంబర్ (ఐచ్ఛికం)',
       deliveryPhonePlaceholder: '10 అంకెల మొబైల్ నంబర్',
-      deliveryPhoneNote: 'డెలివరీ ప్రారంభమైన వెంటనే 5% తగ్గింపు కూపన్ వాట్సాప్ చేస్తాం. ఎలాంటి స్పామ్ ఉండదు.',
-      deliverySubmitText: 'నా ఏరియాకు ఓటు వేసి 5% కూపన్ పొందండి 🚀',
+      deliveryPhoneNote: 'మీ ఏరియాలో డెలివరీ ప్రారంభమైన వెంటనే తెలియజేస్తాం. ఎలాంటి స్పామ్ ఉండదు.',
+      deliverySubmitText: 'నా ప్రాంతం కోసం ఓటు వేయండి 🚀',
       deliverySubmitting: 'నమోదవుతోంది…',
       deliverySuccessTitle: '🎉 మీ ఓటు విజయవంతంగా నమోదైంది!',
       deliverySuccessMsg: 'ధన్యవాదాలు! మీ ప్రాంత డిమాండ్ నమోదైంది. మీ ఇంటికే వేడి వేడి ఆహారాన్ని అందించేందుకు మేము డెలివరీ మార్గాలను రూపొందిస్తున్నాం!',
@@ -486,10 +488,11 @@
     var deliveryModalSub = qs('#deliveryModalSub'); if (deliveryModalSub) deliveryModalSub.textContent = S.deliveryModalSub;
     var modalDeliverySpeed = qs('#modalDeliverySpeed'); if (modalDeliverySpeed) modalDeliverySpeed.textContent = S.modalDeliverySpeed;
     var modalDeliverySpeedLabel = qs('#modalDeliverySpeedLabel'); if (modalDeliverySpeedLabel) modalDeliverySpeedLabel.textContent = S.modalDeliverySpeedLabel;
+    var modalDeliveryPack = qs('#modalDeliveryPack'); if (modalDeliveryPack) modalDeliveryPack.textContent = S.modalDeliveryPack;
+    var modalDeliveryPackLabel = qs('#modalDeliveryPackLabel'); if (modalDeliveryPackLabel) modalDeliveryPackLabel.textContent = S.modalDeliveryPackLabel;
     var modalDeliveryCountLabel = qs('#modalDeliveryCountLabel'); if (modalDeliveryCountLabel) modalDeliveryCountLabel.textContent = S.deliveryVotesLabel;
     var modalDeliveryOfferLabel = qs('#modalDeliveryOfferLabel'); if (modalDeliveryOfferLabel) modalDeliveryOfferLabel.textContent = S.deliveryOfferLabel;
     var deliveryAreaLabel = qs('#deliveryAreaLabel'); if (deliveryAreaLabel) deliveryAreaLabel.innerHTML = S.deliveryAreaLabel + ' <span style="color:var(--nonveg);">*</span>';
-    var deliveryChipsLabel = qs('#deliveryChipsLabel'); if (deliveryChipsLabel) deliveryChipsLabel.textContent = S.deliveryChipsLabel;
     var deliveryAreaInput = qs('#deliveryAreaInput'); if (deliveryAreaInput) deliveryAreaInput.placeholder = S.deliveryAreaPlaceholder;
     var deliveryPhoneLabel = qs('#deliveryPhoneLabel'); if (deliveryPhoneLabel) deliveryPhoneLabel.textContent = S.deliveryPhoneLabel;
     var deliveryPhoneInput = qs('#deliveryPhoneInput'); if (deliveryPhoneInput) deliveryPhoneInput.placeholder = S.deliveryPhonePlaceholder;
@@ -2755,8 +2758,8 @@
     function setupWhatsAppShare(area){
       if (!shareBtn) return;
       var currentArea = area || (storedVote ? storedVote.area : 'my area');
-      var textEn = '🛵 I just voted for Navrang Restaurant Home Delivery in ' + currentArea + '! 🍛 Support our colony so they start home delivery soon with 5% OFF: ' + window.location.href;
-      var textTe = '🛵 నవరంగ్ రెస్టారెంట్ హోమ్ డెలివరీ కోసం నేను ' + currentArea + ' కు ఓటు వేశాను! 🍛 మన ఏరియాలో డెలివరీ త్వరగా ప్రారంభం కావడానికి మీరు కూడా ఓటు వేయండి & 5% ఆఫర్ పొందండి: ' + window.location.href;
+      var textEn = '🛵 I just voted for Navrang Restaurant Home Delivery in ' + currentArea + '! 🍛 Support our colony so they start home delivery directly to our area: ' + window.location.href;
+      var textTe = '🛵 నవరంగ్ రెస్టారెంట్ హోమ్ డెలివరీ కోసం నేను ' + currentArea + ' కు ఓటు వేశాను! 🍛 మన ఏరియాలో డెలివరీ త్వరగా ప్రారంభం కావడానికి మీరు కూడా ఓటు వేయండి: ' + window.location.href;
       var shareText = currentLang === 'te' ? textTe : textEn;
       shareBtn.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(shareText);
     }
@@ -2771,8 +2774,8 @@
         var successDesc = qs('#deliverySuccessMsg');
         if (successDesc){
           successDesc.textContent = (currentLang === 'te')
-            ? 'మీ ఏరియా (' + storedVote.area + ') కోసం మీ ఓటు నమోదైంది! డెలివరీ ప్రారంభమైన వెంటనే 5% తగ్గింపు కూపన్ అందజేస్తాం.'
-            : 'Your vote for ' + storedVote.area + ' is recorded! When home delivery routes open, your 5% discount coupon will be ready.';
+            ? 'మీ ఏరియా (' + storedVote.area + ') కోసం మీ ఓటు నమోదైంది! డెలివరీ ప్రారంభమైన వెంటనే మీ ఇంటికే వేడి వేడి ఆహారాన్ని అందిస్తాం.'
+            : 'Your vote for ' + storedVote.area + ' is recorded! When home delivery routes open, we will deliver steaming hot food right to your doorstep.';
         }
         setupWhatsAppShare(storedVote.area);
       } else {
@@ -2812,25 +2815,8 @@
     if (areaInput){
       areaInput.addEventListener('input', function(){
         areaInput.classList.remove('input-err');
-        var val = areaInput.value.trim().toLowerCase();
-        areaChips.forEach(function(c){
-          c.classList.toggle('active', c.dataset.area.toLowerCase() === val);
-        });
       });
     }
-
-    // Quick selection chips
-    areaChips.forEach(function(chip){
-      chip.addEventListener('click', function(){
-        var area = chip.dataset.area;
-        if (areaInput){
-          areaInput.value = area;
-          areaInput.classList.remove('input-err');
-          areaInput.focus();
-        }
-        areaChips.forEach(function(c){ c.classList.toggle('active', c === chip); });
-      });
-    });
 
     // Form submission
     if (submitBtn){

@@ -874,33 +874,6 @@
   .stats-col strong{display:block;font-size:16px;color:var(--maroon);font-family:'IBM Plex Mono',monospace;}
   .stats-col span{font-size:10.5px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.6px;font-weight:700;}
 
-  /* Area Quick Selection Chips */
-  .delivery-chips-section{margin-top:10px;}
-  .delivery-chips-label{
-    font-size:11px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;
-    letter-spacing:0.6px;margin-bottom:7px;display:flex;align-items:center;gap:5px;
-  }
-  .delivery-chips-wrap{
-    display:flex;flex-wrap:wrap;gap:6px;
-  }
-  .area-chip{
-    background:var(--paper-soft);border:1.2px solid var(--rule-strong);
-    border-radius:18px;padding:5px 11px;font-size:12px;font-weight:600;
-    color:var(--ink);cursor:pointer;transition:all .16s ease;
-    display:inline-flex;align-items:center;gap:4px;user-select:none;
-    font-family:inherit;
-  }
-  .area-chip .chip-pin{font-size:11px;opacity:0.85;}
-  .area-chip:hover{
-    background:var(--turmeric-soft);border-color:var(--turmeric-gold);
-    color:var(--maroon);transform:translateY(-1px);
-  }
-  .area-chip.active{
-    background:linear-gradient(135deg, rgba(212,155,34,0.22), rgba(18,64,28,0.12));
-    border-color:var(--maroon);color:var(--maroon-deep);font-weight:800;
-    box-shadow:0 1px 4px rgba(18,64,28,0.15);
-  }
-
   .delivery-form-group{margin-bottom:14px;}
   .delivery-form-group label{
     display:block;font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:5px;
@@ -2179,7 +2152,7 @@
         <div class="delivery-scooter-icon" aria-hidden="true">🛵</div>
         <div class="delivery-text-wrap">
           <h3 class="delivery-headline" id="deliveryHeadline">Want Navrang Delivered to Your Doorstep?</h3>
-          <p class="delivery-subtext" id="deliverySubtext">Vote for your colony or area! If we receive enough demand, we'll launch express home delivery with an exclusive 5% OFF launch discount.</p>
+          <p class="delivery-subtext" id="deliverySubtext">Vote for your colony or area! If we receive enough demand, we'll launch express home delivery directly to your doorstep.</p>
         </div>
       </div>
       <div class="delivery-actions-row">
@@ -2298,12 +2271,12 @@
 
       <div class="delivery-stats-banner">
         <div class="stats-col">
-          <strong id="modalDeliverySpeed">Express</strong>
+          <strong id="modalDeliverySpeed">⚡ Express</strong>
           <span id="modalDeliverySpeedLabel">Direct Delivery</span>
         </div>
         <div class="stats-col">
-          <strong id="modalDeliveryOffer">5% OFF</strong>
-          <span id="modalDeliveryOfferLabel">Launch Coupon</span>
+          <strong id="modalDeliveryPack">🍲 Fresh &amp; Hot</strong>
+          <span id="modalDeliveryPackLabel">Royal Packaging</span>
         </div>
       </div>
 
@@ -2311,23 +2284,10 @@
         <div class="delivery-form-group">
           <label id="deliveryAreaLabel" for="deliveryAreaInput">Your Colony / Area / Landmark <span style="color:var(--nonveg);">*</span></label>
           <input type="text" id="deliveryAreaInput" class="delivery-form-input" placeholder="e.g. Gandhi Nagar, Station Road..." required autocomplete="off">
-          
-          <div class="delivery-chips-section">
-            <span class="delivery-chips-label" id="deliveryChipsLabel">Popular areas (tap to auto-fill):</span>
-            <div class="delivery-chips-wrap" id="deliveryAreaChips">
-              <button type="button" class="area-chip" data-area="Station Road"><span class="chip-pin">📍</span> Station Road</button>
-              <button type="button" class="area-chip" data-area="Gandhi Nagar"><span class="chip-pin">📍</span> Gandhi Nagar</button>
-              <button type="button" class="area-chip" data-area="Ashok Nagar"><span class="chip-pin">📍</span> Ashok Nagar</button>
-              <button type="button" class="area-chip" data-area="RTC Bus Stand"><span class="chip-pin">📍</span> RTC Bus Stand</button>
-              <button type="button" class="area-chip" data-area="Housing Board"><span class="chip-pin">📍</span> Housing Board</button>
-              <button type="button" class="area-chip" data-area="Collector Office"><span class="chip-pin">📍</span> Collector Office</button>
-              <button type="button" class="area-chip" data-area="Clock Tower"><span class="chip-pin">📍</span> Clock Tower</button>
-            </div>
-          </div>
         </div>
 
         <button type="button" class="delivery-submit-cta" id="deliverySubmitBtn">
-          <span id="deliverySubmitText">Vote for My Area &amp; Get 5% Coupon 🚀</span>
+          <span id="deliverySubmitText">Vote for My Area 🚀</span>
         </button>
       </form>
     </div>
