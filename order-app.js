@@ -168,6 +168,8 @@
       deliveryVotedText: 'You Voted! Launching Soon',
       deliveryModalTitle: 'Bring Navrang to Your Home!',
       deliveryModalSub: 'Vote for your area & help us prioritize delivery routes.',
+      modalDeliverySpeed: '⚡ Express',
+      modalDeliverySpeedLabel: 'Direct Delivery',
       deliveryVotesLabel: 'Customer Votes',
       deliveryOfferLabel: 'Launch Coupon',
       deliveryAreaLabel: 'Your Colony / Area / Landmark',
@@ -304,6 +306,8 @@
       deliveryVotedText: 'మీ ఓటు నమోదైంది! త్వరలో వస్తున్నాం',
       deliveryModalTitle: 'నవరంగ్ రుచులు మీ ఇంటికి!',
       deliveryModalSub: 'మీ ఏరియాను ఎంచుకోండి, డెలివరీ రూట్లను వేగవంతం చేయడంలో మాకు సహాయపడండి.',
+      modalDeliverySpeed: '⚡ ఎక్స్‌ప్రెస్',
+      modalDeliverySpeedLabel: 'డైరెక్ట్ డెలివరీ',
       deliveryVotesLabel: 'కస్టమర్ ఓట్లు',
       deliveryOfferLabel: 'లాంచ్ కూపన్',
       deliveryAreaLabel: 'మీ కాలనీ / ఏరియా / ల్యాండ్‌మార్క్',
@@ -478,6 +482,8 @@
     var deliveryVotedText = qs('#deliveryVotedText'); if (deliveryVotedText) deliveryVotedText.textContent = S.deliveryVotedText;
     var deliveryModalTitle = qs('#deliveryModalTitle'); if (deliveryModalTitle) deliveryModalTitle.textContent = S.deliveryModalTitle;
     var deliveryModalSub = qs('#deliveryModalSub'); if (deliveryModalSub) deliveryModalSub.textContent = S.deliveryModalSub;
+    var modalDeliverySpeed = qs('#modalDeliverySpeed'); if (modalDeliverySpeed) modalDeliverySpeed.textContent = S.modalDeliverySpeed;
+    var modalDeliverySpeedLabel = qs('#modalDeliverySpeedLabel'); if (modalDeliverySpeedLabel) modalDeliverySpeedLabel.textContent = S.modalDeliverySpeedLabel;
     var modalDeliveryCountLabel = qs('#modalDeliveryCountLabel'); if (modalDeliveryCountLabel) modalDeliveryCountLabel.textContent = S.deliveryVotesLabel;
     var modalDeliveryOfferLabel = qs('#modalDeliveryOfferLabel'); if (modalDeliveryOfferLabel) modalDeliveryOfferLabel.textContent = S.deliveryOfferLabel;
     var deliveryAreaLabel = qs('#deliveryAreaLabel'); if (deliveryAreaLabel) deliveryAreaLabel.innerHTML = S.deliveryAreaLabel + ' <span style="color:var(--nonveg);">*</span>';
