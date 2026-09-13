@@ -283,6 +283,16 @@
   }
   .insta-subline strong{color:var(--maroon-light);}
 
+  .insta-perks-row{
+    display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px;
+  }
+  .insta-perk{
+    display:inline-flex;align-items:center;gap:4px;
+    background:rgba(18,64,28,0.06);border:1px solid rgba(18,64,28,0.15);border-radius:14px;
+    padding:3px 8px;font-size:11px;font-weight:700;color:var(--maroon-deep);
+  }
+  .insta-perk svg{color:var(--leaf);flex:0 0 auto;}
+
   .insta-actions-row{display:flex;gap:8px;margin-bottom:0;}
   .insta-follow-cta{
     flex:1.4;background:linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #F77737 100%);
@@ -2108,7 +2118,7 @@
     <div class="insta-card">
       <!-- Media Header with Rich Food Banner & Overlay Badges -->
       <div class="insta-media" id="instaBannerMedia" role="button" tabindex="0" aria-label="View 5% Off Instagram Offer details">
-        <img src="images/app/instagram-offer-banner.jpg" alt="Instagram 5% Discount Offer - Navrang Restaurant" class="insta-img" loading="eager" fetchpriority="high">
+        <img src="images/app/instagram-offer-banner.jpg?v=2" alt="Instagram 5% Discount Offer - Navrang Restaurant" class="insta-img" loading="eager" fetchpriority="high">
         <div class="insta-media-overlay"></div>
         <div class="insta-pill-exclusive">
           <span class="insta-pill-icon"><img src="images/app/instagram.png" alt=""></span>
@@ -2128,9 +2138,16 @@
             <img src="images/app/instagram.png" alt="Instagram">
           </div>
           <div class="insta-title-col">
-            <h2 class="insta-headline" id="heroOfferTitle">Get 5% OFF on Total Bill!</h2>
-            <p class="insta-subline" id="heroOfferDesc">Follow <strong>@navrang786fr</strong> on Instagram &amp; show your screen during billing to claim 5% OFF!</p>
+            <h2 class="insta-headline" id="heroOfferTitle">Get Flat 5% OFF on Total Bill!</h2>
+            <p class="insta-subline" id="heroOfferDesc">Follow <strong>@navrang786fr</strong> on Instagram &amp; show your screen during billing to claim flat 5% savings on your entire food bill!</p>
           </div>
+        </div>
+
+        <!-- Quick Offer Badges -->
+        <div class="insta-perks-row">
+          <span class="insta-perk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Flat 5% OFF</span>
+          <span class="insta-perk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Dine-In &amp; Takeaway</span>
+          <span class="insta-perk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Instant at Billing</span>
         </div>
 
         <!-- Interactive Action Buttons -->
