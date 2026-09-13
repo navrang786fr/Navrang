@@ -173,6 +173,7 @@
       deliveryVotesLabel: 'Customer Votes',
       deliveryOfferLabel: 'Launch Coupon',
       deliveryAreaLabel: 'Your Colony / Area / Landmark',
+      deliveryChipsLabel: 'Popular areas (tap to auto-fill):',
       deliveryAreaPlaceholder: 'e.g. Gandhi Nagar, Station Road...',
       deliveryPhoneLabel: 'WhatsApp / Mobile Number (Optional)',
       deliveryPhonePlaceholder: '10-digit mobile number',
@@ -311,6 +312,7 @@
       deliveryVotesLabel: 'కస్టమర్ ఓట్లు',
       deliveryOfferLabel: 'లాంచ్ కూపన్',
       deliveryAreaLabel: 'మీ కాలనీ / ఏరియా / ల్యాండ్‌మార్క్',
+      deliveryChipsLabel: 'ప్రసిద్ధ ప్రాంతాలు (ఎంచుకోవడానికి నొక్కండి):',
       deliveryAreaPlaceholder: 'ఉదా: గాంధీ నగర్, స్టేషన్ రోడ్...',
       deliveryPhoneLabel: 'వాట్సాప్ / మొబైల్ నంబర్ (ఐచ్ఛికం)',
       deliveryPhonePlaceholder: '10 అంకెల మొబైల్ నంబర్',
@@ -487,6 +489,7 @@
     var modalDeliveryCountLabel = qs('#modalDeliveryCountLabel'); if (modalDeliveryCountLabel) modalDeliveryCountLabel.textContent = S.deliveryVotesLabel;
     var modalDeliveryOfferLabel = qs('#modalDeliveryOfferLabel'); if (modalDeliveryOfferLabel) modalDeliveryOfferLabel.textContent = S.deliveryOfferLabel;
     var deliveryAreaLabel = qs('#deliveryAreaLabel'); if (deliveryAreaLabel) deliveryAreaLabel.innerHTML = S.deliveryAreaLabel + ' <span style="color:var(--nonveg);">*</span>';
+    var deliveryChipsLabel = qs('#deliveryChipsLabel'); if (deliveryChipsLabel) deliveryChipsLabel.textContent = S.deliveryChipsLabel;
     var deliveryAreaInput = qs('#deliveryAreaInput'); if (deliveryAreaInput) deliveryAreaInput.placeholder = S.deliveryAreaPlaceholder;
     var deliveryPhoneLabel = qs('#deliveryPhoneLabel'); if (deliveryPhoneLabel) deliveryPhoneLabel.textContent = S.deliveryPhoneLabel;
     var deliveryPhoneInput = qs('#deliveryPhoneInput'); if (deliveryPhoneInput) deliveryPhoneInput.placeholder = S.deliveryPhonePlaceholder;
@@ -2718,6 +2721,7 @@
     var submitText = qs('#deliverySubmitText');
     var doneBtn = qs('#deliveryDoneBtn');
     var shareBtn = qs('#deliveryShareBtn');
+    var areaChips = qsa('.area-chip', qs('#deliveryAreaChips'));
 
     var storedVote = getStoredDeliveryVote();
     if (storedVote){
@@ -2808,8 +2812,25 @@
     if (areaInput){
       areaInput.addEventListener('input', function(){
         areaInput.classList.remove('input-err');
+        var val = areaInput.value.trim().toLowerCase();
+        areaChips.forEach(function(c){
+          c.classList.toggle('active', c.dataset.area.toLowerCase() === val);
+        });
       });
     }
+
+    // Quick selection chips
+    areaChips.forEach(function(chip){
+      chip.addEventListener('click', function(){
+        var area = chip.dataset.area;
+        if (areaInput){
+          areaInput.value = area;
+          areaInput.classList.remove('input-err');
+          areaInput.focus();
+        }
+        areaChips.forEach(function(c){ c.classList.toggle('active', c === chip); });
+      });
+    });
 
     // Form submission
     if (submitBtn){
